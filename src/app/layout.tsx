@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     default: 'loke.dev',
     template: '%s | loke.dev',
   },
+  metadataBase: new URL('https://loke.dev'),
   description: 'Personal website of Loke',
   keywords: ['Next.js', 'React', 'JavaScript', 'Web Development'],
   authors: [{ name: 'Loke' }],

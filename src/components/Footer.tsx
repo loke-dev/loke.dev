@@ -1,11 +1,12 @@
-import Link from 'next/link'
+import Container from './ui/Container'
+import NavLink from './ui/NavLink'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
     <footer className="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Container padding="default" spacing="none">
         <div className="py-8 md:flex md:items-center md:justify-between">
           <div className="text-center md:text-left">
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -14,28 +15,19 @@ export default function Footer() {
           </div>
           <div className="mt-4 flex justify-center md:mt-0">
             <div className="flex space-x-6">
-              <Link
-                href="/"
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              >
+              <NavLink href="/" type="footer">
                 Home
-              </Link>
-              <Link
-                href="/about"
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              >
+              </NavLink>
+              <NavLink href="/about" type="footer">
                 About
-              </Link>
-              <Link
-                href="/contact"
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              >
+              </NavLink>
+              <NavLink href="/contact" type="footer">
                 Contact
-              </Link>
+              </NavLink>
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }
