@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="py-8 md:flex md:items-center md:justify-between">
           <div className="text-center md:text-left">
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -37,5 +37,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

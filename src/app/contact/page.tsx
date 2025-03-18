@@ -1,38 +1,38 @@
-import type { Metadata } from "next";
-import JsonLd from "../../components/JsonLd";
+import type { Metadata } from 'next'
+import JsonLd from '../../components/JsonLd'
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch with Loke",
-};
+  title: 'Contact',
+  description: 'Get in touch with Loke',
+}
 
 export default function Contact() {
   const contactJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    name: "Contact Loke",
-    description: "Contact page for Loke",
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact Loke',
+    description: 'Contact page for Loke',
     mainEntity: {
-      "@type": "Person",
-      name: "Loke",
-      email: "hello@loke.dev",
-      telephone: "+1 (555) 123-4567",
+      '@type': 'Person',
+      name: 'Loke',
+      email: 'hello@loke.dev',
+      telephone: '+1 (555) 123-4567',
       address: {
-        "@type": "PostalAddress",
-        addressLocality: "Stockholm",
-        addressCountry: "Sweden",
+        '@type': 'PostalAddress',
+        addressLocality: 'Stockholm',
+        addressCountry: 'Sweden',
       },
     },
-  };
+  }
 
   return (
     <>
       <JsonLd data={contactJsonLd} />
       <div className="bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8">
-          <div className="max-w-lg mx-auto md:max-w-none md:grid md:grid-cols-2 md:gap-8">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-lg md:grid md:max-w-none md:grid-cols-2 md:gap-8">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl dark:text-white">
                 Get in touch
               </h2>
               <p className="mt-3 text-lg text-gray-500 dark:text-gray-400">
@@ -129,7 +129,7 @@ export default function Contact() {
                       name="name"
                       id="name"
                       autoComplete="name"
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md"
+                      className="block w-full rounded-md border-gray-300 px-4 py-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       placeholder="Your name"
                     />
                   </div>
@@ -147,7 +147,7 @@ export default function Contact() {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md"
+                      className="block w-full rounded-md border-gray-300 px-4 py-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -164,7 +164,7 @@ export default function Contact() {
                       id="message"
                       name="message"
                       rows={4}
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md"
+                      className="block w-full rounded-md border-gray-300 px-4 py-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       placeholder="Your message"
                     ></textarea>
                   </div>
@@ -172,7 +172,7 @@ export default function Contact() {
                 <div>
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                   >
                     Send Message
                   </button>
@@ -183,5 +183,5 @@ export default function Contact() {
         </div>
       </div>
     </>
-  );
+  )
 }
