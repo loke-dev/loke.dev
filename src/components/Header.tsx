@@ -18,6 +18,9 @@ export default function Header() {
             <NavLink href="/" type="header">
               Home
             </NavLink>
+            <NavLink href="/blog" type="header">
+              Blog
+            </NavLink>
             <NavLink href="/about" type="header">
               About
             </NavLink>
