@@ -1,5 +1,4 @@
 import { getPostSlugs, getPostBySlug } from '@/lib/mdx'
-import Container from '@/components/ui/Container'
 import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
@@ -45,17 +44,14 @@ export default async function BlogPost({
   const { data } = matter(fileContents)
 
   return (
-    <Container className="py-12">
+    <div className="container mx-auto px-4 py-12">
       <div className="mb-8">
-        <Link
-          href="/blog"
-          className="mb-4 inline-block text-blue-600 hover:underline dark:text-blue-400"
-        >
+        <Link href="/blog" className="link link-primary mb-4 inline-block">
           ← Back to all posts
         </Link>
         <h1 className="mb-3 text-4xl font-bold">{data.title}</h1>
         {data.date && (
-          <time className="mb-6 block text-gray-500 dark:text-gray-400">
+          <time className="mb-6 block opacity-70">
             {new Date(data.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -65,9 +61,9 @@ export default async function BlogPost({
         )}
       </div>
 
-      <article className="prose prose-lg dark:prose-invert max-w-none">
+      <article className="prose prose-lg max-w-none">
         <PostContent />
       </article>
-    </Container>
+    </div>
   )
 }

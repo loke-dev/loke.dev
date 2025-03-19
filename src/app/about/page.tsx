@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import JsonLd from '../../components/JsonLd'
+import JsonLd from '@/components/JsonLd'
 
 export const metadata: Metadata = {
   title: 'About',
@@ -24,19 +24,17 @@ export default function About() {
   return (
     <>
       <JsonLd data={personJsonLd} />
-      <div className="bg-white dark:bg-gray-900">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+      <div className="bg-base-100">
+        <div className="container mx-auto px-4 py-16 lg:py-20">
+          <div className="grid lg:grid-cols-3 lg:gap-8">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-                About Me
-              </h2>
-              <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
+              <h2 className="text-3xl font-bold">About Me</h2>
+              <p className="mt-4 text-lg opacity-70">
                 Learn more about my background, skills, and interests.
               </p>
             </div>
             <div className="mt-12 lg:col-span-2 lg:mt-0">
-              <div className="prose prose-indigo dark:prose-invert max-w-none">
+              <div className="prose max-w-none">
                 <p>
                   Hello! I&apos;m Loke, a passionate web developer and designer
                   with a focus on creating beautiful, functional, and accessible

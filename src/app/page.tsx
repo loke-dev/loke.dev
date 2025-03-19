@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
-import Button from '../components/ui/Button'
-import Container from '../components/ui/Container'
-import JsonLd from '../components/JsonLd'
-import ProjectCard from '../components/ProjectCard'
-import Section from '../components/ui/Section'
-import Text from '../components/ui/Text'
+import Link from 'next/link'
+import JsonLd from '@/components/JsonLd'
+import ProjectCard from '@/components/ProjectCard'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -28,52 +25,35 @@ export default function Home() {
     <>
       <JsonLd data={websiteJsonLd} />
 
-      <Section background="white">
-        <Container spacing="xlarge">
-          <div className="text-center">
-            <Text variant="h1" as="h1" align="center">
-              <span className="block">Welcome to</span>
-              <Text
-                variant="h1"
-                as="span"
-                intent="accent"
-                align="center"
-                className="block"
-              >
-                loke.dev
-              </Text>
-            </Text>
-            <Text
-              variant="bodyLarge"
-              as="p"
-              align="center"
-              className="mx-auto mt-3 max-w-md sm:text-lg md:mt-5 md:max-w-3xl md:text-xl"
-            >
-              Personal website of Loke. Web developer, designer, and technology
-              enthusiast.
-            </Text>
-            <div className="mt-10 flex justify-center">
-              <div className="rounded-md shadow">
-                <Button href="/about" intent="primary">
+      <section className="bg-base-100">
+        <div className="container mx-auto px-4 py-16 md:py-20">
+          <div className="hero text-center">
+            <div className="hero-content flex-col">
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                <span className="block">Welcome to</span>
+                <span className="text-primary block">loke.dev</span>
+              </h1>
+              <p className="mx-auto mt-3 max-w-md text-lg opacity-75">
+                Personal website of Loke. Web developer, designer, and
+                technology enthusiast.
+              </p>
+              <div className="mt-6 flex justify-center gap-4">
+                <Link href="/about" className="btn btn-primary">
                   About Me
-                </Button>
-              </div>
-              <div className="ml-3 rounded-md shadow">
-                <Button href="/contact" intent="secondary">
+                </Link>
+                <Link href="/contact" className="btn btn-secondary">
                   Contact
-                </Button>
+                </Link>
               </div>
             </div>
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      <Section background="gray">
-        <Container spacing="large">
-          <Text variant="h2" as="h2">
-            <span className="block">Latest Projects</span>
-          </Text>
-          <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <section className="bg-base-200">
+        <div className="container mx-auto px-4 py-12 md:py-16">
+          <h2 className="mb-6 text-3xl font-bold">Latest Projects</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <ProjectCard
               title="Project One"
               description="Description of project one. This is a placeholder for a real project."
@@ -87,8 +67,8 @@ export default function Home() {
               description="Description of project three. This is a placeholder for a real project."
             />
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
     </>
   )
 }

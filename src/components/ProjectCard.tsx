@@ -1,6 +1,3 @@
-import Card from './ui/Card'
-import Text from './ui/Text'
-
 interface ProjectCardProps {
   title: string
   description: string
@@ -13,13 +10,11 @@ export default function ProjectCard({
   className,
 }: ProjectCardProps) {
   return (
-    <Card className={className}>
-      <Text variant="h3" as="h3">
-        {title}
-      </Text>
-      <Text variant="body" className="mt-2">
-        {description}
-      </Text>
-    </Card>
+    <div className={`card bg-base-100 shadow-lg ${className || ''}`}>
+      <div className="card-body">
+        <h3 className="card-title text-lg font-medium">{title}</h3>
+        <p className="mt-2">{description}</p>
+      </div>
+    </div>
   )
 }
