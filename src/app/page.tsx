@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import JsonLd from '@/components/JsonLd'
 import ProjectCard from '@/components/ProjectCard'
+import { SandpackExamples } from '@/components/sandpack-examples'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -49,6 +50,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <SandpackExamples />
 
       <section className="bg-base-200">
         <div className="container mx-auto px-4 py-12 md:py-16">
