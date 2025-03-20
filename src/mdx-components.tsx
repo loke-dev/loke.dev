@@ -1,6 +1,30 @@
 import type { MDXComponents } from 'mdx/types'
 import Image from 'next/image'
 import Link from 'next/link'
+import { highlightCode } from './lib/shiki'
+import { Suspense } from 'react'
+
+async function CodeBlock({
+  children,
+  className,
+}: {
+  children: string
+  className?: string
+}) {
+  const lang = className?.replace('language-', '') || 'text'
+
+  const html = await highlightCode(children, lang)
+
+  return <div dangerouslySetInnerHTML={{ __html: html }} />
+}
+
+function CodeBlockFallback({ children }: { children: string }) {
+  return (
+    <pre className="overflow-x-auto rounded-md bg-gray-800 p-4 font-mono text-sm text-gray-200">
+      <code>{children}</code>
+    </pre>
+  )
+}
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -40,16 +64,28 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </blockquote>
     ),
-    code: ({ children }) => (
-      <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-sm dark:bg-gray-800">
-        {children}
-      </code>
-    ),
-    pre: ({ children }) => (
-      <pre className="mb-4 overflow-x-auto rounded bg-gray-100 p-4 font-mono text-sm dark:bg-gray-800">
-        {children}
-      </pre>
-    ),
+    code: ({ children, className }) => {
+      const isInlineCode = typeof children === 'string' && !className
+
+      if (isInlineCode) {
+        return (
+          <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-sm dark:bg-gray-800">
+            {children}
+          </code>
+        )
+      }
+
+      return (
+        <Suspense
+          fallback={<CodeBlockFallback>{String(children)}</CodeBlockFallback>}
+        >
+          <CodeBlock className={className}>{String(children)}</CodeBlock>
+        </Suspense>
+      )
+    },
+    pre: ({ children }) => {
+      return <div className="not-prose mb-6">{children}</div>
+    },
     ...components,
   }
 }

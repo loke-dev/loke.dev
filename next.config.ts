@@ -5,6 +5,7 @@ const withMDX = createMDX()
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  serverExternalPackages: ['shiki'],
 }
 
 export default withMDX(nextConfig)
