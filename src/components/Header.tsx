@@ -1,4 +1,5 @@
 import NavLink from './NavLink'
+import ThemeController from './ThemeController'
 
 export default function Header() {
   return (
@@ -19,6 +20,9 @@ export default function Header() {
             </li>
             <li>
               <NavLink href="/contact">Contact</NavLink>
+            </li>
+            <li className="flex items-center justify-center pl-2">
+              <ThemeController />
             </li>
           </ul>
         </div>
