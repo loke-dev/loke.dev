@@ -13,12 +13,8 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const { slug } = await params
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const { slug } = params
   const post = getPostBySlug(slug)
 
   return {
@@ -27,12 +23,8 @@ export async function generateMetadata({
   }
 }
 
-export default async function BlogPost({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const { slug } = await params
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+  const { slug } = params
   const postsDirectory = path.join(process.cwd(), 'src/posts')
   const fullPath = path.join(postsDirectory, `${slug}.mdx`)
 
