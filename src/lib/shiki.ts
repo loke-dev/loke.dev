@@ -25,9 +25,10 @@ export async function getShikiHighlighter() {
 export async function highlightCode(code: string, lang: string) {
   const highlighter = await getShikiHighlighter()
 
-  const validLang = (await highlighter)
-    .getLoadedLanguages()
-    .includes(lang as any)
+  const loadedLanguages = (await highlighter).getLoadedLanguages()
+  const validLang = loadedLanguages.includes(
+    lang as unknown as (typeof loadedLanguages)[number]
+  )
     ? lang
     : 'text'
 

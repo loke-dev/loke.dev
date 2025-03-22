@@ -9,7 +9,11 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "next lint && prettier --check ."
+    "check": "next lint && prettier --check .",
+    "prepare": "husky",
+    "lint-staged": "lint-staged",
+    "type-check": "tsc --noEmit",
+    "ci-check": "pnpm lint && pnpm format:check && pnpm type-check"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^2.20.0",
@@ -31,6 +35,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "daisyui": "^5.0.6",
@@ -39,10 +45,24 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-tailwindcss": "^3.18.0",
     "gray-matter": "^4.0.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "shiki": "^3.2.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md,mdx}": [
+      "prettier --write"
+    ],
+    "**/*.{ts,tsx}": [
+      "bash -c 'pnpm type-check'"
+    ]
   }
 }

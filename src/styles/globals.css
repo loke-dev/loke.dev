@@ -5,41 +5,41 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "lokelight";
+  name: 'lokelight';
   default: true;
   color-scheme: light;
 
   /* Base/Neutral colors */
-  --color-base-100: #F9F5F1; /* Off-White */
-  --color-base-200: #F0EBE7; /* Slightly darker Off-White */
-  --color-base-300: #E6E1DD; /* Even darker Off-White */
+  --color-base-100: #f9f5f1; /* Off-White */
+  --color-base-200: #f0ebe7; /* Slightly darker Off-White */
+  --color-base-300: #e6e1dd; /* Even darker Off-White */
   --color-base-content: #282828; /* Deep Charcoal */
 
   /* Primary colors */
   --color-primary: #008080; /* Modern Teal */
-  --color-primary-content: #F9F5F1; /* Off-White */
+  --color-primary-content: #f9f5f1; /* Off-White */
 
   /* Secondary colors */
-  --color-secondary: #6B8E23; /* Earthy Olive */
-  --color-secondary-content: #F9F5F1; /* Off-White */
+  --color-secondary: #6b8e23; /* Earthy Olive */
+  --color-secondary-content: #f9f5f1; /* Off-White */
 
   /* Accent colors */
-  --color-accent: #FF7F50; /* Vibrant Coral */
+  --color-accent: #ff7f50; /* Vibrant Coral */
   --color-accent-content: #282828; /* Deep Charcoal */
 
   /* Neutral colors */
-  --color-neutral: #A0A0A0; /* Mid-Gray */
+  --color-neutral: #a0a0a0; /* Mid-Gray */
   --color-neutral-content: #282828; /* Deep Charcoal */
 
   /* State colors */
-  --color-info: #B0C4DE; /* Muted Blue-Gray */
+  --color-info: #b0c4de; /* Muted Blue-Gray */
   --color-info-content: #282828; /* Deep Charcoal */
-  --color-success: #6B8E23; /* Earthy Olive */
-  --color-success-content: #F9F5F1; /* Off-White */
-  --color-warning: #FF7F50; /* Vibrant Coral */
+  --color-success: #6b8e23; /* Earthy Olive */
+  --color-success-content: #f9f5f1; /* Off-White */
+  --color-warning: #ff7f50; /* Vibrant Coral */
   --color-warning-content: #282828; /* Deep Charcoal */
-  --color-error: #E2725B; /* Light Terracotta */
-  --color-error-content: #F9F5F1; /* Off-White */
+  --color-error: #e2725b; /* Light Terracotta */
+  --color-error-content: #f9f5f1; /* Off-White */
 
   /* border radius */
   --radius-selector: 1rem;
@@ -59,41 +59,41 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "lokedark";
+  name: 'lokedark';
   prefersdark: true;
   color-scheme: dark;
 
   /* Base/Neutral colors */
   --color-base-100: #282828; /* Deep Charcoal */
   --color-base-200: #333333; /* Slightly lighter Deep Charcoal */
-  --color-base-300: #3D3D3D; /* Even lighter Deep Charcoal */
-  --color-base-content: #F9F5F1; /* Off-White */
+  --color-base-300: #3d3d3d; /* Even lighter Deep Charcoal */
+  --color-base-content: #f9f5f1; /* Off-White */
 
   /* Primary colors */
   --color-primary: #008080; /* Modern Teal */
-  --color-primary-content: #F9F5F1; /* Off-White */
+  --color-primary-content: #f9f5f1; /* Off-White */
 
   /* Secondary colors */
-  --color-secondary: #6B8E23; /* Earthy Olive */
-  --color-secondary-content: #F9F5F1; /* Off-White */
+  --color-secondary: #6b8e23; /* Earthy Olive */
+  --color-secondary-content: #f9f5f1; /* Off-White */
 
   /* Accent colors */
-  --color-accent: #FF7F50; /* Vibrant Coral */
-  --color-accent-content: #F9F5F1; /* Off-White */
+  --color-accent: #ff7f50; /* Vibrant Coral */
+  --color-accent-content: #f9f5f1; /* Off-White */
 
   /* Neutral colors */
-  --color-neutral: #A0A0A0; /* Mid-Gray */
-  --color-neutral-content: #F9F5F1; /* Off-White */
+  --color-neutral: #a0a0a0; /* Mid-Gray */
+  --color-neutral-content: #f9f5f1; /* Off-White */
 
   /* State colors */
-  --color-info: #B0C4DE; /* Muted Blue-Gray */
-  --color-info-content: #F9F5F1; /* Off-White */
-  --color-success: #6B8E23; /* Earthy Olive */
-  --color-success-content: #F9F5F1; /* Off-White */
-  --color-warning: #FF7F50; /* Vibrant Coral */
-  --color-warning-content: #F9F5F1; /* Off-White */
-  --color-error: #E2725B; /* Light Terracotta */
-  --color-error-content: #F9F5F1; /* Off-White */
+  --color-info: #b0c4de; /* Muted Blue-Gray */
+  --color-info-content: #f9f5f1; /* Off-White */
+  --color-success: #6b8e23; /* Earthy Olive */
+  --color-success-content: #f9f5f1; /* Off-White */
+  --color-warning: #ff7f50; /* Vibrant Coral */
+  --color-warning-content: #f9f5f1; /* Off-White */
+  --color-error: #e2725b; /* Light Terracotta */
+  --color-error-content: #f9f5f1; /* Off-White */
 
   /* border radius */
   --radius-selector: 1rem;
