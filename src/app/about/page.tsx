@@ -1,42 +1,40 @@
-import type { Metadata } from "next";
-import JsonLd from "../../components/JsonLd";
+import type { Metadata } from 'next'
+import JsonLd from '@/components/JsonLd'
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn more about Loke and his work",
-};
+  title: 'About',
+  description: 'Learn more about Loke and his work',
+}
 
 export default function About() {
   const personJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Loke",
-    url: "https://loke.dev",
-    jobTitle: "Web Developer",
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Loke',
+    url: 'https://loke.dev',
+    jobTitle: 'Web Developer',
     worksFor: {
-      "@type": "Organization",
-      name: "Example Company",
+      '@type': 'Organization',
+      name: 'Example Company',
     },
-    description: "Web developer, designer, and technology enthusiast",
-    skills: "React, Next.js, TypeScript, Tailwind CSS, Node.js",
-  };
+    description: 'Web developer, designer, and technology enthusiast',
+    skills: 'React, Next.js, TypeScript, Tailwind CSS, Node.js',
+  }
 
   return (
     <>
       <JsonLd data={personJsonLd} />
-      <div className="bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+      <div className="bg-base-100">
+        <div className="container mx-auto px-4 py-16 lg:py-20">
+          <div className="grid lg:grid-cols-3 lg:gap-8">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-                About Me
-              </h2>
-              <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
+              <h2 className="text-3xl font-bold">About Me</h2>
+              <p className="mt-4 text-lg opacity-70">
                 Learn more about my background, skills, and interests.
               </p>
             </div>
-            <div className="mt-12 lg:mt-0 lg:col-span-2">
-              <div className="prose prose-indigo dark:prose-invert max-w-none">
+            <div className="mt-12 lg:col-span-2 lg:mt-0">
+              <div className="prose max-w-none">
                 <p>
                   Hello! I&apos;m Loke, a passionate web developer and designer
                   with a focus on creating beautiful, functional, and accessible
@@ -83,5 +81,5 @@ export default function About() {
         </div>
       </div>
     </>
-  );
+  )
 }

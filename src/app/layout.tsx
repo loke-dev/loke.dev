@@ -1,80 +1,88 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
+import { Providers } from './providers'
+import { SandpackCSS } from '@/components/sandpackStyles'
 
-import "../styles/globals.css";
+import '../styles/globals.css'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: '(prefers-color-scheme: light)', color: '#F9F5F1' },
+    { media: '(prefers-color-scheme: dark)', color: '#282828' },
   ],
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
-};
+}
 
 export const metadata: Metadata = {
   title: {
-    default: "loke.dev",
-    template: "%s | loke.dev",
+    default: 'loke.dev',
+    template: '%s | loke.dev',
   },
-  description: "Personal website of Loke",
-  keywords: ["Next.js", "React", "JavaScript", "Web Development"],
-  authors: [{ name: "Loke" }],
-  creator: "Loke",
+  metadataBase: new URL('https://loke.dev'),
+  description: 'Personal website of Loke',
+  keywords: ['Next.js', 'React', 'JavaScript', 'Web Development'],
+  authors: [{ name: 'Loke' }],
+  creator: 'Loke',
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://loke.dev",
-    siteName: "loke.dev",
-    title: "loke.dev",
-    description: "Personal website of Loke",
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://loke.dev',
+    siteName: 'loke.dev',
+    title: 'loke.dev',
+    description: 'Personal website of Loke',
     images: [
       {
-        url: "/og-image.jpg",
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: "loke.dev",
+        alt: 'loke.dev',
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "loke.dev",
-    description: "Personal website of Loke",
-    images: ["/og-image.jpg"],
+    card: 'summary_large_image',
+    title: 'loke.dev',
+    description: 'Personal website of Loke',
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
     follow: true,
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        <SandpackCSS />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-full flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
       >
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
-  );
+  )
 }

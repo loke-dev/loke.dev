@@ -1,41 +1,39 @@
-import type { Metadata } from "next";
-import JsonLd from "../../components/JsonLd";
+import type { Metadata } from 'next'
+import JsonLd from '@/components/JsonLd'
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch with Loke",
-};
+  title: 'Contact',
+  description: 'Get in touch with Loke',
+}
 
 export default function Contact() {
   const contactJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    name: "Contact Loke",
-    description: "Contact page for Loke",
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact Loke',
+    description: 'Contact page for Loke',
     mainEntity: {
-      "@type": "Person",
-      name: "Loke",
-      email: "hello@loke.dev",
-      telephone: "+1 (555) 123-4567",
+      '@type': 'Person',
+      name: 'Loke',
+      email: 'hello@loke.dev',
+      telephone: '+1 (555) 123-4567',
       address: {
-        "@type": "PostalAddress",
-        addressLocality: "Stockholm",
-        addressCountry: "Sweden",
+        '@type': 'PostalAddress',
+        addressLocality: 'Stockholm',
+        addressCountry: 'Sweden',
       },
     },
-  };
+  }
 
   return (
     <>
       <JsonLd data={contactJsonLd} />
-      <div className="bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8">
-          <div className="max-w-lg mx-auto md:max-w-none md:grid md:grid-cols-2 md:gap-8">
+      <div className="bg-base-100">
+        <div className="container mx-auto px-4 py-16 lg:py-20">
+          <div className="mx-auto max-w-lg md:grid md:max-w-none md:grid-cols-2 md:gap-8">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-                Get in touch
-              </h2>
-              <p className="mt-3 text-lg text-gray-500 dark:text-gray-400">
+              <h2 className="text-3xl font-bold">Get in touch</h2>
+              <p className="mt-3 text-lg opacity-70">
                 Have a question or want to work together? Feel free to reach out
                 using the contact form or through any of the channels below.
               </p>
@@ -43,7 +41,7 @@ export default function Contact() {
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg
-                      className="h-6 w-6 text-gray-400"
+                      className="h-6 w-6 opacity-60"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -58,14 +56,14 @@ export default function Contact() {
                       />
                     </svg>
                   </div>
-                  <div className="ml-3 text-base text-gray-500 dark:text-gray-400">
+                  <div className="ml-3 text-base opacity-70">
                     <p>hello@loke.dev</p>
                   </div>
                 </div>
                 <div className="mt-6 flex">
                   <div className="flex-shrink-0">
                     <svg
-                      className="h-6 w-6 text-gray-400"
+                      className="h-6 w-6 opacity-60"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -80,108 +78,83 @@ export default function Contact() {
                       />
                     </svg>
                   </div>
-                  <div className="ml-3 text-base text-gray-500 dark:text-gray-400">
+                  <div className="ml-3 text-base opacity-70">
                     <p>+1 (555) 123-4567</p>
-                  </div>
-                </div>
-                <div className="mt-6 flex">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="h-6 w-6 text-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3 text-base text-gray-500 dark:text-gray-400">
-                    <p>Stockholm, Sweden</p>
+                    <p className="mt-1">Mon-Fri 9am to 5pm PST</p>
                   </div>
                 </div>
               </div>
             </div>
             <div className="mt-12 sm:mt-16 md:mt-0">
-              <form className="grid grid-cols-1 gap-y-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Name
-                  </label>
-                  <div className="mt-1">
+              <h2 className="text-3xl font-bold">Send us a message</h2>
+              <div className="mt-9">
+                <form
+                  action="#"
+                  method="POST"
+                  className="grid grid-cols-1 gap-y-6"
+                >
+                  <div>
+                    <label htmlFor="name" className="label">
+                      <span className="label-text">Name</span>
+                    </label>
                     <input
                       type="text"
                       name="name"
                       id="name"
                       autoComplete="name"
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md"
+                      className="input input-bordered w-full"
                       placeholder="Your name"
                     />
                   </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Email
-                  </label>
-                  <div className="mt-1">
+                  <div>
+                    <label htmlFor="email" className="label">
+                      <span className="label-text">Email</span>
+                    </label>
                     <input
                       id="email"
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md"
-                      placeholder="your.email@example.com"
+                      className="input input-bordered w-full"
+                      placeholder="Your email"
                     />
                   </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Message
-                  </label>
-                  <div className="mt-1">
+                  <div>
+                    <label htmlFor="phone" className="label">
+                      <span className="label-text">Phone</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="phone"
+                      id="phone"
+                      autoComplete="tel"
+                      className="input input-bordered w-full"
+                      placeholder="Your phone number"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="message" className="label">
+                      <span className="label-text">Message</span>
+                    </label>
                     <textarea
                       id="message"
                       name="message"
                       rows={4}
-                      className="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md"
+                      className="textarea textarea-bordered w-full"
                       placeholder="Your message"
                     ></textarea>
                   </div>
-                </div>
-                <div>
-                  <button
-                    type="submit"
-                    className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Send Message
-                  </button>
-                </div>
-              </form>
+                  <div>
+                    <button type="submit" className="btn btn-primary w-full">
+                      Send Message
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </>
-  );
+  )
 }

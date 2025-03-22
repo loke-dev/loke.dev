@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
 interface JsonLdProps {
-  data: Record<string, unknown>;
+  data: Record<string, unknown>
 }
 
 export default function JsonLd({ data }: JsonLdProps) {
@@ -10,5 +10,5 @@ export default function JsonLd({ data }: JsonLdProps) {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
-  );
+  )
 }
