@@ -12,7 +12,8 @@
     "check": "next lint && prettier --check .",
     "lint-staged": "lint-staged",
     "type-check": "tsc --noEmit",
-    "ci-check": "pnpm lint && pnpm format:check && pnpm type-check"
+    "ci-check": "pnpm lint && pnpm format:check && pnpm type-check",
+    "prepare": "husky"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^2.20.0",
@@ -44,6 +45,8 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
     "gray-matter": "^4.0.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "shiki": "^3.2.1",
