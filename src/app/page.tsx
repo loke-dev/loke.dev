@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import JsonLd from '@/components/JsonLd'
-import ProjectCard from '@/components/ProjectCard'
+import JsonLd from '@/components/jsonLd'
+import ProjectCard from '@/components/projectCard'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -34,8 +34,7 @@ export default function Home() {
                 <span className="text-primary block">loke.dev</span>
               </h1>
               <p className="mx-auto mt-3 max-w-md text-lg opacity-75">
-                Personal website of Loke. Web developer, designer, and
-                technology enthusiast.
+                Personal website of Loke. Web developer, designer, and technology enthusiast.
               </p>
               <div className="mt-6 flex justify-center gap-4">
                 <Link href="/about" className="btn btn-primary">

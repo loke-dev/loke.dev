@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import SunIcon from '@/icons/SunIcon'
-import MoonIcon from '@/icons/MoonIcon'
+import { Moon, Sun } from 'lucide-react'
 
 export default function ThemeController() {
   const [isdark, setIsdark] = useState(false)
@@ -32,8 +31,8 @@ export default function ThemeController() {
           value="lokelight"
           className="theme-controller"
         />
-        <SunIcon />
-        <MoonIcon />
+        <Sun />
+        <Moon />
       </label>
     </div>
   )

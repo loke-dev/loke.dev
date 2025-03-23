@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import JsonLd from '@/components/JsonLd'
+import JsonLd from '@/components/jsonLd'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -34,8 +34,8 @@ export default function Contact() {
             <div>
               <h2 className="text-3xl font-bold">Get in touch</h2>
               <p className="mt-3 text-lg opacity-70">
-                Have a question or want to work together? Feel free to reach out
-                using the contact form or through any of the channels below.
+                Have a question or want to work together? Feel free to reach out using the contact form or through any
+                of the channels below.
               </p>
               <div className="mt-9">
                 <div className="flex">
@@ -88,11 +88,7 @@ export default function Contact() {
             <div className="mt-12 sm:mt-16 md:mt-0">
               <h2 className="text-3xl font-bold">Send us a message</h2>
               <div className="mt-9">
-                <form
-                  action="#"
-                  method="POST"
-                  className="grid grid-cols-1 gap-y-6"
-                >
+                <form action="#" method="POST" className="grid grid-cols-1 gap-y-6">
                   <div>
                     <label htmlFor="name" className="label">
                       <span className="label-text">Name</span>

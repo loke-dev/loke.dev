@@ -1,5 +1,5 @@
-import NavLink from './NavLink'
-import ThemeController from './ThemeController'
+import NavLink from './navLink'
+import ThemeController from './themeController'
 
 export default function Header() {
   return (

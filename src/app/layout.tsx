@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
+import Header from '../components/header'
+import Footer from '../components/footer'
 import { Providers } from './providers'
 import { SandpackCSS } from '@/components/sandpackStyles'
 
@@ -74,9 +74,7 @@ export default function RootLayout({
       <head>
         <SandpackCSS />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}>
         <Providers>
           <Header />
           <main className="flex-grow">{children}</main>

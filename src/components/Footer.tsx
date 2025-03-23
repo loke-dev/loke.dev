@@ -1,4 +1,4 @@
-import NavLink from './NavLink'
+import NavLink from './navLink'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -8,9 +8,7 @@ export default function Footer() {
       <div className="container mx-auto">
         <div className="grid-flow-col items-center justify-between gap-4 md:grid">
           <div className="text-center md:text-left">
-            <p className="text-sm">
-              &copy; {currentYear} loke.dev. All rights reserved.
-            </p>
+            <p className="text-sm">&copy; {currentYear} loke.dev. All rights reserved.</p>
           </div>
           <div className="flex gap-4">
             <NavLink href="/" type="footer">
