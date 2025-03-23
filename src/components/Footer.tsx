@@ -1,25 +1,25 @@
-import NavLink from './navLink'
+import Link from 'next/link'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="footer footer-center bg-base-200 text-base-content border-base-300 border-t p-4">
-      <div className="container mx-auto">
-        <div className="grid-flow-col items-center justify-between gap-4 md:grid">
-          <div className="text-center md:text-left">
-            <p className="text-sm">&copy; {currentYear} loke.dev. All rights reserved.</p>
+    <footer className="bg-muted/40 border-t">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex flex-col items-center md:items-start">
+            <p className="text-muted-foreground text-sm">&copy; {currentYear} loke.dev. All rights reserved.</p>
           </div>
           <div className="flex gap-4">
-            <NavLink href="/" type="footer">
+            <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
               Home
-            </NavLink>
-            <NavLink href="/about" type="footer">
+            </Link>
+            <Link href="/about" className="text-muted-foreground hover:text-foreground text-sm">
               About
-            </NavLink>
-            <NavLink href="/contact" type="footer">
+            </Link>
+            <Link href="/contact" className="text-muted-foreground hover:text-foreground text-sm">
               Contact
-            </NavLink>
+            </Link>
           </div>
         </div>
       </div>
