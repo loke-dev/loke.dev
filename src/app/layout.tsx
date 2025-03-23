@@ -4,6 +4,7 @@ import Header from '../components/header'
 import Footer from '../components/footer'
 import { Providers } from './providers'
 import { SandpackCSS } from '@/components/sandpackStyles'
+import { unstable_ViewTransition as ViewTransition } from 'react'
 
 import '../styles/globals.css'
 
@@ -77,7 +78,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}>
         <Providers>
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow">
+            <ViewTransition name="test">{children}</ViewTransition>
+          </main>
           <Footer />
         </Providers>
       </body>
