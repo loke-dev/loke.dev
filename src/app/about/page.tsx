@@ -1,74 +1,143 @@
-import type { Metadata } from 'next'
-import JsonLd from '@/components/jsonLd'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn more about Loke and his work',
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { CodeIcon, GlobeIcon, BookOpenIcon, MountainIcon, CameraIcon, HeartIcon, CoffeeIcon } from 'lucide-react'
 
 export default function About() {
-  const personJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: 'Loke',
-    url: 'https://loke.dev',
-    jobTitle: 'Web Developer',
-    worksFor: {
-      '@type': 'Organization',
-      name: 'Example Company',
-    },
-    description: 'Web developer, designer, and technology enthusiast',
-    skills: 'React, Next.js, TypeScript, Tailwind CSS, Node.js',
-  }
+  // Calculate years of experience dynamically
+  const currentYear = new Date().getFullYear()
+  const startYear = 2017
+  const yearsOfExperience = currentYear - startYear
+
+  const skills = [
+    { category: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Shadcn UI', 'Framer Motion'] },
+    { category: 'Backend', items: ['Node.js', 'Express', 'PostgreSQL', 'Prisma', 'tRPC'] },
+    { category: 'DevOps', items: ['Docker', 'CI/CD', 'Vercel', 'GitHub Actions'] },
+    { category: 'Tools', items: ['Git', 'VS Code', 'Figma', 'Cursor'] },
+  ]
+
+  const interests = [
+    { name: 'Hiking', icon: <MountainIcon className="mr-2 h-4 w-4" /> },
+    { name: 'Photography', icon: <CameraIcon className="mr-2 h-4 w-4" /> },
+    { name: 'Open Source', icon: <GlobeIcon className="mr-2 h-4 w-4" /> },
+    { name: 'Reading', icon: <BookOpenIcon className="mr-2 h-4 w-4" /> },
+    { name: 'Coding', icon: <CodeIcon className="mr-2 h-4 w-4" /> },
+    { name: 'Coffee', icon: <CoffeeIcon className="mr-2 h-4 w-4" /> },
+  ]
 
   return (
-    <>
-      <JsonLd data={personJsonLd} />
-      <div className="bg-base-100">
-        <div className="container mx-auto px-4 py-16 lg:py-20">
-          <div className="grid lg:grid-cols-3 lg:gap-8">
-            <div>
-              <h2 className="text-3xl font-bold">About Me</h2>
-              <p className="mt-4 text-lg opacity-70">Learn more about my background, skills, and interests.</p>
+    <div className="bg-background">
+      <div className="container mx-auto px-4 py-16 lg:py-20">
+        <div className="grid lg:grid-cols-3 lg:gap-12">
+          <div className="space-y-6">
+            <div className="flex flex-col items-center lg:items-start">
+              <Avatar className="mb-4 h-32 w-32">
+                <AvatarFallback className="bg-primary text-primary-foreground text-xl">LC</AvatarFallback>
+              </Avatar>
+              <h1 className="text-3xl font-bold">Loke</h1>
+              <p className="text-muted-foreground text-lg">Frontend Developer</p>
             </div>
-            <div className="mt-12 lg:col-span-2 lg:mt-0">
-              <div className="prose max-w-none">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Quick Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="font-medium">Location</p>
+                  <p className="text-muted-foreground">Sweden</p>
+                </div>
+                <div>
+                  <p className="font-medium">Experience</p>
+                  <p className="text-muted-foreground">{yearsOfExperience} years</p>
+                </div>
+                <div>
+                  <p className="font-medium">Focus</p>
+                  <p className="text-muted-foreground">Web Development & UI/UX</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="mt-12 space-y-8 lg:col-span-2 lg:mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>About Me</CardTitle>
+                <CardDescription>Frontend developer with a passion for clean UI and great UX</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <p>
-                  Hello! I&apos;m Loke, a passionate web developer and designer with a focus on creating beautiful,
-                  functional, and accessible web experiences.
+                  Hi there! I'm Loke, a frontend developer with {yearsOfExperience} years of experience crafting modern,
+                  responsive, and accessible web applications. My journey in web development began in 2017, and I've
+                  been passionate about creating exceptional digital experiences ever since.
                 </p>
                 <p>
-                  With several years of experience in the industry, I&apos;ve worked on a variety of projects ranging
-                  from small business websites to large-scale web applications. My expertise includes front-end
-                  development with React and Next.js, as well as back-end development with Node.js.
+                  I specialize in building applications with React and Next.js, leveraging TypeScript for type safety
+                  and Tailwind CSS for beautiful, responsive designs. I'm particularly enthusiastic about
+                  component-driven development and creating reusable, maintainable UI systems.
                 </p>
                 <p>
-                  I&apos;m particularly interested in user experience design, accessibility, and performance
-                  optimization. I believe that the web should be accessible to everyone, regardless of their abilities
-                  or the devices they use.
+                  Throughout my career, I've worked on projects ranging from small business websites to complex web
+                  applications with thousands of users. I approach each project with attention to detail, focusing on
+                  performance optimization, accessibility, and creating intuitive user experiences.
                 </p>
-                <h3>Skills</h3>
-                <ul>
-                  <li>Front-end Development: React, Next.js, TypeScript, Tailwind CSS</li>
-                  <li>Back-end Development: Node.js, Express, PostgreSQL</li>
-                  <li>UI/UX Design: Figma, Adobe XD</li>
-                  <li>DevOps: Docker, CI/CD, AWS</li>
-                </ul>
-                <h3>Education</h3>
-                <p>
-                  I hold a Bachelor&apos;s degree in Computer Science from Example University, where I specialized in
-                  web development and human-computer interaction.
-                </p>
-                <h3>Interests</h3>
-                <p>
-                  Outside of work, I enjoy hiking, photography, and contributing to open-source projects. I&apos;m also
-                  an avid reader and enjoy learning about new technologies and design trends.
-                </p>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Skills</CardTitle>
+                <CardDescription>Technical expertise and capabilities</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {skills.map((skillGroup, index) => (
+                    <div key={index}>
+                      <h3 className="mb-3 font-medium">{skillGroup.category}</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {skillGroup.items.map((skill, skillIndex) => (
+                          <Badge key={skillIndex} variant="secondary">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                      {index < skills.length - 1 && <Separator className="mt-4" />}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Interests</CardTitle>
+                <CardDescription>What I enjoy outside of coding</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                  {interests.map((interest, index) => (
+                    <div key={index} className="flex items-center">
+                      {interest.icon}
+                      <span>{interest.name}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6">
+                  <p className="flex items-center">
+                    <HeartIcon className="mr-2 h-4 w-4 text-red-500" />
+                    <span>
+                      When I'm not coding, you'll find me exploring new technologies, contributing to open source, or
+                      seeking inspiration in nature. I believe in continuous learning and strive to stay at the
+                      forefront of web development trends.
+                    </span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
