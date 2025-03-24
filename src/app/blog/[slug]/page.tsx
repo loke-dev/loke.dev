@@ -2,23 +2,22 @@ import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import dynamic from 'next/dynamic'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { MDXRemote } from 'next-mdx-remote/rsc'
+import { mdxComponents } from '@/lib/mdx-components'
+import { Callout } from '@/components/mdx/callout'
+import { CodeBlock } from '@/components/mdx/code-block'
 
 export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params
   const postsDirectory = path.join(process.cwd(), 'src/posts')
   const fullPath = path.join(postsDirectory, `${slug}.mdx`)
 
-  const PostContent = dynamic(() => import(`@/posts/${slug}.mdx`), {
-    loading: () => <p>Loading post content...</p>,
-  })
-
   const fileContents = fs.readFileSync(fullPath, 'utf8')
-  const { data } = matter(fileContents)
+  const { data, content } = matter(fileContents)
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
@@ -46,7 +45,17 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
           <Separator />
           <CardContent className="pt-6">
             <article className="prose prose-lg dark:prose-invert max-w-none">
-              <PostContent />
+              <MDXRemote
+                source={content}
+                components={{
+                  ...mdxComponents,
+                  Callout,
+                  CodeBlock,
+                }}
+                options={{
+                  parseFrontmatter: false,
+                }}
+              />
             </article>
           </CardContent>
         </Card>

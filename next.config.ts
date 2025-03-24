@@ -1,14 +1,12 @@
-import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
 
-const withMDX = createMDX({})
-
 const nextConfig: NextConfig = {
-  pageExtensions: ['mdx', 'ts', 'tsx'],
+  pageExtensions: ['ts', 'tsx'],
   serverExternalPackages: ['shiki'],
+  transpilePackages: ['next-mdx-remote'],
   experimental: {
     viewTransition: true,
   },
 }
 
-export default withMDX(nextConfig)
+export default nextConfig
