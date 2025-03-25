@@ -30,7 +30,6 @@ const iconStyles = {
   success: 'text-green-600 dark:text-green-400',
 }
 
-// Named export for direct usage in MDX
 export const Callout = React.forwardRef<HTMLDivElement, CalloutProps>(function Callout(
   { type = 'info', title, children },
   ref

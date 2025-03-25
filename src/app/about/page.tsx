@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { CodeIcon, GlobeIcon, BookOpenIcon, MountainIcon, CameraIcon, HeartIcon, CoffeeIcon } from 'lucide-react'
 
 export default function About() {
-  // Calculate years of experience dynamically
   const currentYear = new Date().getFullYear()
   const startYear = 2017
   const yearsOfExperience = currentYear - startYear

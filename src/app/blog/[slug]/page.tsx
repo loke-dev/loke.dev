@@ -6,10 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import { mdxComponents } from '@/lib/mdx-components'
-import { Callout } from '@/components/mdx/callout'
-import { CodeBlock } from '@/components/mdx/code-block'
+import { MDXProvider } from '@/components/mdx/mdx-provider'
 
 export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params
@@ -45,17 +42,7 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
           <Separator />
           <CardContent className="pt-6">
             <article className="prose prose-lg dark:prose-invert max-w-none">
-              <MDXRemote
-                source={content}
-                components={{
-                  ...mdxComponents,
-                  Callout,
-                  CodeBlock,
-                }}
-                options={{
-                  parseFrontmatter: false,
-                }}
-              />
+              <MDXProvider content={content} />
             </article>
           </CardContent>
         </Card>

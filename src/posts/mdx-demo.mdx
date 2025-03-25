@@ -8,6 +8,28 @@ excerpt: A demonstration of advanced MDX features now available in our blog post
 
 This post demonstrates the enhanced MDX capabilities now available on our blog.
 
+## Syntax Highlighting
+
+You can use inline code like this: `const hello = "world";`
+
+Also, you can use regular code blocks:
+
+```ts
+function greet(name) {
+  console.log(`Hello, ${name}!`)
+
+  // This is a multi-line code example
+  // to demonstrate syntax highlighting
+  return {
+    message: `Hello, ${name}!`,
+    timestamp: new Date(),
+  }
+}
+
+// Call the function
+greet('World')
+```
+
 ## Custom Components
 
 ### Callouts
@@ -28,14 +50,14 @@ This post demonstrates the enhanced MDX capabilities now available on our blog.
 
 ### Code Blocks
 
-Code blocks now have syntax highlighting and line numbers:
+Code blocks now have syntax highlighting:
 
 ```javascript
 function greet(name) {
   console.log(`Hello, ${name}!`)
 
   // This is a multi-line code example
-  // to demonstrate line numbering
+  // to demonstrate syntax highlighting
   return {
     message: `Hello, ${name}!`,
     timestamp: new Date(),
@@ -77,11 +99,11 @@ All standard Markdown features work as expected:
 
 ### Tables
 
-| Feature         | Description                           |
-| --------------- | ------------------------------------- |
-| Callouts        | Highlighted information boxes         |
-| Code Blocks     | Syntax highlighting with line numbers |
-| Automatic Links | External links open in new tabs       |
+| Feature         | Description                     |
+| --------------- | ------------------------------- |
+| Callouts        | Highlighted information boxes   |
+| Code Blocks     | Syntax highlighting             |
+| Automatic Links | External links open in new tabs |
 
 ## Conclusion
 

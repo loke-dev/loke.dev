@@ -3,24 +3,15 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string }
-  reset: () => void
-}) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(error)
   }, [error])
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-max text-center">
-        <p className="text-sm font-semibold tracking-wide text-red-600 uppercase dark:text-red-400">
-          Error
-        </p>
+        <p className="text-sm font-semibold tracking-wide text-red-600 uppercase dark:text-red-400">Error</p>
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
           Something went wrong
         </h1>
