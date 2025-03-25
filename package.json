@@ -17,8 +17,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@codesandbox/sandpack-react": "^2.20.0",
-    "@codesandbox/sandpack-themes": "^2.0.21",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-navigation-menu": "^1.2.5",
@@ -32,8 +30,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss-animate": "^1.0.7",
-    "tw-animate-css": "^1.2.4"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
