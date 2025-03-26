@@ -6,9 +6,11 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { MDXProvider } from '@/components/mdx/mdx-provider'
+import { MDXProvider } from '@/lib/mdx-provider'
 
-export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
+export default async function BlogPost(props: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await props.params
   const postsDirectory = path.join(process.cwd(), 'src/posts')
   const fullPath = path.join(postsDirectory, `${slug}.mdx`)

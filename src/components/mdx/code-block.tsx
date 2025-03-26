@@ -10,23 +10,34 @@ interface CodeBlockProps {
   html?: string
 }
 
-export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(async function CodeBlock(
-  { code, language = 'typescript', filename, className },
-  ref
-) {
-  const extractedLanguage = className?.replace('language-', '') || language
-  const html = await codeToHtml({
-    code,
-    language: extractedLanguage,
-  })
+export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
+  async function CodeBlock(
+    { code, language = 'typescript', filename, className },
+    ref
+  ) {
+    const extractedLanguage = className?.replace('language-', '') || language
+    const html = await codeToHtml({
+      code,
+      language: extractedLanguage,
+    })
 
-  return (
-    <div ref={ref} className="bg-muted/50 relative my-6 overflow-hidden rounded-lg border">
-      {filename && <div className="bg-muted border-b px-4 py-2 text-sm font-medium">{filename}</div>}
-      <div className="group relative">
-        <div dangerouslySetInnerHTML={{ __html: html }} />
-        <CopyButton code={code} />
+    console.log({ language, extractedLanguage, html })
+
+    return (
+      <div
+        ref={ref}
+        className="bg-muted/50 relative my-6 overflow-hidden rounded-lg border"
+      >
+        {filename && (
+          <div className="bg-muted border-b px-4 py-2 text-sm font-medium">
+            {filename}
+          </div>
+        )}
+        <div className="group relative">
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+          <CopyButton code={code} />
+        </div>
       </div>
-    </div>
-  )
-})
+    )
+  }
+)

@@ -1,0 +1,75 @@
+---
+title: Essential Tailwind CSS Tips
+date: 2024-03-28
+excerpt: Discover time-saving techniques and best practices for using Tailwind CSS in your projects.
+---
+
+# Essential Tailwind CSS Tips
+
+Tailwind CSS has revolutionized how we style web applications. Here are some essential tips to boost your productivity.
+
+## Customize Your Theme
+
+Extend Tailwind's default theme to match your brand:
+
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3b82f6',
+        secondary: '#10b981',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+    },
+  },
+  // other config
+}
+```
+
+## Component Patterns
+
+<Callout type="success" title="DRY Principle">
+  Extract common utility patterns into reusable components rather than
+  duplicating class combinations.
+</Callout>
+
+Instead of repeating long class strings:
+
+<CodeBlock
+  code={`// Button component
+export function Button({ children }) {
+  return (
+    <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">
+      {children}
+    </button>
+  )
+}`}
+  language="tsx"
+  filename="components/Button.tsx"
+/>
+
+## Using the JIT Compiler
+
+Tailwind's Just-In-Time compiler offers several advantages:
+
+| Feature            | Benefit                                                    |
+| ------------------ | ---------------------------------------------------------- |
+| Faster builds      | Only generates used CSS                                    |
+| Any value variants | Like `top-[117px]` or `grid-cols-[fit-content(100px),1fr]` |
+| All variants       | Combine variants without configuration                     |
+
+## Responsive Design
+
+Use Tailwind's responsive modifiers for adaptive layouts:
+
+```html
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <!-- Content adapts to screen size -->
+</div>
+```
+
+These tips should help you get more out of Tailwind CSS in your projects. The utility-first approach may seem verbose at first, but the productivity gains are substantial once you're familiar with the system.

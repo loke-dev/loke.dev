@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Separator } from '@/components/ui/separator'
-import { Callout } from '@/components/mdx/callout'
 import { CodeBlock } from '@/components/mdx/code-block'
 
 export const mdxComponents = {
@@ -17,18 +16,35 @@ export const mdxComponents = {
   h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h3 className="mt-4 mb-2 text-xl font-bold tracking-tight" {...props} />
   ),
-  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => <p className="mb-4 leading-7" {...props} />,
-  ul: (props: React.HTMLAttributes<HTMLUListElement>) => <ul className="mb-4 list-disc pl-6" {...props} />,
-  ol: (props: React.HTMLAttributes<HTMLOListElement>) => <ol className="mb-4 list-decimal pl-6" {...props} />,
-  li: (props: React.HTMLAttributes<HTMLLIElement>) => <li className="mt-2" {...props} />,
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p className="mb-4 leading-7" {...props} />
+  ),
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul className="mb-4 list-disc pl-6" {...props} />
+  ),
+  ol: (props: React.HTMLAttributes<HTMLOListElement>) => (
+    <ol className="mb-4 list-decimal pl-6" {...props} />
+  ),
+  li: (props: React.HTMLAttributes<HTMLLIElement>) => (
+    <li className="mt-2" {...props} />
+  ),
   blockquote: (props: React.HTMLAttributes<HTMLQuoteElement>) => (
-    <blockquote className="border-primary my-6 border-l-4 pl-4 italic" {...props} />
+    <blockquote
+      className="border-primary my-6 border-l-4 pl-4 italic"
+      {...props}
+    />
   ),
   a: ({ href, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
     const isInternal = href && (href.startsWith('/') || href.startsWith('#'))
 
     if (isInternal) {
-      return <Link href={href} className="text-primary hover:text-primary/80 underline underline-offset-4" {...props} />
+      return (
+        <Link
+          href={href}
+          className="text-primary hover:text-primary/80 underline underline-offset-4"
+          {...props}
+        />
+      )
     }
 
     return (
@@ -42,7 +58,13 @@ export const mdxComponents = {
     )
   },
   hr: () => <Separator className="my-6" />,
-  code: ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  code: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode
+    className?: string
+  }) => {
     return <CodeBlock code={String(children)} className={className} />
   },
   pre: ({ children }: { children: React.ReactNode }) => {
@@ -69,11 +91,13 @@ export const mdxComponents = {
       <table className="w-full border-collapse" {...props} />
     </div>
   ),
-  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => <thead className="bg-muted/50" {...props} />,
+  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <thead className="bg-muted/50" {...props} />
+  ),
   th: (props: React.ThHTMLAttributes<HTMLTableCellElement>) => (
     <th className="border px-4 py-2 text-left font-bold" {...props} />
   ),
-  td: (props: React.TdHTMLAttributes<HTMLTableCellElement>) => <td className="border px-4 py-2" {...props} />,
-  CodeBlock,
-  Callout,
+  td: (props: React.TdHTMLAttributes<HTMLTableCellElement>) => (
+    <td className="border px-4 py-2" {...props} />
+  ),
 }

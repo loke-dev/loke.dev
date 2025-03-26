@@ -1,0 +1,94 @@
+---
+title: Understanding React Server Components
+date: 2024-02-15
+excerpt: A practical guide to React Server Components and how they're changing frontend development.
+---
+
+# Understanding React Server Components
+
+React Server Components (RSC) represent a paradigm shift in how we build React applications. Let's explore what makes them special.
+
+## What Are Server Components?
+
+Server Components render exclusively on the server and send HTML to the client. This approach offers several benefits:
+
+<Callout type="info">
+  Server Components can access server-side resources directly without additional
+  API layers.
+</Callout>
+
+## Key Benefits
+
+| Benefit           | Description                                           |
+| ----------------- | ----------------------------------------------------- |
+| Zero Bundle Size  | Server components don't add to your JavaScript bundle |
+| Direct DB Access  | Query databases without intermediate APIs             |
+| Improved Security | Sensitive logic stays on the server                   |
+| Better SEO        | Content is server-rendered and ready for crawlers     |
+
+## Server vs. Client Components
+
+```tsx
+// Server Component (app/page.tsx)
+import { db } from '@/lib/db'
+
+export default async function Posts() {
+  const posts = await db.post.findMany()
+
+  return (
+    <div>
+      <h1>Posts</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+Client Components are marked with the `"use client"` directive:
+
+<CodeBlock
+  code={`"use client"
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+return (
+<div>
+<p>Count: {count}</p>
+<button onClick={() => setCount(count + 1)}>
+Increment
+</button>
+</div>
+)
+}`}
+language="tsx"
+filename="components/Counter.tsx"
+/>
+
+## Composing Components
+
+The real power comes from combining server and client components:
+
+```tsx
+// app/dashboard/page.tsx
+import Counter from '@/components/Counter'
+import ServerData from '@/components/ServerData'
+
+export default function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <ServerData />
+      <Counter />
+    </div>
+  )
+}
+```
+
+React Server Components are transforming the landscape of web development by combining the best aspects of server-rendered and client-side interactivity.

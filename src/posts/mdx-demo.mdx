@@ -59,14 +59,18 @@ function greet(name) {
   // This is a multi-line code example
   // to demonstrate syntax highlighting
   return {
-    message: `Hello, ${name}!`,
-    timestamp: new Date(),
+    message: `Hello, ${name}!`, // [!code highlight]
+    message: `Hello, ${name + '!'}!`,
+    timestamp: new Date(123), // [!code ++]
+    timestamp: new Date(), // [!code --]
   }
 }
 
 // Call the function
 greet('World')
 ```
+
+---
 
 You can also use the CodeBlock component directly:
 
@@ -104,6 +108,12 @@ All standard Markdown features work as expected:
 | Callouts        | Highlighted information boxes   |
 | Code Blocks     | Syntax highlighting             |
 | Automatic Links | External links open in new tabs |
+
+| Month    | Savings |
+| -------- | ------- |
+| January  | $250    |
+| February | $80     |
+| March    | $420    |
 
 ## Conclusion
 
