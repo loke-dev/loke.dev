@@ -1,5 +1,6 @@
 import { createHighlighter, makeSingletonHighlighter } from 'shiki'
 import { bundledLanguages } from 'shiki/bundle/web'
+import { selectedThemes, SHIKI_THEMES } from './shiki-themes'
 
 const getHighlighter = makeSingletonHighlighter(createHighlighter)
 
@@ -11,15 +12,12 @@ export const codeToHtml = async ({
   language: string
 }) => {
   const highlighter = await getHighlighter({
-    themes: ['github-dark', 'github-light'],
+    themes: SHIKI_THEMES,
     langs: [...Object.keys(bundledLanguages)],
   })
 
   return highlighter.codeToHtml(code, {
     lang: language,
-    themes: {
-      dark: 'github-dark',
-      light: 'github-light',
-    },
+    themes: selectedThemes,
   })
 }

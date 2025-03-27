@@ -21,8 +21,6 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       language: extractedLanguage,
     })
 
-    console.log({ language, extractedLanguage, html })
-
     return (
       <div
         ref={ref}
@@ -34,7 +32,10 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
           </div>
         )}
         <div className="group relative">
-          <div dangerouslySetInnerHTML={{ __html: html }} />
+          <div
+            dangerouslySetInnerHTML={{ __html: html }}
+            className={filename ? '[&>pre]:m-0 [&>pre]:rounded-none' : ''}
+          />
           <CopyButton code={code} />
         </div>
       </div>

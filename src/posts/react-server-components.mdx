@@ -4,8 +4,6 @@ date: 2024-02-15
 excerpt: A practical guide to React Server Components and how they're changing frontend development.
 ---
 
-# Understanding React Server Components
-
 React Server Components (RSC) represent a paradigm shift in how we build React applications. Let's explore what makes them special.
 
 ## What Are Server Components?
@@ -59,17 +57,12 @@ export default function Counter() {
   const [count, setCount] = useState(0)
 
 return (
+
 <div>
-<p>Count: {count}</p>
-<button onClick={() => setCount(count + 1)}>
-Increment
-</button>
+  <p>Count: {count}</p>
+  <button onClick={() => setCount(count + 1)}>Increment</button>
 </div>
-)
-}`}
-language="tsx"
-filename="components/Counter.tsx"
-/>
+) }`} language="tsx" filename="components/Counter.tsx" />
 
 ## Composing Components
 

@@ -4,8 +4,6 @@ date: 2024-04-15
 excerpt: A quick introduction to Next.js 14 and its key features for modern web development.
 ---
 
-# Getting Started with Next.js
-
 Next.js has become one of the most popular React frameworks for building modern web applications. Let's explore some of its core features.
 
 ## The App Router
@@ -26,23 +24,24 @@ React Server Components allow you to render components on the server:
 <CodeBlock
   code={`// app/users/page.tsx
 async function getUsers() {
-  const res = await fetch('https://api.example.com/users')
-  return res.json()
+    const res = await fetch('https://api.example.com/users')
+    return res.json()
 }
 
 export default async function UsersPage() {
-  const users = await getUsers()
+    const users = await getUsers()
 
-return (
-<div>
-<h1>Users</h1>
-<ul>
-{users.map(user => (
-<li key={user.id}>{user.name}</li>
-))}
-</ul>
-</div>
-)
+    return (
+      <div>
+        <h1>Users</h1>
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      </div>
+    )
+
 }`}
 language="tsx"
 filename="app/users/page.tsx"
