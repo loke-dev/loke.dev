@@ -36,8 +36,8 @@ export function ProjectCard({
   const fallbackImage = `https://placehold.co/${imageWidth}x${imageHeight}/1a1a1a/ffffff?text=${encodeURIComponent(title)}`
 
   return (
-    <Card className="flex flex-col">
-      <CardHeader>
+    <Card className="flex h-full flex-col">
+      <CardHeader className="flex-none">
         <div className="relative mb-4 aspect-video overflow-hidden rounded-lg">
           <div className="bg-muted relative h-full w-full">
             <Image
@@ -74,7 +74,7 @@ export function ProjectCard({
           ))}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-wrap gap-2">
+      <CardFooter className="mt-auto flex flex-none flex-wrap gap-2">
         <Button
           asChild
           variant="outline"

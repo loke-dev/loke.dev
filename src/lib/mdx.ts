@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import { readFile, readdir } from 'node:fs/promises'
+import path from 'node:path'
 import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'src/posts')
@@ -11,14 +11,15 @@ export interface PostMetadata {
   excerpt?: string
 }
 
-export function getPostSlugs(): string[] {
-  return fs.readdirSync(postsDirectory).filter((file) => file.endsWith('.mdx'))
+export async function getPostSlugs(): Promise<string[]> {
+  const files = await readdir(postsDirectory)
+  return files.filter((file) => file.endsWith('.mdx'))
 }
 
-export function getPostBySlug(slug: string): PostMetadata {
+export async function getPostBySlug(slug: string): Promise<PostMetadata> {
   const realSlug = slug.replace(/\.mdx$/, '')
   const filePath = path.join(postsDirectory, `${realSlug}.mdx`)
-  const fileContents = fs.readFileSync(filePath, 'utf8')
+  const fileContents = await readFile(filePath, 'utf8')
   const { data } = matter(fileContents)
 
   return {
@@ -29,14 +30,11 @@ export function getPostBySlug(slug: string): PostMetadata {
   }
 }
 
-export function getAllPosts(): PostMetadata[] {
-  const slugs = getPostSlugs()
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug))
-    .sort((post1, post2) => {
-      if (!post1.date || !post2.date) return 0
-      return new Date(post2.date).getTime() - new Date(post1.date).getTime()
-    })
-
-  return posts
+export async function getAllPosts(): Promise<PostMetadata[]> {
+  const slugs = await getPostSlugs()
+  const posts = await Promise.all(slugs.map((slug) => getPostBySlug(slug)))
+  return posts.sort((post1, post2) => {
+    if (!post1.date || !post2.date) return 0
+    return new Date(post2.date).getTime() - new Date(post1.date).getTime()
+  })
 }
