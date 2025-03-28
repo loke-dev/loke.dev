@@ -1,0 +1,85 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "AI-Powered Analytics Platform",
+      "description": "A machine learning platform that provides real-time analytics and insights for business data",
+      "technologies": ["Next.js", "Python", "TensorFlow", "AWS"],
+      "link": "https://example.com/analytics",
+      "github": "https://github.com/example/analytics",
+      "featured": true
+    },
+    {
+      "id": 2,
+      "title": "E-commerce Solution",
+      "description": "A modern e-commerce platform built with Next.js and Stripe integration",
+      "technologies": ["Next.js", "Stripe", "Prisma", "PostgreSQL"],
+      "link": "https://example.com/ecommerce",
+      "github": "https://github.com/example/ecommerce",
+      "featured": true
+    },
+    {
+      "id": 3,
+      "title": "Real-time Chat Application",
+      "description": "A scalable chat application with real-time messaging and file sharing",
+      "technologies": ["Next.js", "Socket.io", "Redis", "MongoDB"],
+      "link": "https://example.com/chat",
+      "github": "https://github.com/example/chat",
+      "featured": false
+    },
+    {
+      "id": 4,
+      "title": "Portfolio Website Generator",
+      "description": "A tool that generates beautiful portfolio websites from markdown files",
+      "technologies": ["Next.js", "MDX", "Tailwind CSS", "Vercel"],
+      "link": "https://example.com/portfolio",
+      "github": "https://github.com/example/portfolio",
+      "featured": false
+    },
+    {
+      "id": 5,
+      "title": "Task Management System",
+      "description": "A collaborative task management system with real-time updates",
+      "technologies": ["Next.js", "tRPC", "Prisma", "PostgreSQL"],
+      "link": "https://example.com/tasks",
+      "github": "https://github.com/example/tasks",
+      "featured": true
+    },
+    {
+      "id": 6,
+      "title": "Weather Dashboard",
+      "description": "A beautiful weather dashboard with real-time updates and forecasting",
+      "technologies": ["React", "OpenWeather API", "Chart.js", "Tailwind CSS"],
+      "link": "https://example.com/weather",
+      "github": "https://github.com/example/weather",
+      "featured": false
+    },
+    {
+      "id": 7,
+      "title": "Recipe Finder",
+      "description": "A recipe search engine with filtering and meal planning features",
+      "technologies": ["React", "Node.js", "MongoDB", "Express"],
+      "link": "https://example.com/recipe",
+      "github": "https://github.com/example/recipe",
+      "featured": false
+    },
+    {
+      "id": 8,
+      "title": "Budget Tracker",
+      "description": "A personal finance management tool with expense tracking and analytics",
+      "technologies": ["Vue.js", "Firebase", "Chart.js", "Tailwind CSS"],
+      "link": "https://example.com/budget",
+      "github": "https://github.com/example/budget",
+      "featured": false
+    },
+    {
+      "id": 9,
+      "title": "Fitness App",
+      "description": "A workout tracking app with custom exercise plans and progress monitoring",
+      "technologies": ["React Native", "Node.js", "PostgreSQL", "Express"],
+      "link": "https://example.com/fitness",
+      "github": "https://github.com/example/fitness",
+      "featured": false
+    }
+  ]
+}

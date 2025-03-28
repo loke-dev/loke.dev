@@ -13,13 +13,28 @@ export default function Header() {
           </Link>
         </div>
         <nav className="flex items-center space-x-6 text-sm font-medium">
-          <Link href="/blog" className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}>
+          <Link
+            href="/blog"
+            className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}
+          >
             Blog
           </Link>
-          <Link href="/about" className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}>
+          <Link
+            href="/projects"
+            className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}
+          >
+            Projects
+          </Link>
+          <Link
+            href="/about"
+            className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}
+          >
             About
           </Link>
-          <Link href="/contact" className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}>
+          <Link
+            href="/contact"
+            className={cn(navigationMenuTriggerStyle(), 'bg-transparent px-4')}
+          >
             Contact
           </Link>
           <ThemeToggle />

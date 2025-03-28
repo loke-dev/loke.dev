@@ -21,7 +21,7 @@ export default async function BlogPost(props: {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
       <div className="mb-8">
-        <Button variant="ghost" size="sm" asChild className="mb-6">
+        <Button variant="outline" size="sm" asChild className="mb-6">
           <Link href="/blog">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to all posts
