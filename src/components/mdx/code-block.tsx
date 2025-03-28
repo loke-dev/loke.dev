@@ -24,10 +24,10 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     return (
       <div
         ref={ref}
-        className="bg-muted/50 relative my-6 overflow-hidden rounded-lg border"
+        className="relative my-6 overflow-hidden rounded-lg border"
       >
         {filename && (
-          <div className="bg-muted border-b px-4 py-2 text-sm font-medium">
+          <div className="border-b px-4 py-2 text-sm font-medium">
             {filename}
           </div>
         )}

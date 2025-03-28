@@ -57,10 +57,8 @@ function greet(name) {
   // This is a multi-line code example
   // to demonstrate syntax highlighting
   return {
-    message: `Hello, ${name}!`, // [!code highlight]
-    message: `Hello, ${name + '!'}!`,
-    timestamp: new Date(123), // [!code ++]
-    timestamp: new Date(), // [!code --]
+    message: `Hello, ${name}!`,
+    timestamp: new Date(),
   }
 }
 
@@ -70,7 +68,7 @@ greet('World')
 
 ---
 
-You can also use the CodeBlock component directly:
+You can also use the CodeBlock component directly, with a filename in this example:
 
 <CodeBlock
   code={`const heading = "Custom Code Block";

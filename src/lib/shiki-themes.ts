@@ -1,7 +1,7 @@
 // To change theme for syntax highlighting, update this selectedThemes and also in globals.css
 export const selectedThemes: Record<'dark' | 'light', ShikiTheme> = {
-  dark: 'min-dark',
-  light: 'min-light',
+  dark: 'material-theme-darker',
+  light: 'material-theme-lighter',
 } as const
 
 export const SHIKI_THEMES = [
