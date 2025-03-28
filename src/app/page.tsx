@@ -4,6 +4,7 @@ import JsonLd from '@/components/jsonLd'
 import { ProjectCard } from '@/components/projectCard'
 import { Button } from '@/components/ui/button'
 import { getAllPosts } from '@/lib/mdx'
+import { Hero } from '@/components/Hero'
 import {
   Card,
   CardContent,
@@ -40,29 +41,7 @@ export default async function Home() {
   return (
     <>
       <JsonLd data={websiteJsonLd} />
-
-      <section className="bg-background">
-        <div className="container mx-auto px-4 py-16 md:py-20">
-          <div className="flex flex-col items-center text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              <span className="block">Welcome to</span>
-              <span className="text-primary block">loke.dev</span>
-            </h1>
-            <p className="text-muted-foreground mx-auto mt-3 max-w-md text-lg">
-              Personal website of Loke. Web developer, designer, and technology
-              enthusiast.
-            </p>
-            <div className="mt-6 flex gap-4">
-              <Button asChild>
-                <Link href="/about">About Me</Link>
-              </Button>
-              <Button asChild variant="secondary">
-                <Link href="/contact">Contact</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       <section className="bg-muted/30">
         <div className="container mx-auto px-4 py-12 md:py-16">
