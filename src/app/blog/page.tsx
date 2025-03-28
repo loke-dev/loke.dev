@@ -19,7 +19,7 @@ export default function BlogPage() {
   const posts = getAllPosts()
 
   return (
-    <div className="container mx-auto py-12">
+    <div className="container mx-auto px-4 py-12">
       <div className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight">Blog</h1>
         <p className="text-muted-foreground mt-2">
