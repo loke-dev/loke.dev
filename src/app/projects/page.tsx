@@ -1,29 +1,10 @@
 import { Metadata } from 'next'
-import { promises as fs } from 'fs'
-import path from 'path'
-import { ProjectCard } from '@/components/project-card'
+import { ProjectCard } from '@/components/projectCard'
+import { getProjects } from '@/lib/projects'
 
 export const metadata: Metadata = {
   title: 'Projects',
   description: 'Check out my latest projects and work',
-}
-
-interface Project {
-  id: number
-  title: string
-  description: string
-  technologies: string[]
-  image?: string
-  link: string
-  github: string
-  featured: boolean
-}
-
-async function getProjects() {
-  const filePath = path.join(process.cwd(), 'src/app/projects/projects.json')
-  const fileContents = await fs.readFile(filePath, 'utf8')
-  const data = JSON.parse(fileContents)
-  return data.projects as Project[]
 }
 
 export default async function ProjectsPage() {

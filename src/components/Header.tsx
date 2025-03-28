@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
-import { ThemeToggle } from './theme-toggle'
+import { ThemeToggle } from './themeToggle'
 import { cn } from '@/lib/utils'
 
 export default function Header() {
