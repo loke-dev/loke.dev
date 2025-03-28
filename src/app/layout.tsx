@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import Header from '../components/header'
 import Footer from '../components/footer'
 import { Providers } from './providers'
-import { unstable_ViewTransition as ViewTransition } from 'react'
+import { ViewTransitionWrapper } from '@/components/viewTransitionWrapper'
 
 import '../styles/globals.css'
 
@@ -77,7 +77,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           <main className="flex-grow">
-            <ViewTransition name="test">{children}</ViewTransition>
+            <ViewTransitionWrapper>{children}</ViewTransitionWrapper>
           </main>
           <Footer />
         </Providers>
