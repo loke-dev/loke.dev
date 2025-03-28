@@ -12,7 +12,7 @@ import { CalendarIcon, ArrowRight } from 'lucide-react'
 
 export const metadata = {
   title: 'Blog | loke.dev',
-  description: 'Articles and thoughts by Loke Carlsson',
+  description: 'Articles and thoughts by Loke',
 }
 
 export default function BlogPage() {
