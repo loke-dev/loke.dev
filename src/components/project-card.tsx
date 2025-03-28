@@ -8,7 +8,8 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Github, Link as LinkIcon } from 'lucide-react'
+import { Link as LinkIcon } from 'lucide-react'
+import { siGithub } from 'simple-icons'
 import Image from 'next/image'
 
 interface ProjectCardProps {
@@ -81,7 +82,14 @@ export function ProjectCard({
           className="flex-1 sm:flex-none"
         >
           <a href={github} target="_blank" rel="noopener noreferrer">
-            <Github className="mr-2 h-4 w-4" />
+            <svg
+              role="img"
+              viewBox="0 0 24 24"
+              className="mr-2 h-4 w-4 fill-current"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d={siGithub.path} />
+            </svg>
             GitHub
           </a>
         </Button>
