@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { AlertCircle, CheckCircle2, Info, AlertTriangle } from 'lucide-react'
+import { AlertCircle, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 
 interface CalloutProps {
   type?: 'info' | 'warning' | 'error' | 'success'

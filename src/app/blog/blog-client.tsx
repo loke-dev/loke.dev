@@ -1,6 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { ArrowRight, CalendarIcon } from 'lucide-react'
+import { Animated } from '@/components/ui/animated'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -8,9 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { CalendarIcon, ArrowRight } from 'lucide-react'
-import { Animated } from '@/components/ui/animated'
 import { fadeIn, fadeInSlideUp, scaleIn } from '@/lib/animations'
 import type { PostMetadata } from '@/lib/mdx'
 

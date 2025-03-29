@@ -1,6 +1,18 @@
 'use client'
 
 import {
+  BookOpenIcon,
+  CameraIcon,
+  CodeIcon,
+  CoffeeIcon,
+  GlobeIcon,
+  HeartIcon,
+  MountainIcon,
+} from 'lucide-react'
+import { Animated } from '@/components/ui/animated'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import {
   Card,
   CardContent,
   CardDescription,
@@ -8,18 +20,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import {
-  CodeIcon,
-  GlobeIcon,
-  BookOpenIcon,
-  MountainIcon,
-  CameraIcon,
-  HeartIcon,
-  CoffeeIcon,
-} from 'lucide-react'
-import { Animated } from '@/components/ui/animated'
 import {
   fadeIn,
   fadeInSlideLeft,

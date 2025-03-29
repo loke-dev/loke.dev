@@ -1,15 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { Animated } from '@/components/ui/animated'
+import { Button } from '@/components/ui/button'
 import {
+  defaultTransition,
   fadeIn,
   fadeInSlideLeft,
   fadeInSlideUp,
   scaleIn,
-  defaultTransition,
 } from '@/lib/animations'
 
 export function Hero() {

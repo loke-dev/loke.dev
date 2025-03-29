@@ -1,3 +1,8 @@
+import Image from 'next/image'
+import { Link as LinkIcon } from 'lucide-react'
+import { siGithub } from 'simple-icons'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -6,11 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Link as LinkIcon } from 'lucide-react'
-import { siGithub } from 'simple-icons'
-import Image from 'next/image'
 
 interface ProjectCardProps {
   title: string

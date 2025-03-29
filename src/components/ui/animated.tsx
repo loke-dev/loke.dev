@@ -1,8 +1,8 @@
 'use client'
 
+import { ReactNode } from 'react'
 import { motion, Variants } from 'framer-motion'
 import { defaultTransition } from '@/lib/animations'
-import { ReactNode } from 'react'
 
 interface AnimatedProps {
   children: ReactNode

@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Copy } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface CopyButtonProps {
   code: string
@@ -30,7 +30,9 @@ export function CopyButton({ code }: CopyButtonProps) {
       </Button>
 
       {copied && (
-        <div className="bg-foreground text-background absolute top-2 right-2 rounded-md px-2 py-1 text-xs">Copied!</div>
+        <div className="bg-foreground text-background absolute top-2 right-2 rounded-md px-2 py-1 text-xs">
+          Copied!
+        </div>
       )}
     </>
   )

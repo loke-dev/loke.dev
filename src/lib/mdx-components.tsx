@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
-import { Separator } from '@/components/ui/separator'
+import Link from 'next/link'
 import { CodeBlock } from '@/components/mdx/code-block'
+import { Separator } from '@/components/ui/separator'
 
 export const mdxComponents = {
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (

@@ -1,12 +1,12 @@
 'use client'
 
+import { Mail } from 'lucide-react'
 import { JsonLd } from '@/components/jsonLd'
+import { Animated } from '@/components/ui/animated'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Mail } from 'lucide-react'
-import { Animated } from '@/components/ui/animated'
-import { fadeIn, fadeInSlideUp, fadeInSlideLeft } from '@/lib/animations'
+import { fadeIn, fadeInSlideLeft, fadeInSlideUp } from '@/lib/animations'
 
 export default function Contact() {
   const contactJsonLd = {
