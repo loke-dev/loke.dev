@@ -2,8 +2,6 @@
 
 A modern, minimalist, and highly performant Next.js 15 template for personal websites, blogs, and portfolios. This template uses the latest features from Next.js, React 19, and Tailwind CSS 4.
 
-![Next.js Personal Website Template](https://placehold.co/600x400?text=Next.js+Personal+Website+Template)
-
 ## ✨ Features
 
 - 🚀 **Next.js 15** with App Router
