@@ -1,5 +1,8 @@
+import fs from 'fs/promises'
+import path from 'path'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import matter from 'gray-matter'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -14,21 +17,27 @@ export async function generateStaticParams() {
   }))
 }
 
+export const dynamicParams = false
+
 export default async function BlogPost(props: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await props.params
 
   try {
-    const filePath = `src/posts/${slug}.mdx`
-    const fileContents = await fetch(
-      new URL(filePath, import.meta.url).href
-    ).then((res) => {
-      if (!res.ok) throw new Error('Failed to fetch post')
-      return res.text()
-    })
+    const postsDirectory = path.join(process.cwd(), 'src/posts')
+    const fullPath = path.join(postsDirectory, `${slug}.mdx`)
 
-    const post = await getPostBySlug(slug)
+    const [post, fileContents] = await Promise.all([
+      getPostBySlug(slug),
+      fs.readFile(fullPath, 'utf8').catch(() => null),
+    ])
+
+    if (!fileContents) {
+      return notFound()
+    }
+
+    const { content } = matter(fileContents)
 
     return (
       <div className="container mx-auto max-w-4xl px-4 py-12">
@@ -58,7 +67,7 @@ export default async function BlogPost(props: {
             <Separator />
             <CardContent className="pt-6">
               <article className="prose prose-lg dark:prose-invert max-w-none">
-                <MDXProvider content={fileContents} />
+                <MDXProvider content={content} />
               </article>
             </CardContent>
           </Card>
@@ -66,6 +75,6 @@ export default async function BlogPost(props: {
       </div>
     )
   } catch {
-    notFound()
+    return notFound()
   }
 }
