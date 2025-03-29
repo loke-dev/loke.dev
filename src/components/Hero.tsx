@@ -9,14 +9,12 @@ import {
   fadeInSlideLeft,
   fadeInSlideUp,
   scaleIn,
-  hoverScale,
-  floatingAnimation,
   defaultTransition,
 } from '@/lib/animations'
 
 export function Hero() {
   return (
-    <div className="bg-background relative min-h-[90vh] w-full overflow-hidden">
+    <section className="bg-background relative min-h-[90vh] w-full overflow-hidden">
       <Animated
         variants={fadeIn}
         transition={{ ...defaultTransition, duration: 1.5 }}
@@ -32,22 +30,15 @@ export function Hero() {
           className="relative z-10 space-y-6"
         >
           <div className="space-y-4">
-            <motion.div
-              variants={scaleIn}
-              whileHover={hoverScale}
-              className="border-primary/20 bg-primary/10 inline-block rounded-full border px-4 py-1.5"
-            >
-              <span className="text-primary text-sm font-medium">
+            <div className="bg-muted inline-block rounded-full px-4 py-1.5">
+              <p className="text-muted-foreground text-sm font-medium">
                 Web Developer
-              </span>
-            </motion.div>
+              </p>
+            </div>
             <Animated variants={fadeInSlideUp} delay={0.5}>
-              <motion.span
-                className="from-primary bg-gradient-to-r via-purple-500 to-pink-600 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-6xl"
-                whileHover={hoverScale}
-              >
+              <h1 className="text-primary text-4xl font-bold tracking-tight sm:text-6xl">
                 Loke.dev
-              </motion.span>
+              </h1>
             </Animated>
           </div>
           <Animated
@@ -55,37 +46,29 @@ export function Hero() {
             delay={0.7}
             className="text-muted-foreground max-w-lg text-lg"
           >
-            Web developer crafting elegant solutions with modern technologies.
-            Focused on creating impactful digital experiences.
+            <p>
+              Web developer crafting elegant solutions with modern technologies.
+              Focused on creating impactful digital experiences.
+            </p>
           </Animated>
           <Animated
             variants={fadeInSlideUp}
             delay={0.9}
             className="flex items-center gap-4"
           >
-            <Button
-              asChild
-              size="lg"
-              className="group relative overflow-hidden"
-            >
+            <Button asChild size="lg" className="relative overflow-hidden">
               <Link href="/about">
-                <motion.span className="relative z-10" whileHover={hoverScale}>
-                  About Me
-                </motion.span>
-                <div className="from-primary/50 to-primary absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity group-hover:opacity-100" />
+                <span className="relative z-10">About Me</span>
               </Link>
             </Button>
             <Button
               asChild
               variant="secondary"
               size="lg"
-              className="group relative overflow-hidden"
+              className="relative overflow-hidden"
             >
               <Link href="/contact">
-                <motion.span className="relative z-10" whileHover={hoverScale}>
-                  Get in Touch
-                </motion.span>
-                <div className="from-secondary/50 to-secondary absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity group-hover:opacity-100" />
+                <span className="relative z-10">Get in Touch</span>
               </Link>
             </Button>
           </Animated>
@@ -97,39 +80,48 @@ export function Hero() {
           className="relative hidden md:block"
         >
           <motion.div
-            {...floatingAnimation}
-            className="bg-primary/30 absolute top-1/2 right-0 h-64 w-64 -translate-y-1/2 rounded-full blur-3xl"
-          />
-          <motion.div
             animate={{
-              scale: [1, 1.6, 1],
-              rotate: [0, -20, 0],
-              x: [0, -40, 0],
-              y: [0, 40, 0],
-            }}
-            transition={{
-              duration: 14,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="absolute top-1/2 right-24 h-48 w-48 -translate-y-1/2 rounded-full bg-purple-500/30 blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1, 1.5, 1],
-              rotate: [0, 25, 0],
+              scale: [1, 1.2, 1],
               x: [0, 30, 0],
-              y: [0, 25, 0],
+              y: [0, -30, 0],
             }}
             transition={{
-              duration: 16,
+              duration: 8,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="absolute top-1/2 right-12 h-32 w-32 -translate-y-1/2 rounded-full bg-pink-600/30 blur-3xl"
+            className="bg-primary/50 absolute top-1/2 right-0 h-72 w-72 -translate-y-1/2 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, -15, 0],
+              x: [0, -50, 0],
+              y: [0, 50, 0],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute top-1/2 right-24 h-64 w-64 -translate-y-1/2 rounded-full bg-white/50 blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.4, 1],
+              rotate: [0, 20, 0],
+              x: [0, 40, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="bg-primary/35 absolute top-1/2 right-12 h-56 w-56 -translate-y-1/2 rounded-full blur-3xl"
           />
         </Animated>
       </div>
-    </div>
+    </section>
   )
 }

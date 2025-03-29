@@ -17,6 +17,9 @@ const config: Config = {
       },
     },
     extend: {
+      lineHeight: {
+        'tight-plus': '1.2',
+      },
       colors: {
         border: 'var(--border)',
         input: 'var(--input)',
