@@ -8,7 +8,7 @@ export interface PostMetadata {
   title: string
   slug: string
   date?: string
-  excerpt?: string
+  description?: string
 }
 
 export async function getPostSlugs(): Promise<string[]> {
@@ -26,7 +26,7 @@ export async function getPostBySlug(slug: string): Promise<PostMetadata> {
     slug: realSlug,
     title: data.title || realSlug,
     date: data.date || null,
-    excerpt: data.excerpt || null,
+    description: data.description || null,
   }
 }
 

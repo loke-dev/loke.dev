@@ -85,9 +85,9 @@ export default async function Home() {
                         </time>
                       </div>
                     )}
-                    {post.excerpt && (
+                    {post.description && (
                       <p className="text-muted-foreground line-clamp-3">
-                        {post.excerpt}
+                        {post.description}
                       </p>
                     )}
                   </CardContent>

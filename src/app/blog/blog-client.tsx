@@ -39,7 +39,11 @@ export function BlogClient({ posts }: BlogClientProps) {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, index) => (
-            <Animated key={post.slug} variants={scaleIn} delay={index * 0.1}>
+            <Animated
+              key={post.slug}
+              variants={scaleIn}
+              delay={Math.min(index, 8) * 0.05}
+            >
               <Card className="flex flex-col overflow-hidden transition-all hover:shadow-md">
                 <CardHeader className="pb-3">
                   <CardTitle className="line-clamp-2">
@@ -64,9 +68,9 @@ export function BlogClient({ posts }: BlogClientProps) {
                       </time>
                     </div>
                   )}
-                  {post.excerpt && (
+                  {post.description && (
                     <p className="text-muted-foreground line-clamp-3">
-                      {post.excerpt}
+                      {post.description}
                     </p>
                   )}
                 </CardContent>
