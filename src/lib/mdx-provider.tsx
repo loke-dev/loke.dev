@@ -7,9 +7,9 @@ import {
   createHighlighter,
   HighlighterCoreOptions,
 } from 'shiki'
+import { mdxComponents } from '@/lib/mdx-components'
 import { Callout } from '@/components/mdx/callout'
 import { CodeBlock } from '@/components/mdx/code-block'
-import { mdxComponents } from '@/lib/mdx-components'
 import { selectedThemes, SHIKI_THEMES } from './shiki-themes'
 
 interface MDXProviderProps {

@@ -2,8 +2,6 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Animated } from '@/components/ui/animated'
-import { Button } from '@/components/ui/button'
 import {
   defaultTransition,
   fadeIn,
@@ -11,6 +9,8 @@ import {
   fadeInSlideUp,
   scaleIn,
 } from '@/lib/animations'
+import { Animated } from '@/components/ui/animated'
+import { Button } from '@/components/ui/button'
 
 export function Hero() {
   return (

@@ -9,6 +9,12 @@ import {
   HeartIcon,
   MountainIcon,
 } from 'lucide-react'
+import {
+  fadeIn,
+  fadeInSlideLeft,
+  fadeInSlideUp,
+  scaleIn,
+} from '@/lib/animations'
 import { Animated } from '@/components/ui/animated'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -20,12 +26,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import {
-  fadeIn,
-  fadeInSlideLeft,
-  fadeInSlideUp,
-  scaleIn,
-} from '@/lib/animations'
 
 export default function About() {
   const currentYear = new Date().getFullYear()

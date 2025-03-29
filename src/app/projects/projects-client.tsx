@@ -1,9 +1,9 @@
 'use client'
 
-import type { Project } from '@/types/project'
+import { fadeInSlideUp, scaleIn } from '@/lib/animations'
 import { ProjectCard } from '@/components/projectCard'
 import { Animated } from '@/components/ui/animated'
-import { fadeInSlideUp, scaleIn } from '@/lib/animations'
+import type { Project } from '@/types/project'
 
 interface ProjectsClientProps {
   featuredProjects: Project[]

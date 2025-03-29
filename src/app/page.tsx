@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, CalendarIcon } from 'lucide-react'
 import { siGithub, siInstagram, siX } from 'simple-icons'
+import { fadeIn, fadeInSlideUp, scaleIn } from '@/lib/animations'
+import { getAllPosts } from '@/lib/mdx'
+import { getProjects } from '@/lib/projects'
 import { Hero } from '@/components/hero'
 import { JsonLd } from '@/components/jsonLd'
 import { ProjectCard } from '@/components/projectCard'
@@ -14,9 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { fadeIn, fadeInSlideUp, scaleIn } from '@/lib/animations'
-import { getAllPosts } from '@/lib/mdx'
-import { getProjects } from '@/lib/projects'
 
 export const metadata: Metadata = {
   title: 'Home',

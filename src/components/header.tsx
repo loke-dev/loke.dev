@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
 import {
@@ -10,7 +11,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
 import { ThemeToggle } from './themeToggle'
 
 const mainNav = [

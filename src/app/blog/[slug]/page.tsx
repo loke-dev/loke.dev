@@ -4,11 +4,11 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import matter from 'gray-matter'
 import { ArrowLeft } from 'lucide-react'
+import { getPostBySlug, getPostSlugs } from '@/lib/mdx'
+import { MDXProvider } from '@/lib/mdx-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { getPostBySlug, getPostSlugs } from '@/lib/mdx'
-import { MDXProvider } from '@/lib/mdx-provider'
 
 export async function generateStaticParams() {
   const slugs = await getPostSlugs()

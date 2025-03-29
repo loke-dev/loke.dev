@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { ArrowRight, CalendarIcon } from 'lucide-react'
+import { fadeIn, fadeInSlideUp, scaleIn } from '@/lib/animations'
+import type { PostMetadata } from '@/lib/mdx'
 import { Animated } from '@/components/ui/animated'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,8 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { fadeIn, fadeInSlideUp, scaleIn } from '@/lib/animations'
-import type { PostMetadata } from '@/lib/mdx'
 
 interface BlogClientProps {
   posts: PostMetadata[]
