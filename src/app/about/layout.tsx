@@ -3,7 +3,13 @@ import { JsonLd } from '@/components/jsonLd'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Learn more about Loke and his work',
+  description:
+    'Learn about my journey as a frontend developer, my skills in React, Next.js, and modern web technologies, and my professional experience.',
+  openGraph: {
+    title: 'About Loke - Frontend Developer',
+    description:
+      'Learn about my journey as a frontend developer, my skills in React, Next.js, and modern web technologies, and my professional experience.',
+  },
 }
 
 export default function AboutLayout({

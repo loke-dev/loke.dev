@@ -31,35 +31,73 @@ export const metadata: Metadata = {
     template: '%s | loke.dev',
   },
   metadataBase: new URL('https://loke.dev'),
-  description: 'Personal website of Loke',
-  keywords: ['Next.js', 'React', 'JavaScript', 'Web Development'],
-  authors: [{ name: 'Loke' }],
+  description:
+    'Frontend developer specializing in React, Next.js, and modern web technologies',
+  keywords: [
+    'Next.js',
+    'React',
+    'JavaScript',
+    'TypeScript',
+    'Web Development',
+    'Frontend Development',
+    'UI/UX',
+    'Software Engineering',
+  ],
+  authors: [{ name: 'Loke', url: 'https://loke.dev' }],
   creator: 'Loke',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/favicon-180x180.png', sizes: '180x180', type: 'image/png' },
+      { url: '/favicon-167x167.png', sizes: '167x167', type: 'image/png' },
+    ],
+    other: [
+      { url: '/favicon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://loke.dev',
     siteName: 'loke.dev',
     title: 'loke.dev',
-    description: 'Personal website of Loke',
+    description:
+      'Frontend developer specializing in React, Next.js, and modern web technologies',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'loke.dev',
+        alt: 'loke.dev - Frontend Developer',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'loke.dev',
-    description: 'Personal website of Loke',
+    description:
+      'Frontend developer specializing in React, Next.js, and modern web technologies',
     images: ['/og-image.jpg'],
+    creator: '@loke',
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
   },
 }
 

@@ -20,7 +20,13 @@ import {
 
 export const metadata: Metadata = {
   title: 'Home',
-  description: 'Welcome to loke.dev - Personal website of Loke',
+  description:
+    'Frontend developer specializing in React, Next.js, and modern web technologies. Explore my latest projects and articles about web development.',
+  openGraph: {
+    title: 'loke.dev - Frontend Developer',
+    description:
+      'Frontend developer specializing in React, Next.js, and modern web technologies. Explore my latest projects and articles about web development.',
+  },
 }
 
 export default async function Home() {

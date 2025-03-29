@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with Loke',
+  description:
+    'Get in touch with me for web development projects, collaborations, or any questions about frontend development.',
   openGraph: {
-    title: 'Contact',
-    description: 'Get in touch with Loke',
+    title: 'Contact | loke.dev',
+    description:
+      'Get in touch with me for web development projects, collaborations, or any questions about frontend development.',
   },
 }
 
