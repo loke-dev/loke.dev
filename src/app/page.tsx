@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import JsonLd from '@/components/jsonLd'
+import { JsonLd } from '@/components/jsonLd'
 import { ProjectCard } from '@/components/projectCard'
 import { Button } from '@/components/ui/button'
 import { getAllPosts } from '@/lib/mdx'
-import { Hero } from '@/components/Hero'
+import { Hero } from '@/components/hero'
 import { Animated } from '@/components/ui/animated'
 import { fadeIn, fadeInSlideUp, scaleIn } from '@/lib/animations'
 import {

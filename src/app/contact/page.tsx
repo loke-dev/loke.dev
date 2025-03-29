@@ -1,6 +1,6 @@
 'use client'
 
-import JsonLd from '@/components/jsonLd'
+import { JsonLd } from '@/components/jsonLd'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
