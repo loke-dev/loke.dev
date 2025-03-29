@@ -52,7 +52,7 @@ export default function About() {
       category: 'DevOps',
       items: ['Docker', 'CI/CD', 'Vercel', 'GitHub Actions'],
     },
-    { category: 'Tools', items: ['Git', 'VS Code', 'Figma', 'Cursor'] },
+    { category: 'Tools', items: ['Git', 'VS Code', 'Figma'] },
   ]
 
   const interests = [
@@ -218,7 +218,7 @@ export default function About() {
                     <Animated variants={fadeIn} delay={0.8}>
                       <div className="mt-6">
                         <p className="flex items-center">
-                          <HeartIcon className="mr-2 h-4 w-4 text-red-500" />
+                          <HeartIcon className="mr-4 h-12 w-12 text-red-500" />
                           <span>
                             When I'm not coding, you'll find me exploring new
                             technologies, contributing to open source, or
