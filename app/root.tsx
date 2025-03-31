@@ -6,6 +6,8 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
+import { Footer } from './components/Footer'
+import { Header } from './components/Header'
 import './tailwind.css'
 
 export const links: LinksFunction = () => [
@@ -23,15 +25,19 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="min-h-screen">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="min-h-screen bg-background font-sans antialiased">
+        <div className="relative flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>

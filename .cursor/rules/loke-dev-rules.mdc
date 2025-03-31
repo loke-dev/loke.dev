@@ -3,10 +3,8 @@ description:
 globs: 
 alwaysApply: true
 ---
+This project is using Remix Vite, always refer to vite docs instead of remix classic docs.
 - Always use Tailwind CSS version 4 for styling and utilize shadcn ui to add components that they support and we dont currently dont have in the codebase, utilize radix ui for components structure.
+- Always follow official best practices from Remix.run and Vite.dev
 - Try to avoid useEffect whenever possible.
-- Always await params in nextjs, like this const { hello } = await params
-- Always add 'use client' at top of file, for components and pages when they have client side logic, like useState.
-- Never leave any comments in the code
 - Don't write any comments in the code
-- Never create test pages or test blog posts
