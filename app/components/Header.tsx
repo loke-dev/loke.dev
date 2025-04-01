@@ -9,6 +9,7 @@ export function Header() {
     { to: '/about', label: 'About' },
     { to: '/blog', label: 'Blog' },
     { to: '/projects', label: 'Projects' },
+    { to: '/contact', label: 'Contact' },
   ]
 
   return (
