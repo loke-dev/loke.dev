@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 export function Header() {
   const links = [
     { to: '/', label: 'Home' },
+    { to: '/about', label: 'About' },
     { to: '/blog', label: 'Blog' },
     { to: '/projects', label: 'Projects' },
   ]
