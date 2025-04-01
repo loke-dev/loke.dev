@@ -28,7 +28,7 @@ module.exports = {
     // React
     {
       files: ["**/*.{js,jsx,ts,tsx}"],
-      plugins: ["react", "jsx-a11y"],
+      plugins: ["react", "jsx-a11y", "react-refresh"],
       extends: [
         "plugin:react/recommended",
         "plugin:react/jsx-runtime",
@@ -47,6 +47,15 @@ module.exports = {
         "import/resolver": {
           typescript: {},
         },
+      },
+      rules: {
+        "react-refresh/only-export-components": [
+          "error",
+          {
+            allowConstantExport: false,
+            allowExportNames: ["meta", "links", "headers", "loader", "action", "handle", "shouldRevalidate"]
+          }
+        ],
       },
     },
 

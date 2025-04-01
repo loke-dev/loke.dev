@@ -3,21 +3,7 @@ import path from 'path'
 import { type LoaderFunctionArgs } from '@remix-run/node'
 import matter from 'gray-matter'
 import { marked } from 'marked'
-
-export interface BlogPost {
-  slug: string
-  title: string
-  description: string
-  date: string
-  content: string
-  frontmatter: {
-    title: string
-    description: string
-    date: string
-    published: boolean
-    [key: string]: unknown
-  }
-}
+import type { BlogPost } from '@/types/blog'
 
 const BLOG_PATH = path.join(process.cwd(), 'app', 'posts')
 

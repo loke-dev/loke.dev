@@ -1,6 +1,7 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
-import { getBlogPosts, type BlogPost } from '../lib/blog'
+import type { BlogPost } from '@/types/blog'
+import { getBlogPosts } from '../lib/blog'
 
 export const meta: MetaFunction = () => {
   return [
@@ -44,7 +45,7 @@ export default function BlogIndex() {
               key={post.slug}
               className="group rounded-lg border p-6 transition-colors hover:bg-muted/50"
             >
-              <Link to={post.slug} className="block" prefetch="viewport">
+              <Link to={post.slug} className="block" prefetch="intent">
                 <div className="mb-2 flex items-center text-sm text-muted-foreground">
                   <time dateTime={post.date}>
                     {new Date(post.date).toLocaleDateString('en-US', {

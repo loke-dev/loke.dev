@@ -5,7 +5,6 @@ import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 
 export function Header() {
   const links = [
-    { to: '/', label: 'Home' },
     { to: '/about', label: 'About' },
     { to: '/blog', label: 'Blog' },
     { to: '/projects', label: 'Projects' },
@@ -25,7 +24,7 @@ export function Header() {
               key={link.to}
               to={link.to}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              prefetch="viewport"
+              prefetch="intent"
             >
               {link.label}
             </Link>
@@ -46,6 +45,7 @@ export function Header() {
                   key={link.to}
                   to={link.to}
                   className="text-base font-medium text-muted-foreground transition-colors hover:text-primary"
+                  prefetch="intent"
                 >
                   {link.label}
                 </Link>
