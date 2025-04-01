@@ -1,0 +1,84 @@
+---
+title: Getting Started with Remix
+description: Learn how to build modern web applications with Remix
+date: 2024-01-01
+published: true
+---
+
+# Getting Started with Remix
+
+Remix is a full stack web framework that helps you build better websites with React. It provides server rendering, routing, data loading, and more to help you build fast, modern web applications.
+
+## Why Remix?
+
+Remix brings many benefits to your web application development:
+
+- **Server Rendering**: Every page is server-rendered for fast initial loads
+- **Progressive Enhancement**: JavaScript enhances the experience but isn't required
+- **Simple Data Loading**: Load data on the server based on the URL
+- **Simple Data Mutations**: Submit forms and handle errors without client-side code
+- **Error Boundaries**: Handle errors at any level of your UI
+- **Nested Routes**: Build complex UIs with simple nested routes
+
+## Setting Up a Remix Project
+
+Getting started with Remix is simple:
+
+```bash
+npx create-remix@latest my-remix-app
+cd my-remix-app
+pnpm install
+pnpm dev
+```
+
+## Creating a Route
+
+In Remix, routes are defined by files in the `app/routes` directory. For example, to create a page at `/about`, you would create a file at `app/routes/about.tsx`:
+
+```tsx
+export default function About() {
+  return (
+    <div>
+      <h1>About Us</h1>
+      <p>This is the about page.</p>
+    </div>
+  )
+}
+```
+
+## Loading Data
+
+One of Remix's core features is data loading. You can load data on the server for each route:
+
+```tsx
+import { json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+
+export async function loader() {
+  const data = await fetchSomeData()
+  return json({ data })
+}
+
+export default function MyRoute() {
+  const { data } = useLoaderData<typeof loader>()
+  return <div>{data}</div>
+}
+```
+
+## Styling with Tailwind CSS
+
+Tailwind CSS works great with Remix. With utility classes, you can quickly style your components:
+
+```tsx
+export default function Button({ children }) {
+  return (
+    <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      {children}
+    </button>
+  )
+}
+```
+
+## Conclusion
+
+Remix provides a modern approach to building web applications that emphasizes web fundamentals while leveraging the power of React. By starting with server rendering and progressive enhancement, you can build web applications that are fast, resilient, and user-friendly.

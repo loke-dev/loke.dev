@@ -25,6 +25,7 @@ export function Header() {
               key={link.to}
               to={link.to}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              prefetch="viewport"
             >
               {link.label}
             </Link>

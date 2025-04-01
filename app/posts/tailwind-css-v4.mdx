@@ -1,0 +1,85 @@
+---
+title: What's New in Tailwind CSS v4
+description: Exploring the exciting features and improvements in Tailwind CSS version 4
+date: 2024-04-01
+published: true
+---
+
+# What's New in Tailwind CSS v4
+
+Tailwind CSS v4 brings significant improvements and new features to the popular utility-first CSS framework. This release focuses on performance, developer experience, and new styling capabilities.
+
+## JIT-Only Engine
+
+Tailwind CSS v4 has fully embraced Just-in-Time (JIT) compilation, completely removing the old engine. This change brings several benefits:
+
+- Faster build times
+- Smaller CSS output
+- No more configuration for JIT mode
+- Improved developer experience with immediate feedback
+
+## Lightning-Fast Performance
+
+The rewritten engine in v4 delivers impressive performance improvements:
+
+- Up to 10x faster than v3
+- Near-instantaneous CSS generation
+- Significantly reduced memory usage
+- Much faster HMR (Hot Module Replacement) updates
+
+## Experimental Features Now Stable
+
+Many experimental features from v3 are now stable and fully supported:
+
+- Container queries
+- Has selector
+- Parent selector `&`
+- Logical properties
+- Color function syntax
+- More advanced arbitrary values
+
+## Simplified Configuration
+
+The configuration in v4 has been streamlined:
+
+```js
+// tailwind.config.ts
+import type { Config } from 'tailwindcss'
+
+export default {
+  content: [
+    './app/**/*.{js,jsx,ts,tsx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3b82f6',
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config
+```
+
+## New Styling Capabilities
+
+Tailwind CSS v4 introduces several new styling capabilities:
+
+- Advanced color manipulation
+- More granular typography controls
+- Improved dark mode support
+- Enhanced responsive design utilities
+- Better custom property integration
+
+## Migration from v3
+
+Migrating from Tailwind CSS v3 to v4 is relatively straightforward for most projects:
+
+1. Update your dependencies
+2. Adjust your configuration file format
+3. Check for any deprecated utilities
+4. Update any custom plugins
+
+## Conclusion
+
+Tailwind CSS v4 represents a significant step forward for the framework, with its focus on performance, developer experience, and new styling capabilities. The JIT-only approach simplifies the architecture while delivering impressive speed improvements that make development even more enjoyable.
