@@ -8,9 +8,10 @@ import {
 } from '@remix-run/react'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
-import './tailwind.css'
+import tailwindStyles from './styles/tailwind.css?url'
 
 export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: tailwindStyles },
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
     rel: 'preconnect',
