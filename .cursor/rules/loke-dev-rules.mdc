@@ -8,4 +8,4 @@ This project is using Remix Vite, always refer to vite docs instead of remix cla
 - Always follow official best practices from Remix.run and Vite.dev.
 - Try to avoid useEffect whenever possible.
 - Don't write any comments in the code.
-- Always use absolute paths (path alias).
+- Always use path aliases for internal import (example @/components/button).
