@@ -1,11 +1,13 @@
 import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
+  useRouteError,
+  useRouteLoaderData,
 } from '@remix-run/react'
 import { ClientHintCheck } from '@/lib/client-hint-check'
 import { getHints } from '@/lib/hints'
@@ -42,9 +44,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
+// The Layout export is used across the root component, ErrorBoundary, and HydrateFallback
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { effectiveTheme } = useLoaderData<typeof loader>()
-  const isDark = effectiveTheme === 'dark'
+  // Using useRouteLoaderData instead of useLoaderData to safely access data in all contexts
+  const data = useRouteLoaderData<typeof loader>('root')
+  const isDark = data?.effectiveTheme === 'dark'
 
   return (
     <html lang="en" className={`min-h-screen ${isDark ? 'dark' : ''}`}>
@@ -68,6 +72,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
+// The default export renders the happy path
 export default function App() {
   return <Outlet />
+}
+
+// Error boundary handles errors
+export function ErrorBoundary() {
+  const error = useRouteError()
+
+  let message = 'An unexpected error occurred'
+  let status = 500
+
+  if (isRouteErrorResponse(error)) {
+    message = error.data
+    status = error.status
+  } else if (error instanceof Error) {
+    message = error.message
+  }
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Error {status}</h1>
+      <p className="mb-4">{message}</p>
+    </div>
+  )
 }
