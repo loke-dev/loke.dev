@@ -1,15 +1,18 @@
-import type { LinksFunction } from '@remix-run/node'
+import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from '@remix-run/react'
-import { Footer } from './components/footer'
-import { Header } from './components/header'
-import { ThemeProvider } from './lib/theme-provider'
-import tailwindStyles from './styles/tailwind.css?url'
+import { ClientHintCheck } from '@/lib/client-hint-check'
+import { getHints } from '@/lib/hints'
+import { getEffectiveTheme, getTheme } from '@/lib/theme.server'
+import { Footer } from '@/components/footer'
+import { Header } from '@/components/header'
+import tailwindStyles from '@/styles/tailwind.css?url'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindStyles },
@@ -25,23 +28,37 @@ export const links: LinksFunction = () => [
   },
 ]
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const theme = await getTheme(request)
+  const hints = getHints(request)
+  const effectiveTheme = await getEffectiveTheme(request)
+
+  return {
+    theme,
+    systemTheme: hints.theme,
+    effectiveTheme,
+  }
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { effectiveTheme } = useLoaderData<typeof loader>()
+  const isDark = effectiveTheme === 'dark'
+
   return (
-    <html lang="en" className="min-h-screen">
+    <html lang="en" className={`min-h-screen ${isDark ? 'dark' : ''}`}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <ClientHintCheck />
         <Meta />
         <Links />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider defaultTheme="system" storageKey="loke-dev-theme">
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <div className="relative flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
