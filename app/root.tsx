@@ -12,10 +12,12 @@ import { getHints } from '@/lib/hints'
 import { getEffectiveTheme, getTheme } from '@/lib/theme.server'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import appStyles from '@/styles/app.css?url'
 import tailwindStyles from '@/styles/tailwind.css?url'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindStyles },
+  { rel: 'stylesheet', href: appStyles },
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
     rel: 'preconnect',

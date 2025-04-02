@@ -52,8 +52,8 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px] p-6">
               <SheetHeader>
-                <SheetTitle hidden>Navigation Menu</SheetTitle>
-                <SheetDescription hidden>
+                <SheetTitle>Navigation Menu</SheetTitle>
+                <SheetDescription>
                   Find your way around the site
                 </SheetDescription>
               </SheetHeader>

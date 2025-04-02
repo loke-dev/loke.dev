@@ -1,12 +1,41 @@
-import { useFetcher, useLocation, useMatches } from '@remix-run/react'
+import { parseWithZod } from '@conform-to/zod'
+import {
+  useFetcher,
+  useFetchers,
+  useLocation,
+  useMatches,
+} from '@remix-run/react'
 import { Monitor, Moon, Sun } from 'lucide-react'
+import { z } from 'zod'
 import { type Theme } from '@/lib/theme.server'
 import { Button } from '@/components/ui/button'
+
+const ThemeFormSchema = z.object({
+  theme: z.enum(['system', 'light', 'dark']),
+  redirectTo: z.string().optional(),
+})
 
 type RootLoaderData = {
   theme: Theme
   systemTheme: 'light' | 'dark'
   effectiveTheme: 'light' | 'dark'
+}
+
+function useOptimisticThemeMode() {
+  const fetchers = useFetchers()
+  const themeFetcher = fetchers.find(
+    (f: { formAction?: string }) => f.formAction === '/resources/theme-switch'
+  )
+
+  if (themeFetcher && themeFetcher.formData) {
+    const submission = parseWithZod(themeFetcher.formData, {
+      schema: ThemeFormSchema,
+    })
+
+    if (submission.status === 'success') {
+      return submission.value.theme
+    }
+  }
 }
 
 export function ThemeToggle() {
@@ -18,9 +47,11 @@ export function ThemeToggle() {
 
   const fetcher = useFetcher()
   const location = useLocation()
+  const optimisticMode = useOptimisticThemeMode()
+  const mode = optimisticMode ?? theme
 
-  let displayTheme = theme
-  if (theme === 'system') {
+  let displayTheme = mode
+  if (mode === 'system') {
     displayTheme = systemTheme
   }
 
@@ -38,14 +69,14 @@ export function ThemeToggle() {
 
   return (
     <fetcher.Form method="POST" action="/resources/theme-switch">
-      <input type="hidden" name="theme" value={nextTheme[theme]} />
+      <input type="hidden" name="theme" value={nextTheme[mode]} />
       <input type="hidden" name="redirectTo" value={location.pathname} />
       <Button
         variant="ghost"
         size="icon"
-        aria-label={`Switch to ${nextTheme[theme]} theme`}
+        aria-label={`Switch to ${nextTheme[mode]} theme`}
       >
-        {theme === 'system'
+        {mode === 'system'
           ? icons.system
           : icons[displayTheme as 'light' | 'dark']}
         <span className="sr-only">Toggle theme</span>
