@@ -2,7 +2,15 @@ import { Link } from '@remix-run/react'
 import { Menu } from 'lucide-react'
 import { ThemeToggle } from '@/components/themeToggle'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 
 export function Header() {
   const links = [
@@ -43,16 +51,30 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px] p-6">
-              <nav className="flex flex-col gap-6">
-                {links.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="text-base font-medium text-muted-foreground transition-colors hover:text-primary"
-                    prefetch="intent"
-                  >
-                    {link.label}
+              <SheetHeader>
+                <SheetTitle hidden>Navigation Menu</SheetTitle>
+                <SheetDescription hidden>
+                  Find your way around the site
+                </SheetDescription>
+              </SheetHeader>
+              <nav className="flex flex-col gap-6 mt-6">
+                <SheetClose asChild>
+                  <Link to="/" className="flex items-center">
+                    <span className="text-xl font-bold tracking-tight">
+                      loke.dev
+                    </span>
                   </Link>
+                </SheetClose>
+                {links.map((link) => (
+                  <SheetClose key={link.to} asChild>
+                    <Link
+                      to={link.to}
+                      className="text-base font-medium text-muted-foreground transition-colors hover:text-primary"
+                      prefetch="intent"
+                    >
+                      {link.label}
+                    </Link>
+                  </SheetClose>
                 ))}
               </nav>
             </SheetContent>
