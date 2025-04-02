@@ -1,6 +1,6 @@
 import type { MetaFunction } from '@remix-run/node'
+import { ProjectCard } from '@/components/projectCard'
 import { Project } from '@/types/projects'
-import { ProjectCard } from '../components/ProjectCard'
 
 export const meta: MetaFunction = () => {
   return [

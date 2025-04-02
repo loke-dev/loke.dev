@@ -9,3 +9,4 @@ This project is using Remix Vite, always refer to vite docs instead of remix cla
 - Try to avoid useEffect whenever possible.
 - Don't write any comments in the code.
 - Always use path aliases for internal import (example @/components/button).
+- Always check if i have started a dev server on port 3000 already before starting another one.

@@ -1,5 +1,5 @@
 import type { MetaFunction } from '@remix-run/node'
-import { Hero } from '@/components/Hero'
+import { Hero } from '@/components/hero'
 
 export const meta: MetaFunction = () => {
   return [

@@ -1,5 +1,5 @@
 import { Outlet } from '@remix-run/react'
-import { MDXComponentsProvider } from '../components/mdx-provider'
+import { MDXComponentsProvider } from '@/lib/mdx-provider'
 
 export default function BlogLayout() {
   return (

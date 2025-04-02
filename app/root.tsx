@@ -6,8 +6,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
-import { Footer } from './components/Footer'
-import { Header } from './components/Header'
+import { Footer } from './components/footer'
+import { Header } from './components/header'
+import { ThemeProvider } from './lib/theme-provider'
 import tailwindStyles from './styles/tailwind.css?url'
 
 export const links: LinksFunction = () => [
@@ -34,11 +35,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
+        <ThemeProvider defaultTheme="system" storageKey="loke-dev-theme">
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </ThemeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

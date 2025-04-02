@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/heading-has-content */
 import { HTMLAttributes, type ReactNode } from 'react'
 import { MDXProvider } from '@mdx-js/react'
-import { Callout } from './Callout'
+import { Callout } from '@/components/callout'
 
 type ComponentProps = HTMLAttributes<HTMLElement> & { children?: ReactNode }
 
