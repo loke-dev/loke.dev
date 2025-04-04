@@ -28,7 +28,7 @@ export default function BlogIndex() {
   const { posts } = useLoaderData<typeof loader>()
 
   return (
-    <Page size="md">
+    <Page>
       <PageHeader
         title="Blog"
         description="Articles, guides, and thoughts on web development and technology"

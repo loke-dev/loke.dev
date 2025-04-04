@@ -14,7 +14,7 @@ export const meta: MetaFunction = () => {
 
 export default function Contact() {
   return (
-    <Page size="sm">
+    <Page>
       <PageHeader
         title="Contact Me"
         description="Have a question or want to work together? Feel free to reach out using the form below."

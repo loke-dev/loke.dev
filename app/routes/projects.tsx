@@ -77,7 +77,7 @@ export default function Projects() {
   const otherProjects = projects.filter((project) => !project.featured)
 
   return (
-    <Page size="md">
+    <Page>
       <PageHeader
         title="Projects"
         description="A showcase of my work, side projects, and experiments."

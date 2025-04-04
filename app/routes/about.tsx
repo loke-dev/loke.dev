@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function About() {
   return (
-    <Page size="sm">
+    <Page>
       <PageHeader title="About Me" />
 
       <div className="prose prose-gray dark:prose-invert">
