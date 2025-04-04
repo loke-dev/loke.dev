@@ -17,9 +17,6 @@ importers:
       '@epic-web/invariant':
         specifier: ^1.0.0
         version: 1.0.0
-      '@mdx-js/mdx':
-        specifier: ^3.1.0
-        version: 3.1.0(acorn@8.14.1)
       '@radix-ui/react-dialog':
         specifier: ^1.1.6
         version: 1.1.6(@types/react-dom@18.3.5(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -50,30 +47,18 @@ importers:
       cookie:
         specifier: ^1.0.2
         version: 1.0.2
-      gray-matter:
-        specifier: ^4.0.3
-        version: 4.0.3
-      highlight.js:
-        specifier: ^11.11.1
-        version: 11.11.1
       isbot:
         specifier: ^5.1.25
         version: 5.1.25
       lucide-react:
         specifier: ^0.486.0
         version: 0.486.0(react@18.3.1)
-      marked:
-        specifier: ^15.0.7
-        version: 15.0.7
       react:
         specifier: ^18.3.1
         version: 18.3.1
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
-      rehype-pretty-code:
-        specifier: ^0.14.1
-        version: 0.14.1(shiki@3.2.1)
       remix-themes:
         specifier: ^2.0.4
         version: 2.0.4(react-router@6.30.0(react@18.3.1))
@@ -83,12 +68,6 @@ importers:
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.1.0
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@4.1.0)
-      tw-animate-css:
-        specifier: ^1.2.5
-        version: 1.2.5
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -99,6 +78,9 @@ importers:
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.4.1
         version: 4.4.1(prettier@3.5.3)
+      '@mdx-js/mdx':
+        specifier: ^3.1.0
+        version: 3.1.0(acorn@8.14.1)
       '@mdx-js/rollup':
         specifier: ^3.1.0
         version: 3.1.0(acorn@8.14.1)(rollup@4.39.0)
@@ -147,18 +129,30 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.19
         version: 0.4.19(eslint@9.23.0(jiti@2.4.2))
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
+      highlight.js:
+        specifier: ^11.11.1
+        version: 11.11.1
       husky:
         specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
         specifier: ^15.5.0
         version: 15.5.0
+      marked:
+        specifier: ^15.0.7
+        version: 15.0.7
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
         version: 0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3)
+      rehype-pretty-code:
+        specifier: ^0.14.1
+        version: 0.14.1(shiki@3.2.1)
       remark-frontmatter:
         specifier: ^5.0.0
         version: 5.0.0
@@ -174,6 +168,12 @@ importers:
       tailwindcss:
         specifier: ^4.1.0
         version: 4.1.0
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@4.1.0)
+      tw-animate-css:
+        specifier: ^1.2.5
+        version: 1.2.5
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
