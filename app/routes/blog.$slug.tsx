@@ -4,6 +4,7 @@ import { runSync } from '@mdx-js/mdx'
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getBlogPost, validateBlogSlug } from '@/utils/blog'
+import type { BlogPost } from '@/types/blog'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data?.post) {
@@ -19,7 +20,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ]
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+interface LoaderData {
+  post: BlogPost
+}
+
+export async function loader({
+  params,
+}: LoaderFunctionArgs): Promise<LoaderData> {
   const slug = validateBlogSlug(params)
   const post = await getBlogPost(slug)
 
@@ -27,7 +34,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response('Not found', { status: 404 })
   }
 
-  return Response.json({ post })
+  return { post }
 }
 
 const DynamicMdxComponent = ({
@@ -37,7 +44,6 @@ const DynamicMdxComponent = ({
 }) => {
   return <Component />
 }
-DynamicMdxComponent.displayName = 'DynamicMdxComponent'
 
 export default function BlogPostPage() {
   const { post } = useLoaderData<typeof loader>()

@@ -14,9 +14,14 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader() {
+interface LoaderData {
+  posts: BlogPost[]
+}
+
+export async function loader(): Promise<LoaderData> {
   const posts = await getBlogPosts()
-  return Response.json({ posts })
+
+  return { posts }
 }
 
 export default function BlogIndex() {
@@ -40,7 +45,7 @@ export default function BlogIndex() {
         </div>
       ) : (
         <div className="grid gap-8">
-          {posts.map((post: BlogPost) => (
+          {posts.map((post) => (
             <article
               key={post.slug}
               className="group rounded-lg border p-6 transition-colors hover:bg-muted/50"
