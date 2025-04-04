@@ -44,9 +44,6 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
     const result = await compile(content, {
       outputFormat: 'function-body',
-      pragma: 'runtime.jsx',
-      pragmaFrag: 'runtime.Fragment',
-      pragmaImportSource: 'react',
       jsxImportSource: 'react',
       remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
       rehypePlugins: [

@@ -38,7 +38,10 @@ export async function loader({
 
   let mdxContent = ''
   try {
-    const { default: Component } = await run(post.content, runtime)
+    const { default: Component } = await run(post.content, {
+      ...runtime,
+      baseUrl: import.meta.url,
+    })
     mdxContent = renderToStaticMarkup(createElement(Component))
   } catch (error) {
     console.error('Error rendering MDX:', error)
