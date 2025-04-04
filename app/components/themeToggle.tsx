@@ -68,7 +68,11 @@ export function ThemeToggle() {
   }
 
   return (
-    <fetcher.Form method="POST" action="/resources/theme-switch">
+    <fetcher.Form
+      method="POST"
+      action="/resources/theme-switch"
+      preventScrollReset
+    >
       <input type="hidden" name="theme" value={nextTheme[mode]} />
       <input type="hidden" name="redirectTo" value={location.pathname} />
       <Button
