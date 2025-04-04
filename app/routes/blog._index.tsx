@@ -1,6 +1,7 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { getBlogPosts, type BlogPostListing } from '@/utils/blog'
+import { Grid, Page, PageHeader } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
   return [
@@ -27,13 +28,11 @@ export default function BlogIndex() {
   const { posts } = useLoaderData<typeof loader>()
 
   return (
-    <div className="">
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight">Blog</h1>
-        <p className="text-lg text-muted-foreground">
-          Articles, guides, and thoughts on web development and technology
-        </p>
-      </div>
+    <Page size="md">
+      <PageHeader
+        title="Blog"
+        description="Articles, guides, and thoughts on web development and technology"
+      />
 
       {posts.length === 0 ? (
         <div className="rounded-lg border p-8 text-center">
@@ -43,7 +42,7 @@ export default function BlogIndex() {
           </p>
         </div>
       ) : (
-        <div className="grid gap-8">
+        <Grid columns={1} columnsSm={2} columnsMd={2} columnsLg={2} gap="md">
           {posts.map((post) => (
             <article
               key={post.slug}
@@ -71,8 +70,8 @@ export default function BlogIndex() {
               </Link>
             </article>
           ))}
-        </div>
+        </Grid>
       )}
-    </div>
+    </Page>
   )
 }

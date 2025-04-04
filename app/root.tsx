@@ -62,7 +62,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="min-h-screen bg-background font-sans antialiased">
         <div className="relative flex min-h-screen flex-col">
           <Header />
-          <main className="flex-1">{children}</main>
+          {children}
           <Footer />
         </div>
         <ScrollRestoration />
@@ -92,9 +92,11 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Error {status}</h1>
-      <p className="mb-4">{message}</p>
-    </div>
+    <Layout>
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-2xl font-bold mb-4">Error {status}</h1>
+        <p className="mb-4">{message}</p>
+      </div>
+    </Layout>
   )
 }

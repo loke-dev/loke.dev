@@ -5,6 +5,7 @@ import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { getBlogPost, validateBlogSlug } from '@/utils/blog'
+import { Page } from '@/components/layout'
 import type { BlogPost } from '@/types/blog'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -55,7 +56,7 @@ export default function BlogPostPage() {
   const { post, mdxContent } = useLoaderData<typeof loader>()
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-12">
+    <Page size="md">
       <article>
         <header className="mb-8 text-center">
           <time className="text-sm text-muted-foreground">
@@ -77,6 +78,6 @@ export default function BlogPostPage() {
           dangerouslySetInnerHTML={{ __html: mdxContent }}
         />
       </article>
-    </div>
+    </Page>
   )
 }
