@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { createElement } from 'react'
 import * as runtime from 'react/jsx-runtime'
-import { runSync } from '@mdx-js/mdx'
+import { run } from '@mdx-js/mdx'
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { getBlogPost, validateBlogSlug } from '@/utils/blog'
 import type { BlogPost } from '@/types/blog'
 
@@ -22,6 +23,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 interface LoaderData {
   post: BlogPost
+  mdxContent: string
 }
 
 export async function loader({
@@ -34,33 +36,20 @@ export async function loader({
     throw new Response('Not found', { status: 404 })
   }
 
-  return { post }
-}
+  let mdxContent = ''
+  try {
+    const { default: Component } = await run(post.content, runtime)
+    mdxContent = renderToStaticMarkup(createElement(Component))
+  } catch (error) {
+    console.error('Error rendering MDX:', error)
+    mdxContent = '<div>Error rendering content</div>'
+  }
 
-const DynamicMdxComponent = ({
-  Component,
-}: {
-  Component: React.ComponentType
-}) => {
-  return <Component />
+  return { post, mdxContent }
 }
 
 export default function BlogPostPage() {
-  const { post } = useLoaderData<typeof loader>()
-
-  const MdxContent = useMemo(() => {
-    try {
-      const { default: Content } = runSync(post.content, { ...runtime })
-      const MdxRenderer = () => <DynamicMdxComponent Component={Content} />
-      MdxRenderer.displayName = 'MdxRenderer'
-      return MdxRenderer
-    } catch (error) {
-      console.error('Error rendering MDX:', error)
-      const ErrorRenderer = () => <div>Error rendering content</div>
-      ErrorRenderer.displayName = 'ErrorRenderer'
-      return ErrorRenderer
-    }
-  }, [post.content])
+  const { post, mdxContent } = useLoaderData<typeof loader>()
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12">
@@ -80,9 +69,10 @@ export default function BlogPostPage() {
             {post.description}
           </p>
         </header>
-        <div className="prose prose-lg dark:prose-invert max-w-none">
-          <MdxContent />
-        </div>
+        <div
+          className="prose prose-lg dark:prose-invert max-w-none"
+          dangerouslySetInnerHTML={{ __html: mdxContent }}
+        />
       </article>
     </div>
   )
