@@ -1,7 +1,6 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
-import { getBlogPosts } from '@/utils/blog'
-import type { BlogPost } from '@/types/blog'
+import { getBlogPosts, type BlogPostListing } from '@/utils/blog'
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,7 +14,7 @@ export const meta: MetaFunction = () => {
 }
 
 interface LoaderData {
-  posts: BlogPost[]
+  posts: BlogPostListing[]
 }
 
 export async function loader(): Promise<LoaderData> {

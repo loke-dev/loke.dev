@@ -11,7 +11,15 @@ import type { BlogPost } from '@/types/blog'
 
 const BLOG_PATH = path.join(process.cwd(), 'app', 'posts')
 
-export async function getBlogPosts(): Promise<BlogPost[]> {
+export interface BlogPostListing {
+  slug: string
+  title: string
+  description: string
+  date: string
+  published: boolean
+}
+
+export async function getBlogPosts(): Promise<BlogPostListing[]> {
   try {
     const files = await fs.readdir(BLOG_PATH)
     const mdxFiles = files.filter((file) => file.endsWith('.mdx'))
@@ -19,15 +27,22 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     const posts = await Promise.all(
       mdxFiles.map(async (file) => {
         const slug = file.replace(/\.mdx$/, '')
-        return getBlogPost(slug)
+        const filePath = path.join(BLOG_PATH, file)
+        const source = await fs.readFile(filePath, 'utf8')
+        const { data: frontmatter } = matter(source)
+
+        return {
+          slug,
+          title: frontmatter.title as string,
+          description: frontmatter.description as string,
+          date: frontmatter.date as string,
+          published: frontmatter.published !== false,
+        }
       })
     )
 
     return posts
-      .filter(
-        (post): post is BlogPost =>
-          post !== null && post.frontmatter.published !== false
-      )
+      .filter((post) => post.published)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   } catch (error) {
     console.error('Error getting blog posts:', error)
