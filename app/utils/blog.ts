@@ -1,8 +1,12 @@
 import { promises as fs } from 'fs'
 import path from 'path'
+import { compile } from '@mdx-js/mdx'
 import { type LoaderFunctionArgs } from '@remix-run/node'
 import matter from 'gray-matter'
-import { marked } from 'marked'
+import { rehypePrettyCode } from 'rehype-pretty-code'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import type { BlogPost } from '@/types/blog'
 
 const BLOG_PATH = path.join(process.cwd(), 'app', 'posts')
@@ -15,24 +19,15 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     const posts = await Promise.all(
       mdxFiles.map(async (file) => {
         const slug = file.replace(/\.mdx$/, '')
-        const filePath = path.join(BLOG_PATH, file)
-        const source = await fs.readFile(filePath, 'utf8')
-
-        const { data: frontmatter, content } = matter(source)
-
-        return {
-          slug,
-          content: await marked.parse(content),
-          frontmatter: frontmatter as BlogPost['frontmatter'],
-          title: frontmatter.title as string,
-          description: frontmatter.description as string,
-          date: frontmatter.date as string,
-        }
+        return getBlogPost(slug)
       })
     )
 
     return posts
-      .filter((post) => post.frontmatter.published !== false)
+      .filter(
+        (post): post is BlogPost =>
+          post !== null && post.frontmatter.published !== false
+      )
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   } catch (error) {
     console.error('Error getting blog posts:', error)
@@ -46,11 +41,32 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     const source = await fs.readFile(filePath, 'utf8')
 
     const { data: frontmatter, content } = matter(source)
-    const htmlContent = await marked.parse(content)
+
+    const result = await compile(content, {
+      outputFormat: 'function-body',
+      pragma: 'runtime.jsx',
+      pragmaFrag: 'runtime.Fragment',
+      pragmaImportSource: 'react',
+      jsxImportSource: 'react',
+      remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
+      rehypePlugins: [
+        [
+          rehypePrettyCode,
+          {
+            theme: {
+              dark: 'github-dark',
+              light: 'github-light',
+            },
+          },
+        ],
+      ],
+    })
+
+    const processedContent = String(result)
 
     return {
       slug,
-      content: htmlContent,
+      content: processedContent,
       frontmatter: frontmatter as BlogPost['frontmatter'],
       title: frontmatter.title as string,
       description: frontmatter.description as string,

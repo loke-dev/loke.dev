@@ -1,8 +1,7 @@
-import {
-  json,
-  type LoaderFunctionArgs,
-  type MetaFunction,
-} from '@remix-run/node'
+import { useMemo } from 'react'
+import * as runtime from 'react/jsx-runtime'
+import { runSync } from '@mdx-js/mdx'
+import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getBlogPost, validateBlogSlug } from '@/utils/blog'
 
@@ -28,11 +27,34 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response('Not found', { status: 404 })
   }
 
-  return json({ post })
+  return Response.json({ post })
 }
+
+const DynamicMdxComponent = ({
+  Component,
+}: {
+  Component: React.ComponentType
+}) => {
+  return <Component />
+}
+DynamicMdxComponent.displayName = 'DynamicMdxComponent'
 
 export default function BlogPostPage() {
   const { post } = useLoaderData<typeof loader>()
+
+  const MdxContent = useMemo(() => {
+    try {
+      const { default: Content } = runSync(post.content, { ...runtime })
+      const MdxRenderer = () => <DynamicMdxComponent Component={Content} />
+      MdxRenderer.displayName = 'MdxRenderer'
+      return MdxRenderer
+    } catch (error) {
+      console.error('Error rendering MDX:', error)
+      const ErrorRenderer = () => <div>Error rendering content</div>
+      ErrorRenderer.displayName = 'ErrorRenderer'
+      return ErrorRenderer
+    }
+  }, [post.content])
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12">
@@ -53,7 +75,7 @@ export default function BlogPostPage() {
           </p>
         </header>
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <MdxContent />
         </div>
       </article>
     </div>
