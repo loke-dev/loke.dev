@@ -76,7 +76,7 @@ export default function Projects() {
   const otherProjects = projects.filter((project) => !project.featured)
 
   return (
-    <div className="container mx-auto px-4 py-16 md:px-8">
+    <div className="container mx-auto px-4 py-4 md:py-16 md:px-8">
       <div className="mx-auto max-w-6xl">
         <h1 className="mb-8 text-4xl font-bold tracking-tight">Projects</h1>
         <p className="mb-12 text-lg text-muted-foreground">

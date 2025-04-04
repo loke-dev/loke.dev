@@ -1,6 +1,6 @@
 import { data, redirect, type ActionFunctionArgs } from '@remix-run/node'
 import { z } from 'zod'
-import { setTheme, ThemeSchema } from '@/lib/theme.server'
+import { setTheme, ThemeSchema } from '@/utils/theme.server'
 
 const ThemeFormSchema = z.object({
   theme: ThemeSchema,

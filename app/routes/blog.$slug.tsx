@@ -4,7 +4,7 @@ import {
   type MetaFunction,
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { getBlogPost, validateBlogSlug } from '@/lib/blog'
+import { getBlogPost, validateBlogSlug } from '@/utils/blog'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data?.post) {

@@ -13,7 +13,7 @@ export const meta: MetaFunction = () => {
 
 export default function Contact() {
   return (
-    <div className="container mx-auto px-4 py-16 md:px-8">
+    <div className="container mx-auto px-4 py-4 md:py-16 md:px-8">
       <div className="mx-auto max-w-2xl">
         <h1 className="mb-8 text-4xl font-bold tracking-tight">Contact Me</h1>
 

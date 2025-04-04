@@ -1,6 +1,6 @@
 import { createCookieSessionStorage } from '@remix-run/node'
 import { z } from 'zod'
-import { getHints } from '@/lib/hints'
+import { getHints } from '@/utils/hints'
 
 export const ThemeSchema = z.enum(['system', 'light', 'dark'])
 export type Theme = z.infer<typeof ThemeSchema>

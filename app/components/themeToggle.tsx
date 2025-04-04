@@ -7,7 +7,7 @@ import {
 } from '@remix-run/react'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { z } from 'zod'
-import { type Theme } from '@/lib/theme.server'
+import { type Theme } from '@/utils/theme.server'
 import { Button } from '@/components/ui/button'
 
 const ThemeFormSchema = z.object({

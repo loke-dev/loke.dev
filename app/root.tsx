@@ -9,9 +9,9 @@ import {
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
-import { ClientHintCheck } from '@/lib/client-hint-check'
-import { getHints } from '@/lib/hints'
-import { getEffectiveTheme, getTheme } from '@/lib/theme.server'
+import { ClientHintCheck } from '@/utils/client-hint-check'
+import { getHints } from '@/utils/hints'
+import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import appStyles from '@/styles/app.css?url'

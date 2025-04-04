@@ -17,7 +17,7 @@
     "^react/(.*)$",
     "<THIRD_PARTY_MODULES>",
     "^@/config/(.*)$",
-    "^@/lib/(.*)$",
+    "^@/utils/(.*)$",
     "^@/hooks/(.*)$",
     "^@/context/(.*)$",
     "^@/components/(.*)$",

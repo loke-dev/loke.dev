@@ -2,9 +2,11 @@ import path from 'path'
 import mdx from '@mdx-js/rollup'
 import { vitePlugin as remix } from '@remix-run/dev'
 import tailwindcss from '@tailwindcss/vite'
+import { rehypePrettyCode } from 'rehype-pretty-code'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+import { flatRoutes } from 'remix-flat-routes'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -18,6 +20,17 @@ export default defineConfig({
   plugins: [
     mdx({
       remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
+      rehypePlugins: [
+        [
+          rehypePrettyCode,
+          {
+            theme: {
+              dark: 'github-dark',
+              light: 'github-light',
+            },
+          },
+        ],
+      ],
     }),
     remix({
       future: {
@@ -26,6 +39,16 @@ export default defineConfig({
         v3_throwAbortReason: true,
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true,
+      },
+      routes(defineRoutes) {
+        return flatRoutes('routes', defineRoutes, {
+          ignoredRouteFiles: ['**/.*'], // Ignore dot files (like .DS_Store)
+          appDir: 'app',
+          routeDir: 'routes',
+          basePath: '/',
+          paramPrefixChar: '$',
+          nestedDirectoryChar: '+',
+        })
       },
     }),
     tailwindcss(),

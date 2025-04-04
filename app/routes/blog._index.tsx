@@ -1,6 +1,6 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
-import { getBlogPosts } from '@/lib/blog'
+import { getBlogPosts } from '@/utils/blog'
 import type { BlogPost } from '@/types/blog'
 
 export const meta: MetaFunction = () => {
@@ -23,7 +23,7 @@ export default function BlogIndex() {
   const { posts } = useLoaderData<typeof loader>()
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12">
+    <div className="">
       <div className="mb-12 text-center">
         <h1 className="mb-4 text-4xl font-bold tracking-tight">Blog</h1>
         <p className="text-lg text-muted-foreground">
