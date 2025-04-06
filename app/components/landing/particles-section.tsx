@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
+import { useTheme } from './use-theme'
 
 export function ParticlesSection() {
+  const { theme } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const textContainerRef = useRef<HTMLDivElement>(null)
@@ -89,7 +91,7 @@ export function ParticlesSection() {
         this.vy = (Math.random() - 0.5) * 0.5
         this.size = Math.random() * 2 + 1
 
-        const hue = Math.floor(Math.random() * 60) + 200 // Blues and purples
+        const hue = Math.floor(Math.random() * 60) + 170 // Blues and purples
         this.color = `hsla(${hue}, 90%, 65%, 0.7)`
       }
 
@@ -181,23 +183,32 @@ export function ParticlesSection() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-20 bg-gradient-to-b from-indigo-950 to-slate-950 relative"
+      className={`min-h-screen w-full flex flex-col items-center justify-center px-4 py-36 bg-gradient-to-b ${theme.particles.from} ${theme.particles.to} relative overflow-hidden`}
     >
       <canvas ref={canvasRef} className="absolute inset-0"></canvas>
+
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-[5%] left-[10%] w-64 h-64 rounded-full bg-blue-600 blur-3xl opacity-20"></div>
+        <div className="absolute bottom-[15%] right-[15%] w-72 h-72 rounded-full bg-indigo-500 blur-3xl opacity-15"></div>
+      </div>
 
       <div
         ref={textContainerRef}
         className="max-w-4xl w-full mb-8 relative z-10"
       >
-        <h2 className="animated-element text-4xl md:text-5xl font-bold mb-6 text-center text-white">
+        <h2
+          className={`animated-element text-4xl md:text-5xl font-bold mb-6 text-center ${theme.particles.text.primary}`}
+        >
           Connected Technology
         </h2>
-        <p className="animated-element text-lg text-center text-blue-200 mb-12">
+        <p
+          className={`animated-element text-lg text-center ${theme.particles.text.secondary} mb-12`}
+        >
           Building the infrastructure that powers the modern web
         </p>
 
         <div className="animated-element text-center">
-          <button className="px-8 py-3 bg-blue-600 rounded-full text-white font-medium hover:bg-blue-700 transition-colors shadow-lg">
+          <button className="px-8 py-3 bg-blue-500 rounded-full text-white font-medium hover:bg-blue-700 transition-colors shadow-lg">
             Start Building
           </button>
         </div>

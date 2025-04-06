@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll'
+import { useTheme } from './use-theme'
 
 export function ResponsiveDesignSection() {
+  const { theme } = useTheme()
   const containerRef = useAnimationOnScroll({
     targets: '.section-title, .section-text',
     animation: {
@@ -92,18 +94,29 @@ export function ResponsiveDesignSection() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-20 bg-gradient-to-b from-slate-900 to-indigo-950"
+      className={`min-h-screen w-full flex flex-col items-center justify-center px-4 py-32 bg-gradient-to-b ${theme.responsive.from} ${theme.responsive.to} overflow-hidden relative`}
     >
-      <div className="max-w-4xl w-full mb-16">
-        <h2 className="section-title text-4xl md:text-5xl font-bold mb-6 text-center text-white opacity-0">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
+        <div className="absolute -top-[10%] right-[10%] w-64 h-64 rounded-full bg-indigo-600 blur-3xl opacity-20"></div>
+        <div className="absolute left-[5%] bottom-[10%] w-52 h-52 rounded-full bg-violet-500 blur-3xl opacity-15"></div>
+        <div className="absolute right-[40%] top-[30%] w-28 h-28 rounded-full border border-indigo-300 opacity-20"></div>
+      </div>
+
+      <div className="max-w-4xl w-full mb-16 relative z-10">
+        <h2
+          className={`section-title text-4xl md:text-5xl font-bold mb-6 text-center ${theme.responsive.text.primary} opacity-0`}
+        >
           Responsive By Design
         </h2>
-        <p className="section-text text-lg text-center text-slate-300 opacity-0">
+        <p
+          className={`section-text text-lg text-center ${theme.responsive.text.secondary} opacity-0`}
+        >
           Creating experiences that work beautifully on every device
         </p>
       </div>
 
-      <div ref={devicesRef} className="relative h-[50vh] w-full max-w-4xl">
+      <div ref={devicesRef} className="relative h-[50vh] w-full max-w-4xl z-10">
         <div className="device-desktop absolute left-0 top-1/2 -translate-y-1/2 w-[65%] h-[70%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
           <div className="h-6 bg-slate-700 flex items-center px-2">
             <div className="w-2 h-2 rounded-full bg-red-500 mr-1"></div>

@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
+import { ScrollCue } from './scroll-cue'
+import { useTheme } from './use-theme'
 
 export function HeroSection() {
+  const { theme } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -54,7 +57,7 @@ export function HeroSection() {
   return (
     <div
       ref={containerRef}
-      className="relative h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 to-blue-950 text-white px-4"
+      className={`relative h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b ${theme.hero.from} ${theme.hero.to} ${theme.hero.text.primary} px-4 pb-16 overflow-hidden`}
     >
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-blue-500 blur-3xl"></div>
@@ -62,17 +65,25 @@ export function HeroSection() {
         <div className="absolute top-1/3 right-1/4 w-24 h-24 rounded-full bg-green-500 blur-3xl"></div>
       </div>
 
-      <h1 className="animated-element text-5xl md:text-7xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+      <h1
+        className={`animated-element text-5xl md:text-7xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600`}
+      >
         Building the Web
       </h1>
-      <p className="animated-element text-xl md:text-2xl max-w-2xl text-center mb-10">
+      <p
+        className={`animated-element text-xl md:text-2xl max-w-2xl text-center mb-10 ${theme.hero.text.secondary}`}
+      >
         Crafting immersive digital experiences with modern technologies and
         creative animations
       </p>
       <div className="animated-element">
-        <button className="px-8 py-3 bg-blue-600 rounded-full text-white font-medium hover:bg-blue-700 transition-colors">
+        <button className="px-8 py-3 bg-blue-500 rounded-full text-white font-medium hover:bg-blue-700 transition-colors">
           Explore
         </button>
+      </div>
+
+      <div className="absolute bottom-16 w-full flex justify-center">
+        <ScrollCue color={theme.hero.text.secondary} />
       </div>
     </div>
   )

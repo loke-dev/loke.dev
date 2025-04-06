@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll'
+import { useTheme } from './use-theme'
 
 export function CodeTypingSection() {
+  const { theme } = useTheme()
   const codeContainerRef = useRef<HTMLPreElement>(null)
 
   const containerRef = useAnimationOnScroll({
@@ -135,18 +137,29 @@ export function CodeTypingSection() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-20 bg-slate-950"
+      className={`min-h-screen w-full flex flex-col items-center justify-center px-4 py-24 bg-gradient-to-b ${theme.code.from} ${theme.code.to} overflow-hidden relative`}
     >
-      <div className="max-w-4xl w-full mb-10">
-        <h2 className="animated-element text-4xl md:text-5xl font-bold mb-6 text-center text-white ">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
+        <div className="absolute right-[5%] top-[15%] w-40 h-40 rounded-full border-2 border-indigo-400 opacity-25"></div>
+        <div className="absolute left-[10%] bottom-[20%] w-64 h-64 rounded-full border border-blue-500 opacity-20"></div>
+        <div className="absolute right-[15%] bottom-[10%] w-16 h-16 rounded-full bg-indigo-500 blur-xl opacity-20"></div>
+      </div>
+
+      <div className="max-w-4xl w-full mb-10 relative z-10">
+        <h2
+          className={`animated-element text-4xl md:text-5xl font-bold mb-6 text-center ${theme.code.text.primary}`}
+        >
           Code That Comes to Life
         </h2>
-        <p className="animated-element text-lg text-center text-slate-300 mb-16">
+        <p
+          className={`animated-element text-lg text-center ${theme.code.text.secondary} mb-16`}
+        >
           Creating animations with JavaScript is like writing poetry with code
         </p>
       </div>
 
-      <div className="animated-element code-box w-full max-w-2xl bg-slate-900 rounded-lg shadow-xl overflow-hidden ">
+      <div className="animated-element code-box w-full max-w-2xl bg-slate-900 rounded-lg shadow-xl overflow-hidden relative z-10">
         <div className="bg-slate-800 px-4 py-2 flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>

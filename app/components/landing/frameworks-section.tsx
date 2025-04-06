@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll'
+import { useTheme } from './use-theme'
 
 export function FrameworksSection() {
+  const { theme } = useTheme()
   const containerRef = useAnimationOnScroll({
     targets: '.section-title, .section-text',
     animation: {
@@ -78,20 +80,31 @@ export function FrameworksSection() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-20 bg-gradient-to-b from-slate-950 to-slate-900"
+      className={`min-h-screen w-full flex flex-col items-center justify-center px-4 py-28 bg-gradient-to-b ${theme.frameworks.from} ${theme.frameworks.to} overflow-hidden relative`}
     >
-      <div className="max-w-4xl w-full mb-20">
-        <h2 className="section-title text-4xl md:text-5xl font-bold mb-6 text-center text-white opacity-0">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
+        <div className="absolute left-0 top-[10%] w-72 h-72 rounded-full bg-violet-600 blur-3xl opacity-20"></div>
+        <div className="absolute right-[5%] bottom-[30%] w-80 h-80 rounded-full bg-blue-600 blur-3xl opacity-15"></div>
+        <div className="absolute hidden md:block left-[20%] bottom-[20%] w-36 h-36 rounded-full border border-violet-400 opacity-25"></div>
+      </div>
+
+      <div className="max-w-4xl w-full mb-20 relative z-10">
+        <h2
+          className={`section-title text-4xl md:text-5xl font-bold mb-6 text-center ${theme.frameworks.text.primary} opacity-0`}
+        >
           Modern Frameworks
         </h2>
-        <p className="section-text text-lg text-center text-slate-300 opacity-0">
+        <p
+          className={`section-text text-lg text-center ${theme.frameworks.text.secondary} opacity-0`}
+        >
           Building with the best tools for the modern web
         </p>
       </div>
 
       <div
         ref={frameworKsRef}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl relative z-10"
       >
         {frameworks.map((framework, index) => (
           <div

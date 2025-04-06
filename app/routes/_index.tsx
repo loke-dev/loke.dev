@@ -1,6 +1,5 @@
 import type { MetaFunction } from '@remix-run/node'
 import { TechLanding } from '@/components/landing'
-import { Page } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,9 +13,5 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  return (
-    <Page noPadding>
-      <TechLanding />
-    </Page>
-  )
+  return <TechLanding />
 }
