@@ -14,6 +14,14 @@ export default function About() {
       <PageHeader title="About Me" />
 
       <div className="prose prose-gray dark:prose-invert">
+        <div className="flex justify-center mb-6">
+          <img
+            src="/loke_clay.png"
+            alt="3D clay avatar"
+            className="rounded-lg w-64 h-auto"
+          />
+        </div>
+
         <p className="lead">
           Hi, I&apos;m a developer passionate about creating meaningful digital
           experiences.
