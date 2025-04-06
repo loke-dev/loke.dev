@@ -45,15 +45,15 @@ export const defaultTheme: ThemeOptions = {
   },
   responsive: {
     from: 'from-violet-950',
-    to: 'to-indigo-950',
+    to: 'to-blue-950',
     text: {
       primary: 'text-white',
       secondary: 'text-slate-300',
     },
   },
   particles: {
-    from: 'from-indigo-950',
-    to: 'to-slate-950',
+    from: 'from-blue-950',
+    to: 'to-black',
     accent: 'blue-500',
     text: {
       primary: 'text-white',

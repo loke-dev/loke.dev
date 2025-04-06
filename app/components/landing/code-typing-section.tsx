@@ -148,12 +148,12 @@ export function CodeTypingSection() {
 
       <div className="max-w-4xl w-full mb-10 relative z-10">
         <h2
-          className={`animated-element text-4xl md:text-5xl font-bold mb-6 text-center ${theme.code.text.primary}`}
+          className={`animated-element text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-center ${theme.code.text.primary}`}
         >
           Code That Comes to Life
         </h2>
         <p
-          className={`animated-element text-lg text-center ${theme.code.text.secondary} mb-16`}
+          className={`animated-element text-xl sm:text-2xl md:text-3xl text-center ${theme.code.text.secondary} mb-16`}
         >
           Creating animations with JavaScript is like writing poetry with code
         </p>

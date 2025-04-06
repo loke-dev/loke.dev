@@ -91,12 +91,12 @@ export function FrameworksSection() {
 
       <div className="max-w-4xl w-full mb-20 relative z-10">
         <h2
-          className={`section-title text-4xl md:text-5xl font-bold mb-6 text-center ${theme.frameworks.text.primary} opacity-0`}
+          className={`section-title text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-center ${theme.frameworks.text.primary} opacity-0`}
         >
           Modern Frameworks
         </h2>
         <p
-          className={`section-text text-lg text-center ${theme.frameworks.text.secondary} opacity-0`}
+          className={`section-text text-xl sm:text-2xl md:text-3xl text-center ${theme.frameworks.text.secondary} opacity-0`}
         >
           Building with the best tools for the modern web
         </p>

@@ -1,25 +1,17 @@
 import { useEffect, useRef } from 'react'
-import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll'
 import { useTheme } from './use-theme'
 
 export function ResponsiveDesignSection() {
   const { theme } = useTheme()
-  const containerRef = useAnimationOnScroll({
-    targets: '.section-title, .section-text',
-    animation: {
-      translateY: [20, 0],
-      opacity: [0, 1],
-      duration: 800,
-      easing: 'easeOutSine',
-    },
-    threshold: 0.2,
-  })
-
+  const containerRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLDivElement>(null)
   const devicesRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!containerRef.current || !devicesRef.current) return
+    if (!containerRef.current || !textRef.current || !devicesRef.current) return
 
+    const title = textRef.current.querySelector('.section-title') as HTMLElement
+    const text = textRef.current.querySelector('.section-text') as HTMLElement
     const desktop = devicesRef.current.querySelector(
       '.device-desktop'
     ) as HTMLElement
@@ -30,66 +22,89 @@ export function ResponsiveDesignSection() {
       '.device-mobile'
     ) as HTMLElement
 
-    if (!desktop || !tablet || !mobile) return
+    if (!title || !text || !desktop || !tablet || !mobile) return
 
-    // Initial state
-    desktop.style.transform = 'translateX(-300px) translateY(-50%)'
+    // Set initial state
+    title.style.opacity = '0'
+    title.style.transform = 'translateY(40px)'
+    text.style.opacity = '0'
+    text.style.transform = 'translateY(40px)'
+
     desktop.style.opacity = '0'
+    desktop.style.transform = 'translateX(-400px) translateY(-50%)'
 
-    tablet.style.transform = 'translate(-50%, 200px)'
     tablet.style.opacity = '0'
+    tablet.style.transform = 'translate(-50%, 200px)'
 
-    mobile.style.transform = 'translateX(300px) translateY(-50%)'
     mobile.style.opacity = '0'
+    mobile.style.transform = 'translateX(400px) translateY(-50%)'
 
-    desktop.style.transition = 'opacity 0.8s ease, transform 0.8s ease'
-    tablet.style.transition = 'opacity 0.8s ease, transform 0.8s ease'
-    mobile.style.transition = 'opacity 0.8s ease, transform 0.8s ease'
-
-    // Handle scroll event to animate devices
-    const handleDeviceAnimation = () => {
-      if (!containerRef.current) return
-
-      const rect = containerRef.current.getBoundingClientRect()
+    const handleScroll = () => {
       const windowHeight = window.innerHeight
+      const containerRect = containerRef.current?.getBoundingClientRect()
 
-      // Calculate progress (0 to 1)
-      let progress = 1 - rect.bottom / (windowHeight + rect.height)
-      progress = Math.max(0, Math.min(1, progress))
+      if (!containerRect) return
 
-      // Animate devices based on scroll progress
-      if (progress > 0.1) {
-        // Animate desktop
-        const desktopProgress = Math.min(1, (progress - 0.1) * 3)
-        desktop.style.transform = `translateX(${-300 * (1 - desktopProgress)}px) translateY(-50%)`
-        desktop.style.opacity = desktopProgress.toString()
+      // Text animation - calculate progress based on position
+      const textRect = textRef.current?.getBoundingClientRect()
+      if (textRect) {
+        // Start when section is entering viewport, end when it's 80% through the viewport
+        // This makes the animation last much longer as user scrolls
+        const startPoint = windowHeight + containerRect.height * 0.3
+        const endPoint = windowHeight * 0.2 - containerRect.height * 0.3
+        const current = containerRect.top
+
+        let progress = (startPoint - current) / (startPoint - endPoint)
+        progress = Math.max(0, Math.min(1, progress))
+
+        // Apply transforms directly proportional to scroll
+        title.style.opacity = progress.toString()
+        title.style.transform = `translateY(${40 * (1 - progress)}px)`
+
+        // Slight delay for text
+        const textProgress = Math.max(0, Math.min(1, progress - 0.05))
+        text.style.opacity = textProgress.toString()
+        text.style.transform = `translateY(${40 * (1 - textProgress)}px)`
       }
 
-      if (progress > 0.3) {
-        // Animate tablet
-        const tabletProgress = Math.min(1, (progress - 0.3) * 3)
-        tablet.style.transform = `translate(-50%, ${200 * (1 - tabletProgress)}px)`
+      // Devices animation
+      const devicesRect = devicesRef.current?.getBoundingClientRect()
+      if (devicesRect) {
+        // Make devices animate over a longer scroll range
+        // This makes them move more gradually as user scrolls
+        const startPoint = windowHeight + containerRect.height * 0.4
+        const endPoint = windowHeight * 0.2 - containerRect.height * 0.4
+        const current = containerRect.top
+
+        let progress = (startPoint - current) / (startPoint - endPoint)
+        progress = Math.max(0, Math.min(1, progress))
+
+        // Desktop animation - directly tied to scroll
+        desktop.style.opacity = progress.toString()
+        desktop.style.transform = `translateX(${-400 * (1 - progress)}px) translateY(-50%)`
+
+        // Tablet animation - slightly different timing
+        const tabletProgress = Math.max(0, Math.min(1, progress * 0.9))
         tablet.style.opacity = tabletProgress.toString()
-      }
+        tablet.style.transform = `translate(-50%, ${200 * (1 - tabletProgress)}px)`
 
-      if (progress > 0.5) {
-        // Animate mobile
-        const mobileProgress = Math.min(1, (progress - 0.5) * 3)
-        mobile.style.transform = `translateX(${300 * (1 - mobileProgress)}px) translateY(-50%)`
+        // Mobile animation - slightly different timing
+        const mobileProgress = Math.max(0, Math.min(1, progress * 0.8))
         mobile.style.opacity = mobileProgress.toString()
+        mobile.style.transform = `translateX(${400 * (1 - mobileProgress)}px) translateY(-50%)`
       }
     }
 
     // Initial check
-    handleDeviceAnimation()
+    handleScroll()
 
     // Add scroll listener
-    window.addEventListener('scroll', handleDeviceAnimation, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
-      window.removeEventListener('scroll', handleDeviceAnimation)
+      window.removeEventListener('scroll', handleScroll)
     }
-  }, [containerRef])
+  }, [])
 
   return (
     <div
@@ -103,21 +118,24 @@ export function ResponsiveDesignSection() {
         <div className="absolute right-[40%] top-[30%] w-28 h-28 rounded-full border border-indigo-300 opacity-20"></div>
       </div>
 
-      <div className="max-w-4xl w-full mb-16 relative z-10">
+      <div
+        ref={textRef}
+        className="max-w-4xl w-full relative z-10 mb-12 lg:mb-0"
+      >
         <h2
-          className={`section-title text-4xl md:text-5xl font-bold mb-6 text-center ${theme.responsive.text.primary} opacity-0`}
+          className={`section-title text-5xl sm:text-6xl md:text-7xl text-center font-bold mb-6 ${theme.responsive.text.primary}`}
         >
           Responsive By Design
         </h2>
         <p
-          className={`section-text text-lg text-center ${theme.responsive.text.secondary} opacity-0`}
+          className={`section-text text-xl text-center sm:text-2xl md:text-3xl ${theme.responsive.text.secondary}`}
         >
           Creating experiences that work beautifully on every device
         </p>
       </div>
 
       <div ref={devicesRef} className="relative h-[50vh] w-full max-w-4xl z-10">
-        <div className="device-desktop absolute left-0 top-1/2 -translate-y-1/2 w-[65%] h-[70%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
+        <div className="device-desktop absolute left-0 top-1/2 w-[65%] h-[70%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
           <div className="h-6 bg-slate-700 flex items-center px-2">
             <div className="w-2 h-2 rounded-full bg-red-500 mr-1"></div>
             <div className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></div>
@@ -133,7 +151,7 @@ export function ResponsiveDesignSection() {
           </div>
         </div>
 
-        <div className="device-tablet absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[35%] h-[60%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
+        <div className="device-tablet absolute left-1/2 top-1/2 -translate-x-1/2 w-[35%] h-[60%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
           <div className="h-4 bg-slate-700"></div>
           <div className="p-3 flex flex-col h-[calc(100%-1rem)]">
             <div className="h-5 w-1/2 bg-slate-700 rounded mb-3"></div>
@@ -146,7 +164,7 @@ export function ResponsiveDesignSection() {
           </div>
         </div>
 
-        <div className="device-mobile absolute right-0 top-1/2 -translate-y-1/2 w-[20%] h-[50%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
+        <div className="device-mobile absolute right-0 top-1/2 w-[20%] h-[50%] bg-slate-800 rounded-lg shadow-xl overflow-hidden">
           <div className="h-3 bg-slate-700"></div>
           <div className="p-2 flex flex-col h-[calc(100%-0.75rem)]">
             <div className="h-4 w-1/2 bg-slate-700 rounded mb-2"></div>
