@@ -1,12 +1,15 @@
 import { createElement } from 'react'
 import * as runtime from 'react/jsx-runtime'
 import { run } from '@mdx-js/mdx'
-import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
+import {
+  data,
+  type LoaderFunctionArgs,
+  type MetaFunction,
+} from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { getBlogPost, validateBlogSlug } from '@/utils/blog'
 import { Page } from '@/components/layout'
-import type { BlogPost } from '@/types/blog'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data?.post) {
@@ -22,19 +25,30 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ]
 }
 
-interface LoaderData {
-  post: BlogPost
-  mdxContent: string
-}
+// Cache MDX content in memory
+const mdxCache = new Map<string, { content: string; timestamp: number }>()
 
-export async function loader({
-  params,
-}: LoaderFunctionArgs): Promise<LoaderData> {
+export async function loader({ params }: LoaderFunctionArgs) {
   const slug = validateBlogSlug(params)
   const post = await getBlogPost(slug)
 
   if (!post) {
     throw new Response('Not found', { status: 404 })
+  }
+
+  // Check if we have a cached version of the rendered MDX
+  const cached = mdxCache.get(slug)
+  if (cached) {
+    // Return cached content with caching headers
+    return data(
+      { post, mdxContent: cached.content },
+      {
+        headers: {
+          'Cache-Control': 'public, max-age=3600',
+          'Last-Modified': new Date(cached.timestamp).toUTCString(),
+        },
+      }
+    )
   }
 
   let mdxContent = ''
@@ -44,12 +58,27 @@ export async function loader({
       baseUrl: import.meta.url,
     })
     mdxContent = renderToStaticMarkup(createElement(Component))
+
+    // Cache the rendered content
+    mdxCache.set(slug, {
+      content: mdxContent,
+      timestamp: Date.now(),
+    })
   } catch (error) {
     console.error('Error rendering MDX:', error)
     mdxContent = '<div>Error rendering content</div>'
   }
 
-  return { post, mdxContent }
+  // Return response with caching headers
+  return data(
+    { post, mdxContent },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600',
+        'Last-Modified': new Date().toUTCString(),
+      },
+    }
+  )
 }
 
 export default function BlogPostPage() {

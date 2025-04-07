@@ -1,6 +1,6 @@
-import { type MetaFunction } from '@remix-run/node'
+import { data, type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
-import { getBlogPosts, type BlogPostListing } from '@/utils/blog'
+import { getBlogPosts } from '@/utils/blog'
 import { Grid, Page, PageHeader } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
@@ -14,14 +14,18 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-interface LoaderData {
-  posts: BlogPostListing[]
-}
-
-export async function loader(): Promise<LoaderData> {
+export async function loader() {
   const posts = await getBlogPosts()
 
-  return { posts }
+  return data(
+    { posts },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
+        'Last-Modified': new Date().toUTCString(),
+      },
+    }
+  )
 }
 
 export default function BlogIndex() {
