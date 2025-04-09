@@ -7,7 +7,6 @@ import { rehypePrettyCode } from 'rehype-pretty-code'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import { flatRoutes } from 'remix-flat-routes'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -40,16 +39,6 @@ export default defineConfig({
         v3_throwAbortReason: true,
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true,
-      },
-      routes(defineRoutes) {
-        return flatRoutes('routes', defineRoutes, {
-          ignoredRouteFiles: ['**/.*'], // Ignore dot files (like .DS_Store)
-          appDir: 'app',
-          routeDir: 'routes',
-          basePath: '/',
-          paramPrefixChar: '$',
-          nestedDirectoryChar: '+',
-        })
       },
     }),
     tailwindcss(),
