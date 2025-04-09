@@ -4,6 +4,7 @@ globs:
 alwaysApply: true
 ---
 This project is using Remix Vite, always refer to vite docs instead of remix classic docs.
+- Always use pnpm as the package manager!
 - Always use Tailwind CSS version 4 for styling and utilize shadcn ui to add components that they support and we dont currently dont have in the codebase, utilize radix ui for components structure.
 - Tailwind version 4 does not use a js config file, dont create one.
 - Always follow official best practices from respective package/tool.
