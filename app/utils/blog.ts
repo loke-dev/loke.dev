@@ -12,12 +12,6 @@ import type { BlogPost } from '@/types/blog'
 
 const BLOG_PATH = path.join(process.cwd(), 'app', 'posts')
 
-// Create LRU caches for MDX content and blog listings
-const mdxCache = new LRUCache<string, { content: string; timestamp: number }>({
-  max: 50,
-  ttl: 1000 * 60 * 60, // Cache for 1 hour
-})
-
 const blogListingsCache = new LRUCache<
   string,
   { posts: BlogPostListing[]; timestamp: number }
@@ -26,7 +20,6 @@ const blogListingsCache = new LRUCache<
   ttl: 1000 * 60 * 5, // Cache for 5 minutes
 })
 
-// MDX compilation configuration
 const MDX_COMPILE_OPTIONS: CompileOptions = {
   outputFormat: 'function-body',
   jsxImportSource: 'react',
@@ -44,6 +37,16 @@ const MDX_COMPILE_OPTIONS: CompileOptions = {
   ],
 } as const
 
+async function compileMdx(source: string): Promise<string> {
+  try {
+    const result = await compile(source, MDX_COMPILE_OPTIONS)
+    return String(result.value)
+  } catch (error) {
+    console.error('MDX Compilation Error:', error)
+    throw new Error('Failed to compile MDX content')
+  }
+}
+
 export interface BlogPostListing {
   slug: string
   title: string
@@ -54,7 +57,6 @@ export interface BlogPostListing {
 
 export async function getBlogPosts(): Promise<BlogPostListing[]> {
   try {
-    // Check cache first
     const cached = blogListingsCache.get('listings')
     const stats = await fs.stat(BLOG_PATH)
 
@@ -86,7 +88,6 @@ export async function getBlogPosts(): Promise<BlogPostListing[]> {
       .filter((post) => post.published)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-    // Cache the results
     blogListingsCache.set('listings', {
       posts: sortedPosts,
       timestamp: stats.mtimeMs,
@@ -105,37 +106,14 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     const source = await fs.readFile(filePath, 'utf8')
     const { data: frontmatter, content } = matter(source)
 
-    // Check if we have a valid cached version
-    const cached = mdxCache.get(slug)
-    const stats = await fs.stat(filePath)
-
-    if (cached && cached.timestamp >= stats.mtimeMs) {
-      return {
-        slug,
-        content: cached.content,
-        frontmatter: frontmatter as BlogPost['frontmatter'],
-        title: frontmatter.title as string,
-        description: frontmatter.description as string,
-        date: frontmatter.date as string,
-      }
-    }
-
-    const result = await compile(content, MDX_COMPILE_OPTIONS)
-    const processedContent = String(result)
-
-    // Cache the compiled content with timestamp
-    mdxCache.set(slug, {
-      content: processedContent,
-      timestamp: stats.mtimeMs,
-    })
-
     return {
       slug,
-      content: processedContent,
-      frontmatter: frontmatter as BlogPost['frontmatter'],
-      title: frontmatter.title as string,
-      description: frontmatter.description as string,
-      date: frontmatter.date as string,
+      content,
+      title: frontmatter.title,
+      description: frontmatter.description,
+      date: frontmatter.date,
+      published: frontmatter.published !== false,
+      compiledContent: await compileMdx(content),
     }
   } catch (error) {
     console.error(`Error getting blog post ${slug}:`, error)

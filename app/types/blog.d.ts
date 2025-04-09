@@ -3,8 +3,10 @@ export interface BlogPost {
   title: string
   description: string
   date: string
+  published: boolean
   content: string
-  frontmatter: {
+  compiledContent: string
+  frontmatter?: {
     title: string
     description: string
     date: string
