@@ -14,6 +14,7 @@ import { getHints } from '@/utils/hints'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { Toaster } from '@/components/ui/toast'
 import appStyles from '@/styles/app.css?url'
 import tailwindStyles from '@/styles/tailwind.css?url'
 
@@ -65,6 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {children}
           <Footer />
         </div>
+        <Toaster theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
         <Scripts />
       </body>

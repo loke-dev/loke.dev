@@ -1,4 +1,5 @@
 import path from 'path'
+import contentCollections from '@content-collections/remix-vite'
 import mdx from '@mdx-js/rollup'
 import { vitePlugin as remix } from '@remix-run/dev'
 import tailwindcss from '@tailwindcss/vite'
@@ -53,6 +54,7 @@ export default defineConfig({
     }),
     tailwindcss(),
     tsconfigPaths(),
+    contentCollections(),
   ],
   resolve: {
     alias: {

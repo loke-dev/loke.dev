@@ -1,67 +1,66 @@
-import { useMemo } from 'react'
-import * as runtime from 'react/jsx-runtime'
-import { runSync } from '@mdx-js/mdx'
-import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { getBlogPost, validateBlogSlug } from '@/utils/blog'
+import { MDXContent } from '@content-collections/mdx/react'
+import { LoaderFunctionArgs } from '@remix-run/node'
+import { MetaFunction, useLoaderData } from '@remix-run/react'
+import { allPosts } from 'content-collections'
+import { setFlashMessage } from '@/utils/session.server'
+import { Callout } from '@/components/callout'
 import { Page } from '@/components/layout'
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  const slug = validateBlogSlug(params)
-  const post = await getBlogPost(slug)
+export const meta: MetaFunction = ({ params }) => {
+  const post = allPosts.find((post) => post.title === params.slug)
+
+  return [
+    { title: `Blog - ${post?.title}` },
+    {
+      name: 'description',
+      content:
+        'Articles, guides, and thoughts on web development and technology',
+    },
+  ]
+}
+
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  const post = allPosts.find((post) => post._meta.path === params.slug)
 
   if (!post) {
-    throw new Response('Post not found', { status: 404 })
+    return setFlashMessage(
+      request,
+      `Post "${params.slug}" was not found`,
+      'error',
+      '/blog'
+    )
   }
 
-  if (!post.published) {
-    return redirect('/blog')
-  }
-
-  return {
-    title: post.title,
-    description: post.description,
-    date: post.date,
-    slug: post.slug,
-    compiledContent: post.compiledContent,
-  }
+  return { post }
 }
 
 export default function BlogPostPage() {
-  const { title, description, date, compiledContent } =
-    useLoaderData<typeof loader>()
+  const { post } = useLoaderData<typeof loader>()
 
-  const MdxComponent = useMemo(() => {
-    if (!compiledContent) return () => null
-    try {
-      const { default: Component } = runSync(compiledContent, {
-        ...runtime,
-      })
-      return Component
-    } catch (error) {
-      console.error('Error running compiled MDX:', error)
-      const ErrorDisplay = () => <div>Error rendering post content.</div>
-      ErrorDisplay.displayName = 'MdxErrorDisplay'
-      return ErrorDisplay
-    }
-  }, [compiledContent])
+  if (!post) {
+    return <div>Post not found</div>
+  }
 
   return (
     <Page size="md">
       <article>
         <header className="mb-8 text-center">
           <time className="text-sm text-muted-foreground">
-            {new Date(date).toLocaleDateString('en-US', {
+            {new Date(post.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
             })}
           </time>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight">{title}</h1>
-          <p className="mt-4 text-xl text-muted-foreground">{description}</p>
+          <h1 className="mt-2 text-4xl font-bold tracking-tight">
+            {post.title}
+          </h1>
+          <p className="mt-4 text-xl text-muted-foreground">
+            {post.description}
+          </p>
         </header>
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <MdxComponent />
+          <MDXContent code={post.body} components={{ Callout }} />
         </div>
       </article>
     </Page>
