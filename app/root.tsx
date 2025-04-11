@@ -1,3 +1,4 @@
+import { useSWEffect } from '@remix-pwa/sw'
 import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import {
   isRouteErrorResponse,
@@ -76,6 +77,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // The default export renders the happy path
 export default function App() {
+  useSWEffect()
+
   return <Outlet />
 }
 

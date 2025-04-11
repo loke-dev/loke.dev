@@ -1,6 +1,7 @@
 import path from 'path'
 import contentCollections from '@content-collections/remix-vite'
 import mdx from '@mdx-js/rollup'
+import { remixPWA } from '@remix-pwa/dev'
 import { vitePlugin as remix } from '@remix-run/dev'
 import tailwindcss from '@tailwindcss/vite'
 import { rehypePrettyCode } from 'rehype-pretty-code'
@@ -44,6 +45,7 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     contentCollections(),
+    remixPWA(),
   ],
   resolve: {
     alias: {
