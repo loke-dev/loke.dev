@@ -55,20 +55,36 @@ declare let self: ServiceWorkerGlobalScope
 self.addEventListener('install', (event) => {
   logger.log('Service worker installed')
 
-  // Preload essential files
+  // Preload essential files - use absolute URLs and filter out any that fail
   const precacheResources = [
-    '/_offline',
-    '/manifest.json',
-    '/favicon.ico',
-    '/loke_clay.png',
+    self.location.origin + '/_offline',
+    self.location.origin + '/manifest.json',
+    self.location.origin + '/favicon.ico',
+    self.location.origin + '/loke_clay.png',
   ]
 
   event.waitUntil(
     Promise.all([
       self.skipWaiting(),
-      caches
-        .open(DOCUMENT_CACHE_NAME)
-        .then((cache) => cache.addAll(precacheResources)),
+      // Try to cache each resource separately and ignore failures
+      (async () => {
+        const cache = await caches.open(DOCUMENT_CACHE_NAME)
+        // Add each resource individually so a single failure doesn't break the whole cache
+        await Promise.allSettled(
+          precacheResources.map(async (url) => {
+            try {
+              const response = await fetch(url, { cache: 'reload' })
+              if (!response.ok) {
+                throw new Error(`Failed to fetch ${url}: ${response.status}`)
+              }
+              return cache.put(url, response)
+            } catch (error) {
+              logger.error(`Failed to cache ${url}:`, error)
+              return Promise.resolve() // Continue despite error
+            }
+          })
+        )
+      })(),
     ])
   )
 })
@@ -134,6 +150,57 @@ export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
   const request = context.event.request
   const url = new URL(request.url)
 
+  // Special case for the offline route
+  if (url.pathname === '/_offline') {
+    // First try to fetch from network
+    try {
+      const response = await fetch(request)
+      // If successful, clone and cache it
+      if (response.ok) {
+        const responseClone = response.clone()
+        caches.open(DOCUMENT_CACHE_NAME).then((cache) => {
+          cache.put(request, responseClone)
+          logger.log('Cached offline page from network')
+        })
+      }
+      return response
+    } catch {
+      // If network fails, check all caches
+      const allCaches = await caches.keys()
+      for (const cacheName of allCaches) {
+        const cache = await caches.open(cacheName)
+        const cachedResponse = await cache.match(request)
+        if (cachedResponse) return cachedResponse
+      }
+
+      // Otherwise, create a simple offline response
+      return new Response(
+        `<!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <title>You're Offline</title>
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <style>
+              body { font-family: system-ui, sans-serif; padding: 2rem; text-align: center; }
+              h1 { font-size: 1.5rem; }
+            </style>
+          </head>
+          <body>
+            <h1>You're offline</h1>
+            <p>Please check your internet connection and try again.</p>
+            <button onclick="window.location.href='/'">Try Homepage</button>
+            <button onclick="window.location.reload()">Retry</button>
+          </body>
+        </html>`,
+        {
+          status: 200,
+          headers: { 'Content-Type': 'text/html' },
+        }
+      )
+    }
+  }
+
   if (isDocumentRequest(request)) {
     try {
       return await documentCache.handleRequest(request)
@@ -142,7 +209,21 @@ export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
 
       // If we're offline and the document isn't cached, serve the offline page
       if (!isOnline) {
-        const offlineResponse = await caches.match('/_offline')
+        const offlineUrl = self.location.origin + '/_offline'
+
+        // Try exact match first
+        let offlineResponse = await caches.match(offlineUrl)
+
+        // If no exact match, try any match
+        if (!offlineResponse) {
+          const allCaches = await caches.keys()
+          for (const cacheName of allCaches) {
+            const cacheInstance = await caches.open(cacheName)
+            offlineResponse = await cacheInstance.match(offlineUrl)
+            if (offlineResponse) break
+          }
+        }
+
         if (offlineResponse) return offlineResponse
       }
 
@@ -191,11 +272,23 @@ self.addEventListener('fetch', (event: FetchEvent) => {
           }
 
           return await fetch(request)
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
+        } catch {
           // If offline, try to serve the offline page
           const cache = await caches.open(DOCUMENT_CACHE_NAME)
-          const cachedResponse = await cache.match('/_offline')
+          const offlineUrl = self.location.origin + '/_offline'
+
+          // Try exact match first
+          let cachedResponse = await cache.match(offlineUrl)
+
+          // If no exact match, try any match
+          if (!cachedResponse) {
+            const allCaches = await caches.keys()
+            for (const cacheName of allCaches) {
+              const cacheInstance = await caches.open(cacheName)
+              cachedResponse = await cacheInstance.match(offlineUrl)
+              if (cachedResponse) break
+            }
+          }
 
           if (cachedResponse) {
             return cachedResponse

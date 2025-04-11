@@ -169,8 +169,12 @@ export default function Index() {
                 </CardContent>
                 <CardFooter>
                   <Button variant="ghost" asChild className="gap-1">
-                    <Link to={`/blog/${post._meta.path}`}>
-                      Read more <ArrowRight className="h-4 w-4" />
+                    <Link
+                      to={`/blog/${post._meta.path}`}
+                      aria-label={`Read more about ${post.title}`}
+                    >
+                      Read more{' '}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                   </Button>
                 </CardFooter>
@@ -181,8 +185,9 @@ export default function Index() {
 
         <div className="flex justify-center mt-12">
           <Button asChild size="lg">
-            <Link to="/blog">
-              View All Articles <ArrowRight className="ml-2 h-4 w-4" />
+            <Link to="/blog" aria-label="View all blog articles">
+              View All Articles{' '}
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
         </div>

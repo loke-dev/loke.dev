@@ -54,7 +54,12 @@ export default function BlogIndex() {
                 key={post.title}
                 className="group rounded-lg border p-6 transition-colors hover:bg-muted/50"
               >
-                <Link to={post._meta.path} className="block" prefetch="intent">
+                <Link
+                  to={post._meta.path}
+                  className="block"
+                  prefetch="intent"
+                  aria-labelledby={`post-title-${post._meta.path}`}
+                >
                   <div className="mb-2 flex items-center text-sm text-muted-foreground">
                     <time dateTime={post.date}>
                       {new Date(post.date).toLocaleDateString('en-US', {
@@ -64,13 +69,18 @@ export default function BlogIndex() {
                       })}
                     </time>
                   </div>
-                  <h2 className="mb-2 text-2xl font-bold tracking-tight group-hover:underline">
+                  <h2
+                    id={`post-title-${post._meta.path}`}
+                    className="mb-2 text-2xl font-bold tracking-tight group-hover:underline"
+                  >
                     {post.title}
                   </h2>
                   <p className="text-muted-foreground">{post.description}</p>
                   <div className="mt-4">
                     <span className="text-sm font-medium text-primary group-hover:underline">
-                      Read more →
+                      Read more{' '}
+                      <span className="sr-only">about {post.title}</span>{' '}
+                      <span aria-hidden="true">→</span>
                     </span>
                   </div>
                 </Link>

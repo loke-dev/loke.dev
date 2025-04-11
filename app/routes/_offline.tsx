@@ -1,4 +1,20 @@
+import { MetaFunction } from '@remix-run/node'
 import { Link } from '@remix-run/react'
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "You're Offline | Loke.dev" },
+    { name: 'description', content: 'Offline page for Loke.dev' },
+  ]
+}
+
+export function loader() {
+  return new Response(null, {
+    headers: {
+      'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+    },
+  })
+}
 
 export default function Offline() {
   return (
