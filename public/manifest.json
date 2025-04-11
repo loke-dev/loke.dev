@@ -1,0 +1,22 @@
+{
+  "name": "Loke.dev",
+  "short_name": "Loke.dev",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030711",
+  "theme_color": "#1e293b",
+  "description": "Loke Carlsson's personal website and blog",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/loke_clay.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

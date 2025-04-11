@@ -15,6 +15,7 @@ import { getHints } from '@/utils/hints'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { NetworkStatusIndicator } from '@/components/network-status'
 import { Toaster } from '@/components/ui/toast'
 import appStyles from '@/styles/app.css?url'
 import tailwindStyles from '@/styles/tailwind.css?url'
@@ -32,6 +33,7 @@ export const links: LinksFunction = () => [
     rel: 'stylesheet',
     href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
   },
+  { rel: 'manifest', href: '/manifest.json' },
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -57,6 +59,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content={isDark ? '#030711' : '#ffffff'} />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="application-name" content="Loke.dev" />
+        <meta name="apple-mobile-web-app-title" content="Loke.dev" />
+        <link rel="apple-touch-icon" href="/loke_clay.png" />
         <ClientHintCheck />
         <Links />
         <Meta />
@@ -67,6 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {children}
           <Footer />
         </div>
+        <NetworkStatusIndicator />
         <Toaster theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
         <Scripts />

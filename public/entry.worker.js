@@ -68,7 +68,7 @@ const _Logger = class _Logger {
 };
 __publicField(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
 let Logger = _Logger;
-new Logger();
+const logger$1 = new Logger();
 function getAugmentedNamespace(n) {
   if (n.__esModule) return n;
   var f = n.default;
@@ -104,6 +104,51 @@ function isDocumentRequest(e) {
   return isMethod$1(e, ["get"]) && "navigate" === e.mode;
 }
 const isHttpRequest = (e) => e instanceof Request ? e.url.startsWith("http") : e.toString().startsWith("http");
+const _MessageHandler = class _MessageHandler {
+  constructor(e) {
+    __publicField(this, "eventName");
+    this.eventName = e;
+  }
+  bind(e) {
+    _MessageHandler.messageHandlers[this.eventName] = e;
+  }
+  async handleMessage(e) {
+    const { data: s } = e;
+    if ("object" == typeof s && s.type && _MessageHandler.messageHandlers[s.type]) try {
+      await _MessageHandler.messageHandlers[s.type](e);
+    } catch (e2) {
+      logger$1.error(`Error handling message of type ${s.type}:`, e2);
+    }
+  }
+};
+__publicField(_MessageHandler, "messageHandlers", {});
+let MessageHandler = _MessageHandler;
+class NavigationHandler extends MessageHandler {
+  constructor(e) {
+    super("REMIX_NAVIGATION");
+    __publicField(this, "allowList");
+    __publicField(this, "denyList");
+    __publicField(this, "documentCache");
+    __publicField(this, "logger");
+    this.allowList = e.allowList || [], this.denyList = e.denyList || [], this.documentCache = e.cache, this.logger = e.logger || logger$1, this.bind(this.handleNavigation.bind(this));
+  }
+  async handleNavigation(e) {
+    const { data: t } = e, { isSsr: o, location: s } = t.payload, r = s.pathname + s.search + s.hash;
+    if (!(this.allowList.length > 0 && !this.allowList.some((e2) => r.match(e2)) || this.denyList.length > 0 && this.denyList.some((e2) => r.match(e2)))) try {
+      if (!await this.documentCache.match(r) && "CacheOnly" !== this.documentCache.strategy.constructor.name) {
+        this.logger.debug(`Document request for ${r} not found in cache. Fetching from server...`);
+        const e2 = await fetch(r).catch((e3) => {
+          this.logger.error(`Error fetching document for ${r}:`, e3);
+        });
+        if (!e2) return;
+        return await this.documentCache.addToCache(r, e2.clone());
+      }
+      o && (this.logger.setLogLevel("warn"), this.logger.log(`Document request for ${r} handled.`), this.logger.setLogLevel("debug"));
+    } catch (e2) {
+      this.logger.error(`Error handling document request for ${r}:`, e2);
+    }
+  }
+}
 const CACHE_TIMESTAMP_HEADER = "sw-cache-timestamp";
 class BaseStrategy {
   constructor(e, t = { maxEntries: 50, matchOptions: {} }) {
@@ -4785,31 +4830,143 @@ const dataCache = new EnhancedCache(DATA_CACHE_NAME, {
     maxEntries: 72
   }
 });
+let isOnline = true;
 self.addEventListener("install", (event) => {
   logger.log("Service worker installed");
-  event.waitUntil(self.skipWaiting());
+  const precacheResources = [
+    "/_offline",
+    "/manifest.json",
+    "/favicon.ico",
+    "/loke_clay.png"
+  ];
+  event.waitUntil(
+    Promise.all([
+      self.skipWaiting(),
+      caches.open(DOCUMENT_CACHE_NAME).then((cache) => cache.addAll(precacheResources))
+    ])
+  );
 });
 self.addEventListener("activate", (event) => {
   logger.log("Service worker activated");
-  event.waitUntil(self.clients.claim());
+  const currentCaches = [DOCUMENT_CACHE_NAME, ASSET_CACHE_NAME, DATA_CACHE_NAME];
+  event.waitUntil(
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (!currentCaches.includes(cacheName)) {
+              logger.log(`Deleting outdated cache: ${cacheName}`);
+              return caches.delete(cacheName);
+            }
+            return null;
+          }).filter(Boolean)
+        );
+      })
+    ])
+  );
+});
+self.addEventListener("online", () => {
+  isOnline = true;
+  logger.log("App is online");
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => client.postMessage({ type: "ONLINE" }));
+  });
+});
+self.addEventListener("offline", () => {
+  isOnline = false;
+  logger.log("App is offline");
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => client.postMessage({ type: "OFFLINE" }));
+  });
+});
+self.addEventListener("sync", (event) => {
+  const syncEvent = event;
+  if (syncEvent.tag === "deferred-operations") {
+    logger.log("Performing deferred operations sync");
+  }
 });
 const defaultFetchHandler = async ({ context }) => {
   const request = context.event.request;
   const url = new URL(request.url);
   if (isDocumentRequest(request)) {
-    return documentCache.handleRequest(request);
+    try {
+      return await documentCache.handleRequest(request);
+    } catch (error) {
+      logger.error("Failed to serve document from cache:", error);
+      if (!isOnline) {
+        const offlineResponse = await caches.match("/_offline");
+        if (offlineResponse)
+          return offlineResponse;
+      }
+      return fetch(request);
+    }
   }
   if (isLoaderRequest$1(request)) {
-    return dataCache.handleRequest(request);
+    try {
+      return await dataCache.handleRequest(request);
+    } catch (error) {
+      logger.error("Failed to serve loader data from cache:", error);
+      return fetch(request);
+    }
   }
   if (self.__workerManifest.assets.includes(url.pathname)) {
     return assetCache.handleRequest(request);
   }
   return fetch(request);
 };
+const messageHandler = new NavigationHandler({
+  cache: documentCache
+});
+self.addEventListener("message", (event) => {
+  event.waitUntil(messageHandler.handleMessage(event));
+});
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.mode === "navigate") {
+    event.respondWith(
+      (async () => {
+        try {
+          const preloadResponse = await event.preloadResponse;
+          if (preloadResponse) {
+            return preloadResponse;
+          }
+          return await fetch(request);
+        } catch (error) {
+          const cache = await caches.open(DOCUMENT_CACHE_NAME);
+          const cachedResponse = await cache.match("/_offline");
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return new Response(
+            "You are offline and the offline page is not cached.",
+            {
+              status: 503,
+              headers: { "Content-Type": "text/plain" }
+            }
+          );
+        }
+      })()
+    );
+  }
+});
 const entryWorker = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   defaultFetchHandler
+}, Symbol.toStringTag, { value: "Module" }));
+var __getOwnPropNames$8 = Object.getOwnPropertyNames;
+var __commonJS$8 = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames$8(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var require_worker_runtime$8 = __commonJS$8({
+  "@remix-pwa/worker-runtime"(exports, module) {
+    module.exports = {};
+  }
+});
+var worker_runtime_default$8 = require_worker_runtime$8();
+const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: worker_runtime_default$8
 }, Symbol.toStringTag, { value: "Module" }));
 var __getOwnPropNames$7 = Object.getOwnPropertyNames;
 var __commonJS$7 = (cb, mod) => function __require() {
@@ -4821,7 +4978,7 @@ var require_worker_runtime$7 = __commonJS$7({
   }
 });
 var worker_runtime_default$7 = require_worker_runtime$7();
-const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$7
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4835,7 +4992,7 @@ var require_worker_runtime$6 = __commonJS$6({
   }
 });
 var worker_runtime_default$6 = require_worker_runtime$6();
-const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$6
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4849,7 +5006,7 @@ var require_worker_runtime$5 = __commonJS$5({
   }
 });
 var worker_runtime_default$5 = require_worker_runtime$5();
-const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$5
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4863,7 +5020,7 @@ var require_worker_runtime$4 = __commonJS$4({
   }
 });
 var worker_runtime_default$4 = require_worker_runtime$4();
-const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$4
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4877,7 +5034,7 @@ var require_worker_runtime$3 = __commonJS$3({
   }
 });
 var worker_runtime_default$3 = require_worker_runtime$3();
-const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$3
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4891,7 +5048,7 @@ var require_worker_runtime$2 = __commonJS$2({
   }
 });
 var worker_runtime_default$2 = require_worker_runtime$2();
-const route5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$2
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4905,7 +5062,7 @@ var require_worker_runtime$1 = __commonJS$1({
   }
 });
 var worker_runtime_default$1 = require_worker_runtime$1();
-const route6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -4919,14 +5076,15 @@ var require_worker_runtime = __commonJS({
   }
 });
 var worker_runtime_default = require_worker_runtime();
-const route7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default
 }, Symbol.toStringTag, { value: "Module" }));
 const assets = [
   "/entry.worker.js",
   "/favicon.ico",
-  "/loke_clay.png"
+  "/loke_clay.png",
+  "/manifest.json"
 ];
 const routes = {
   "root": {
@@ -4977,6 +5135,18 @@ const routes = {
     hasWorkerAction: false,
     module: route3
   },
+  "routes/_offline": {
+    id: "routes/_offline",
+    parentId: "root",
+    path: void 0,
+    index: void 0,
+    caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
+    module: route4
+  },
   "routes/projects": {
     id: "routes/projects",
     parentId: "root",
@@ -4987,7 +5157,7 @@ const routes = {
     hasAction: false,
     hasWorkerLoader: false,
     hasWorkerAction: false,
-    module: route4
+    module: route5
   },
   "routes/contact": {
     id: "routes/contact",
@@ -4999,7 +5169,7 @@ const routes = {
     hasAction: false,
     hasWorkerLoader: false,
     hasWorkerAction: false,
-    module: route5
+    module: route6
   },
   "routes/_index": {
     id: "routes/_index",
@@ -5011,7 +5181,7 @@ const routes = {
     hasAction: false,
     hasWorkerLoader: false,
     hasWorkerAction: false,
-    module: route6
+    module: route7
   },
   "routes/about": {
     id: "routes/about",
@@ -5023,7 +5193,7 @@ const routes = {
     hasAction: false,
     hasWorkerLoader: false,
     hasWorkerAction: false,
-    module: route7
+    module: route8
   }
 };
 const entry = { module: entryWorker };
