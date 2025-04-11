@@ -3,6 +3,7 @@ import { Link, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { useBfcache } from '@/hooks/useBfcache'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +24,14 @@ export const meta: MetaFunction = () => {
   ]
 }
 
+// Add HTTP headers for bfcache support
+export function headers() {
+  return {
+    'Cache-Control': 'no-cache',
+    'Permissions-Policy': 'unload=()',
+  }
+}
+
 export async function loader() {
   // Get the latest 3 blog posts
   const latestPosts = allPosts
@@ -34,6 +43,9 @@ export async function loader() {
 
 export default function Index() {
   const { latestPosts } = useLoaderData<typeof loader>()
+
+  // Enable back/forward cache support
+  useBfcache()
 
   return (
     <div className="flex flex-col items-center">

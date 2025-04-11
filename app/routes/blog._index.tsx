@@ -4,6 +4,7 @@ import { Link, MetaFunction, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
 import { toast } from 'sonner'
 import { getFlashMessage } from '@/utils/session.server'
+import { useBfcache } from '@/hooks/useBfcache'
 import { Grid, Page, PageHeader } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
@@ -17,6 +18,14 @@ export const meta: MetaFunction = () => {
   ]
 }
 
+// Add HTTP headers for bfcache support
+export function headers() {
+  return {
+    'Cache-Control': 'no-cache',
+    'Permissions-Policy': 'unload=()',
+  }
+}
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { toast, headers } = await getFlashMessage(request)
 
@@ -25,6 +34,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function BlogIndex() {
   const { posts, toast: flashMessage } = useLoaderData<typeof loader>()
+
+  // Enable back/forward cache support
+  useBfcache()
 
   useEffect(() => {
     if (flashMessage) {

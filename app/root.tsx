@@ -13,12 +13,21 @@ import {
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
+import { useBfcache } from '@/hooks/useBfcache'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { NetworkStatusIndicator } from '@/components/network-status'
 import { Toaster } from '@/components/ui/toast'
 import appStyles from '@/styles/app.css?url'
 import tailwindStyles from '@/styles/tailwind.css?url'
+
+// Add HTTP headers for bfcache support
+export function headers() {
+  return {
+    'Cache-Control': 'no-cache',
+    'Permissions-Policy': 'unload=()',
+  }
+}
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindStyles },
@@ -81,6 +90,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 // The default export renders the happy path
 export default function App() {
   useSWEffect()
+
+  // Enable back/forward cache support
+  useBfcache(() => {
+    // Optionally refresh data or perform other actions on bfcache restoration
+    console.log('Page restored from back/forward cache')
+  })
 
   return <Outlet />
 }
