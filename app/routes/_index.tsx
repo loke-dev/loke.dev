@@ -171,9 +171,9 @@ export default function Index() {
                   <Button variant="ghost" asChild className="gap-1">
                     <Link
                       to={`/blog/${post._meta.path}`}
-                      aria-label={`Read more about ${post.title}`}
+                      aria-label={`Read article: ${post.title}`}
                     >
-                      Read more{' '}
+                      Read article: {post.title}{' '}
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                   </Button>

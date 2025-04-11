@@ -78,8 +78,7 @@ export default function BlogIndex() {
                   <p className="text-muted-foreground">{post.description}</p>
                   <div className="mt-4">
                     <span className="text-sm font-medium text-primary group-hover:underline">
-                      Read more{' '}
-                      <span className="sr-only">about {post.title}</span>{' '}
+                      Read article: {post.title}{' '}
                       <span aria-hidden="true">→</span>
                     </span>
                   </div>
