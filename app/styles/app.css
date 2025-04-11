@@ -35,9 +35,9 @@ pre[data-theme] {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem 1.5rem;
-  background-color: var(--shiki-light-bg) !important;
+  background-color: var(--shiki-light-bg);
 }
 
 html.dark pre[data-theme] {
-  background-color: var(--shiki-dark-bg) !important;
+  background-color: var(--shiki-dark-bg);
 }

@@ -17,7 +17,18 @@ const posts = defineCollection({
   transform: async (document, context) => {
     const body = await compileMDX(context, document, {
       remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypePrettyCode],
+      rehypePlugins: [
+        [
+          rehypePrettyCode,
+          {
+            theme: {
+              dark: 'min-dark',
+              light: 'catppuccin-latte',
+            },
+            keepBackground: true,
+          },
+        ],
+      ],
     })
     return {
       ...document,
