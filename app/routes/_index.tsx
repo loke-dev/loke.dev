@@ -185,7 +185,7 @@ export default function Index() {
                       to={`/blog/${post._meta.path}`}
                       aria-label={`Read article: ${post.title}`}
                     >
-                      Read article: {post.title}{' '}
+                      Read article{' '}
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                   </Button>
