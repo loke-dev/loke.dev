@@ -5,3 +5,8 @@ node_modules
 .env
 
 .content-collections
+
+.DS_Store
+
+# Service Worker
+public/entry.worker.js
