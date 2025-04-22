@@ -9,4 +9,4 @@ node_modules
 .DS_Store
 
 # Service Worker
-public/entry.worker.js
+/public/entry.worker.js
