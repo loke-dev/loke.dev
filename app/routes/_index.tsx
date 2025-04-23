@@ -197,7 +197,7 @@ export default function Index() {
 
         <div className="flex justify-center mt-12">
           <Button asChild size="lg">
-            <Link to="/blog" aria-label="View all blog articles">
+            <Link to="/blog" aria-label="View All Articles">
               View All Articles{' '}
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Link>

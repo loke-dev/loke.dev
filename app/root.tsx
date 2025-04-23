@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useSWEffect } from '@remix-pwa/sw'
 import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import {
@@ -13,6 +14,7 @@ import {
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
+import { toast } from '@/utils/toast'
 import { useBfcache } from '@/hooks/useBfcache'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
@@ -33,7 +35,43 @@ export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindStyles },
   { rel: 'stylesheet', href: appStyles },
 
+  // PWA manifest
   { rel: 'manifest', href: '/manifest.json' },
+
+  // Favicon links
+  { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+  {
+    rel: 'icon',
+    type: 'image/png',
+    sizes: '32x32',
+    href: '/favicon-32x32.png',
+  },
+  {
+    rel: 'icon',
+    type: 'image/png',
+    sizes: '16x16',
+    href: '/favicon-16x16.png',
+  },
+
+  // Apple touch icon links
+  { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+
+  // Android chrome icons
+  {
+    rel: 'icon',
+    type: 'image/png',
+    sizes: '192x192',
+    href: '/android-chrome-192x192.png',
+  },
+  {
+    rel: 'icon',
+    type: 'image/png',
+    sizes: '512x512',
+    href: '/android-chrome-512x512.png',
+  },
+
+  // Preload critical assets
+  { rel: 'preload', href: '/android-chrome-192x192.png', as: 'image' },
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -67,7 +105,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <meta name="application-name" content="Loke.dev" />
         <meta name="apple-mobile-web-app-title" content="Loke.dev" />
-        <link rel="apple-touch-icon" href="/loke_clay.png" />
+
+        {/* PWA related meta tags */}
+        <meta name="description" content="Lokes personal website and blog" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <ClientHintCheck />
         <Links />
         <Meta />
@@ -89,6 +133,45 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // The default export renders the happy path
 export default function App() {
+  const [swRegistered, setSwRegistered] = useState(false)
+
+  // Service worker event listener for registration and updates
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      const handleUpdate = () => {
+        toast('Update available', {
+          description:
+            'A new version of this site is available. Reload to update.',
+          action: {
+            label: 'Reload',
+            onClick: () => window.location.reload(),
+          },
+          duration: 10000,
+        })
+      }
+
+      const handleSuccess = () => {
+        if (!swRegistered) {
+          setSwRegistered(true)
+          console.log('Service worker registered successfully')
+        }
+      }
+
+      // Listen for service worker events
+      navigator.serviceWorker.addEventListener('controllerchange', handleUpdate)
+
+      // Check service worker registration
+      navigator.serviceWorker.ready.then(handleSuccess)
+
+      return () => {
+        navigator.serviceWorker.removeEventListener(
+          'controllerchange',
+          handleUpdate
+        )
+      }
+    }
+  }, [swRegistered])
+
   useSWEffect()
 
   // Enable back/forward cache support

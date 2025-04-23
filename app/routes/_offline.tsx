@@ -1,5 +1,7 @@
 import { MetaFunction } from '@remix-run/node'
 import { Link } from '@remix-run/react'
+import { WifiOff } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,27 +18,35 @@ export function loader() {
   })
 }
 
-export default function Offline() {
+export default function OfflinePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] p-4 text-center">
-      <h1 className="text-3xl font-bold mb-4">You&rsquo;re offline</h1>
-      <p className="mb-6 max-w-md">
-        It looks like you&rsquo;re currently offline. Some content may not be
-        available until you reconnect to the internet.
+      <div className="rounded-full bg-muted p-6 mb-6">
+        <WifiOff className="h-12 w-12 text-muted-foreground" />
+      </div>
+
+      <h1 className="text-3xl font-bold mb-4">You&rsquo;re Offline</h1>
+
+      <p className="text-muted-foreground max-w-md mb-8">
+        It looks like you&rsquo;ve lost your internet connection. Some content
+        and functionality may be limited while you&rsquo;re offline.
       </p>
-      <div className="flex gap-4">
-        <Link
-          to="/"
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-        >
-          Try Homepage
-        </Link>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-        >
-          Retry
-        </button>
+
+      <div className="flex flex-wrap gap-4 justify-center">
+        <Button onClick={() => window.location.reload()}>
+          Try Reconnecting
+        </Button>
+
+        <Button variant="outline" asChild>
+          <Link to="/">Go to Homepage</Link>
+        </Button>
+      </div>
+
+      <div className="mt-12 text-sm text-muted-foreground">
+        <p>
+          This site is available offline thanks to Progressive Web App
+          technology. You can still access previously visited pages.
+        </p>
       </div>
     </div>
   )

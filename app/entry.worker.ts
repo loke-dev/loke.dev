@@ -9,24 +9,30 @@ import {
   type DefaultFetchHandler,
 } from '@remix-pwa/sw'
 
-const version = 'v1'
+// Use a timestamp or build hash for automatic version-based invalidation
+// This will be updated on each build to ensure cache invalidation
+const version = 'v1-' + new Date().toISOString().split('T')[0]
 
-const DOCUMENT_CACHE_NAME = `document-cache`
-const ASSET_CACHE_NAME = `asset-cache`
-const DATA_CACHE_NAME = `data-cache`
+const DOCUMENT_CACHE_NAME = `document-cache-${version}`
+const ASSET_CACHE_NAME = `asset-cache-${version}`
+const DATA_CACHE_NAME = `data-cache-${version}`
 
 const logger = new Logger({
   prefix: '[Loke-dev]',
 })
 
+// Document cache - CacheFirst strategy for HTML pages
 const documentCache = new EnhancedCache(DOCUMENT_CACHE_NAME, {
   version,
   strategy: 'CacheFirst',
   strategyOptions: {
     maxEntries: 64,
+    // Add cache expiration for documents
+    maxAgeSeconds: 60 * 60 * 24, // 1 day
   },
 })
 
+// Asset cache - CacheFirst with longer expiration for static assets
 const assetCache = new EnhancedCache(ASSET_CACHE_NAME, {
   version,
   strategy: 'CacheFirst',
@@ -36,12 +42,14 @@ const assetCache = new EnhancedCache(ASSET_CACHE_NAME, {
   },
 })
 
+// Data cache - NetworkFirst for API data
 const dataCache = new EnhancedCache(DATA_CACHE_NAME, {
   version,
   strategy: 'NetworkFirst',
   strategyOptions: {
     networkTimeoutInSeconds: 10,
     maxEntries: 72,
+    maxAgeSeconds: 60 * 60, // 1 hour stale data is acceptable
   },
 })
 
@@ -60,7 +68,9 @@ self.addEventListener('install', (event) => {
     self.location.origin + '/_offline',
     self.location.origin + '/manifest.json',
     self.location.origin + '/favicon.ico',
-    self.location.origin + '/loke_clay.png',
+    self.location.origin + '/android-chrome-512x512.png',
+    self.location.origin + '/android-chrome-192x192.png',
+    self.location.origin + '/apple-touch-icon.png',
   ]
 
   event.waitUntil(
@@ -92,23 +102,31 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   logger.log('Service worker activated')
 
-  // Clean up old caches
+  // Get current cache names with version included
   const currentCaches = [DOCUMENT_CACHE_NAME, ASSET_CACHE_NAME, DATA_CACHE_NAME]
 
   event.waitUntil(
     Promise.all([
       self.clients.claim(),
+      // Clean up old caches by looking for caches that don't match our current version
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .map((cacheName) => {
-              if (!currentCaches.includes(cacheName)) {
-                logger.log(`Deleting outdated cache: ${cacheName}`)
-                return caches.delete(cacheName)
-              }
-              return null
+            .filter((cacheName) => {
+              // Keep non-versioned caches or caches with current version
+              // Delete old version caches
+              const isCurrentCache = currentCaches.includes(cacheName)
+              const isOldVersionCache =
+                (cacheName.startsWith('document-cache-') && !isCurrentCache) ||
+                (cacheName.startsWith('asset-cache-') && !isCurrentCache) ||
+                (cacheName.startsWith('data-cache-') && !isCurrentCache)
+
+              return isOldVersionCache
             })
-            .filter(Boolean)
+            .map((cacheName) => {
+              logger.log(`Deleting outdated cache: ${cacheName}`)
+              return caches.delete(cacheName)
+            })
         )
       }),
     ])
@@ -149,6 +167,10 @@ self.addEventListener('sync', (event) => {
 export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
   const request = context.event.request
   const url = new URL(request.url)
+
+  // Add cache-busting for development environment
+  const isDev =
+    process.env.NODE_ENV === 'development' || url.hostname === 'localhost'
 
   // Special case for the offline route
   if (url.pathname === '/_offline') {
@@ -195,12 +217,21 @@ export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
         </html>`,
         {
           status: 200,
-          headers: { 'Content-Type': 'text/html' },
+          headers: {
+            'Content-Type': 'text/html',
+            'Cache-Control': 'no-cache', // Don't cache this fallback
+          },
         }
       )
     }
   }
 
+  // Skip caching for development
+  if (isDev) {
+    return fetch(request)
+  }
+
+  // Handle document requests
   if (isDocumentRequest(request)) {
     try {
       return await documentCache.handleRequest(request)
@@ -232,6 +263,7 @@ export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
     }
   }
 
+  // Handle data requests (API)
   if (isLoaderRequest(request)) {
     try {
       return await dataCache.handleRequest(request)
@@ -241,10 +273,31 @@ export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
     }
   }
 
+  // Handle static assets
   if (self.__workerManifest.assets.includes(url.pathname)) {
-    return assetCache.handleRequest(request)
+    // Add cache headers to response
+    const assetResponse = await assetCache.handleRequest(request)
+
+    // If we have a response and it's not an opaque response, add cache headers
+    if (assetResponse && assetResponse.type !== 'opaque') {
+      const headers = new Headers(assetResponse.headers)
+
+      // Add cache headers if not already present
+      if (!headers.has('Cache-Control')) {
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+      }
+
+      return new Response(assetResponse.body, {
+        status: assetResponse.status,
+        statusText: assetResponse.statusText,
+        headers,
+      })
+    }
+
+    return assetResponse
   }
 
+  // Default to network for all other requests
   return fetch(request)
 }
 
