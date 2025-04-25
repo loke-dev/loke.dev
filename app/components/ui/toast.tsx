@@ -13,7 +13,7 @@ interface ToasterProps {
 }
 
 export function Toaster({
-  position = 'top-right',
+  position = 'bottom-right',
   closeButton = true,
   theme = 'system',
   ...props
