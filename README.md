@@ -1,4 +1,4 @@
-# loke.dev!
+# loke.dev
 
 ## Development
 
