@@ -1,20 +1,48 @@
 app = "loke-dev"
-primary_region = "arn" # Stockholm region, change if you prefer another region
+primary_region = "arn"
+
+[build]
+  # Dockerfile is in the root, flyctl will pick it up automatically.
+  # The NODE_ENV arg can be useful if your Dockerfile's build stage uses it.
+  [build.args]
+    NODE_ENV = "production"
+
+[env]
+  PORT = "3000"
+  # NODE_ENV = "production" # Good to have here too, but Dockerfile's ENV takes precedence at runtime
 
 [http_service]
   internal_port = 3000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 0 # Set to 1 for no cold starts
   processes = ["app"]
 
-[build]
-  [build.args]
-    NODE_ENV = "production"
+  # Add health checks
+  [http_service.checks]
+    [http_service.checks.alive]
+      type = "tcp"
+      interval = "15s"
+      timeout = "2s"
+      grace_period = "5s"
+    [http_service.checks.ready]
+      type = "http"
+      port = 3000 # Should match internal_port
+      path = "/"  # Basic check, consider a dedicated /healthcheck endpoint
+      interval = "15s"
+      timeout = "2s"
+      grace_period = "5s"
+      headers = {} # Add any required headers if your health check endpoint needs them
 
-[env]
-  PORT = "3000"
+# Serve static assets from public/build folder, which is where Vite outputs them
+[[statics]]
+  guest_path = "/app/public/build" # Path inside the running container
+  url_prefix = "/build"            # URL prefix for these assets
 
 [processes]
-  app = "node ./build/server/index.js"
+  app = "node ./build/server/index.js" # Matches CMD in Dockerfile
+
+# Optional: If you have tasks to run before a new version is live (e.g., DB migrations)
+# [deploy]
+#   release_command = "pnpm run migrate"
