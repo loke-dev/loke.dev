@@ -12,7 +12,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx,json}\"",
     "prepare": "husky",
-    "browser-tools": "pnpm dlx @agentdeskai/browser-tools-server@latest"
+    "browser-tools": "pnpm dlx @agentdeskai/browser-tools-server@latest",
+    "deploy": "fly deploy"
   },
   "dependencies": {
     "@conform-to/zod": "^1.3.0",

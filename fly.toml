@@ -1,0 +1,20 @@
+app = "loke-dev"
+primary_region = "arn" # Stockholm region, change if you prefer another region
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[build]
+  [build.args]
+    NODE_ENV = "production"
+
+[env]
+  PORT = "3000"
+
+[processes]
+  app = "node ./build/server/index.js"
