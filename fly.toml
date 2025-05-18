@@ -9,7 +9,7 @@ primary_region = "arn"
 
 [env]
   PORT = "3000"
-  # NODE_ENV = "production" # Good to have here too, but Dockerfile's ENV takes precedence at runtime
+  NODE_ENV = "production"
 
 [http_service]
   internal_port = 3000
