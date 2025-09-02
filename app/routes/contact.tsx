@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { parseWithZod } from '@conform-to/zod'
 import {
-  json,
+  data,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
   type MetaFunction,
@@ -42,7 +42,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { toast, headers } = await getFlashMessage(request)
-  return json({ toast }, { headers })
+  return data({ toast }, { headers })
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -50,12 +50,12 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = parseWithZod(formData, { schema: ContactSchema })
 
   if (submission.status !== 'success') {
-    return json({ result: submission.reply() }, { status: 400 })
+    return data({ result: submission.reply() }, { status: 400 })
   }
 
   const rateLimit = await checkRateLimit(request)
   if (!rateLimit.allowed) {
-    return json(
+    return data(
       {
         result: submission.reply({
           formErrors: [
@@ -72,7 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const captchaValid = await verifyTurnstileToken(submission.value.captchaToken)
   if (!captchaValid) {
-    return json(
+    return data(
       {
         result: submission.reply({
           formErrors: ['CAPTCHA verification failed. Please try again.'],
@@ -92,7 +92,7 @@ export async function action({ request }: ActionFunctionArgs) {
     )
   } catch (error) {
     console.error('Contact form error:', error)
-    return json(
+    return data(
       {
         result: submission.reply({
           formErrors: [
