@@ -72,15 +72,6 @@ export default function BlogIndex() {
                   prefetch="intent"
                   aria-labelledby={`post-title-${post._meta.path}`}
                 >
-                  <div className="mb-2 flex items-center text-sm text-muted-foreground">
-                    <time dateTime={post.date}>
-                      {new Date(post.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </time>
-                  </div>
                   <h2
                     id={`post-title-${post._meta.path}`}
                     className="mb-2 text-2xl font-bold tracking-tight group-hover:underline"

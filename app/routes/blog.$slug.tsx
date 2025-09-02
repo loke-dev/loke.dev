@@ -45,13 +45,6 @@ export default function BlogPostPage() {
     <Page size="md">
       <article>
         <header className="mb-8 text-center">
-          <time className="text-sm text-muted-foreground">
-            {new Date(post.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
           <h1 className="mt-2 text-4xl font-bold tracking-tight">
             {post.title}
           </h1>
