@@ -83,6 +83,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     theme,
     systemTheme: hints.theme,
     effectiveTheme,
+    ENV: {
+      TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
+    },
   }
 }
 
@@ -115,6 +118,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ClientHintCheck />
         <Links />
         <Meta />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data?.ENV || {})}`,
+          }}
+        />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <div className="relative flex min-h-screen flex-col">
