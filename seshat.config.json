@@ -1,0 +1,8 @@
+{
+  "contentDir": "app/posts",
+  "assetsDir": "public/images",
+  "publicAssetPath": "/images",
+  "topic": "Software Engineering, AI, and Technology",
+  "tone": "Professional yet witty and engaging",
+  "framework": "remix"
+}
