@@ -1,0 +1,93 @@
+---
+title: 'The Postgres Performance Cliff: Why Your Queries Are Slowing Down (And How Indexing Actually Works)'
+description: >-
+  A deep dive into why simply 'indexing everything' fails and how to use execution plans to fix real-world database bottlenecks.
+date: 2026-01-17T20:50:36.587Z
+published: true
+tag: postgresql
+image: '/images/postgres-performance-indexing-guide.png'
+---
+
+Most developers treat database performance like a mystery box: you throw an index at a slow query and hope the "Estimated Time" drops. But eventually, you hit the "Performance Cliff"—that moment where adding more indexes actually makes your app slower and your queries still crawl.
+
+I’ve spent a lot of time debugging Postgres instances that were "over-indexed" yet under-performing. To fix this, we need to move past the idea that indexes are magic and understand how Postgres actually decides to find your data.
+
+## The Mental Model: It’s just a sorted list
+
+At its core, a standard Postgres index (a B-Tree) is just a sorted representation of your data.
+
+Imagine a massive phone book. If I ask you to find "John Smith," you use the fact that the book is sorted alphabetically to jump to the 'S' section. That’s an **Index Scan**. If I give you a phone book that _isn't_ sorted and ask you to find everyone living on "Maple Street," you have to read every single page. That’s a **Sequential Scan**.
+
+The "cliff" happens when your "phone book" gets so heavy that even looking at the index takes significant effort, or worse, when Postgres decides it’s actually faster to just read the whole table anyway.
+
+## Reading the Map with `EXPLAIN ANALYZE`
+
+If a query is slow, the first thing I do is run `EXPLAIN ANALYZE`. Most people just look at the "Execution Time" at the bottom, but the real gold is in the plan nodes.
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT * FROM orders
+WHERE customer_id = 4521 AND status = 'shipped';
+```
+
+When you run this, look for `Seq Scan`. If you see that on a table with a million rows, that's your smoking gun.
+
+<Callout>
+  The `BUFFERS` option is critical. It tells you how much data Postgres is
+  pulling from shared memory vs. hitting the disk. If `shared hit` is low and
+  `read` is high, your "working set" doesn't fit in RAM.
+</Callout>
+
+## The Multi-Column Index Trap
+
+I often see developers create individual indexes for every column they query.
+
+```sql
+-- Don't do this for every column
+CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+CREATE INDEX idx_orders_status ON orders(status);
+```
+
+If you query `WHERE customer_id = X AND status = Y`, Postgres has to pick one index, find the matches, and then filter the results by the other column. It's much faster to use a **Composite Index**:
+
+```sql
+CREATE INDEX idx_orders_customer_status ON orders(customer_id, status);
+```
+
+**But there's a catch: Order matters.**
+
+A composite index on `(customer_id, status)` is like a phone book sorted by Last Name, then First Name. You can find "Smith, John" easily. You can find all the "Smiths" easily. But you **cannot** find all the "Johns" without scanning the whole thing.
+
+If your query filters by `status` but not `customer_id`, this index is useless. Always put the most selective columns (the ones that narrow down the results the most) first.
+
+## Why "Index Everything" Fails
+
+Every index you add isn't free. I like to think of it as "Write Tax."
+
+1.  **INSERT/UPDATE/DELETE overhead**: Every time you change a row, Postgres has to update every single index associated with that table. If you have 10 indexes, one `INSERT` becomes 11 writes.
+2.  **The Optimizer gets confused**: With too many overlapping indexes, the Postgres query optimizer might occasionally pick a "sub-optimal" index, leading to erratic performance.
+3.  **Index Bloat**: Indexes take up space. If your indexes are larger than your available RAM, Postgres has to swap to disk, and your performance will crater.
+
+## When Postgres Ignores Your Index
+
+I’ve seen colleagues pull their hair out because they added an index, but `EXPLAIN` shows Postgres is still doing a `Seq Scan`. This usually happens for two reasons:
+
+1.  **Small Tables**: If your table has 500 rows, reading the whole thing from memory is faster than opening an index file, finding the pointer, and then fetching the row. Postgres is being smart here.
+2.  **Low Cardinality**: If you index a `boolean` column like `is_active`, and 90% of your rows are `true`, Postgres won't use the index. It's faster to just scan the table than to jump back and forth between the index and the heap for 90% of the data.
+
+## Practical Strategy for Real-World Fixes
+
+When I'm optimizing a slow system, I follow this checklist:
+
+1.  **Identify the slow query** using `pg_stat_statements`.
+2.  **Run `EXPLAIN (ANALYZE, BUFFERS)`**. Is it a `Seq Scan`? Is it an `Index Scan` that's actually returning 100,000 rows (meaning the filter isn't specific enough)?
+3.  **Check for "Index Only Scans"**. This is the holy grail. If your index includes all the columns in your `SELECT` clause, Postgres doesn't even have to look at the table (the "heap").
+
+```sql
+-- If I only need the status
+CREATE INDEX idx_customer_status_covering ON orders(customer_id) INCLUDE (status);
+```
+
+By using `INCLUDE`, we store the `status` data right in the index tree. It makes the index slightly larger but makes the query lightning fast because the database never touches the actual table rows.
+
+Indexing is about balance. You don't need an index for every query—you need the _right_ indexes for your most frequent and most expensive queries. Stop guessing, start explaining.

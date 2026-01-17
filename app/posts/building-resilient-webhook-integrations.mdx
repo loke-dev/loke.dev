@@ -1,0 +1,122 @@
+---
+title: "Your Webhooks Will Fail: Building a Resilient Integration That Doesn't Lose Data"
+description: >-
+  A deep dive into implementing idempotency, manual retries, and dead-letter queues to ensure your third-party integrations stay bulletproof when things go wrong.
+date: 2026-01-17T20:56:41.197Z
+published: true
+tag: software-engineering
+image: '/images/building-resilient-webhook-integrations.png'
+---
+
+Most developers treat webhooks as a "set it and forget it" feature. You set up an endpoint, parse the JSON, update your database, and return a `200 OK`. It works perfectly in development, but in production, the internet is a chaotic mess of network blips, 500 errors, and race conditions.
+
+If your webhook handler isn't resilient, you _will_ lose data. Stripe might think they delivered an invoice payment notification, but if your server was restarting during a deployment, that customer might never get their credits.
+
+Here is how I build webhook integrations that don't break when the world is on fire.
+
+### The Golden Rule: Acknowledge Immediately
+
+The biggest mistake I see is developers trying to do "heavy lifting" inside the webhook request-response cycle.
+
+```typescript
+// ❌ Don't do this
+app.post('/webhooks/stripe', async (req, res) => {
+  const event = req.body
+
+  // If this takes 15 seconds, Stripe might timeout and retry,
+  // leading to duplicate processing.
+  await syncUserPermissions(event.data.customer)
+  await generateInvoicePdf(event.data.id)
+  await sendWelcomeEmail(event.data.customer_email)
+
+  res.status(200).send('Success')
+})
+```
+
+Webhooks are usually delivered with a timeout (often 10–30 seconds). If your processing logic hits a slow database query or an external API, the provider will assume the delivery failed and try again.
+
+Instead, **ingest and escape.** Save the payload to a queue or a database table and return a `200 OK` as fast as humanly possible.
+
+### Idempotency: The "Do It Once" Guarantee
+
+Because providers retry failed webhooks, you will eventually receive the same event twice. Maybe the network cut out _after_ you processed the data but _before_ you sent the `200 OK`.
+
+To prevent duplicate side effects (like charging a customer twice), you need **Idempotency**.
+
+Most providers send a unique ID for every event (e.g., Stripe’s `evt_123`). I use this ID as a guard:
+
+```typescript
+async function handleWebhook(event: WebhookEvent) {
+  // 1. Check if we've already processed this ID
+  const alreadyProcessed = await db.webhookLog.findUnique({
+    where: { eventId: event.id },
+  })
+
+  if (alreadyProcessed) {
+    console.log(`Event ${event.id} already handled. Skipping.`)
+    return
+  }
+
+  // 2. Wrap your logic in a transaction
+  await db.$transaction(async (tx) => {
+    await processLogic(event, tx)
+
+    // 3. Mark as processed within the same transaction
+    await tx.webhookLog.create({
+      data: { eventId: event.id, status: 'processed' },
+    })
+  })
+}
+```
+
+### The "Dead Letter Queue" Strategy
+
+Sometimes, your code is fine, but the data is weird. Or maybe your database is down for maintenance. If a background job fails after 5 retries, you shouldn't just let it vanish into the ether.
+
+I always implement a **Dead Letter Queue (DLQ)**. When a background job fails permanently, it moves to the DLQ. This is essentially a "holding pen" for broken events.
+
+I then build a simple internal dashboard (or a CLI script) that allows me to:
+
+1. Inspect the failed payload.
+2. Fix the bug in the code.
+3. **Re-play** the event.
+
+If you don't have a way to re-play failed webhooks, you'll find yourself manually editing database rows at 2:00 AM to fix a sync error. It's not fun.
+
+### Verification is Not Optional
+
+If your webhook endpoint is public, anyone can send it a POST request. I’ve seen developers assume that because the URL is "secret," it's safe. It isn't.
+
+Always verify the signature using the provider's official library.
+
+```typescript
+import Stripe from 'stripe'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+app.post('/webhooks', async (req, res) => {
+  const sig = req.headers['stripe-signature']
+
+  try {
+    // This ensures the request actually came from Stripe
+    const event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    )
+    // ...
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`)
+  }
+})
+```
+
+### Summary Checklist for a Bulletproof Integration
+
+1.  **Verify Signatures:** Don't trust the source without cryptographic proof.
+2.  **Respond Fast:** Save the payload to a queue/DB and return `200` immediately.
+3.  **Use Idempotency:** Keep a log of processed event IDs to prevent duplicates.
+4.  **Implement Retries:** Use exponential backoff for transient errors (like network blips).
+5.  **Build a DLQ:** Have a place for permanent failures to live until you can fix them.
+
+Building webhooks this way takes more time upfront, but it buys you the most valuable thing in software engineering: the ability to sleep through the night without your pager going off.

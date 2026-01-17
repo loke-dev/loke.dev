@@ -9,7 +9,13 @@ import { loadServiceWorker } from '@remix-pwa/sw'
 import { RemixBrowser } from '@remix-run/react'
 import { hydrateRoot } from 'react-dom/client'
 
-loadServiceWorker()
+const isProduction =
+  window.location.hostname !== 'localhost' &&
+  window.location.hostname !== '127.0.0.1'
+
+if (isProduction) {
+  loadServiceWorker()
+}
 
 startTransition(() => {
   hydrateRoot(

@@ -1,0 +1,200 @@
+---
+title: "Wait for It... Or Don't: Handling LLM Latency in Remix Without Losing Your Mind"
+description: >-
+  A deep dive into using Remix's streaming capabilities and Server-Sent Events to keep your UI snappy while your AI model takes its sweet time to think.
+date: 2026-01-17T16:32:55.000Z
+published: true
+tag: remix
+---
+
+We’ve all been there. You click "Generate," and... nothing. For twelve long, agonizing seconds, your app looks like it's crashed. The user is staring at a static button, wondering if they should refresh the page or just go make a sandwich.
+
+In the world of LLMs (Large Language Models), latency isn't just a bug; it's a feature of the current hardware reality. Even the fastest models take time to "think" and spit out tokens. If you’re building an AI-powered feature in a traditional request-response cycle, you’re basically asking your users to meditate while your server waits for a 500-word essay from GPT-4.
+
+But here’s the thing: we don't have to wait.
+
+Remix, with its deep roots in web standards, is actually one of the best frameworks for handling this. Today, I want to walk through how we can move away from the "Loading..." spinner of doom and into the glorious world of streaming.
+
+## The Problem with the "Wait and See" Approach
+
+Last month, I was working on a side project—a tool that generates custom bedtime stories for kids. I built it the "easy" way first. An `action` function sent a prompt to OpenAI, waited for the `await openai.chat.completions.create(...)` to finish, and then returned the JSON.
+
+It was terrible.
+
+Because LLMs generate text token by token, the total response time is proportional to the length of the output. A short greeting takes 2 seconds. A long story? 30 seconds. In the browser, that looks like a timeout or a broken UI.
+
+We need to stream. We want those words to pop up on the screen the millisecond the model thinks of them.
+
+## The Remix Streaming Toolbox
+
+Remix gives us two primary ways to handle "long-running things" without blocking the UI:
+
+1.  **`defer` and `<Await>`**: Great for slow database queries where you want to send the shell of the page immediately.
+2.  **Raw Response Streaming**: Essential for LLMs where you want to iterate over a `ReadableStream` and push chunks to the client.
+
+While `defer` is awesome for loading data in a `loader`, for a chat-like experience where the user triggers an action, we usually want to leverage a raw `Response` with the right headers.
+
+## Setting Up the Stream on the Server
+
+Let's look at how we actually handle this in a Remix `action`. The goal is to return a stream that the browser can consume.
+
+```typescript
+// app/routes/chat.tsx
+import { type ActionFunctionArgs } from '@remix-run/node'
+import { openai } from '~/utils/openai.server'
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData()
+  const prompt = formData.get('prompt') as string
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: prompt }],
+    stream: true, // This is the magic sauce
+  })
+
+  // We transform the OpenAI stream into a ReadableStream
+  const stream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of response) {
+        const text = chunk.choices[0]?.delta?.content || ''
+        controller.enqueue(new TextEncoder().encode(text))
+      }
+      controller.close()
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    },
+  })
+}
+```
+
+So, what’s happening here? Instead of `await`-ing the final result, we're passing back a `ReadableStream`. We set the `Content-Type` to `text/event-stream`. This tells the browser: "Hey, don't close this connection yet. There’s more coming."
+
+<Callout type="warning">
+  **Watch out for the Edge!** If you're deploying to Vercel or Netlify, make
+  sure your function timeout is set high enough, or better yet, use Edge
+  Functions. Traditional lambdas often have a 10-second "execution" limit that
+  includes the time spent waiting for the stream to finish.
+</Callout>
+
+## Consuming the Stream in the UI
+
+This is where it gets a bit tricky. Remix’s `useFetcher` is fantastic for JSON, but it doesn't natively "stream" into your state out of the box (yet). We have to do a little manual labor.
+
+I like to use a custom hook for this. It keeps the component clean and handles the messy business of reading from the stream reader.
+
+```tsx
+// app/hooks/useStreamingText.ts
+import { useState } from 'react'
+
+export function useStreamingText() {
+  const [data, setData] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const stream = async (prompt: string) => {
+    setData('')
+    setIsLoading(true)
+
+    const response = await fetch('/chat', {
+      method: 'POST',
+      body: new URLSearchParams({ prompt }),
+    })
+
+    if (!response.body) return
+
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) break
+
+      const chunk = decoder.decode(value, { stream: true })
+      setData((prev) => prev + chunk)
+    }
+
+    setIsLoading(false)
+  }
+
+  return { data, isLoading, stream }
+}
+```
+
+Now, in your component, it feels almost like magic:
+
+```tsx
+export default function ChatPage() {
+  const { data, isLoading, stream } = useStreamingText()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    stream(formData.get('prompt') as string)
+  }
+
+  return (
+    <div className="p-8 max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit} className="mb-8">
+        <input
+          name="prompt"
+          className="border p-2 w-full rounded"
+          placeholder="Ask me something..."
+        />
+        <button
+          disabled={isLoading}
+          className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          {isLoading ? 'Thinking...' : 'Generate'}
+        </button>
+      </form>
+
+      <div className="prose bg-gray-50 p-4 rounded min-h-[100px] whitespace-pre-wrap">
+        {data}
+        {isLoading && (
+          <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse ml-1" />
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+## Making it Feel "Premium"
+
+If you've used ChatGPT, you know it doesn't just dump text. There's a certain _vibe_ to it. Here are a few small things I do to make the UI feel less like a "technical data transfer" and more like an experience:
+
+1.  **The Cursor**: Notice the little `animate-pulse` span in the code above? That's the "AI is typing" indicator. It’s a tiny visual cue that prevents the user from thinking the stream stalled if there's a 1-second gap between sentences.
+2.  **Auto-Scrolling**: If your text gets long, the user shouldn't have to manual-scroll to see the new words. Use a `useEffect` that monitors the `data` length and scrolls the container to the bottom.
+3.  **Markdown Parsing**: Most LLMs output Markdown. Instead of just rendering `data` in a div, use something like `react-markdown`.
+
+### The "Oh No" Factor: Error Handling
+
+Here’s a hard truth: streams are finicky. If the user loses their internet connection halfway through a 5-minute generation, the stream just... stops.
+
+In your `while(true)` loop, you _must_ wrap the `reader.read()` in a try/catch block. If it fails, you should probably keep the data you already have but show a "Connection lost" warning. There's nothing worse than having 90% of a great response disappear because of a brief Wi-Fi hiccup.
+
+## Why not just use `useEventSource`?
+
+You might have seen the `remix-utils` library or native `EventSource` (SSE) examples. SSE is great if you need to push updates from the server multiple times _outside_ of a specific user action (like a live notification feed).
+
+But for LLM responses triggered by a button click, a `fetch` with a `ReadableStream` is often simpler because you can send `POST` requests with complex bodies easily. `EventSource` is strictly `GET`, which means you have to cram your prompts into URL parameters. Trust me, nobody wants to debug a 2,000-character prompt inside a URL.
+
+## Wrapping Up
+
+Handling LLM latency isn't about making the AI faster (we can't—until the GPU gods smile upon us). It's about managing human expectations.
+
+By using Remix to stream responses, you're giving the user immediate feedback. You're showing them progress. It's the difference between waiting for a package in the mail with no tracking number and watching the delivery truck move on a map in real-time.
+
+Now go forth and stream! Your users' sanity will thank you.
+
+---
+
+**What are you building with LLMs?** I’ve been seeing some wild implementations lately, especially with the new voice models. If you've found a better way to handle streaming state in Remix, hit me up—I'm always looking to refine my hooks!
+
+<ctrl63>

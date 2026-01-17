@@ -1,0 +1,123 @@
+---
+title: "The 'Loading...' Spinner is Dead: Streaming AI Responses in Remix Without Losing Your Mind"
+description: >-
+  Stop making users stare at a blank screen; learn how to combine Remix’s defer utility with OpenAI’s streaming API to build a snappy AI interface that feels faster than a junior dev on their third espresso.
+date: 2026-01-17T20:10:14.843Z
+published: true
+tag: remix
+image: '/images/streaming-ai-responses-remix-defer.png'
+---
+
+I was staring at a loading spinner yesterday. For twelve seconds. Twelve seconds in "developer time" is basically an eternity—long enough to question my career choices, check my phone, and wonder if the API I wrote even works.
+
+We’ve conditioned ourselves to think that a spinning circle is a "good UX" because it shows something is happening. But honestly? It’s a lazy solution for a slow process. Especially with LLMs. If you’re making your users wait for a full 500-word OpenAI response to generate before showing them a single character, you aren't just losing their attention; you’re losing their trust.
+
+We can do better. And if you're using Remix, it’s actually stupidly simple to stop the madness.
+
+### The "Full JSON" Trap
+
+Most of us start here. You hit an endpoint, `await` the response, and then return a nice, clean JSON object.
+
+```typescript
+// The "Don't Do This" Loader
+export async function loader() {
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: 'Explain quantum physics to a cat.' }],
+  })
+
+  return json({ content: completion.choices[0].message.content })
+}
+```
+
+The problem? This loader won't resolve until GPT is finished being a poet. Your user sees a blank screen (or a global loading bar) for the entire duration. It's boring. It's slow. It feels broken.
+
+### Enter the Stream
+
+The magic happens when we stop treating the AI response as a "file" and start treating it as a "pipe." OpenAI (and basically every other provider) can stream tokens as they’re generated.
+
+Remix has this gorgeous utility called `defer`. Most people use it for slow database queries, but it’s the secret weapon for AI. The trick is that we don't want to just `defer` a slow promise; we want to stream the actual chunks to the browser.
+
+But wait, there's a catch. Real talk: `defer` is designed for promises that eventually resolve. For character-by-character streaming, we usually have to drop down to a raw `Response`.
+
+### The "Snap Your Fingers" Implementation
+
+Here is how I’ve been structuring my streaming loaders lately. We’re going to use a `ReadableStream` and pass it directly through the loader. It bypasses the standard "wait for the transition" logic and just... works.
+
+```typescript
+export async function loader({ request }: LoaderFunctionArgs) {
+  const stream = await openai.chat.completions.create({
+    model: 'gpt-4-turbo',
+    stream: true, // This is the MVP right here
+    messages: [{ role: 'user', content: 'Write a short story about a bug.' }],
+  })
+
+  // We turn the OpenAI stream into a standard Web Stream
+  const webStream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of stream) {
+        const text = chunk.choices[0]?.delta?.content || ''
+        controller.enqueue(new TextEncoder().encode(text))
+      }
+      controller.close()
+    },
+  })
+
+  return new Response(webStream, {
+    headers: { 'Content-Type': 'text/event-stream' },
+  })
+}
+```
+
+<Callout>
+  Keep in mind that if you're deploying to Vercel or Netlify, their serverless
+  functions have execution limits. If your AI takes 2 minutes to write a novel,
+  the function might get killed before it's done. Edge functions are usually the
+  better play for streaming.
+</Callout>
+
+### Handling it on the Frontend (Without the Headache)
+
+Now, how do we actually show this in our component? You could use `useEffect` and a bunch of state variables, but that's a recipe for spaghetti code.
+
+Instead, I like to use a simple hook or a direct stream reader. Since the loader is returning a raw stream, we can use `fetch` (or let Remix handle it) to read the chunks. But if you want to keep it "Remix-y," using a `fetcher` and an `EventSource` (or a simple reader loop) is the way to go.
+
+Actually, let's look at a simpler way to think about it. If you use a `Resource Route` for the stream, your UI can stay light:
+
+```tsx
+export default function AIComponent() {
+  const [data, setData] = useState('')
+
+  const startStreaming = async () => {
+    setData('')
+    const response = await fetch('/api/stream-ai')
+    const reader = response.body?.getReader()
+    const decoder = new TextDecoder()
+
+    while (true) {
+      const { done, value } = await reader!.read()
+      if (done) break
+      setData((prev) => prev + decoder.decode(value))
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={startStreaming}>Generate Magic</button>
+      <div className="prose">{data || 'Waiting for inspiration...'}</div>
+    </div>
+  )
+}
+```
+
+### Why this matters
+
+When a user clicks "Generate" and words start appearing **instantly**, their perception of performance shifts. Even if the total generation time is the same, the _perceived_ time is almost zero. They start reading the first sentence while the third sentence is still being "thought of."
+
+It feels alive. It feels like the app is talking to them.
+
+And let’s be honest, it makes you look like a wizard. No more `Loading...` spinners. No more boring skeletons. Just pure, unadulterated data flowing from the cloud to the glass.
+
+So, next time you’re building an AI feature, do me a favor? Kill the spinner. Your users (and my sanity) will thank you.
+
+Anyway, I'm going to go get another espresso. This one's gone cold while I was refactoring my streams. Happy coding!

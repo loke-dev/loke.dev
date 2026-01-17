@@ -1,13 +1,11 @@
 import { MetaFunction } from '@remix-run/node'
 import { Link } from '@remix-run/react'
 import { WifiOff } from 'lucide-react'
+import { createMetaTags } from '@/utils/meta'
 import { Button } from '@/components/ui/button'
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: "You're Offline | Loke.dev" },
-    { name: 'description', content: 'Offline page for Loke.dev' },
-  ]
+  return createMetaTags("You're Offline", 'Offline page for Loke.dev')
 }
 
 export function loader() {

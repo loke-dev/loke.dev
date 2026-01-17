@@ -1,0 +1,125 @@
+---
+title: 'My Code is a Haunted House: A Guide to Refactoring Without Waking the Ghosts'
+description: >-
+  We all have that one file we're afraid to touch. Here's how I finally tackled my most terrifying legacy code without burning the whole repository down.
+date: 2026-01-17T20:27:49.288Z
+published: true
+tag: software-engineering
+image: '/images/refactoring-legacy-code-strategies.png'
+---
+
+Last Tuesday, I found myself staring at a file named `OrderProcessor.v2.final.LEGACY.js`.
+
+It was 4,200 lines long. It had comments dating back to 2014—notes from developers who have long since left the company, probably to go farm organic honey in Vermont where the code can’t hurt them. The file was full of logic that seemed to rely on the phase of the moon. Or, more accurately, it relied on a global variable named `window.temp_state_do_not_delete`.
+
+I call these files "Haunted Houses."
+
+You know the feeling. You open the file, your fans start spinning, and you feel a cold chill. You know that if you change a single `if` statement on line 450, a printer in the accounting department three floors up will start screaming.
+
+Most of us just add another `if` statement at the top, pray to the gods of Continuous Integration, and close the tab as fast as possible. But last week, a critical bug forced me to go inside. I didn't just survive; I actually cleaned the place up.
+
+Here is how I refactored the most terrifying code I’ve ever seen without waking the ghosts.
+
+## Rule 1: Don't Clean While You're Fixing
+
+This is the biggest mistake I see. You're in there to fix a bug, you see a typo, you fix it. You see a weird variable name, you rename it. Before you know it, you've changed thirty things, and you have no idea which one broke the checkout flow.
+
+When you’re dealing with a haunted house, you have to be surgical. I treat it like a crime scene. I don't touch anything unless it's relevant to the evidence.
+
+**My workflow looks like this:**
+
+1.  Reproduce the bug with a test.
+2.  Fix the bug with the ugliest, most minimal code possible.
+3.  Verify the fix.
+4.  **Then**, and only then, do I start the refactor.
+
+Separating "the fix" from "the cleanup" saves your sanity. If the refactor goes south, you can always revert to the "ugly fix" and still hit your deadline.
+
+## The Safety Net: Characterization Tests
+
+Before I moved a single line of code in `OrderProcessor`, I wrote what Michael Feathers calls "Characterization Tests."
+
+The goal isn't to test if the code is _correct_. Honestly, the code is probably doing fifty wrong things that the business has just accepted as "features" over the last decade. The goal is to document what the code _actually does right now_.
+
+I fed the function a bunch of weird inputs and recorded the outputs.
+
+```javascript
+// A "Golden Master" style test
+test('it does... whatever it currently does', () => {
+  const input = { id: 123, items: [], coupon: 'SUMMER_GHOST' }
+  const result = hauntedFunction(input)
+
+  // I don't know why it returns this, but it does.
+  // We must preserve this behavior for now.
+  expect(result).toEqual({
+    status: 'error_but_actually_success',
+    legacy_id: 0,
+    __internal_garbage: true,
+  })
+})
+```
+
+I wrote about twenty of these. They are ugly. They are brittle. And they are the only reason I didn't get fired, because twice during the refactor, I broke a weird edge case I didn't even know existed.
+
+## Finding the "Load-Bearing" Walls
+
+Once I had my tests, I started looking for the patterns. Haunted houses usually have a lot of "dead wood"—code that literally does nothing but stayed there because people were scared to delete it.
+
+I found a 400-line block of code that handled a "Flash Player integration." We haven't used Flash since the Obama administration.
+
+But I didn't just delete it. I commented it out first. I waited. I ran the tests. Then I deleted it. Small victories.
+
+Look, the key to refactoring legacy code isn't a massive rewrite. It's the **Strangler Pattern**, but applied to functions instead of microservices. I slowly started pulling logic out of the giant file and into small, pure, testable functions in a new file called `OrderLogic.js`.
+
+<Callout>
+  **Important:** If you find a global variable being mutated inside a 500-line
+  loop, do not try to "fix" the architecture immediately. Wrap that mutation in
+  a named function so you can at least see where the ghost is hiding.
+</Callout>
+
+## The "Leaf-to-Root" Strategy
+
+I used to try refactoring from the top down. I’d start at the main exported function and try to make sense of it. That’s a trap. It’s like trying to untie a knot by pulling on the tightest part.
+
+Instead, I go for the "leaves"—the tiny helper functions at the bottom of the file that don't depend on anything else.
+
+- Found a date formatter? Move it to a utility file.
+- Found a currency calculator? Move it.
+- Found a regex that validates emails (and probably fails)? Move it.
+
+By the time I finished moving the leaves, the "trunk" of the file—the scary business logic—was much shorter and easier to read. It’s a lot less intimidating to look at 200 lines of logic than 4,000.
+
+## Dealing with "The Knowledge"
+
+The hardest part of refactoring legacy code isn't the syntax. It's "The Knowledge." This is the undocumented context that only lives in the heads of people who don't work here anymore.
+
+I found a line that said: `if (order.id === 99912) return; // Special case for Dave`.
+
+Who is Dave? Why is his order special? Dave is a ghost.
+
+I spent two hours in Slack archives and found out Dave was the CEO's cousin who used the app for testing in 2016. The "Special case" was actually breaking our analytics.
+
+**Refactoring is as much archaeology as it is engineering.** You have to dig through Git blame history. You have to ask the senior dev who’s been there forever. You have to be a detective.
+
+## When to Stop
+
+You could refactor forever. You could turn that haunted house into a modern, glass-walled skyscraper with a Kubernetes cluster in the basement.
+
+But you shouldn't.
+
+I stopped when the code was **understandable** and **testable**. It’s still not "perfect." It still uses some weird legacy patterns. But now, when the next developer (probably me in six months) opens `OrderProcessor.js`, they won't feel that sense of impending doom.
+
+## The Result
+
+After three days of work:
+
+- Deleted 1,400 lines of dead code.
+- Moved 800 lines into pure, unit-tested utility functions.
+- Fixed the original bug.
+- Added 45 tests that didn't exist before.
+
+The house is still old. The floorboards still creak a little. But the ghosts? They’re finally resting in peace.
+
+If you're staring at a haunted file right now, don't reach for the matches. Reach for the tests. One room at a time, you can make it a home again.
+
+Anyway, I’m off to go figure out why `window.temp_state_do_not_delete` is now being called by the marketing pixel. Wish me luck. Or send help. Honestly, either works.

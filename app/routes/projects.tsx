@@ -1,13 +1,11 @@
 import type { MetaFunction } from '@remix-run/node'
+import { createMetaTags } from '@/utils/meta'
 import { Grid, Page, PageHeader, Section } from '@/components/layout'
 import { ProjectCard } from '@/components/projectCard'
 import { Project } from '@/types/projects'
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: 'Projects - loke.dev' },
-    { name: 'description', content: 'My portfolio of projects and work' },
-  ]
+  return createMetaTags('Projects', 'My portfolio of projects and work')
 }
 
 const projects: Project[] = [

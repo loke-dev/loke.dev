@@ -1,0 +1,100 @@
+---
+title: 'The Monorepo Struggle: How I Finally Organized My Projects Without the Tooling Headache'
+description: >-
+  A deep dive into transitioning to a monorepo setup using Turborepo to solve dependency hell and drastically speed up CI/CD pipelines.
+date: 2026-01-17T20:53:00.265Z
+published: true
+tag: devops
+image: '/images/monorepo-struggle-turborepo-guide.png'
+---
+
+Managing a handful of independent repositories feels fine until you need to share a single UI component or a TypeScript interface across them. Suddenly, you're stuck in a loop of publishing private npm packages, waiting for CI to finish, and bumping versions across four different projects just to change a button color.
+
+I reached my breaking point when a simple design system update took three hours of "syncing" instead of three minutes of coding. I needed a monorepo, but I didn't want a PhD in build tooling just to get it running. That’s where Turborepo changed the game for me.
+
+## The Mental Model: Workspaces
+
+The hardest part of moving to a monorepo isn't the code—it's how you think about your file structure. In a standard setup, everything lives in `/apps` or `/packages`.
+
+Here is the basic structure I landed on:
+
+```text
+my-turborepo/
+├── apps/
+│   ├── web/          # Next.js marketing site
+│   └── dashboard/    # React admin panel
+├── packages/
+│   ├── ui/           # Shared React components
+│   ├── config-eslint/# Shared linting rules
+│   └── tsconfig/     # Shared TS configs
+├── package.json
+└── turbo.json
+```
+
+By using **pnpm workspaces** (or npm/yarn workspaces), the root `package.json` treats each folder in `apps` and `packages` as a local dependency. You don't "publish" the UI package; you just link to it.
+
+```json
+// apps/web/package.json
+{
+  "dependencies": {
+    "@repo/ui": "workspace:*"
+  }
+}
+```
+
+## Making it Fast with `turbo.json`
+
+The "magic" of Turborepo lies in its execution engine. Most monorepo tools are slow because they run tasks linearly. Turborepo understands the graph of your dependencies.
+
+If `web` depends on `ui`, Turbo knows it has to build `ui` first. But more importantly, if you haven't touched the `ui` package, Turbo will **never build it twice**. It caches the output and restores it instantly.
+
+Here is the `turbo.json` I use to orchestrate this:
+
+```json
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
+```
+
+The `^build` syntax is the secret sauce. It tells Turbo: "To build this project, first build all the dependencies that come before it in the graph."
+
+## Solving the CI/CD Bottleneck
+
+Before this setup, my GitHub Actions ran for 15 minutes on every PR because it rebuilt every single app from scratch. With Turborepo's **Remote Caching**, that time dropped to under 2 minutes.
+
+When a teammate builds the project locally, the artifacts are pushed to a secure cloud cache. When the CI server runs, it checks if that specific hash of code has been built already. If it has, it just downloads the `dist` folder.
+
+It looks like this in your CI YAML:
+
+```yaml
+- name: Build
+  run: npx turbo build --remote-cache-timeout=60
+  env:
+    TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+    TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+```
+
+## The "Gotcha": Version Mismatches
+
+One headache I encountered was "dependency drift." Just because you’re in a monorepo doesn’t mean your versions stay in sync automatically. If `apps/web` uses Tailwind v3.2 and `packages/ui` uses Tailwind v3.4, you're going to have a bad time.
+
+**The Fix:** Use a single source of truth for versions in the root `package.json` where possible, or use a tool like `syncpack` to ensure all workspace dependencies match. In a pnpm environment, the `pnpm-workspace.yaml` helps keep things tight.
+
+## Why This Matters
+
+The transition to a monorepo isn't just about organization; it's about reducing friction.
+
+When your UI components, types, and business logic live in the same "brain," your velocity increases. You can refactor a core database schema and see exactly which frontend components break in real-time. You stop being a "repo janitor" and go back to being a developer.
+
+If you’re currently struggling with multiple repos, start small. Move one shared config into a `/packages` folder, drop in a `turbo.json`, and watch your build times shrink. You don't need to migrate everything overnight to feel the benefits.

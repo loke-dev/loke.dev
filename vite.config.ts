@@ -17,6 +17,8 @@ declare module '@remix-run/node' {
   }
 }
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 export default defineConfig({
   plugins: [
     mdx({
@@ -45,7 +47,7 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     contentCollections(),
-    remixPWA(),
+    ...(isProduction ? [remixPWA()] : []),
   ],
   resolve: {
     alias: {

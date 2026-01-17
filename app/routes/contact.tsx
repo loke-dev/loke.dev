@@ -10,6 +10,7 @@ import { useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { z } from 'zod'
 import { verifyTurnstileToken } from '@/utils/captcha.server'
 import { sendContactEmail } from '@/utils/email.server'
+import { createMetaTags } from '@/utils/meta'
 import { checkRateLimit, getRateLimitHeaders } from '@/utils/rate-limit.server'
 import { getFlashMessage, setFlashMessage } from '@/utils/session.server'
 import { Captcha } from '@/components/captcha'
@@ -34,10 +35,7 @@ const ContactSchema = z.object({
 })
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: 'Contact - loke.dev' },
-    { name: 'description', content: 'Get in touch with me' },
-  ]
+  return createMetaTags('Contact', 'Get in touch with me')
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

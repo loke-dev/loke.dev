@@ -14,6 +14,7 @@ const posts = defineCollection({
     date: z.string(),
     tag: z.string(),
     published: z.boolean(),
+    image: z.string().optional(),
   }),
   transform: async (document, context) => {
     const body = await compileMDX(context, document, {

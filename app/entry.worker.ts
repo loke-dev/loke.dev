@@ -60,7 +60,16 @@ export {}
 
 declare let self: ServiceWorkerGlobalScope
 
+const isDevelopment =
+  self.location.hostname === 'localhost' ||
+  self.location.hostname === '127.0.0.1'
+
 self.addEventListener('install', (event) => {
+  if (isDevelopment) {
+    logger.log('Service worker skipped in development')
+    return self.skipWaiting()
+  }
+
   logger.log('Service worker installed')
 
   // Preload essential files - use absolute URLs and filter out any that fail
@@ -100,6 +109,24 @@ self.addEventListener('install', (event) => {
 })
 
 self.addEventListener('activate', (event) => {
+  if (isDevelopment) {
+    logger.log('Service worker activation skipped in development')
+    event.waitUntil(
+      Promise.all([
+        self.clients.claim(),
+        caches.keys().then((cacheNames) => {
+          return Promise.all(
+            cacheNames.map((cacheName) => {
+              logger.log(`Deleting cache in development: ${cacheName}`)
+              return caches.delete(cacheName)
+            })
+          )
+        }),
+      ])
+    )
+    return
+  }
+
   logger.log('Service worker activated')
 
   // Get current cache names with version included
@@ -311,6 +338,10 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
 
 // Add offline fallback handling
 self.addEventListener('fetch', (event: FetchEvent) => {
+  if (isDevelopment) {
+    return
+  }
+
   const request = event.request
 
   // Only handle navigation requests that fail

@@ -13,6 +13,7 @@ import {
 } from '@remix-run/react'
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
+import { createTitle } from '@/utils/meta'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { toast } from '@/utils/toast'
 import { useBfcache } from '@/hooks/useBfcache'
@@ -205,10 +206,14 @@ export function ErrorBoundary() {
     message = error.message
   }
 
+  const errorTitle =
+    status === 404 ? 'Page Not Found' : `Error ${status > 0 ? status : ''}`
+
   return (
     <Layout>
+      <title>{createTitle({ title: errorTitle })}</title>
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold mb-4">Error {status}</h1>
+        <h1 className="text-2xl font-bold mb-4">{errorTitle}</h1>
         <p className="mb-4">{message}</p>
       </div>
     </Layout>

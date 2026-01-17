@@ -3,19 +3,16 @@ import { data, LoaderFunctionArgs } from '@remix-run/node'
 import { Link, MetaFunction, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
 import { toast } from 'sonner'
+import { createMetaTags } from '@/utils/meta'
 import { getFlashMessage } from '@/utils/session.server'
 import { useBfcache } from '@/hooks/useBfcache'
 import { Grid, Page, PageHeader } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: 'Blog - loke.dev' },
-    {
-      name: 'description',
-      content:
-        'Articles, guides, and thoughts on web development and technology',
-    },
-  ]
+  return createMetaTags(
+    'Blog',
+    'Articles, guides, and thoughts on web development and technology'
+  )
 }
 
 // Add HTTP headers for bfcache support
@@ -29,7 +26,11 @@ export function headers() {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { toast, headers } = await getFlashMessage(request)
 
-  return data({ posts: allPosts, toast }, { headers })
+  const sortedPosts = [...allPosts].sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  })
+
+  return data({ posts: sortedPosts, toast }, { headers })
 }
 
 export default function BlogIndex() {
@@ -64,7 +65,7 @@ export default function BlogIndex() {
             return (
               <article
                 key={post.title}
-                className="group rounded-lg border p-6 transition-colors hover:bg-muted/50"
+                className="group rounded-lg border overflow-hidden transition-colors hover:bg-muted/50"
               >
                 <Link
                   to={post._meta.path}
@@ -72,17 +73,28 @@ export default function BlogIndex() {
                   prefetch="intent"
                   aria-labelledby={`post-title-${post._meta.path}`}
                 >
-                  <h2
-                    id={`post-title-${post._meta.path}`}
-                    className="mb-2 text-2xl font-bold tracking-tight group-hover:underline"
-                  >
-                    {post.title}
-                  </h2>
-                  <p className="text-muted-foreground">{post.description}</p>
-                  <div className="mt-4">
-                    <span className="text-sm font-medium text-primary group-hover:underline">
-                      Read article <span aria-hidden="true">→</span>
-                    </span>
+                  {post.image && (
+                    <div className="aspect-video w-full overflow-hidden bg-muted">
+                      <img
+                        src={post.image}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h2
+                      id={`post-title-${post._meta.path}`}
+                      className="mb-2 text-2xl font-bold tracking-tight group-hover:underline"
+                    >
+                      {post.title}
+                    </h2>
+                    <p className="text-muted-foreground">{post.description}</p>
+                    <div className="mt-4">
+                      <span className="text-sm font-medium text-primary group-hover:underline">
+                        Read article <span aria-hidden="true">→</span>
+                      </span>
+                    </div>
                   </div>
                 </Link>
               </article>

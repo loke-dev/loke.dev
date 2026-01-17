@@ -1,11 +1,9 @@
 import type { MetaFunction } from '@remix-run/node'
+import { createMetaTags } from '@/utils/meta'
 import { Page, PageHeader, Section } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: 'About - loke.dev' },
-    { name: 'description', content: 'About me and my journey' },
-  ]
+  return createMetaTags('About', 'About me and my journey')
 }
 
 export default function About() {
