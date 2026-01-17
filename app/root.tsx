@@ -11,6 +11,7 @@ import {
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
+import { Analytics } from '@vercel/analytics/remix'
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { createTitle } from '@/utils/meta'
@@ -135,6 +136,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Toaster theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
         <Scripts />
+        <Analytics />
       </body>
     </html>
   )
