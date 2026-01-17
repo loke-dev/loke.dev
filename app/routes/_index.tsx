@@ -164,7 +164,16 @@ export default function Index() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
             >
-              <Card className="h-full flex flex-col hover:shadow-md transition-shadow">
+              <Card className="h-full flex flex-col hover:shadow-md transition-shadow group overflow-hidden">
+                {post.image && (
+                  <div className="aspect-video w-full overflow-hidden bg-muted">
+                    <img
+                      src={post.image}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                  </div>
+                )}
                 <CardHeader>
                   <div className="text-sm text-muted-foreground mb-2">
                     {new Date(post.date).toLocaleDateString('en-US', {
