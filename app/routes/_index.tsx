@@ -3,7 +3,7 @@ import { Link, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { SITE_NAME } from '@/utils/meta'
+import { createMetaTags } from '@/utils/meta'
 import { useBfcache } from '@/hooks/useBfcache'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -16,13 +16,10 @@ import {
 } from '@/components/ui/card'
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: `${SITE_NAME} - Web Developer` },
-    {
-      name: 'description',
-      content: 'Personal website of Loke, web developer.',
-    },
-  ]
+  return createMetaTags({
+    title: 'Loke.dev - Web Developer',
+    description: 'Personal website of Loke, web developer.',
+  })
 }
 
 // Add HTTP headers for bfcache support

@@ -1,10 +1,24 @@
 const SITE_NAME = 'Loke.dev'
 const DEFAULT_SEPARATOR = ' - '
+const SITE_DOMAIN = 'https://loke.dev'
+const DEFAULT_IMAGE = `${SITE_DOMAIN}/loke_clay.png`
+const TWITTER_HANDLE = '@lokecarlsson'
+const AUTHOR_NAME = 'Loke Carlsson'
 
 type TitleOptions = {
   title?: string
   separator?: string
   includesSiteName?: boolean
+}
+
+type MetaTagsOptions = {
+  title: string
+  description: string
+  url?: string
+  image?: string
+  type?: 'website' | 'article'
+  author?: string
+  publishedTime?: string
 }
 
 export function createTitle(options: TitleOptions = {}): string {
@@ -25,14 +39,48 @@ export function createTitle(options: TitleOptions = {}): string {
   return `${title}${separator}${SITE_NAME}`
 }
 
-export function createMetaTags(
-  title: string,
-  description: string
-): Array<{ title?: string; name?: string; content?: string }> {
-  return [
-    { title: createTitle({ title }) },
+export function createMetaTags(options: MetaTagsOptions) {
+  const {
+    title,
+    description,
+    url = SITE_DOMAIN,
+    image = DEFAULT_IMAGE,
+    type = 'website',
+    author = AUTHOR_NAME,
+    publishedTime,
+  } = options
+
+  const fullTitle = createTitle({ title })
+  const metaTags: Array<{
+    title?: string
+    name?: string
+    property?: string
+    content?: string
+  }> = [
+    { title: fullTitle },
     { name: 'description', content: description },
+    { name: 'author', content: author },
+    { property: 'og:title', content: title },
+    { property: 'og:description', content: description },
+    { property: 'og:type', content: type },
+    { property: 'og:url', content: url },
+    { property: 'og:image', content: image },
+    { property: 'og:site_name', content: SITE_NAME },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: title },
+    { name: 'twitter:description', content: description },
+    { name: 'twitter:image', content: image },
+    { name: 'twitter:creator', content: TWITTER_HANDLE },
   ]
+
+  if (type === 'article' && publishedTime) {
+    metaTags.push(
+      { property: 'article:published_time', content: publishedTime },
+      { property: 'article:author', content: author }
+    )
+  }
+
+  return metaTags
 }
 
-export { SITE_NAME }
+export { SITE_NAME, SITE_DOMAIN, AUTHOR_NAME }

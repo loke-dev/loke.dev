@@ -3,16 +3,18 @@ import { data, LoaderFunctionArgs } from '@remix-run/node'
 import { Link, MetaFunction, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
 import { toast } from 'sonner'
-import { createMetaTags } from '@/utils/meta'
+import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getFlashMessage } from '@/utils/session.server'
 import { useBfcache } from '@/hooks/useBfcache'
 import { Grid, Page, PageHeader } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
-  return createMetaTags(
-    'Blog',
-    'Articles, guides, and thoughts on web development and technology'
-  )
+  return createMetaTags({
+    title: 'Blog',
+    description:
+      'Articles, guides, and thoughts on web development and technology',
+    url: `${SITE_DOMAIN}/blog`,
+  })
 }
 
 // Add HTTP headers for bfcache support
