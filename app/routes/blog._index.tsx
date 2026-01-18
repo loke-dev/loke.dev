@@ -12,7 +12,7 @@ export const meta: MetaFunction = () => {
   return createMetaTags({
     title: 'Blog',
     description:
-      'Articles, guides, and thoughts on web development and technology',
+      'In-depth articles, practical guides, and insights on modern web development. Topics include React, Remix, TypeScript, database optimization, AI integration, and building resilient web applications.',
     url: `${SITE_DOMAIN}/blog`,
   })
 }

@@ -1,11 +1,16 @@
 import type { MetaFunction } from '@remix-run/node'
-import { createMetaTags } from '@/utils/meta'
+import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { Grid, Page, PageHeader, Section } from '@/components/layout'
 import { ProjectCard } from '@/components/projectCard'
 import { Project } from '@/types/projects'
 
 export const meta: MetaFunction = () => {
-  return createMetaTags('Projects', 'My portfolio of projects and work')
+  return createMetaTags({
+    title: 'Projects',
+    description:
+      'Portfolio of web development projects including GitDash, blog templates for Remix, Next.js, and SvelteKit, VSCode themes, and open-source tools. Built with React, TypeScript, and modern frameworks.',
+    url: `${SITE_DOMAIN}/projects`,
+  })
 }
 
 const projects: Project[] = [

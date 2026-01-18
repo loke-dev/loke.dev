@@ -7,47 +7,44 @@ export const loader = async () => {
 
   const blogUrls = posts
     .map((post) => {
+      const imageTag = post.image
+        ? `
+      <image:image>
+        <image:loc>${DOMAIN}${post.image}</image:loc>
+        <image:title>${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</image:title>
+      </image:image>`
+        : ''
+
       return `
     <url>
       <loc>${DOMAIN}/blog/${post._meta.path}</loc>
-      <lastmod>${new Date(post.date).toISOString()}</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>0.7</priority>
+      <lastmod>${new Date(post.lastModified || post.date).toISOString()}</lastmod>${imageTag}
     </url>`
     })
     .join('')
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+          xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
       <loc>${DOMAIN}</loc>
       <lastmod>${new Date().toISOString()}</lastmod>
-      <changefreq>weekly</changefreq>
-      <priority>1.0</priority>
     </url>
     <url>
       <loc>${DOMAIN}/blog</loc>
       <lastmod>${new Date().toISOString()}</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
     </url>
     <url>
       <loc>${DOMAIN}/about</loc>
       <lastmod>${new Date().toISOString()}</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>0.8</priority>
     </url>
     <url>
       <loc>${DOMAIN}/projects</loc>
       <lastmod>${new Date().toISOString()}</lastmod>
-      <changefreq>weekly</changefreq>
-      <priority>0.8</priority>
     </url>
     <url>
       <loc>${DOMAIN}/contact</loc>
       <lastmod>${new Date().toISOString()}</lastmod>
-      <changefreq>yearly</changefreq>
-      <priority>0.5</priority>
     </url>${blogUrls}
   </urlset>`
 

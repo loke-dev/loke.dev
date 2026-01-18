@@ -1,9 +1,14 @@
 import type { MetaFunction } from '@remix-run/node'
-import { createMetaTags } from '@/utils/meta'
+import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { Page, PageHeader, Section } from '@/components/layout'
 
 export const meta: MetaFunction = () => {
-  return createMetaTags('About', 'About me and my journey')
+  return createMetaTags({
+    title: 'About',
+    description:
+      'Learn about my journey as a full-stack web developer, my skills in React, Remix, TypeScript, and modern web technologies, and how I build accessible, performant applications.',
+    url: `${SITE_DOMAIN}/about`,
+  })
 }
 
 export default function About() {

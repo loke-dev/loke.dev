@@ -18,7 +18,8 @@ import {
 export const meta: MetaFunction = () => {
   return createMetaTags({
     title: 'Loke.dev - Web Developer',
-    description: 'Personal website of Loke, web developer.',
+    description:
+      'Full-stack web developer specializing in React, Remix, and modern JavaScript. Building fast, accessible, and beautiful web experiences. Explore in-depth tutorials and guides on web development.',
   })
 }
 

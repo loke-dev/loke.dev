@@ -6,6 +6,7 @@ import { AUTHOR_NAME, createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { setFlashMessage } from '@/utils/session.server'
 import { Callout } from '@/components/callout'
 import { Page } from '@/components/layout'
+import { RelatedPosts } from '@/components/related-posts'
 
 export const meta: MetaFunction = ({ params }) => {
   const post = allPosts.find((post) => post._meta.path === params.slug)
@@ -24,6 +25,7 @@ export const meta: MetaFunction = ({ params }) => {
     image: post.image ? `${SITE_DOMAIN}${post.image}` : undefined,
     type: 'article',
     publishedTime: new Date(post.date).toISOString(),
+    keywords: post.tag,
   })
 }
 
@@ -39,17 +41,19 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     )
   }
 
-  return { post }
+  const publishedPosts = allPosts.filter((p) => p.published)
+
+  return { post, allPosts: publishedPosts }
 }
 
 export default function BlogPostPage() {
-  const { post } = useLoaderData<typeof loader>()
+  const { post, allPosts } = useLoaderData<typeof loader>()
 
   if (!post) {
     return <div>Post not found</div>
   }
 
-  const structuredData = {
+  const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
@@ -58,7 +62,9 @@ export default function BlogPostPage() {
       ? `${SITE_DOMAIN}${post.image}`
       : `${SITE_DOMAIN}/loke_clay.png`,
     datePublished: new Date(post.date).toISOString(),
-    dateModified: new Date(post.date).toISOString(),
+    dateModified: post.lastModified
+      ? new Date(post.lastModified).toISOString()
+      : new Date(post.date).toISOString(),
     author: {
       '@type': 'Person',
       name: AUTHOR_NAME,
@@ -73,13 +79,45 @@ export default function BlogPostPage() {
       '@type': 'WebPage',
       '@id': `${SITE_DOMAIN}/blog/${post._meta.path}`,
     },
+    keywords: post.tag,
+    wordCount: post.wordCount,
+    timeRequired: `PT${post.readingTime}M`,
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: SITE_DOMAIN,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: `${SITE_DOMAIN}/blog`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `${SITE_DOMAIN}/blog/${post._meta.path}`,
+      },
+    ],
   }
 
   return (
     <Page size="md">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <article>
         {post.image && (
@@ -87,7 +125,7 @@ export default function BlogPostPage() {
             <div className="aspect-video w-full overflow-hidden bg-muted">
               <img
                 src={post.image}
-                alt=""
+                alt={post.imageAlt || `Cover image for ${post.title}`}
                 className="h-full w-full object-cover"
               />
             </div>
@@ -100,11 +138,32 @@ export default function BlogPostPage() {
           <p className="mt-4 text-xl text-muted-foreground">
             {post.description}
           </p>
+          <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <time dateTime={post.date}>
+              {new Date(post.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            {post.lastModified && (
+              <span>
+                · Updated{' '}
+                {new Date(post.lastModified).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </span>
+            )}
+            <span>· {post.readingTime} min read</span>
+          </div>
         </header>
         <div className="prose prose-lg dark:prose-invert max-w-none">
           <MDXContent code={post.body} components={{ Callout }} />
         </div>
       </article>
+      <RelatedPosts currentPost={post} allPosts={allPosts} />
     </Page>
   )
 }

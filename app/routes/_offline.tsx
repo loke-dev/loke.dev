@@ -5,7 +5,10 @@ import { createMetaTags } from '@/utils/meta'
 import { Button } from '@/components/ui/button'
 
 export const meta: MetaFunction = () => {
-  return createMetaTags("You're Offline", 'Offline page for Loke.dev')
+  return createMetaTags({
+    title: "You're Offline",
+    description: 'Offline page for Loke.dev',
+  })
 }
 
 export function loader() {

@@ -19,6 +19,7 @@ type MetaTagsOptions = {
   type?: 'website' | 'article'
   author?: string
   publishedTime?: string
+  keywords?: string
 }
 
 export function createTitle(options: TitleOptions = {}): string {
@@ -48,6 +49,7 @@ export function createMetaTags(options: MetaTagsOptions) {
     type = 'website',
     author = AUTHOR_NAME,
     publishedTime,
+    keywords,
   } = options
 
   const fullTitle = createTitle({ title })
@@ -56,10 +58,14 @@ export function createMetaTags(options: MetaTagsOptions) {
     name?: string
     property?: string
     content?: string
+    tagName?: string
+    rel?: string
+    href?: string
   }> = [
     { title: fullTitle },
     { name: 'description', content: description },
     { name: 'author', content: author },
+    { tagName: 'link', rel: 'canonical', href: url },
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
     { property: 'og:type', content: type },
@@ -73,11 +79,18 @@ export function createMetaTags(options: MetaTagsOptions) {
     { name: 'twitter:creator', content: TWITTER_HANDLE },
   ]
 
+  if (keywords) {
+    metaTags.push({ name: 'keywords', content: keywords })
+  }
+
   if (type === 'article' && publishedTime) {
     metaTags.push(
       { property: 'article:published_time', content: publishedTime },
       { property: 'article:author', content: author }
     )
+    if (keywords) {
+      metaTags.push({ property: 'article:tag', content: keywords })
+    }
   }
 
   return metaTags

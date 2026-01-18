@@ -146,7 +146,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const [swRegistered, setSwRegistered] = useState(false)
 
-  // Service worker event listener for registration and updates
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       const handleUpdate = () => {
@@ -168,10 +167,8 @@ export default function App() {
         }
       }
 
-      // Listen for service worker events
       navigator.serviceWorker.addEventListener('controllerchange', handleUpdate)
 
-      // Check service worker registration
       navigator.serviceWorker.ready.then(handleSuccess)
 
       return () => {
@@ -185,13 +182,30 @@ export default function App() {
 
   useSWEffect()
 
-  // Enable back/forward cache support
   useBfcache(() => {
-    // Optionally refresh data or perform other actions on bfcache restoration
     console.log('Page restored from back/forward cache')
   })
 
-  return <Outlet />
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Loke',
+    url: 'https://loke.dev',
+    sameAs: ['https://twitter.com/loke_dev', 'https://github.com/loke-dev'],
+    jobTitle: 'Web Developer',
+    description:
+      'Full-stack web developer specializing in React, Remix, and modern JavaScript',
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <Outlet />
+    </>
+  )
 }
 
 // Error boundary handles errors
