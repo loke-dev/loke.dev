@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import * as React from 'react'
+import { Links, Meta, Scripts } from '@remix-run/react'
 
 export async function loader() {
   return null
@@ -9,18 +10,47 @@ export const clientLoader = () => ({ ok: true })
 
 export function HydrateFallback() {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="text-lg">Loading Studio...</div>
-    </div>
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <title>Studio</title>
+        <Links />
+        <Meta />
+      </head>
+      <body>
+        <div className="flex h-screen items-center justify-center">
+          <div className="text-lg">Loading Studio...</div>
+        </div>
+        <Scripts />
+      </body>
+    </html>
+  )
+}
+
+// Use custom layout to bypass root layout
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <title>Studio</title>
+        <Links />
+        <Meta />
+      </head>
+      <body style={{ margin: 0, height: '100vh', overflow: 'hidden' }}>
+        {children}
+        <Scripts />
+      </body>
+    </html>
   )
 }
 
 export default function StudioPage() {
-  return (
-    <div className="h-screen">
-      <ClientOnlyStudio />
-    </div>
-  )
+  return <ClientOnlyStudio />
 }
 
 function ClientOnlyStudio() {
