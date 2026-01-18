@@ -22,7 +22,6 @@ import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { NetworkStatusIndicator } from '@/components/network-status'
 import { Toaster } from '@/components/ui/toast'
-import appStyles from '@/styles/app.css?url'
 import tailwindStyles from '@/styles/tailwind.css?url'
 
 // Add HTTP headers for bfcache support
@@ -34,8 +33,8 @@ export function headers() {
 }
 
 export const links: LinksFunction = () => [
+  { rel: 'preload', href: tailwindStyles, as: 'style' },
   { rel: 'stylesheet', href: tailwindStyles },
-  { rel: 'stylesheet', href: appStyles },
 
   // PWA manifest
   { rel: 'manifest', href: '/manifest.json' },

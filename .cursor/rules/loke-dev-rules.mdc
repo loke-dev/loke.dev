@@ -13,3 +13,4 @@ This project is using Remix Vite, always refer to vite docs instead of remix cla
 - Don't write any comments in the code.
 - Always use path aliases for internal import (example @/components/button).
 - When writing blog posts, always write in a casual and friendly and fun tone, but keep it professional. Dont sound like a robot.
+- Don't create markdown files for documentation.
