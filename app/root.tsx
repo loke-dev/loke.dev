@@ -69,9 +69,6 @@ export const links: LinksFunction = () => [
     sizes: '512x512',
     href: '/android-chrome-512x512.png',
   },
-
-  // Preload critical assets
-  { rel: 'preload', href: '/android-chrome-192x192.png', as: 'image' },
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {

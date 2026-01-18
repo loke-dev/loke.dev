@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { MDXContent } from '@content-collections/mdx/react'
 import { LoaderFunctionArgs } from '@remix-run/node'
 import { MetaFunction, useLoaderData } from '@remix-run/react'
@@ -11,7 +12,13 @@ import {
 import { setFlashMessage } from '@/utils/session.server'
 import { Callout } from '@/components/callout'
 import { Page } from '@/components/layout'
-import { RelatedPosts } from '@/components/related-posts'
+import { OptimizedImage } from '@/components/optimized-image'
+
+const RelatedPosts = lazy(() =>
+  import('@/components/related-posts').then((m) => ({
+    default: m.RelatedPosts,
+  }))
+)
 
 export const meta: MetaFunction = ({ params }) => {
   const post = allPosts.find((post) => post._meta.path === params.slug)
@@ -126,9 +133,14 @@ export default function BlogPostPage() {
         {post.image && (
           <div className="mb-8 -mx-4 sm:-mx-6 md:-mx-8">
             <div className="aspect-video w-full overflow-hidden bg-muted">
-              <img
+              <OptimizedImage
                 src={post.image}
                 alt={post.imageAlt || `Cover image for ${post.title}`}
+                width={1200}
+                quality={90}
+                format="webp"
+                responsive
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1200px"
                 className="h-full w-full object-cover"
               />
             </div>
@@ -166,7 +178,9 @@ export default function BlogPostPage() {
           <MDXContent code={post.body} components={{ Callout }} />
         </div>
       </article>
-      <RelatedPosts currentPost={post} allPosts={allPosts} />
+      <Suspense fallback={null}>
+        <RelatedPosts currentPost={post} allPosts={allPosts} />
+      </Suspense>
     </Page>
   )
 }

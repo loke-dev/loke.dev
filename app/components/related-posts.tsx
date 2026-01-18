@@ -1,5 +1,6 @@
 import { Link } from '@remix-run/react'
 import { ArrowRight } from 'lucide-react'
+import { OptimizedImage } from './optimized-image'
 import { Button } from './ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
 
@@ -46,9 +47,14 @@ export function RelatedPosts({
           >
             {post.image && (
               <div className="aspect-video w-full overflow-hidden bg-muted">
-                <img
+                <OptimizedImage
                   src={post.image}
                   alt=""
+                  width={400}
+                  quality={80}
+                  format="webp"
+                  responsive
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
               </div>
