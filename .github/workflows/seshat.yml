@@ -1,0 +1,42 @@
+name: Seshat Scribe
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Summon Seshat
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: pnpm exec seshat write
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "Seshat Bot"
+          git config user.email "seshat@bot.com"
+          git add .
+          git commit -m "✦ chronicler: new entry added by Seshat" || echo "No changes to commit"
+          git push

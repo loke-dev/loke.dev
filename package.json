@@ -72,7 +72,7 @@
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
     "remark-mdx-frontmatter": "^5.2.0",
-    "seshat-scribe": "^0.0.3",
+    "seshat-scribe": "^0.0.4",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
     "vite": "^6.3.5",

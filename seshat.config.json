@@ -4,5 +4,6 @@
   "publicAssetPath": "/images",
   "topic": "Software Engineering, AI, and Technology",
   "tone": "Professional yet witty and engaging",
-  "framework": "remix"
+  "framework": "remix",
+  "schedule": "0 9 * * *"
 }

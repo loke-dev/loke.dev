@@ -172,8 +172,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       seshat-scribe:
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.4
+        version: 0.0.4
       tailwindcss:
         specifier: ^4.1.12
         version: 4.1.12
@@ -4805,8 +4805,8 @@ packages:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
     engines: {node: '>= 0.8.0'}
 
-  seshat-scribe@0.0.3:
-    resolution: {integrity: sha512-iJHKc0/Tz1qdmriZU1gVbb/VHe+LM0/Yf0Ne5SjFoOqvasJLwksf7Uv1RBhQU+VqFyNGJWn1TNWBBZnqAlLnVA==}
+  seshat-scribe@0.0.4:
+    resolution: {integrity: sha512-qI5oDWo2Uk9wDNEZ/wLrX8z06JURMp0NHAxUVXYTPeSBMhRi56/9vQn+ZOVj6RmTaUCjn9TAErQRfv+BlraPgQ==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
@@ -10932,7 +10932,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  seshat-scribe@0.0.3:
+  seshat-scribe@0.0.4:
     dependencies:
       '@google/genai': 1.37.0
       chalk: 5.6.2
