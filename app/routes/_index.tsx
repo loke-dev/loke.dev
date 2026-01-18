@@ -23,7 +23,7 @@ const avatarUrl = buildImageUrl('/loke_clay.png', {
 })
 
 export const links: LinksFunction = () => [
-  { rel: 'preload', href: avatarUrl, as: 'image' },
+  { rel: 'preload', href: avatarUrl, as: 'image', fetchPriority: 'high' },
 ]
 
 export const meta: MetaFunction = () => {
