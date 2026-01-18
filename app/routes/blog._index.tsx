@@ -5,7 +5,6 @@ import { allPosts } from 'content-collections'
 import { toast } from 'sonner'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getFlashMessage } from '@/utils/session.server'
-import { useBfcache } from '@/hooks/useBfcache'
 import { Grid, Page, PageHeader } from '@/components/layout'
 import { OptimizedImage } from '@/components/optimized-image'
 
@@ -38,9 +37,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function BlogIndex() {
   const { posts, toast: flashMessage } = useLoaderData<typeof loader>()
-
-  // Enable back/forward cache support
-  useBfcache()
 
   useEffect(() => {
     if (flashMessage) {

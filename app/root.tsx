@@ -16,7 +16,6 @@ import { getHints } from '@/utils/hints'
 import { createTitle } from '@/utils/meta'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { toast } from '@/utils/toast'
-import { useBfcache } from '@/hooks/useBfcache'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
@@ -160,10 +159,7 @@ export default function App() {
       }
 
       const handleSuccess = () => {
-        if (!swRegistered) {
-          setSwRegistered(true)
-          console.log('Service worker registered successfully')
-        }
+        if (!swRegistered) setSwRegistered(true)
       }
 
       navigator.serviceWorker.addEventListener('controllerchange', handleUpdate)
@@ -180,10 +176,6 @@ export default function App() {
   }, [swRegistered])
 
   useSWEffect()
-
-  useBfcache(() => {
-    console.log('Page restored from back/forward cache')
-  })
 
   const personSchema = {
     '@context': 'https://schema.org',
