@@ -1,7 +1,15 @@
+import { buildImageUrl } from '@/utils/image-helpers'
+
 const SITE_NAME = 'Loke.dev'
 const DEFAULT_SEPARATOR = ' - '
 const SITE_DOMAIN = 'https://loke.dev'
-const DEFAULT_IMAGE = `${SITE_DOMAIN}/loke_clay.png`
+const DEFAULT_IMAGE = `${SITE_DOMAIN}${buildImageUrl('/loke_clay.png', {
+  width: 1200,
+  height: 630,
+  quality: 90,
+  format: 'webp',
+  fit: 'cover',
+})}`
 const TWITTER_HANDLE = '@loke_dev'
 const AUTHOR_NAME = 'Loke'
 
@@ -96,4 +104,4 @@ export function createMetaTags(options: MetaTagsOptions) {
   return metaTags
 }
 
-export { SITE_NAME, SITE_DOMAIN, AUTHOR_NAME }
+export { SITE_NAME, SITE_DOMAIN, AUTHOR_NAME, DEFAULT_IMAGE }

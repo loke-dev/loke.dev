@@ -7,6 +7,7 @@ import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getFlashMessage } from '@/utils/session.server'
 import { useBfcache } from '@/hooks/useBfcache'
 import { Grid, Page, PageHeader } from '@/components/layout'
+import { OptimizedImage } from '@/components/optimized-image'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -77,9 +78,14 @@ export default function BlogIndex() {
                 >
                   {post.image && (
                     <div className="aspect-video w-full overflow-hidden bg-muted">
-                      <img
+                      <OptimizedImage
                         src={post.image}
                         alt=""
+                        width={600}
+                        quality={85}
+                        format="webp"
+                        responsive
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
                       />
                     </div>

@@ -3,8 +3,10 @@ import { Link, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { buildImageUrl } from '@/utils/image-helpers'
 import { createMetaTags } from '@/utils/meta'
 import { useBfcache } from '@/hooks/useBfcache'
+import { OptimizedImage } from '@/components/optimized-image'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -87,7 +89,13 @@ export default function Index() {
               >
                 <Avatar className="h-48 w-48 sm:h-64 sm:w-64 border-4">
                   <AvatarImage
-                    src="/loke_clay.png"
+                    src={buildImageUrl('/loke_clay.png', {
+                      width: 256,
+                      height: 256,
+                      quality: 90,
+                      format: 'webp',
+                      fit: 'cover',
+                    })}
                     alt="Profile picture"
                     className="h-full w-full object-cover"
                   />
@@ -165,9 +173,14 @@ export default function Index() {
               <Card className="h-full flex flex-col hover:shadow-md transition-shadow group overflow-hidden">
                 {post.image && (
                   <div className="aspect-video w-full overflow-hidden bg-muted">
-                    <img
+                    <OptimizedImage
                       src={post.image}
                       alt=""
+                      width={500}
+                      quality={85}
+                      format="webp"
+                      responsive
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 500px"
                       className="h-full w-full object-cover transition-transform group-hover:scale-105"
                     />
                   </div>

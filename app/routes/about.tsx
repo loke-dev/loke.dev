@@ -1,6 +1,7 @@
 import type { MetaFunction } from '@remix-run/node'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { Page, PageHeader, Section } from '@/components/layout'
+import { OptimizedImage } from '@/components/optimized-image'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -18,9 +19,13 @@ export default function About() {
 
       <div className="prose prose-gray dark:prose-invert">
         <div className="flex justify-center mb-6">
-          <img
+          <OptimizedImage
             src="/loke_clay.png"
             alt="3D clay avatar"
+            width={512}
+            quality={90}
+            format="webp"
+            fit="cover"
             className="rounded-lg w-64 h-auto"
           />
         </div>

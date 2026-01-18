@@ -2,7 +2,12 @@ import { MDXContent } from '@content-collections/mdx/react'
 import { LoaderFunctionArgs } from '@remix-run/node'
 import { MetaFunction, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
-import { AUTHOR_NAME, createMetaTags, SITE_DOMAIN } from '@/utils/meta'
+import {
+  AUTHOR_NAME,
+  createMetaTags,
+  DEFAULT_IMAGE,
+  SITE_DOMAIN,
+} from '@/utils/meta'
 import { setFlashMessage } from '@/utils/session.server'
 import { Callout } from '@/components/callout'
 import { Page } from '@/components/layout'
@@ -58,9 +63,7 @@ export default function BlogPostPage() {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
-    image: post.image
-      ? `${SITE_DOMAIN}${post.image}`
-      : `${SITE_DOMAIN}/loke_clay.png`,
+    image: post.image ? `${SITE_DOMAIN}${post.image}` : DEFAULT_IMAGE,
     datePublished: new Date(post.date).toISOString(),
     dateModified: post.lastModified
       ? new Date(post.lastModified).toISOString()
