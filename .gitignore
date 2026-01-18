@@ -8,6 +8,9 @@ node_modules
 
 .DS_Store
 
+# Sanity
+/sanity/dist
+
 # Service Worker
 /public/entry.worker.js
 

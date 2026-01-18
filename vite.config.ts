@@ -52,6 +52,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './app'),
+      'sanity.config': path.resolve(__dirname, './sanity.config.ts'),
     },
   },
 })
