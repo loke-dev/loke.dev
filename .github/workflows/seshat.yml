@@ -39,4 +39,5 @@ jobs:
           git config user.email "seshat@bot.com"
           git add .
           git commit -m "✦ chronicler: new entry added by Seshat" || echo "No changes to commit"
+          git pull --rebase
           git push
