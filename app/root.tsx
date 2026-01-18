@@ -8,6 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
@@ -88,9 +89,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 // The Layout export is used across the root component, ErrorBoundary, and HydrateFallback
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Using useRouteLoaderData instead of useLoaderData to safely access data in all contexts
+  const { pathname } = useLocation()
   const data = useRouteLoaderData<typeof loader>('root')
   const isDark = data?.effectiveTheme === 'dark'
+
+  if (pathname.startsWith('/studio')) {
+    return <>{children}</>
+  }
 
   return (
     <html lang="en" className={`min-h-screen ${isDark ? 'dark' : ''}`}>
@@ -174,6 +179,11 @@ export default function App() {
 
   useSWEffect()
 
+  const { pathname } = useLocation()
+  if (pathname.startsWith('/studio')) {
+    return <Outlet />
+  }
+
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -199,6 +209,7 @@ export default function App() {
 // Error boundary handles errors
 export function ErrorBoundary() {
   const error = useRouteError()
+  const { pathname } = useLocation()
 
   let message = 'An unexpected error occurred'
   let status = 500
@@ -213,13 +224,35 @@ export function ErrorBoundary() {
   const errorTitle =
     status === 404 ? 'Page Not Found' : `Error ${status > 0 ? status : ''}`
 
+  const errorContent = (
+    <div className="container mx-auto px-4 py-12">
+      <h1 className="text-2xl font-bold mb-4">{errorTitle}</h1>
+      <p className="mb-4">{message}</p>
+    </div>
+  )
+
+  if (pathname.startsWith('/studio')) {
+    return (
+      <html lang="en">
+        <head>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>{createTitle({ title: errorTitle })}</title>
+          <Links />
+          <Meta />
+        </head>
+        <body>
+          {errorContent}
+          <Scripts />
+        </body>
+      </html>
+    )
+  }
+
   return (
     <Layout>
       <title>{createTitle({ title: errorTitle })}</title>
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold mb-4">{errorTitle}</h1>
-        <p className="mb-4">{message}</p>
-      </div>
+      {errorContent}
     </Layout>
   )
 }
