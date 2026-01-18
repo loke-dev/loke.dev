@@ -4,7 +4,7 @@ const DOMAIN = 'https://loke.dev'
 const SITE_TITLE = 'Loke.dev'
 const SITE_DESCRIPTION =
   'Articles, guides, and thoughts on web development and technology'
-const AUTHOR_NAME = 'Loke Carlsson'
+const AUTHOR_NAME = 'Loke'
 const AUTHOR_EMAIL = 'hello@loke.dev'
 
 function escapeXml(unsafe: string): string {

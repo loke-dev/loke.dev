@@ -2,8 +2,8 @@ const SITE_NAME = 'Loke.dev'
 const DEFAULT_SEPARATOR = ' - '
 const SITE_DOMAIN = 'https://loke.dev'
 const DEFAULT_IMAGE = `${SITE_DOMAIN}/loke_clay.png`
-const TWITTER_HANDLE = '@lokecarlsson'
-const AUTHOR_NAME = 'Loke Carlsson'
+const TWITTER_HANDLE = '@loke_dev'
+const AUTHOR_NAME = 'Loke'
 
 type TitleOptions = {
   title?: string
