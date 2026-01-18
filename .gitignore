@@ -10,3 +10,5 @@ node_modules
 
 # Service Worker
 /public/entry.worker.js
+
+.pnpm-store
