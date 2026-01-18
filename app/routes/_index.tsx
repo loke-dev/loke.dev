@@ -1,11 +1,11 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { allPosts } from 'content-collections'
-import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { buildImageUrl } from '@/utils/image-helpers'
 import { createMetaTags } from '@/utils/meta'
 import { useBfcache } from '@/hooks/useBfcache'
+import { useInView } from '@/hooks/useInView'
 import { OptimizedImage } from '@/components/optimized-image'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -44,8 +44,9 @@ export async function loader() {
 
 export default function Index() {
   const { latestPosts } = useLoaderData<typeof loader>()
+  const techGrid = useInView()
+  const blogGrid = useInView()
 
-  // Enable back/forward cache support
   useBfcache()
 
   return (
@@ -81,12 +82,7 @@ export default function Index() {
                     'linear-gradient(to right, var(--tw-gradient-stops))',
                 }}
               />
-              <motion.div
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-fade-in-scale">
                 <Avatar className="h-48 w-48 sm:h-64 sm:w-64 border-4">
                   <AvatarImage
                     src={buildImageUrl('/loke_clay.png', {
@@ -101,7 +97,7 @@ export default function Index() {
                   />
                   <AvatarFallback>Loke.dev</AvatarFallback>
                 </Avatar>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
@@ -113,12 +109,9 @@ export default function Index() {
           <h2 className="text-3xl font-bold text-center mb-12">
             Some Technologies I Work With
           </h2>
-          <motion.div
+          <div
+            ref={techGrid.ref}
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ staggerChildren: 0.1, duration: 0.4 }}
           >
             {[
               'JavaScript',
@@ -128,18 +121,19 @@ export default function Index() {
               'Next.js',
               'Tailwind CSS',
             ].map((tech, index) => (
-              <motion.div
+              <div
                 key={tech}
-                className="flex items-center justify-center p-4 bg-background rounded-lg shadow-sm h-20"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                className={`flex items-center justify-center p-4 bg-background rounded-lg shadow-sm h-20 ${
+                  techGrid.inView ? 'animate-fade-in-up' : 'opacity-0'
+                }`}
+                style={
+                  techGrid.inView ? { animationDelay: `${index * 100}ms` } : {}
+                }
               >
                 <span className="font-medium">{tech}</span>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -155,20 +149,17 @@ export default function Index() {
           </p>
         </div>
 
-        <motion.div
+        <div
+          ref={blogGrid.ref}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ staggerChildren: 0.2 }}
         >
           {latestPosts.map((post, index) => (
-            <motion.div
+            <div
               key={post.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+              className={blogGrid.inView ? 'animate-fade-in-up' : 'opacity-0'}
+              style={
+                blogGrid.inView ? { animationDelay: `${index * 100}ms` } : {}
+              }
             >
               <Card className="h-full flex flex-col hover:shadow-md transition-shadow group overflow-hidden">
                 {post.image && (
@@ -212,9 +203,9 @@ export default function Index() {
                   </Button>
                 </CardFooter>
               </Card>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
         <div className="flex justify-center mt-12">
           <Button asChild size="lg">

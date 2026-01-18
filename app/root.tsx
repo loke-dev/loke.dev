@@ -11,13 +11,13 @@ import {
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
-import { Analytics } from '@vercel/analytics/remix'
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { createTitle } from '@/utils/meta'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { toast } from '@/utils/toast'
 import { useBfcache } from '@/hooks/useBfcache'
+import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { NetworkStatusIndicator } from '@/components/network-status'
@@ -128,14 +128,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="min-h-screen bg-background font-sans antialiased">
         <div className="relative flex min-h-screen flex-col">
           <Header />
-          {children}
+          <main id="main">{children}</main>
           <Footer />
         </div>
         <NetworkStatusIndicator />
         <Toaster theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
         <Scripts />
-        <Analytics />
+        <DeferredAnalytics />
       </body>
     </html>
   )
