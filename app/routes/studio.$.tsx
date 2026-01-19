@@ -1,6 +1,11 @@
 import { Studio } from 'sanity'
 import config from 'sanity.config'
+import { Hydrated } from '@/components/hydrated'
 
 export default function StudioPage() {
-  return <Studio config={config} />
+  return (
+    <Hydrated>
+      <Studio config={config} />
+    </Hydrated>
+  )
 }
