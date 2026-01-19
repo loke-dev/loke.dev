@@ -1,0 +1,13 @@
+diff --git a/dist/index.js b/dist/index.js
+index e8cc8b7a51f0cd02a60e32dc0fbbe1f70a0a4597..8edb6dc1c5f5bfcc8e85bd78d9c1bfdf59f7f9c7 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -977,7 +977,7 @@ async function build3(config, context, cacheManager, emitter) {
+   async function transformCollection(collections, collection) {
+     const transform = collection.transform;
+     if (transform) {
+-      const limit = pLimit(os.cpus().length);
++      const limit = pLimit(Math.max(1, os.cpus().length));
+       const docs = collection.documents.map(
+         (doc) => limit(() => transformDocument(collections, collection, transform, doc))
+       );

@@ -56,7 +56,7 @@ export default defineConfig({
     },
   },
   ssr: {
-    noExternal: ['styled-components', '@sanity/ui'],
+    noExternal: ['styled-components', '@sanity/ui', '@sanity/vision'],
   },
   optimizeDeps: {
     include: ['styled-components'],
