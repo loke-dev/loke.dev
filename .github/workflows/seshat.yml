@@ -35,8 +35,8 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config user.name "Seshat Bot"
-          git config user.email "seshat@bot.com"
+          git config user.name "loke-dev"
+          git config user.email "hi@loke.dev"
           git add .
           git commit -m "✦ chronicler: new entry added by Seshat" || echo "No changes to commit"
           git pull --rebase
