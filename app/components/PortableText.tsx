@@ -87,5 +87,5 @@ const components: PortableTextComponents = {
 }
 
 export function PortableText({ value }: { value: unknown }) {
-  return <BasePortableText value={value as never} components={components} />
+  return <BasePortableText value={value} components={components} />
 }
