@@ -54,7 +54,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function StudioPage() {
   return (
-    <div id="sanity-studio-root">
+    <div
+      id="sanity-studio-root"
+      style={{ position: 'fixed', inset: 0, zIndex: 999999 }}
+    >
       <ClientOnlyStudio />
     </div>
   )
