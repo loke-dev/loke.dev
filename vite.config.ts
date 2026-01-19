@@ -58,4 +58,13 @@ export default defineConfig({
   ssr: {
     noExternal: ['styled-components', '@sanity/ui'],
   },
+  optimizeDeps: {
+    include: ['styled-components'],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/styled-components/, /node_modules/],
+      transformMixedEsModules: true,
+    },
+  },
 })
