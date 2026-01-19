@@ -2,9 +2,6 @@
 import * as React from 'react'
 import { Links, Meta, Scripts } from '@remix-run/react'
 
-// Tell Remix to skip root layout
-export const handle = { hydrate: true }
-
 export async function loader() {
   return null
 }
@@ -53,14 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function StudioPage() {
-  return (
-    <div
-      id="sanity-studio-root"
-      style={{ position: 'fixed', inset: 0, zIndex: 999999 }}
-    >
-      <ClientOnlyStudio />
-    </div>
-  )
+  return <ClientOnlyStudio />
 }
 
 function ClientOnlyStudio() {
