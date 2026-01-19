@@ -1,0 +1,80 @@
+---
+title: 'Latency is a Design Choice'
+description: "We've spent years optimizing APIs when we should have been moving the data closer to the user's fingertips."
+date: 2026-01-19T09:11:48.193Z
+published: true
+tag: architecture
+image: '/images/latency-is-a-design-choice-local-first.png'
+---
+
+I used to lose sleep over Time to First Byte (TTFB). I spent a solid month in 2018 rewriting a Go microservice to shave 15 milliseconds off a database query, convinced that this was the "hard engineering" that separated the pros from the amateurs. Then I used the app on a spotty 4G connection in a basement cafe. The 15ms I saved didn't matter. The round-trip time (RTT) was 400ms, and the UI stayed locked behind a loading spinner while the browser negotiated a TLS handshake for the tenth time that session. I realized then that I hadn't been solving for the user; I’d been solving for my own dashboard metrics.
+
+We treat latency like an act of God—a natural disaster we can only mitigate with better caching or faster load balancers. But latency is actually a design choice. If your architecture requires a round-trip to a data center in `us-east-1` for every button click, you have _chosen_ to make your user wait.
+
+### The Myth of the "Fast" API
+
+The industry is obsessed with making APIs faster. We use Rust, we use connection pooling, we optimize GraphQL fragments. These are good things. But they ignore the physical reality of the speed of light. If a user is in Tokyo and your server is in Virginia, there is a hard floor on how fast that request can go (roughly 200ms round-trip).
+
+When you add up DNS lookup, TCP handshake, TLS negotiation, and the actual payload transfer, your "10ms" API response is actually a half-second of perceived lag.
+
+The alternative isn't "faster APIs." It's **local-first** thinking.
+
+### Moving the Source of Truth
+
+Traditional web apps treat the server as the only source of truth. The client is just a "dumb" window looking through a very long, very laggy telescope.
+
+If we want zero-latency interfaces, the data has to live _on_ the device before the user even asks for it. This isn't just "caching"—it's a fundamental shift in how we synchronize state.
+
+Instead of this:
+
+```typescript
+// The "Standard" Way: Wait for the network to tell us what happened
+async function handleUpdateTodo(id: string, text: string) {
+  setLoading(true)
+  try {
+    const response = await api.put(`/todos/${id}`, { text })
+    // Update local state only after server says okay
+    setTodos((prev) => prev.map((t) => (t.id === id ? response.data : t)))
+  } finally {
+    setLoading(false)
+  }
+}
+```
+
+We should be doing this:
+
+```typescript
+// The Local-First Way: Act immediately, sync in the background
+function handleUpdateTodo(id: string, text: string) {
+  // 1. Update the local database (SQLite/IndexedDB) immediately
+  localDb.todos.update(id, { text, status: 'pending' })
+
+  // 2. The UI reacts to the local DB change (0ms latency)
+  // 3. A background sync worker pushes the change to the server
+  syncEngine.enqueue({ type: 'UPDATE_TODO', payload: { id, text } })
+}
+```
+
+### The Cost of Zero Latency
+
+Choosing low latency through local-first architecture isn't a free lunch. You're trading **network latency** for **architectural complexity**.
+
+When the client can change data offline or optimistically, you run into the "Split Brain" problem. What happens if I edit a document on my phone while my teammate edits the same line on their laptop?
+
+This is why **CRDTs (Conflict-free Replicated Data Types)** are becoming the darlings of modern architecture. They allow multiple actors to change data independently and merge those changes predictably without a central coordinator. If you choose a local-first design, you are choosing to learn about causal consistency and state-based synchronization.
+
+### Where Do You Actually Need the Server?
+
+Not everything belongs on the client. Heavy computation, sensitive business logic (like price calculations or auth checks), and massive datasets that exceed device storage still belong on the "big iron."
+
+But for the vast majority of SaaS applications—task managers, CRMs, document editors—90% of the data the user interacts with could fit comfortably in a local SQLite database running in the browser via WASM.
+
+### The Decision Matrix
+
+When you're designing your next feature, ask yourself:
+
+1. **Does this action need to be synchronous?** (e.g., Processing a payment? Yes. Renaming a folder? No.)
+2. **Can the user's intent be captured locally first?**
+3. **What is the "cost of being wrong"?** If the server eventually rejects a change, can we roll it back gracefully in the UI?
+
+Latency isn't a technical constraint; it's a boundary condition of your architecture. We’ve spent decades trying to make the pipe wider and shorter. It’s time we just started putting the water in the glass before the user gets thirsty.
