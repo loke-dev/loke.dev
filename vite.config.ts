@@ -55,4 +55,7 @@ export default defineConfig({
       'sanity.config': path.resolve(__dirname, './sanity.config.ts'),
     },
   },
+  ssr: {
+    noExternal: ['styled-components', '@sanity/ui'],
+  },
 })
