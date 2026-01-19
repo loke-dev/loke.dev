@@ -1,0 +1,65 @@
+---
+title: 'Atomic Pull Requests'
+description: 'How much team velocity are you losing to massive code reviews that sit stale for days while bugs hide in plain sight?'
+date: 2026-01-19T07:31:18.032Z
+published: true
+tag: software-engineering
+image: '/images/atomic-pull-requests.png'
+---
+
+Your 50-file pull request isn't a sign of productivity; it's a hostage situation for your teammates. When you drop a massive "Feature X implementation" PR, you aren't asking for a review—you’re asking for a rubber stamp and a prayer that production doesn't explode.
+
+Reviewer fatigue is a quantifiable metric. Give a developer 10 lines to review, and they’ll find three bugs. Give them 1,000 lines, and they’ll say "Looks good to me" (LGTM) within five minutes. Atomic PRs fix this by forcing code changes into the smallest, most coherent units possible.
+
+## The Rule of One
+
+An atomic PR should do exactly one thing. If you find yourself using the word "and" in your PR title, you’ve probably failed.
+
+- **Bad:** `feat: add user profile and fix navigation bug and update dependencies`
+- **Good:** `feat: add user profile avatar upload`
+
+When a PR is limited to a single concern, the cognitive load on the reviewer drops to nearly zero. They can actually reason about the logic instead of just checking for syntax errors. More importantly, if that single feature causes a memory leak, reverting it is a one-button affair that doesn't take three other bug fixes down with it.
+
+## Separate Refactoring from Logic
+
+Mixing a massive Prettier/ESLint reformat with actual business logic is a special kind of evil. I've been guilty of it—you see a messy function while working on a feature, you clean it up, and suddenly the diff is 400 lines of whitespace changes hiding the three lines of critical logic.
+
+Do the cleanup in a separate PR. It’ll get merged in thirty seconds.
+
+```javascript
+// PR #1: Refactor helper (Atomic & Safe)
+export const calculateTotal = (items) => {
+  return items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+}
+
+// PR #2: Logic Change (The actual change we care about)
+export const calculateTotal = (items, discountCode) => {
+  const subtotal = items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  )
+  return applyDiscount(subtotal, discountCode)
+}
+```
+
+By splitting these, the reviewer can see exactly how the logic evolved without squinting through "variable rename" noise.
+
+## Stacked Pull Requests
+
+A common complaint is: "I can't wait for PR A to be merged before I start PR B!"
+
+This is where stacking comes in. You branch `feature-part-2` off of `feature-part-1`. Yes, you have to manage the rebase if part one changes, but it keeps the feedback loop tight. Tools like `gh-stack` or even just disciplined git usage make this manageable. It allows you to ship the foundational API changes while you're still working on the UI components that consume them.
+
+## The "But it's too much overhead" Myth
+
+People argue that creating five small PRs takes longer than one big one. They're wrong.
+
+The time spent isn't in the `git commit`. The time is lost in the "Stale" state. Big PRs sit because they're intimidating. They require a "deep work" block that your senior engineers don't have. Small PRs get knocked out between meetings or while waiting for a build to finish.
+
+If you want to move fast, you have to stop shipping "The Whole Project" and start shipping "The Next Logical Step."
+
+## The Exception: Migrations
+
+There is one gotcha: database migrations or breaking API changes. You can’t always split these without breaking the build. In these cases, use feature flags. Ship the database column in one PR, ship the code that writes to it (but doesn't read yet) in another, and finally, ship the PR that flips the switch.
+
+It feels slower. It feels like more paperwork. But when you haven't had a "revert-fest" on a Friday night in six months, you'll realize that "slow" is actually just "stable."
