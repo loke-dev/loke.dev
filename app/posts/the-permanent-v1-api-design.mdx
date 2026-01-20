@@ -1,0 +1,78 @@
+---
+title: 'The Permanent v1'
+description: 'Stop treating your public API like a draft; once the first developer integrates, your code is effectively written in stone.'
+date: 2026-01-20T09:11:22.847Z
+published: true
+tag: api-design
+image: '/images/the-permanent-v1-api-design.png'
+---
+
+The moment you ship a public endpoint, you lose the right to be "messy" with your data structures. Every breaking change you introduce is a tax levied against your most loyal users—the ones who actually bothered to integrate with your platform.
+
+We often treat our internal codebases like gardens that we can prune and replant at will. But a public API isn't a garden; it's a bridge. People build houses on the other side of that bridge. If you decide to move the bridge three feet to the left because it "looks cleaner," their houses fall into the ravine.
+
+### The "Beta" Delusion
+
+Slapping a "Beta" tag on an API is the developer equivalent of crossing your fingers behind your back. You think it gives you license to rename fields or change types on a whim. It doesn't.
+
+Developers don't care about your roadmap or your sense of aesthetic purity. If your API solves a problem for them, they will bake it into their CI/CD pipeline, wrap it in a series of fragile abstractions, and promptly forget how it works. When you change `user_id` to `account_id` because it's more "domain-accurate," you aren't improving the DX. You're breaking their build.
+
+### Hyrum’s Law is Always Watching
+
+Hyrum’s Law states that with a sufficient number of users, every observable behavior of your system will be depended on by somebody.
+
+I once saw a team change the sort order of a "Recent Activity" list from `created_at` to `updated_at`. Technically, the API documentation never promised a specific sort order. But a major client had built a scraping tool that relied on that specific sequence to deduplicate records. The "silent" change cost that client three days of data integrity.
+
+The observable reality of your API _is_ the documentation.
+
+### Designing for Longevity (Or, How Not to Hate Yourself)
+
+Since you’re stuck with your decisions, you might as well make better ones. The trick isn't to be a perfect prophet; it's to be a cautious architect.
+
+**1. Be Specific, Not Generic**
+Generic field names are where technical debt goes to hide. If you have a field called `data`, you've already lost. What kind of data? Is it a string? An object?
+
+```json
+// Don't do this
+{
+  "id": "abc-123",
+  "metadata": "premium_user"
+}
+
+// Do this
+{
+  "id": "user_01HGP",
+  "subscription_tier": "premium",
+  "is_internal_tester": false
+}
+```
+
+In the second example, if you need to add more "metadata" later, you don't have to worry about whether `subscription_tier` should have been inside a nested object. You've given yourself room to grow sideways.
+
+**2. Strings are Better Than Enums (Usually)**
+Strict enums are a trap in many languages. If you add a new value to an enum, older client libraries that use strict deserialization will often crash. If you return a string, the client can just ignore the values it doesn't recognize.
+
+**3. The "Add, Don't Edit" Rule**
+If you realize `price` should have been a float instead of an integer, do not change the type. Add a new field called `price_decimal` and deprecate the old one.
+
+```javascript
+// Evolution of a response object
+{
+  "item_id": 45,
+  "price": 10, // Deprecated: use price_usd_cents
+  "price_usd_cents": 1050,
+  "currency": "USD"
+}
+```
+
+Yes, the payload gets a bit bloated. Yes, it looks "ugly" to your clean-code sensibilities. But your users' code keeps running, and that is the only metric that matters in API design.
+
+### The Cost of Perfectionism
+
+The urge to refactor is strong. We see a v1 that we wrote six months ago and we cringe at the naming conventions. We want to "fix" it.
+
+Resist.
+
+The beauty of a v1 isn't in its elegant schema; it's in its stability. If you absolutely must change the world, launch a v2. But remember: once you launch v2, you now have two APIs to maintain until the heat death of the universe, because nobody ever migrates off v1 unless you force them to (and they will hate you for it).
+
+Treat your first integration like a marriage proposal. You're in this for the long haul. Make sure you can live with the code you're writing today, because it’s not going anywhere.
