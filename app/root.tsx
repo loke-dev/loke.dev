@@ -8,6 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
@@ -88,9 +89,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 // The Layout export is used across the root component, ErrorBoundary, and HydrateFallback
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Using useRouteLoaderData instead of useLoaderData to safely access data in all contexts
   const data = useRouteLoaderData<typeof loader>('root')
+  const location = useLocation()
   const isDark = data?.effectiveTheme === 'dark'
+  const isStudioRoute = location.pathname.startsWith('/studio')
 
   return (
     <html lang="en" className={`min-h-screen ${isDark ? 'dark' : ''}`}>
@@ -122,13 +124,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        {isStudioRoute ? (
+          <div className="fixed inset-0">{children}</div>
+        ) : (
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        )}
         <NetworkStatusIndicator />
         <Toaster theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
