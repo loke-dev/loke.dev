@@ -26,7 +26,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./app/*"],
-      "content-collections": ["./.content-collections/generated"],
       "sanity.config": ["./sanity.config.ts"]
     },
 

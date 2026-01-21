@@ -1,13 +1,7 @@
 import path from 'path'
-import contentCollections from '@content-collections/remix-vite'
-import mdx from '@mdx-js/rollup'
 import { remixPWA } from '@remix-pwa/dev'
 import { vitePlugin as remix } from '@remix-run/dev'
 import tailwindcss from '@tailwindcss/vite'
-import { rehypePrettyCode } from 'rehype-pretty-code'
-import remarkFrontmatter from 'remark-frontmatter'
-import remarkGfm from 'remark-gfm'
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -21,20 +15,6 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
   plugins: [
-    mdx({
-      remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
-      rehypePlugins: [
-        [
-          rehypePrettyCode,
-          {
-            theme: {
-              dark: 'github-dark',
-              light: 'github-light',
-            },
-          },
-        ],
-      ],
-    }),
     remix({
       future: {
         v3_fetcherPersist: true,
@@ -46,7 +26,6 @@ export default defineConfig({
     }),
     tailwindcss(),
     tsconfigPaths(),
-    contentCollections(),
     ...(isProduction ? [remixPWA()] : []),
   ],
   resolve: {

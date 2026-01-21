@@ -111,6 +111,10 @@ export default defineType({
             hotspot: true,
           },
         },
+        {
+          type: 'callout',
+          title: 'Callout',
+        },
       ],
     }),
   ],

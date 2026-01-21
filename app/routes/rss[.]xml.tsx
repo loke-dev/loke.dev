@@ -1,4 +1,5 @@
-import { allPosts } from 'content-collections'
+import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { getPostImageUrl } from '@/lib/sanity/helpers'
 
 const DOMAIN = 'https://loke.dev'
 const SITE_TITLE = 'Loke.dev'
@@ -17,15 +18,14 @@ function escapeXml(unsafe: string): string {
 }
 
 export const loader = async () => {
-  const posts = allPosts
-    .filter((post) => post.published)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 20)
+  const allPosts = await getAllPublishedPosts()
+  const posts = allPosts.slice(0, 20)
 
   const items = posts
     .map((post) => {
-      const postUrl = `${DOMAIN}/blog/${post._meta.path}`
+      const postUrl = `${DOMAIN}/blog/${post.slug.current}`
       const pubDate = new Date(post.date).toUTCString()
+      const imageUrl = getPostImageUrl(post, 1200)
 
       return `
     <item>
@@ -35,7 +35,7 @@ export const loader = async () => {
       <guid isPermaLink="true">${postUrl}</guid>
       <pubDate>${pubDate}</pubDate>
       <author>${AUTHOR_EMAIL} (${AUTHOR_NAME})</author>
-      ${post.image ? `<enclosure url="${DOMAIN}${post.image}" type="image/png" />` : ''}
+      ${imageUrl ? `<enclosure url="${imageUrl}" type="image/jpeg" />` : ''}
     </item>`
     })
     .join('')

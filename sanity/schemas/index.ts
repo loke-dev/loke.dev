@@ -1,4 +1,5 @@
+import callout from './callout'
 import code from './code'
 import post from './post'
 
-export const schemaTypes = [post, code]
+export const schemaTypes = [post, code, callout]

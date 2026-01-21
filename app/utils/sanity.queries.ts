@@ -1,67 +1,32 @@
-import { client } from '@/utils/sanity.client'
+import { client } from '@/lib/sanity/client'
+import {
+  POST_BY_SLUG_QUERY,
+  POST_QUERY,
+  POST_SLUGS_QUERY,
+} from '@/lib/sanity/queries'
+import { calculateReadingTime } from '@/lib/sanity/reading-time'
+import type { Post, PostSlug } from '@/lib/sanity/types'
 
-export interface Post {
-  _id: string
-  title: string
-  slug: { current: string }
-  description: string
-  date: string
-  lastModified?: string
-  tag: string
-  published: boolean
-  image?: {
-    asset: {
-      _ref: string
-      _type: 'reference'
-    }
-  }
-  imageAlt?: string
-  body: unknown[]
-}
+export type { Post }
 
 export async function getAllPublishedPosts(): Promise<Post[]> {
-  return client.fetch(
-    `*[_type == "post" && published == true] | order(date desc) {
-      _id,
-      title,
-      slug,
-      description,
-      date,
-      lastModified,
-      tag,
-      published,
-      image,
-      imageAlt,
-      body
-    }`
-  )
+  const posts = await client.fetch<Post[]>(POST_QUERY)
+
+  return posts.map((post) => {
+    const { readingTime, wordCount } = calculateReadingTime(post.body || [])
+    return { ...post, readingTime, wordCount }
+  })
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  return client.fetch(
-    `*[_type == "post" && slug.current == $slug][0] {
-      _id,
-      title,
-      slug,
-      description,
-      date,
-      lastModified,
-      tag,
-      published,
-      image,
-      imageAlt,
-      body
-    }`,
-    { slug }
-  )
+  const post = await client.fetch<Post | null>(POST_BY_SLUG_QUERY, { slug })
+
+  if (!post) return null
+
+  const { readingTime, wordCount } = calculateReadingTime(post.body || [])
+  return { ...post, readingTime, wordCount }
 }
 
-export async function getAllPostSlugs(): Promise<
-  { slug: { current: string } }[]
-> {
-  return client.fetch(
-    `*[_type == "post" && published == true] {
-      slug
-    }`
-  )
+export async function getAllPostSlugs(): Promise<PostSlug[]> {
+  return client.fetch<PostSlug[]>(POST_SLUGS_QUERY)
 }
