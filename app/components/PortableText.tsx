@@ -23,6 +23,27 @@ const createComponents = (): PortableTextComponents => {
       },
       code: ({ value }) => {
         const hasFilename = Boolean(value.filename)
+
+        // If we have pre-highlighted HTML from the server, use it
+        if (value.highlightedHtml) {
+          return (
+            <div className="my-4">
+              {hasFilename && (
+                <div className="rounded-t-lg bg-[--shiki-light-bg] dark:bg-[--shiki-dark-bg] border border-b-0 border-border px-4 py-2 text-sm text-muted-foreground">
+                  {value.filename}
+                </div>
+              )}
+              <div
+                className={
+                  hasFilename ? '[&>pre]:!rounded-t-none [&>pre]:!mt-0' : ''
+                }
+                dangerouslySetInnerHTML={{ __html: value.highlightedHtml }}
+              />
+            </div>
+          )
+        }
+
+        // Fallback for non-highlighted code
         return (
           <div className="my-4">
             {hasFilename && (
@@ -90,7 +111,7 @@ const createComponents = (): PortableTextComponents => {
         )
       },
       code: ({ children }) => (
-        <code className="rounded bg-gray-100 px-1 py-0.5 text-sm">
+        <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono text-foreground">
           {children}
         </code>
       ),
