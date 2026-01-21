@@ -7,6 +7,7 @@ import { setFlashMessage } from '@/utils/session.server'
 import { Page } from '@/components/layout'
 import { PortableText } from '@/components/PortableText'
 import { formatDate, getPostImageUrl } from '@/lib/sanity/helpers'
+import { processBodyWithHighlighting } from '@/lib/sanity/process-body.server'
 import {
   createArticleSchema,
   createBreadcrumbSchema,
@@ -58,7 +59,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const allPosts = await getAllPublishedPosts()
 
-  return { post, allPosts }
+  // Process code blocks with syntax highlighting
+  const processedBody = await processBodyWithHighlighting(post.body)
+
+  return { post: { ...post, body: processedBody }, allPosts }
 }
 
 export default function BlogPostPage() {

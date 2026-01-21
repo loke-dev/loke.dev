@@ -19,8 +19,7 @@ export default [
       "coverage/**",
       "public/**",
       "!**/.server",
-      "!**/.client",
-      ".content-collections/**"
+      "!**/.client"
     ]
   },
 

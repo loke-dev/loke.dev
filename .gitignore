@@ -4,8 +4,6 @@ node_modules
 /build
 .env
 
-.content-collections
-
 .DS_Store
 
 # Sanity
