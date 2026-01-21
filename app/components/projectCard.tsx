@@ -1,5 +1,6 @@
 import { Link } from '@remix-run/react'
-import { Project } from '@/types/projects'
+import { getProjectImageUrl } from '@/lib/sanity/helpers'
+import type { Project } from '@/lib/sanity/types'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
@@ -11,11 +12,17 @@ export function ProjectCard({
   project: Project
   featured?: boolean
 }) {
+  const imageUrl = getProjectImageUrl(
+    project,
+    featured ? 800 : 500,
+    featured ? 450 : 375
+  )
+
   return (
     <Card
       className={`overflow-hidden transition-all hover:shadow-md ${featured ? 'flex flex-col md:flex-row w-full' : ''}`}
     >
-      {project.imageUrl && (
+      {imageUrl && (
         <div
           className={`relative w-full overflow-hidden ${
             featured
@@ -24,7 +31,7 @@ export function ProjectCard({
           }`}
         >
           <img
-            src={project.imageUrl}
+            src={imageUrl}
             alt={project.title}
             className="h-full w-full object-cover object-center"
           />

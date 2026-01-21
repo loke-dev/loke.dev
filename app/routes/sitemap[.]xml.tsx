@@ -1,23 +1,34 @@
-import { allPosts } from 'content-collections'
+import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { getPostImageUrl } from '@/lib/sanity/helpers'
 
 const DOMAIN = 'https://loke.dev'
 
+function escapeXml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+}
+
 export const loader = async () => {
-  const posts = allPosts.filter((post) => post.published)
+  const posts = await getAllPublishedPosts()
 
   const blogUrls = posts
     .map((post) => {
-      const imageTag = post.image
+      const imageUrl = getPostImageUrl(post, 1200)
+      const imageTag = imageUrl
         ? `
       <image:image>
-        <image:loc>${DOMAIN}${post.image}</image:loc>
-        <image:title>${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</image:title>
+        <image:loc>${imageUrl}</image:loc>
+        <image:title>${escapeXml(post.title)}</image:title>
       </image:image>`
         : ''
 
       return `
     <url>
-      <loc>${DOMAIN}/blog/${post._meta.path}</loc>
+      <loc>${DOMAIN}/blog/${post.slug.current}</loc>
       <lastmod>${new Date(post.lastModified || post.date).toISOString()}</lastmod>${imageTag}
     </url>`
     })

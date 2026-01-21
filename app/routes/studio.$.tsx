@@ -8,7 +8,7 @@ const Studio = lazy(() =>
 
 export function HydrateFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex h-screen w-screen items-center justify-center">
       <div className="text-center">
         <h1 className="text-2xl font-bold">Loading Sanity Studio...</h1>
       </div>
@@ -29,9 +29,11 @@ export default function StudioPage() {
 
   return (
     <Hydrated>
-      <Suspense fallback={<HydrateFallback />}>
-        <Studio config={config} />
-      </Suspense>
+      <div className="h-screen w-screen overflow-hidden">
+        <Suspense fallback={<HydrateFallback />}>
+          <Studio config={config} />
+        </Suspense>
+      </div>
     </Hydrated>
   )
 }

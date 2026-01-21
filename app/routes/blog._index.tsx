@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { data, LoaderFunctionArgs } from '@remix-run/node'
 import { Link, MetaFunction, useLoaderData } from '@remix-run/react'
-import { allPosts } from 'content-collections'
 import { toast } from 'sonner'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
+import { getAllPublishedPosts } from '@/utils/sanity.queries'
 import { getFlashMessage } from '@/utils/session.server'
 import { Grid, Page, PageHeader } from '@/components/layout'
-import { OptimizedImage } from '@/components/optimized-image'
+import { getPostImageUrl } from '@/lib/sanity/helpers'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -28,11 +28,9 @@ export function headers() {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { toast, headers } = await getFlashMessage(request)
 
-  const sortedPosts = [...allPosts].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime()
-  })
+  const posts = await getAllPublishedPosts()
 
-  return data({ posts: sortedPosts, toast }, { headers })
+  return data({ posts, toast }, { headers })
 }
 
 export default function BlogIndex() {
@@ -61,34 +59,30 @@ export default function BlogIndex() {
       ) : (
         <Grid columns={1} columnsSm={2} columnsMd={2} columnsLg={2} gap="md">
           {posts.map((post) => {
+            const imageUrl = getPostImageUrl(post, 600, 338)
             return (
               <article
-                key={post.title}
+                key={post._id}
                 className="group rounded-lg border overflow-hidden transition-colors hover:bg-muted/50"
               >
                 <Link
-                  to={post._meta.path}
+                  to={post.slug.current}
                   className="block"
                   prefetch="intent"
-                  aria-labelledby={`post-title-${post._meta.path}`}
+                  aria-labelledby={`post-title-${post.slug.current}`}
                 >
-                  {post.image && (
+                  {imageUrl && (
                     <div className="aspect-video w-full overflow-hidden bg-muted">
-                      <OptimizedImage
-                        src={post.image}
-                        alt=""
-                        width={600}
-                        quality={85}
-                        format="webp"
-                        responsive
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+                      <img
+                        src={imageUrl}
+                        alt={post.imageAlt || ''}
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
                       />
                     </div>
                   )}
                   <div className="p-6">
                     <h2
-                      id={`post-title-${post._meta.path}`}
+                      id={`post-title-${post.slug.current}`}
                       className="mb-2 text-2xl font-bold tracking-tight group-hover:underline"
                     >
                       {post.title}

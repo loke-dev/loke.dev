@@ -1,18 +1,16 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
+import { dataset, projectId } from './app/lib/sanity/projectDetails'
 import { schemaTypes } from './sanity/schemas'
 
 export default defineConfig({
   name: 'default',
   title: 'loke.dev',
   basePath: '/studio',
-
-  projectId: import.meta.env.VITE_SANITY_PROJECT_ID || 'l25uat4p',
-  dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
-
+  projectId,
+  dataset,
   plugins: [structureTool(), visionTool()],
-
   schema: {
     types: schemaTypes,
   },
