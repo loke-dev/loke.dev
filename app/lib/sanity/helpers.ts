@@ -1,5 +1,5 @@
 import { urlFor } from './image'
-import type { Post } from './types'
+import type { Post, Project } from './types'
 
 export function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('en-US', {
@@ -32,4 +32,14 @@ export function getRelatedPosts(
     )
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, maxPosts)
+}
+
+export function getProjectImageUrl(
+  project: Project,
+  width: number,
+  height?: number
+): string | null {
+  if (!project.image) return null
+  const builder = urlFor(project.image).width(width)
+  return height ? builder.height(height).url() : builder.url()
 }
