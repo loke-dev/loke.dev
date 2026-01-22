@@ -2,8 +2,15 @@
   "contentDir": "app/posts",
   "assetsDir": "public/images",
   "publicAssetPath": "/images",
-  "topic": "Software Engineering, AI, and Technology",
-  "tone": "Professional yet witty and engaging",
+  "topic": "AI, Web development, React, Node.js, TypeScript, JavaScript, HTML, CSS, and other web development technologies.",
+  "tone": "Casual and friendly and engaging, a bit funny and lighthearted, but still with a professional touch.",
   "framework": "remix",
-  "schedule": "0 9 * * *"
+  "schedule": "0 9 * * *",
+  "outputMode": "sanity",
+  "sanity": {
+    "projectId": "l25uat4p",
+    "dataset": "production",
+    "apiVersion": "2026-01-22",
+    "documentType": "post"
+  }
 }
