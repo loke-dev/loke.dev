@@ -16,7 +16,6 @@ export interface Post {
   date: string
   lastModified?: string
   tag: string
-  published: boolean
   image?: SanityImage
   imageAlt?: string
   body: PortableTextBlock[]

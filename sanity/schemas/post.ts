@@ -45,13 +45,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'published',
-      title: 'Published',
-      type: 'boolean',
-      initialValue: false,
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
       name: 'image',
       title: 'Image',
       type: 'image',
