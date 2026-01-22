@@ -4,6 +4,7 @@ export default defineType({
   name: 'post',
   title: 'Post',
   type: 'document',
+  icon: () => '📝',
   fields: [
     defineField({
       name: 'title',
@@ -111,11 +112,48 @@ export default defineType({
       ],
     }),
   ],
+  orderings: [
+    {
+      title: 'Date (Newest)',
+      name: 'dateDesc',
+      by: [{ field: 'date', direction: 'desc' }],
+    },
+    {
+      title: 'Date (Oldest)',
+      name: 'dateAsc',
+      by: [{ field: 'date', direction: 'asc' }],
+    },
+    {
+      title: 'Title (A-Z)',
+      name: 'titleAsc',
+      by: [{ field: 'title', direction: 'asc' }],
+    },
+    {
+      title: 'Last Modified',
+      name: 'lastModifiedDesc',
+      by: [{ field: 'lastModified', direction: 'desc' }],
+    },
+  ],
   preview: {
     select: {
       title: 'title',
-      subtitle: 'date',
+      date: 'date',
+      tag: 'tag',
       media: 'image',
+    },
+    prepare({ title, date, tag, media }) {
+      const formattedDate = date
+        ? new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
+        : 'No date'
+      return {
+        title,
+        subtitle: `${tag ? `[${tag}]` : ''} ${formattedDate}`,
+        media,
+      }
     },
   },
 })
