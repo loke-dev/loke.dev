@@ -31,6 +31,7 @@ jobs:
       - name: Summon Seshat
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
         run: pnpm exec seshat write
 
       - name: Commit and push changes
