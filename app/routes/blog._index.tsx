@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { data, LoaderFunctionArgs } from '@remix-run/node'
-import { Link, MetaFunction, useLoaderData } from '@remix-run/react'
+import { MetaFunction, useLoaderData } from '@remix-run/react'
 import { toast } from 'sonner'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
 import { getFlashMessage } from '@/utils/session.server'
+import { BlogPostCard } from '@/components/blog-post-card'
 import { Grid, Page, PageHeader } from '@/components/layout'
-import { getPostImageUrl } from '@/lib/sanity/helpers'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -58,46 +58,9 @@ export default function BlogIndex() {
         </div>
       ) : (
         <Grid columns={1} columnsSm={2} columnsMd={2} columnsLg={2} gap="md">
-          {posts.map((post) => {
-            const imageUrl = getPostImageUrl(post, 600, 338)
-            return (
-              <article
-                key={post._id}
-                className="group rounded-lg border overflow-hidden transition-colors hover:bg-muted/50"
-              >
-                <Link
-                  to={post.slug.current}
-                  className="block"
-                  prefetch="intent"
-                  aria-labelledby={`post-title-${post.slug.current}`}
-                >
-                  {imageUrl && (
-                    <div className="aspect-video w-full overflow-hidden bg-muted">
-                      <img
-                        src={imageUrl}
-                        alt={post.imageAlt || ''}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                      />
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <h2
-                      id={`post-title-${post.slug.current}`}
-                      className="mb-2 text-2xl font-bold tracking-tight group-hover:underline"
-                    >
-                      {post.title}
-                    </h2>
-                    <p className="text-muted-foreground">{post.description}</p>
-                    <div className="mt-4">
-                      <span className="text-sm font-medium text-primary group-hover:underline">
-                        Read article <span aria-hidden="true">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </article>
-            )
-          })}
+          {posts.map((post) => (
+            <BlogPostCard key={post._id} post={post} />
+          ))}
         </Grid>
       )}
     </Page>

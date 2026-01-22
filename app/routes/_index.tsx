@@ -4,15 +4,8 @@ import { ArrowRight } from 'lucide-react'
 import { buildImageUrl } from '@/utils/image-helpers'
 import { createMetaTags } from '@/utils/meta'
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { BlogPostCard } from '@/components/blog-post-card'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { formatDate, getPostImageUrl } from '@/lib/sanity/helpers'
 
 const avatarUrl = buildImageUrl('/loke_clay.png', {
   width: 256,
@@ -134,48 +127,15 @@ export default function Index() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {latestPosts.map((post) => {
-            const imageUrl = getPostImageUrl(post, 500, 281)
-            return (
-              <Card
-                key={post._id}
-                className="h-full flex flex-col hover:shadow-md transition-shadow group overflow-hidden"
-              >
-                {imageUrl && (
-                  <div className="aspect-video w-full overflow-hidden bg-muted">
-                    <img
-                      src={imageUrl}
-                      alt={post.imageAlt || ''}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {formatDate(post.date)}
-                  </div>
-                  <CardTitle className="line-clamp-2">{post.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-muted-foreground line-clamp-3">
-                    {post.description}
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" asChild className="gap-1">
-                    <Link
-                      to={`/blog/${post.slug.current}`}
-                      aria-label={`Read article: ${post.title}`}
-                    >
-                      Read article{' '}
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            )
-          })}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {latestPosts.map((post) => (
+            <BlogPostCard
+              key={post._id}
+              post={post}
+              imageWidth={500}
+              imageHeight={281}
+            />
+          ))}
         </div>
 
         <div className="flex justify-center mt-12">
