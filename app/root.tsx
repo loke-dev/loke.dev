@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useSWEffect } from '@remix-pwa/sw'
 import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import {
@@ -16,7 +15,6 @@ import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { createTitle } from '@/utils/meta'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
-import { toast } from '@/utils/toast'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
@@ -147,39 +145,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // The default export renders the happy path
 export default function App() {
-  const [swRegistered, setSwRegistered] = useState(false)
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      const handleUpdate = () => {
-        toast('Update available', {
-          description:
-            'A new version of this site is available. Reload to update.',
-          action: {
-            label: 'Reload',
-            onClick: () => window.location.reload(),
-          },
-          duration: 10000,
-        })
-      }
-
-      const handleSuccess = () => {
-        if (!swRegistered) setSwRegistered(true)
-      }
-
-      navigator.serviceWorker.addEventListener('controllerchange', handleUpdate)
-
-      navigator.serviceWorker.ready.then(handleSuccess)
-
-      return () => {
-        navigator.serviceWorker.removeEventListener(
-          'controllerchange',
-          handleUpdate
-        )
-      }
-    }
-  }, [swRegistered])
-
   useSWEffect()
 
   const personSchema = {
