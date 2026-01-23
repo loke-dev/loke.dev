@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react'
-import { LoaderFunctionArgs } from '@remix-run/node'
+import { data, LoaderFunctionArgs } from '@remix-run/node'
 import { MetaFunction, useLoaderData } from '@remix-run/react'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
-import { getAllPublishedPosts, getPostBySlug } from '@/utils/sanity.queries'
+import { getPostBySlug, getRelatedPosts } from '@/utils/sanity.queries'
 import { setFlashMessage } from '@/utils/session.server'
 import { Page } from '@/components/layout'
 import { PortableText } from '@/components/PortableText'
@@ -41,6 +41,14 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   })
 }
 
+// Blog posts rarely change - use aggressive caching with stale-while-revalidate
+export function headers() {
+  return {
+    'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+    'Permissions-Policy': 'unload=()',
+  }
+}
+
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   if (!params.slug) {
     return setFlashMessage(request, 'Post slug is required', 'error', '/blog')
@@ -57,16 +65,24 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     )
   }
 
-  const allPosts = await getAllPublishedPosts()
+  // Fetch related posts and process body in parallel
+  const [relatedPosts, processedBody] = await Promise.all([
+    getRelatedPosts(post.tag, params.slug, 3),
+    processBodyWithHighlighting(post.body),
+  ])
 
-  // Process code blocks with syntax highlighting
-  const processedBody = await processBodyWithHighlighting(post.body)
-
-  return { post: { ...post, body: processedBody }, allPosts }
+  return data(
+    { post: { ...post, body: processedBody }, relatedPosts },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      },
+    }
+  )
 }
 
 export default function BlogPostPage() {
-  const { post, allPosts } = useLoaderData<typeof loader>()
+  const { post, relatedPosts } = useLoaderData<typeof loader>()
 
   if (!post) {
     return <div>Post not found</div>
@@ -94,6 +110,8 @@ export default function BlogPostPage() {
                 src={imageUrl}
                 alt={post.imageAlt || `Cover image for ${post.title}`}
                 className="h-full w-full object-cover"
+                fetchPriority="high"
+                decoding="async"
               />
             </div>
           </div>
@@ -117,9 +135,11 @@ export default function BlogPostPage() {
           <PortableText value={post.body} />
         </div>
       </article>
-      <Suspense fallback={null}>
-        <RelatedPosts currentPost={post} allPosts={allPosts} />
-      </Suspense>
+      {relatedPosts.length > 0 && (
+        <Suspense fallback={null}>
+          <RelatedPosts posts={relatedPosts} />
+        </Suspense>
+      )}
     </Page>
   )
 }

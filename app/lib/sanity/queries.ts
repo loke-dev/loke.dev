@@ -44,6 +44,18 @@ export const POST_SLUGS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")
   slug
 }`
 
+// Optimized query for related posts - fetches only what's needed
+export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && tag == $postTag && slug.current != $currentSlug] | order(date desc) [0...$limit] {
+  _id,
+  title,
+  slug,
+  description,
+  date,
+  tag,
+  image,
+  imageAlt
+}`
+
 export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) {
   _id,
   title,

@@ -1,21 +1,12 @@
 import { type PostListItem } from '@/utils/sanity.queries'
-import { getRelatedPosts } from '@/lib/sanity/helpers'
 import { BlogPostCard } from './blog-post-card'
 
 type RelatedPostsProps = {
-  currentPost: PostListItem
-  allPosts: PostListItem[]
-  maxPosts?: number
+  posts: PostListItem[]
 }
 
-export function RelatedPosts({
-  currentPost,
-  allPosts,
-  maxPosts = 3,
-}: RelatedPostsProps) {
-  const relatedPosts = getRelatedPosts(currentPost, allPosts, maxPosts)
-
-  if (relatedPosts.length === 0) {
+export function RelatedPosts({ posts }: RelatedPostsProps) {
+  if (posts.length === 0) {
     return null
   }
 
@@ -23,7 +14,7 @@ export function RelatedPosts({
     <section className="mt-16 border-t pt-8">
       <h2 className="mb-6 text-2xl font-bold">Related Articles</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {relatedPosts.map((post) => (
+        {posts.map((post) => (
           <BlogPostCard
             key={post._id}
             post={post}

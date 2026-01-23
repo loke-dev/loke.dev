@@ -3,11 +3,14 @@ import { ArrowRight } from 'lucide-react'
 import { type PostListItem } from '@/utils/sanity.queries'
 import { formatDate, getPostImageUrl } from '@/lib/sanity/helpers'
 
+type PrefetchMode = 'intent' | 'viewport' | 'none'
+
 type BlogPostCardProps = {
   post: PostListItem
   imageWidth?: number
   imageHeight?: number
   variant?: 'default' | 'minimal'
+  prefetch?: PrefetchMode
 }
 
 export function BlogPostCard({
@@ -15,6 +18,7 @@ export function BlogPostCard({
   imageWidth = 600,
   imageHeight = 338,
   variant = 'default',
+  prefetch = 'intent',
 }: BlogPostCardProps) {
   const imageUrl = getPostImageUrl(post, imageWidth, imageHeight)
 
@@ -24,7 +28,8 @@ export function BlogPostCard({
         <Link
           to={`/blog/${post.slug.current}`}
           className="flex h-full flex-col"
-          prefetch="intent"
+          prefetch={prefetch}
+          viewTransition
           aria-labelledby={`post-title-${post.slug.current}`}
         >
           {imageUrl && (
@@ -63,7 +68,8 @@ export function BlogPostCard({
       <Link
         to={`/blog/${post.slug.current}`}
         className="flex h-full flex-col"
-        prefetch="intent"
+        prefetch={prefetch}
+        viewTransition
         aria-labelledby={`post-title-${post.slug.current}`}
       >
         {imageUrl && (

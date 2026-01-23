@@ -21,14 +21,14 @@ const logger = new Logger({
   prefix: '[Loke-dev]',
 })
 
-// Document cache - CacheFirst strategy for HTML pages
+// Document cache - StaleWhileRevalidate for HTML pages
+// Serves cached content immediately, then updates cache in background
 const documentCache = new EnhancedCache(DOCUMENT_CACHE_NAME, {
   version,
-  strategy: 'CacheFirst',
+  strategy: 'StaleWhileRevalidate',
   strategyOptions: {
     maxEntries: 64,
-    // Add cache expiration for documents
-    maxAgeSeconds: 60 * 60 * 24, // 1 day
+    maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
   },
 })
 
@@ -42,14 +42,14 @@ const assetCache = new EnhancedCache(ASSET_CACHE_NAME, {
   },
 })
 
-// Data cache - NetworkFirst for API data
+// Data cache - StaleWhileRevalidate for API data
+// Blog content rarely changes, serve cached immediately and update in background
 const dataCache = new EnhancedCache(DATA_CACHE_NAME, {
   version,
-  strategy: 'NetworkFirst',
+  strategy: 'StaleWhileRevalidate',
   strategyOptions: {
-    networkTimeoutInSeconds: 10,
-    maxEntries: 72,
-    maxAgeSeconds: 60 * 60, // 1 hour stale data is acceptable
+    maxEntries: 100,
+    maxAgeSeconds: 60 * 60 * 24, // 24 hours
   },
 })
 

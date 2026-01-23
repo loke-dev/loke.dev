@@ -85,6 +85,7 @@ export function Pagination({
         aria-disabled={!hasPrevPage}
         tabIndex={hasPrevPage ? 0 : -1}
         prefetch="intent"
+        viewTransition
       >
         <ChevronLeft className="h-4 w-4" />
         <span className="sr-only">Previous page</span>
@@ -111,6 +112,7 @@ export function Pagination({
               )}
               aria-current={page === currentPage ? 'page' : undefined}
               prefetch="intent"
+              viewTransition
             >
               {page}
             </Link>
@@ -129,6 +131,7 @@ export function Pagination({
         aria-disabled={!hasNextPage}
         tabIndex={hasNextPage ? 0 : -1}
         prefetch="intent"
+        viewTransition
       >
         <ChevronRight className="h-4 w-4" />
         <span className="sr-only">Next page</span>

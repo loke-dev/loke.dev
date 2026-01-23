@@ -13,8 +13,12 @@ import {
 import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
+import { preloadHighlighter } from '@/lib/shiki.server'
 
 const ABORT_DELAY = 5_000
+
+// Warm up the syntax highlighter on server start to avoid first-request penalty
+void preloadHighlighter()
 
 export default function handleRequest(
   request: Request,

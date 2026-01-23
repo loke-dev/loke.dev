@@ -34,6 +34,7 @@ export function Header() {
               to={link.to}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               prefetch="intent"
+              viewTransition
             >
               {link.label}
             </Link>
@@ -71,6 +72,7 @@ export function Header() {
                       to={link.to}
                       className="text-base font-medium text-muted-foreground transition-colors hover:text-primary"
                       prefetch="intent"
+                      viewTransition
                     >
                       {link.label}
                     </Link>

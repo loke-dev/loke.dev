@@ -18,6 +18,7 @@ import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { NavigationProgress } from '@/components/navigation-progress'
 import { NetworkStatusIndicator } from '@/components/network-status'
 import { Toaster } from '@/components/ui/toast'
 import tailwindStyles from '@/styles/tailwind.css?url'
@@ -122,6 +123,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
+        <NavigationProgress />
         {isStudioRoute ? (
           <div className="fixed inset-0">{children}</div>
         ) : (

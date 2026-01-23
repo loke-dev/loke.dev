@@ -57,10 +57,14 @@ export default function Index() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" asChild size="lg">
-                <Link to="/projects">View Projects</Link>
+                <Link to="/projects" prefetch="viewport" viewTransition>
+                  View Projects
+                </Link>
               </Button>
               <Button variant="outline" asChild size="lg">
-                <Link to="/contact">Contact Me</Link>
+                <Link to="/contact" prefetch="viewport" viewTransition>
+                  Contact Me
+                </Link>
               </Button>
             </div>
           </div>
@@ -128,19 +132,25 @@ export default function Index() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {latestPosts.map((post) => (
+          {latestPosts.map((post, idx) => (
             <BlogPostCard
               key={post._id}
               post={post}
               imageWidth={500}
               imageHeight={281}
+              prefetch={idx === 0 ? 'viewport' : 'intent'}
             />
           ))}
         </div>
 
         <div className="flex justify-center mt-12">
           <Button asChild size="lg">
-            <Link to="/blog" aria-label="View All Articles">
+            <Link
+              to="/blog"
+              prefetch="viewport"
+              viewTransition
+              aria-label="View All Articles"
+            >
               View All Articles{' '}
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Link>
@@ -157,7 +167,9 @@ export default function Index() {
             collaborations.
           </p>
           <Button asChild>
-            <Link to="/contact">Get in Touch</Link>
+            <Link to="/contact" prefetch="viewport" viewTransition>
+              Get in Touch
+            </Link>
           </Button>
         </div>
       </section>

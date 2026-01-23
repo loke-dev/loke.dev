@@ -5,6 +5,7 @@ import {
   POST_LIST_QUERY,
   POST_PAGINATED_QUERY,
   POST_SLUGS_QUERY,
+  RELATED_POSTS_QUERY,
 } from '@/lib/sanity/queries'
 import { calculateReadingTime } from '@/lib/sanity/reading-time'
 import type { Post, PostListItem, PostSlug } from '@/lib/sanity/types'
@@ -61,4 +62,17 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 export async function getAllPostSlugs(): Promise<PostSlug[]> {
   return client.fetch<PostSlug[]>(POST_SLUGS_QUERY)
+}
+
+export async function getRelatedPosts(
+  tagValue: string | null,
+  currentSlug: string,
+  limit: number = 3
+): Promise<PostListItem[]> {
+  if (!tagValue) return []
+  return client.fetch<PostListItem[]>(RELATED_POSTS_QUERY, {
+    postTag: tagValue,
+    currentSlug,
+    limit,
+  })
 }

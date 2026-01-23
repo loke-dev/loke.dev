@@ -120,3 +120,40 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* View Transitions API - smooth page navigation */
+@supports (view-transition-name: none) {
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 150ms;
+      animation-timing-function: ease-out;
+    }
+
+    ::view-transition-old(root) {
+      animation-name: fade-out;
+    }
+
+    ::view-transition-new(root) {
+      animation-name: fade-in;
+    }
+
+    @keyframes fade-out {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+}

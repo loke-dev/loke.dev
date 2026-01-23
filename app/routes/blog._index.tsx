@@ -1,6 +1,10 @@
 import { useEffect } from 'react'
 import { data, LoaderFunctionArgs } from '@remix-run/node'
-import { MetaFunction, useLoaderData } from '@remix-run/react'
+import {
+  MetaFunction,
+  PrefetchPageLinks,
+  useLoaderData,
+} from '@remix-run/react'
 import { toast } from 'sonner'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getPaginatedPosts } from '@/utils/sanity.queries'
@@ -71,8 +75,17 @@ export default function BlogIndex() {
       ) : (
         <>
           <Grid columns={1} columnsSm={2} columnsMd={2} columnsLg={2} gap="md">
-            {posts.map((post) => (
-              <BlogPostCard key={post._id} post={post} />
+            {posts.map((post, idx) => (
+              <>
+                {idx < 2 ? (
+                  <PrefetchPageLinks page={`/blog/${post.slug.current}`} />
+                ) : null}
+                <BlogPostCard
+                  key={post._id}
+                  post={post}
+                  prefetch={idx < 3 ? 'viewport' : 'intent'}
+                />
+              </>
             ))}
           </Grid>
 

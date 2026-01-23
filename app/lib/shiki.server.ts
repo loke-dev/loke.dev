@@ -2,6 +2,11 @@ import { createHighlighter, type Highlighter } from 'shiki'
 
 let highlighter: Highlighter | null = null
 
+// Simple in-memory cache for highlighted snippets
+// Keyed by `${lang}::${hash(code)}`
+const highlightCache = new Map<string, string>()
+const MAX_CACHE_ENTRIES = 500
+
 const SUPPORTED_LANGUAGES = [
   'javascript',
   'typescript',
@@ -67,11 +72,37 @@ export async function highlightCode(
   const hl = await getHighlighter()
   const lang = normalizeLanguage(language)
 
-  return hl.codeToHtml(code, {
+  const key = `${lang}::${simpleHash(code)}`
+  const cached = highlightCache.get(key)
+  if (cached) return cached
+
+  const html = hl.codeToHtml(code, {
     lang,
     themes: {
       light: 'catppuccin-latte',
       dark: 'min-dark',
     },
   })
+
+  // Simple LRU-ish behavior: if over capacity, delete oldest
+  if (highlightCache.size >= MAX_CACHE_ENTRIES) {
+    const firstKey = highlightCache.keys().next().value
+    if (firstKey) highlightCache.delete(firstKey)
+  }
+  highlightCache.set(key, html)
+  return html
+}
+
+function simpleHash(input: string): number {
+  // djb2
+  let hash = 5381
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash * 33) ^ input.charCodeAt(i)
+  }
+  return hash >>> 0
+}
+
+// Optional: allow preloading at server start to avoid first-request cost
+export async function preloadHighlighter() {
+  await getHighlighter()
 }
