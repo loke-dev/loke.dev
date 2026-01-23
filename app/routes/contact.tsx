@@ -12,6 +12,7 @@ import { verifyTurnstileToken } from '@/utils/captcha.server'
 import { sendContactEmail } from '@/utils/email.server'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { checkRateLimit, getRateLimitHeaders } from '@/utils/rate-limit.server'
+import { getContactPage } from '@/utils/sanity.queries'
 import { getFlashMessage, setFlashMessage } from '@/utils/session.server'
 import { Captcha } from '@/components/captcha'
 import { Page, PageHeader, Section } from '@/components/layout'
@@ -50,8 +51,11 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { toast, headers } = await getFlashMessage(request)
-  return data({ toast }, { headers })
+  const [{ toast, headers }, page] = await Promise.all([
+    getFlashMessage(request),
+    getContactPage(),
+  ])
+  return data({ toast, page }, { headers })
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -118,17 +122,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Contact() {
   const actionData = useActionData<typeof action>()
-  const { toast } = useLoaderData<typeof loader>()
+  const { toast, page } = useLoaderData<typeof loader>()
   const navigation = useNavigation()
   const isSubmitting = navigation.state === 'submitting'
   const [captchaToken, setCaptchaToken] = useState<string>('')
 
   return (
     <Page>
-      <PageHeader
-        title="Contact Me"
-        description="Have a question or want to work together? Feel free to reach out using the form below."
-      />
+      <PageHeader title={page.title} description={page.description} />
 
       {toast && (
         <div
@@ -247,9 +248,14 @@ export default function Contact() {
         </Button>
       </form>
 
-      <Section title="Other ways to reach me" className="mt-12 border-t pt-8">
-        <p>You can also connect with me on social media or via email.</p>
-      </Section>
+      {page.alternativeContactTitle && (
+        <Section
+          title={page.alternativeContactTitle}
+          className="mt-12 border-t pt-8"
+        >
+          <p>{page.alternativeContactDescription}</p>
+        </Section>
+      )}
     </Page>
   )
 }

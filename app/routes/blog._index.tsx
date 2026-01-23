@@ -7,7 +7,7 @@ import {
 } from '@remix-run/react'
 import { toast } from 'sonner'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
-import { getPaginatedPosts } from '@/utils/sanity.queries'
+import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
 import { getFlashMessage } from '@/utils/session.server'
 import { BlogPostCard } from '@/components/blog-post-card'
 import { Grid, Page, PageHeader } from '@/components/layout'
@@ -32,14 +32,15 @@ export function headers() {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url)
-  const page = Math.max(1, Number(url.searchParams.get('page')) || 1)
+  const pageNum = Math.max(1, Number(url.searchParams.get('page')) || 1)
 
-  const [{ toast, headers }, paginatedResult] = await Promise.all([
+  const [{ toast, headers }, paginatedResult, page] = await Promise.all([
     getFlashMessage(request),
-    getPaginatedPosts(page),
+    getPaginatedPosts(pageNum),
+    getBlogPage(),
   ])
 
-  return data({ ...paginatedResult, toast }, { headers })
+  return data({ ...paginatedResult, page, toast }, { headers })
 }
 
 export default function BlogIndex() {
@@ -49,6 +50,7 @@ export default function BlogIndex() {
     totalPages,
     hasNextPage,
     hasPrevPage,
+    page,
     toast: flashMessage,
   } = useLoaderData<typeof loader>()
 
@@ -60,16 +62,15 @@ export default function BlogIndex() {
 
   return (
     <Page>
-      <PageHeader
-        title="Blog"
-        description="Articles, guides, and thoughts on web development and technology"
-      />
+      <PageHeader title={page.title} description={page.description} />
 
       {posts.length === 0 ? (
         <div className="rounded-lg border p-8 text-center">
-          <h2 className="mb-2 text-xl font-semibold">No posts yet</h2>
+          <h2 className="mb-2 text-xl font-semibold">
+            {page.emptyStateTitle || 'No posts yet'}
+          </h2>
           <p className="text-muted-foreground">
-            Check back soon for new articles!
+            {page.emptyStateDescription || 'Check back soon for new articles!'}
           </p>
         </div>
       ) : (

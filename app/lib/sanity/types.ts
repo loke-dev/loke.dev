@@ -47,3 +47,49 @@ export interface Project {
 }
 
 export type ProjectSlug = { slug: { current: string } }
+
+// Page singleton types
+export interface HomePage {
+  heroTitle: string
+  heroDescription: string
+  technologiesSectionTitle: string
+  technologies: string[]
+  blogSectionTitle: string
+  blogSectionDescription: string
+  ctaTitle: string
+  ctaDescription: string
+  ctaButtonText: string
+}
+
+export interface AboutPageSection {
+  _key: string
+  title: string
+  content: PortableTextBlock[]
+}
+
+export interface AboutPage {
+  title: string
+  intro: string
+  sections: AboutPageSection[]
+}
+
+export interface BlogPage {
+  title: string
+  description: string
+  emptyStateTitle?: string
+  emptyStateDescription?: string
+}
+
+export interface ProjectsPage {
+  title: string
+  description: string
+  featuredSectionTitle: string
+  otherSectionTitle: string
+}
+
+export interface ContactPage {
+  title: string
+  description: string
+  alternativeContactTitle?: string
+  alternativeContactDescription?: string
+}

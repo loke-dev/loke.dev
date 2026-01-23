@@ -101,3 +101,47 @@ export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $s
 export const PROJECT_SLUGS_QUERY = `*[_type == "project"] {
   slug
 }`
+
+// Page singleton queries
+export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0] {
+  heroTitle,
+  heroDescription,
+  technologiesSectionTitle,
+  technologies,
+  blogSectionTitle,
+  blogSectionDescription,
+  ctaTitle,
+  ctaDescription,
+  ctaButtonText
+}`
+
+export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage" && _id == "aboutPage"][0] {
+  title,
+  intro,
+  sections[] {
+    _key,
+    title,
+    content
+  }
+}`
+
+export const BLOG_PAGE_QUERY = `*[_type == "blogPage" && _id == "blogPage"][0] {
+  title,
+  description,
+  emptyStateTitle,
+  emptyStateDescription
+}`
+
+export const PROJECTS_PAGE_QUERY = `*[_type == "projectsPage" && _id == "projectsPage"][0] {
+  title,
+  description,
+  featuredSectionTitle,
+  otherSectionTitle
+}`
+
+export const CONTACT_PAGE_QUERY = `*[_type == "contactPage" && _id == "contactPage"][0] {
+  title,
+  description,
+  alternativeContactTitle,
+  alternativeContactDescription
+}`

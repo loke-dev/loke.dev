@@ -1,16 +1,38 @@
 import { client } from '@/lib/sanity/client'
 import {
+  ABOUT_PAGE_QUERY,
+  BLOG_PAGE_QUERY,
+  CONTACT_PAGE_QUERY,
+  HOME_PAGE_QUERY,
   POST_BY_SLUG_QUERY,
   POST_COUNT_QUERY,
   POST_LIST_QUERY,
   POST_PAGINATED_QUERY,
   POST_SLUGS_QUERY,
+  PROJECTS_PAGE_QUERY,
   RELATED_POSTS_QUERY,
 } from '@/lib/sanity/queries'
 import { calculateReadingTime } from '@/lib/sanity/reading-time'
-import type { Post, PostListItem, PostSlug } from '@/lib/sanity/types'
+import type {
+  AboutPage,
+  BlogPage,
+  ContactPage,
+  HomePage,
+  Post,
+  PostListItem,
+  PostSlug,
+  ProjectsPage,
+} from '@/lib/sanity/types'
 
-export type { Post, PostListItem }
+export type {
+  AboutPage,
+  BlogPage,
+  ContactPage,
+  HomePage,
+  Post,
+  PostListItem,
+  ProjectsPage,
+}
 
 export const POSTS_PER_PAGE = 10
 
@@ -75,4 +97,25 @@ export async function getRelatedPosts(
     currentSlug,
     limit,
   })
+}
+
+// Page singleton queries
+export async function getHomePage(): Promise<HomePage> {
+  return client.fetch<HomePage>(HOME_PAGE_QUERY)
+}
+
+export async function getAboutPage(): Promise<AboutPage> {
+  return client.fetch<AboutPage>(ABOUT_PAGE_QUERY)
+}
+
+export async function getBlogPage(): Promise<BlogPage> {
+  return client.fetch<BlogPage>(BLOG_PAGE_QUERY)
+}
+
+export async function getProjectsPage(): Promise<ProjectsPage> {
+  return client.fetch<ProjectsPage>(PROJECTS_PAGE_QUERY)
+}
+
+export async function getContactPage(): Promise<ContactPage> {
+  return client.fetch<ContactPage>(CONTACT_PAGE_QUERY)
 }

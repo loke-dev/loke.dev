@@ -1,6 +1,7 @@
 import type { MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
+import { getProjectsPage } from '@/utils/sanity.queries'
 import { Grid, Page, PageHeader, Section } from '@/components/layout'
 import { ProjectCard } from '@/components/projectCard'
 import { client } from '@/lib/sanity/client'
@@ -23,24 +24,24 @@ export function headers() {
 }
 
 export async function loader() {
-  const projects = await client.fetch<Project[]>(PROJECTS_QUERY)
-  return { projects }
+  const [projects, page] = await Promise.all([
+    client.fetch<Project[]>(PROJECTS_QUERY),
+    getProjectsPage(),
+  ])
+  return { projects, page }
 }
 
 export default function Projects() {
-  const { projects } = useLoaderData<typeof loader>()
+  const { projects, page } = useLoaderData<typeof loader>()
   const featuredProjects = projects.filter((project) => project.featured)
   const otherProjects = projects.filter((project) => !project.featured)
 
   return (
     <Page>
-      <PageHeader
-        title="Projects"
-        description="A showcase of my work, side projects, and experiments."
-      />
+      <PageHeader title={page.title} description={page.description} />
 
       {featuredProjects.length > 0 && (
-        <Section title="Featured Projects">
+        <Section title={page.featuredSectionTitle}>
           <div className="flex flex-col gap-10">
             {featuredProjects.map((project) => (
               <ProjectCard key={project._id} project={project} featured />
@@ -50,7 +51,7 @@ export default function Projects() {
       )}
 
       {otherProjects.length > 0 && (
-        <Section title="Other Projects">
+        <Section title={page.otherSectionTitle}>
           <Grid columns={1} columnsSm={2} columnsLg={3} gap="sm">
             {otherProjects.map((project) => (
               <ProjectCard key={project._id} project={project} />

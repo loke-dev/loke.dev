@@ -1,7 +1,10 @@
 import type { MetaFunction } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
+import { getAboutPage } from '@/utils/sanity.queries'
 import { Page, PageHeader, Section } from '@/components/layout'
 import { OptimizedImage } from '@/components/optimized-image'
+import { PortableText } from '@/components/PortableText'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -18,10 +21,17 @@ export function headers() {
   }
 }
 
+export async function loader() {
+  const page = await getAboutPage()
+  return { page }
+}
+
 export default function About() {
+  const { page } = useLoaderData<typeof loader>()
+
   return (
     <Page>
-      <PageHeader title="About Me" />
+      <PageHeader title={page.title} />
 
       <div className="prose prose-gray dark:prose-invert">
         <div className="flex justify-center mb-6">
@@ -36,35 +46,13 @@ export default function About() {
           />
         </div>
 
-        <p className="lead">
-          Hi, I&apos;m a developer passionate about creating meaningful digital
-          experiences.
-        </p>
+        <p className="lead">{page.intro}</p>
 
-        <Section title="My Journey">
-          <p>
-            I&apos;ve been working in web development for several years,
-            focusing on building accessible, responsive, and performant
-            applications. I enjoy working with modern technologies and
-            frameworks to create solutions that solve real problems.
-          </p>
-        </Section>
-
-        <Section title="Skills & Expertise">
-          <ul className="mt-4 space-y-2">
-            <li>Frontend: React, Remix, Next.js, TypeScript</li>
-            <li>Styling: Tailwind CSS, CSS-in-JS</li>
-            <li>Backend: Node.js, Express, SQL/NoSQL databases</li>
-            <li>DevOps: CI/CD, Docker, Cloud services</li>
-          </ul>
-        </Section>
-
-        <Section title="Get in Touch">
-          <p className="mt-4">
-            Feel free to reach out if you&apos;d like to collaborate on a
-            project or just want to chat!
-          </p>
-        </Section>
+        {page.sections?.map((section) => (
+          <Section key={section._key} title={section.title}>
+            <PortableText value={section.content} />
+          </Section>
+        ))}
       </div>
     </Page>
   )
