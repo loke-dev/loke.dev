@@ -1,10 +1,10 @@
-import { type Post } from '@/utils/sanity.queries'
+import { type PostListItem } from '@/utils/sanity.queries'
 import { getRelatedPosts } from '@/lib/sanity/helpers'
 import { BlogPostCard } from './blog-post-card'
 
 type RelatedPostsProps = {
-  currentPost: Post
-  allPosts: Post[]
+  currentPost: PostListItem
+  allPosts: PostListItem[]
   maxPosts?: number
 }
 

@@ -3,10 +3,11 @@ import { data, LoaderFunctionArgs } from '@remix-run/node'
 import { MetaFunction, useLoaderData } from '@remix-run/react'
 import { toast } from 'sonner'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
-import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { getPaginatedPosts } from '@/utils/sanity.queries'
 import { getFlashMessage } from '@/utils/session.server'
 import { BlogPostCard } from '@/components/blog-post-card'
 import { Grid, Page, PageHeader } from '@/components/layout'
+import { Pagination } from '@/components/pagination'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -17,24 +18,35 @@ export const meta: MetaFunction = () => {
   })
 }
 
-// Add HTTP headers for bfcache support
+// HTTP headers with stale-while-revalidate for better caching
 export function headers() {
   return {
-    'Cache-Control': 'no-cache',
+    'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
     'Permissions-Policy': 'unload=()',
   }
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { toast, headers } = await getFlashMessage(request)
+  const url = new URL(request.url)
+  const page = Math.max(1, Number(url.searchParams.get('page')) || 1)
 
-  const posts = await getAllPublishedPosts()
+  const [{ toast, headers }, paginatedResult] = await Promise.all([
+    getFlashMessage(request),
+    getPaginatedPosts(page),
+  ])
 
-  return data({ posts, toast }, { headers })
+  return data({ ...paginatedResult, toast }, { headers })
 }
 
 export default function BlogIndex() {
-  const { posts, toast: flashMessage } = useLoaderData<typeof loader>()
+  const {
+    posts,
+    currentPage,
+    totalPages,
+    hasNextPage,
+    hasPrevPage,
+    toast: flashMessage,
+  } = useLoaderData<typeof loader>()
 
   useEffect(() => {
     if (flashMessage) {
@@ -57,11 +69,22 @@ export default function BlogIndex() {
           </p>
         </div>
       ) : (
-        <Grid columns={1} columnsSm={2} columnsMd={2} columnsLg={2} gap="md">
-          {posts.map((post) => (
-            <BlogPostCard key={post._id} post={post} />
-          ))}
-        </Grid>
+        <>
+          <Grid columns={1} columnsSm={2} columnsMd={2} columnsLg={2} gap="md">
+            {posts.map((post) => (
+              <BlogPostCard key={post._id} post={post} />
+            ))}
+          </Grid>
+
+          <div className="mt-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              hasNextPage={hasNextPage}
+              hasPrevPage={hasPrevPage}
+            />
+          </div>
+        </>
       )}
     </Page>
   )

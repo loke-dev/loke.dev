@@ -1,10 +1,10 @@
 import { Link } from '@remix-run/react'
 import { ArrowRight } from 'lucide-react'
-import { type Post } from '@/utils/sanity.queries'
+import { type PostListItem } from '@/utils/sanity.queries'
 import { formatDate, getPostImageUrl } from '@/lib/sanity/helpers'
 
 type BlogPostCardProps = {
-  post: Post
+  post: PostListItem
   imageWidth?: number
   imageHeight?: number
   variant?: 'default' | 'minimal'

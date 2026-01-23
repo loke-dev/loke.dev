@@ -1,4 +1,5 @@
-export const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) {
+// Lightweight query for list views (no body content)
+export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) {
   _id,
   title,
   slug,
@@ -7,9 +8,24 @@ export const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | o
   lastModified,
   tag,
   image,
-  imageAlt,
-  body
+  imageAlt
 }`
+
+// Paginated query for blog index
+export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) [$start...$end] {
+  _id,
+  title,
+  slug,
+  description,
+  date,
+  lastModified,
+  tag,
+  image,
+  imageAlt
+}`
+
+// Count query for pagination metadata
+export const POST_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**"))])`
 
 export const POST_BY_SLUG_QUERY = `*[_type == "post" && slug.current == $slug][0] {
   _id,

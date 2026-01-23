@@ -1,5 +1,5 @@
 import { urlFor } from './image'
-import type { Post, Project } from './types'
+import type { Post, PostListItem, Project } from './types'
 
 export function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('en-US', {
@@ -10,7 +10,7 @@ export function formatDate(date: string): string {
 }
 
 export function getPostImageUrl(
-  post: Post,
+  post: PostListItem | Post,
   width: number,
   height?: number
 ): string | null {
@@ -19,11 +19,11 @@ export function getPostImageUrl(
   return height ? builder.height(height).url() : builder.url()
 }
 
-export function getRelatedPosts(
-  currentPost: Post,
-  allPosts: Post[],
+export function getRelatedPosts<T extends PostListItem>(
+  currentPost: PostListItem,
+  allPosts: T[],
   maxPosts = 3
-): Post[] {
+): T[] {
   return allPosts
     .filter(
       (post) =>

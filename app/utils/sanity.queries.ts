@@ -1,21 +1,53 @@
 import { client } from '@/lib/sanity/client'
 import {
   POST_BY_SLUG_QUERY,
-  POST_QUERY,
+  POST_COUNT_QUERY,
+  POST_LIST_QUERY,
+  POST_PAGINATED_QUERY,
   POST_SLUGS_QUERY,
 } from '@/lib/sanity/queries'
 import { calculateReadingTime } from '@/lib/sanity/reading-time'
-import type { Post, PostSlug } from '@/lib/sanity/types'
+import type { Post, PostListItem, PostSlug } from '@/lib/sanity/types'
 
-export type { Post }
+export type { Post, PostListItem }
 
-export async function getAllPublishedPosts(): Promise<Post[]> {
-  const posts = await client.fetch<Post[]>(POST_QUERY)
+export const POSTS_PER_PAGE = 10
 
-  return posts.map((post) => {
-    const { readingTime, wordCount } = calculateReadingTime(post.body || [])
-    return { ...post, readingTime, wordCount }
-  })
+export interface PaginatedPostsResult {
+  posts: PostListItem[]
+  totalCount: number
+  totalPages: number
+  currentPage: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+}
+
+export async function getPaginatedPosts(
+  page: number = 1
+): Promise<PaginatedPostsResult> {
+  const start = (page - 1) * POSTS_PER_PAGE
+  const end = start + POSTS_PER_PAGE
+
+  const [posts, totalCount] = await Promise.all([
+    client.fetch<PostListItem[]>(POST_PAGINATED_QUERY, { start, end }),
+    client.fetch<number>(POST_COUNT_QUERY),
+  ])
+
+  const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE)
+
+  return {
+    posts,
+    totalCount,
+    totalPages,
+    currentPage: page,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1,
+  }
+}
+
+// Keep for backward compatibility (e.g., RSS feed, sitemap)
+export async function getAllPublishedPosts(): Promise<PostListItem[]> {
+  return client.fetch<PostListItem[]>(POST_LIST_QUERY)
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {

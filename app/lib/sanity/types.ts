@@ -8,7 +8,8 @@ export interface SanityImage {
   alt?: string
 }
 
-export interface Post {
+// Base post type for list views (no body content)
+export interface PostListItem {
   _id: string
   title: string
   slug: { current: string }
@@ -18,6 +19,12 @@ export interface Post {
   tag: string
   image?: SanityImage
   imageAlt?: string
+  // Optional: only available when calculated from body
+  readingTime?: number
+}
+
+// Full post type with body content (for detail pages)
+export interface Post extends PostListItem {
   body: PortableTextBlock[]
   readingTime?: number
   wordCount?: number
