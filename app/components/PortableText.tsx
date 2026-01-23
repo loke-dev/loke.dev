@@ -13,10 +13,27 @@ const createComponents = (): PortableTextComponents => {
         if (!value?.asset?._ref) {
           return null
         }
+        // Prefer modern formats and lazy-load
         return (
           <img
-            src={urlFor(value).width(800).url()}
+            src={
+              urlFor(value)
+                .width(800)
+                .auto('format')
+                .quality(80)
+                .url() as unknown as string
+            }
+            srcSet={[
+              urlFor(value).width(400).auto('format').quality(80).url(),
+              urlFor(value).width(800).auto('format').quality(80).url(),
+              urlFor(value).width(1200).auto('format').quality(80).url(),
+            ]
+              .map((u, i) => `${u} ${[400, 800, 1200][i]}w`)
+              .join(', ')}
+            sizes="(min-width: 768px) 700px, 100vw"
             alt={value.alt || 'Image'}
+            loading="lazy"
+            decoding="async"
             className="my-6 rounded-lg"
           />
         )

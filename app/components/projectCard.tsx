@@ -1,5 +1,5 @@
 import { Link } from '@remix-run/react'
-import { getProjectImageUrl } from '@/lib/sanity/helpers'
+import { getProjectImageSrcSet, getProjectImageUrl } from '@/lib/sanity/helpers'
 import type { Project } from '@/lib/sanity/types'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -12,10 +12,13 @@ export function ProjectCard({
   project: Project
   featured?: boolean
 }) {
-  const imageUrl = getProjectImageUrl(
+  const width = featured ? 800 : 500
+  const height = featured ? 450 : 375
+  const imageUrl = getProjectImageUrl(project, width, height)
+  const srcSet = getProjectImageSrcSet(
     project,
-    featured ? 800 : 500,
-    featured ? 450 : 375
+    [Math.round(width / 2), width, Math.round(width * 1.5)],
+    height
   )
 
   return (
@@ -32,7 +35,17 @@ export function ProjectCard({
         >
           <img
             src={imageUrl}
+            srcSet={srcSet || undefined}
+            sizes={
+              featured
+                ? '(min-width: 1024px) 33vw, 100vw'
+                : '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'
+            }
             alt={project.title}
+            loading="lazy"
+            decoding="async"
+            width={width}
+            height={height}
             className="h-full w-full object-cover object-center"
           />
         </div>

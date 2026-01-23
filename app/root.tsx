@@ -26,7 +26,6 @@ import tailwindStyles from '@/styles/tailwind.css?url'
 // Add HTTP headers for bfcache support
 export function headers() {
   return {
-    'Cache-Control': 'no-cache',
     'Permissions-Policy': 'unload=()',
   }
 }
@@ -34,6 +33,20 @@ export function headers() {
 export const links: LinksFunction = () => [
   { rel: 'preload', href: tailwindStyles, as: 'style' },
   { rel: 'stylesheet', href: tailwindStyles },
+
+  // Preconnects
+  { rel: 'dns-prefetch', href: 'https://cdn.sanity.io' },
+  {
+    rel: 'preconnect',
+    href: 'https://cdn.sanity.io',
+    crossOrigin: 'anonymous',
+  },
+  { rel: 'dns-prefetch', href: 'https://vitals.vercel-insights.com' },
+  {
+    rel: 'preconnect',
+    href: 'https://vitals.vercel-insights.com',
+    crossOrigin: 'anonymous',
+  },
 
   // PWA manifest
   { rel: 'manifest', href: '/manifest.json' },

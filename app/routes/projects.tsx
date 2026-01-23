@@ -16,6 +16,12 @@ export const meta: MetaFunction = () => {
   })
 }
 
+export function headers() {
+  return {
+    'Cache-Control': 'public, max-age=600, stale-while-revalidate=3600',
+  }
+}
+
 export async function loader() {
   const projects = await client.fetch<Project[]>(PROJECTS_QUERY)
   return { projects }

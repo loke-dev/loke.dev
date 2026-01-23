@@ -29,7 +29,7 @@ export const meta: MetaFunction = () => {
 
 export function headers() {
   return {
-    'Cache-Control': 'no-cache',
+    'Cache-Control': 'public, max-age=120, stale-while-revalidate=600',
     'Permissions-Policy': 'unload=()',
   }
 }

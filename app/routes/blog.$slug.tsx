@@ -1,12 +1,16 @@
 import { lazy, Suspense } from 'react'
-import { data, LoaderFunctionArgs } from '@remix-run/node'
-import { MetaFunction, useLoaderData } from '@remix-run/react'
+import { defer, type LoaderFunctionArgs } from '@remix-run/node'
+import { Await, MetaFunction, useLoaderData } from '@remix-run/react'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getPostBySlug, getRelatedPosts } from '@/utils/sanity.queries'
 import { setFlashMessage } from '@/utils/session.server'
 import { Page } from '@/components/layout'
 import { PortableText } from '@/components/PortableText'
-import { formatDate, getPostImageUrl } from '@/lib/sanity/helpers'
+import {
+  formatDate,
+  getPostImageSrcSet,
+  getPostImageUrl,
+} from '@/lib/sanity/helpers'
 import { processBodyWithHighlighting } from '@/lib/sanity/process-body.server'
 import {
   createArticleSchema,
@@ -59,20 +63,18 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   if (!post) {
     return setFlashMessage(
       request,
-      `Post "${params.slug}" was not found`,
+      `Post \"${params.slug}\" was not found`,
       'error',
       '/blog'
     )
   }
 
-  // Fetch related posts and process body in parallel
-  const [relatedPosts, processedBody] = await Promise.all([
-    getRelatedPosts(post.tag, params.slug, 3),
-    processBodyWithHighlighting(post.body),
-  ])
+  // Body highlighting is typically fast; compute it eagerly to avoid showing a placeholder
+  const body = await processBodyWithHighlighting(post.body)
+  const relatedPosts = getRelatedPosts(post.tag, params.slug, 3)
 
-  return data(
-    { post: { ...post, body: processedBody }, relatedPosts },
+  return defer(
+    { post: { ...post, body }, relatedPosts },
     {
       headers: {
         'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
@@ -91,6 +93,7 @@ export default function BlogPostPage() {
   const articleSchema = createArticleSchema(post)
   const breadcrumbSchema = createBreadcrumbSchema(post)
   const imageUrl = getPostImageUrl(post, 1200)
+  const heroSrcSet = getPostImageSrcSet(post, [640, 768, 1024, 1280, 1600])
 
   return (
     <Page size="md">
@@ -105,13 +108,17 @@ export default function BlogPostPage() {
       <article>
         {imageUrl && (
           <div className="mb-8 -mx-4 sm:-mx-6 md:-mx-8">
-            <div className="aspect-video w-full overflow-hidden bg-muted">
+            <div className="relative aspect-video w-full overflow-hidden bg-background">
               <img
                 src={imageUrl}
+                srcSet={heroSrcSet || undefined}
+                sizes="(min-width: 1280px) 1200px, (min-width: 768px) 768px, 100vw"
                 alt={post.imageAlt || `Cover image for ${post.title}`}
-                className="h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
                 fetchPriority="high"
                 decoding="async"
+                width={1200}
+                height={675}
               />
             </div>
           </div>
@@ -135,11 +142,13 @@ export default function BlogPostPage() {
           <PortableText value={post.body} />
         </div>
       </article>
-      {relatedPosts.length > 0 && (
-        <Suspense fallback={null}>
-          <RelatedPosts posts={relatedPosts} />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <Await resolve={relatedPosts} errorElement={null}>
+          {(posts) =>
+            posts && posts.length > 0 ? <RelatedPosts posts={posts} /> : null
+          }
+        </Await>
+      </Suspense>
     </Page>
   )
 }

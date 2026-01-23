@@ -36,6 +36,10 @@ export function OptimizedImage({
         src={buildImageUrl(src, { ...opts, width })}
         srcSet={buildSrcSet(src, widths, opts)}
         sizes={sizes || `(max-width: ${width}px) 100vw, ${width}px`}
+        width={width}
+        height={height}
+        loading={props.loading ?? 'lazy'}
+        decoding={props.decoding ?? 'async'}
         alt={alt}
         {...props}
       />
@@ -43,6 +47,14 @@ export function OptimizedImage({
   }
 
   return (
-    <img src={buildImageUrl(src, { ...opts, width })} alt={alt} {...props} />
+    <img
+      src={buildImageUrl(src, { ...opts, width })}
+      width={width}
+      height={height}
+      loading={props.loading ?? 'lazy'}
+      decoding={props.decoding ?? 'async'}
+      alt={alt}
+      {...props}
+    />
   )
 }

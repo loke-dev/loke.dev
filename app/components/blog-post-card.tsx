@@ -1,7 +1,11 @@
 import { Link } from '@remix-run/react'
 import { ArrowRight } from 'lucide-react'
 import { type PostListItem } from '@/utils/sanity.queries'
-import { formatDate, getPostImageUrl } from '@/lib/sanity/helpers'
+import {
+  formatDate,
+  getPostImageSrcSet,
+  getPostImageUrl,
+} from '@/lib/sanity/helpers'
 
 type PrefetchMode = 'intent' | 'viewport' | 'none'
 
@@ -21,6 +25,11 @@ export function BlogPostCard({
   prefetch = 'intent',
 }: BlogPostCardProps) {
   const imageUrl = getPostImageUrl(post, imageWidth, imageHeight)
+  const srcSet = getPostImageSrcSet(
+    post,
+    [Math.round(imageWidth / 2), imageWidth, Math.round(imageWidth * 1.5)],
+    imageHeight
+  )
 
   if (variant === 'minimal') {
     return (
@@ -36,7 +45,13 @@ export function BlogPostCard({
             <div className="aspect-video w-full overflow-hidden bg-muted">
               <img
                 src={imageUrl}
+                srcSet={srcSet || undefined}
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 alt={post.imageAlt || ''}
+                loading="lazy"
+                decoding="async"
+                width={imageWidth}
+                height={imageHeight}
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
               />
             </div>
@@ -76,7 +91,13 @@ export function BlogPostCard({
           <div className="aspect-video w-full overflow-hidden bg-muted">
             <img
               src={imageUrl}
+              srcSet={srcSet || undefined}
+              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               alt={post.imageAlt || ''}
+              loading="lazy"
+              decoding="async"
+              width={imageWidth}
+              height={imageHeight}
               className="h-full w-full object-cover transition-transform group-hover:scale-105"
             />
           </div>

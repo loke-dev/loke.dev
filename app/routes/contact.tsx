@@ -34,6 +34,12 @@ const ContactSchema = z.object({
   captchaToken: z.string().min(1, 'Please complete the CAPTCHA verification'),
 })
 
+export function headers() {
+  return {
+    'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
+  }
+}
+
 export const meta: MetaFunction = () => {
   return createMetaTags({
     title: 'Contact',

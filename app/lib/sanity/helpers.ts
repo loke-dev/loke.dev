@@ -12,11 +12,32 @@ export function formatDate(date: string): string {
 export function getPostImageUrl(
   post: PostListItem | Post,
   width: number,
-  height?: number
+  height?: number,
+  quality: number = 80
 ): string | null {
   if (!post.image) return null
-  const builder = urlFor(post.image).width(width)
+  const builder = urlFor(post.image)
+    .width(width)
+    .quality(quality)
+    .format('webp')
   return height ? builder.height(height).url() : builder.url()
+}
+
+export function getPostImageSrcSet(
+  post: PostListItem | Post,
+  widths: number[],
+  height?: number,
+  quality: number = 80
+): string | null {
+  if (!post.image) return null
+  const parts = widths.map((w) => {
+    const b = urlFor(post.image).width(w).quality(quality).format('webp')
+    const u = height
+      ? b.height(Math.round((height * w) / widths[widths.length - 1])).url()
+      : b.url()
+    return `${u} ${w}w`
+  })
+  return parts.join(', ')
 }
 
 export function getRelatedPosts<T extends PostListItem>(
@@ -37,9 +58,30 @@ export function getRelatedPosts<T extends PostListItem>(
 export function getProjectImageUrl(
   project: Project,
   width: number,
-  height?: number
+  height?: number,
+  quality: number = 80
 ): string | null {
   if (!project.image) return null
-  const builder = urlFor(project.image).width(width)
+  const builder = urlFor(project.image)
+    .width(width)
+    .quality(quality)
+    .format('webp')
   return height ? builder.height(height).url() : builder.url()
+}
+
+export function getProjectImageSrcSet(
+  project: Project,
+  widths: number[],
+  height?: number,
+  quality: number = 80
+): string | null {
+  if (!project.image) return null
+  const parts = widths.map((w) => {
+    const b = urlFor(project.image).width(w).quality(quality).format('webp')
+    const u = height
+      ? b.height(Math.round((height * w) / widths[widths.length - 1])).url()
+      : b.url()
+    return `${u} ${w}w`
+  })
+  return parts.join(', ')
 }
