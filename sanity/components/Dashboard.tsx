@@ -286,6 +286,93 @@ const ActionText = styled.div`
   font-weight: 500;
 `
 
+const SeshatSection = styled(Card)`
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--card-bg-color) 0%, #1e3a5f 100%);
+  border-color: #3b82f6;
+`
+
+const SeshatForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`
+
+const InputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+
+const Label = styled.label`
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--card-fg-color);
+`
+
+const Input = styled.input`
+  padding: 0.75rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: 6px;
+  background: var(--card-bg2-color, #1f2937);
+  color: var(--card-fg-color);
+  font-size: 0.875rem;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  &::placeholder {
+    color: #6b7280;
+  }
+`
+
+const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: ${(props) =>
+    props.$variant === 'primary' ? '#3b82f6' : '#4b5563'};
+  color: white;
+
+  &:hover {
+    background: ${(props) =>
+      props.$variant === 'primary' ? '#2563eb' : '#374151'};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`
+
+const StatusMessage = styled.div<{ $type: 'success' | 'error' | 'info' }>`
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: ${(props) => {
+    if (props.$type === 'success') return '#10b98120'
+    if (props.$type === 'error') return '#ef444420'
+    return '#3b82f620'
+  }};
+  color: ${(props) => {
+    if (props.$type === 'success') return '#10b981'
+    if (props.$type === 'error') return '#ef4444'
+    return '#3b82f6'
+  }};
+  border: 1px solid
+    ${(props) => {
+      if (props.$type === 'success') return '#10b981'
+      if (props.$type === 'error') return '#ef4444'
+      return '#3b82f6'
+    }};
+`
+
 interface Post {
   _id: string
   _createdAt: string
@@ -360,6 +447,12 @@ export function Dashboard() {
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([])
   const [tagData, setTagData] = useState<TagData[]>([])
   const [loading, setLoading] = useState(true)
+  const [seshatTopic, setSeshatTopic] = useState('')
+  const [seshatLoading, setSeshatLoading] = useState(false)
+  const [seshatStatus, setSeshatStatus] = useState<{
+    type: 'success' | 'error' | 'info'
+    message: string
+  } | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -481,6 +574,51 @@ export function Dashboard() {
     return TAG_COLORS[tag.toLowerCase()] || TAG_COLORS.default
   }
 
+  const handleSeshatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!seshatTopic.trim()) return
+
+    setSeshatLoading(true)
+    setSeshatStatus({
+      type: 'info',
+      message: 'Generating blog post... This may take a minute.',
+    })
+
+    try {
+      // Use absolute URL path to avoid Sanity Studio routing issues
+      const apiUrl = window.location.origin + '/api/seshat/write'
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic: seshatTopic }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setSeshatStatus({
+          type: 'success',
+          message: 'Blog post generated successfully! Check the Posts section.',
+        })
+        setSeshatTopic('')
+      } else {
+        setSeshatStatus({
+          type: 'error',
+          message: data.error || 'Failed to generate blog post',
+        })
+      }
+    } catch {
+      setSeshatStatus({
+        type: 'error',
+        message: 'Failed to connect to the server',
+      })
+    } finally {
+      setSeshatLoading(false)
+    }
+  }
+
   const maxMonthlyCount = Math.max(...monthlyData.map((d) => d.count), 1)
 
   if (loading) {
@@ -508,6 +646,35 @@ export function Dashboard() {
         <Title>📊 Dashboard</Title>
         <Subtitle>Welcome back! Here&apos;s your content overview.</Subtitle>
       </Header>
+
+      <SeshatSection>
+        <CardTitle>✦ Seshat Scribe - AI Blog Generator</CardTitle>
+        <SeshatForm onSubmit={handleSeshatSubmit}>
+          <InputGroup>
+            <Label htmlFor="seshat-topic">Custom Topic</Label>
+            <Input
+              id="seshat-topic"
+              type="text"
+              placeholder="e.g., Building a GraphQL API with Node.js"
+              value={seshatTopic}
+              onChange={(e) => setSeshatTopic(e.target.value)}
+              disabled={seshatLoading}
+            />
+          </InputGroup>
+          {seshatStatus && (
+            <StatusMessage $type={seshatStatus.type}>
+              {seshatStatus.message}
+            </StatusMessage>
+          )}
+          <Button
+            type="submit"
+            $variant="primary"
+            disabled={seshatLoading || !seshatTopic.trim()}
+          >
+            {seshatLoading ? '⏳ Generating...' : '✦ Generate Blog Post'}
+          </Button>
+        </SeshatForm>
+      </SeshatSection>
 
       <Grid>
         <StatCard $accent="#3b82f6">
