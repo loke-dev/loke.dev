@@ -169,8 +169,8 @@ importers:
         specifier: ^0.6.14
         version: 0.6.14(@ianvs/prettier-plugin-sort-imports@4.7.0(prettier@3.6.2))(prettier@3.6.2)
       seshat-scribe:
-        specifier: ^0.7.3
-        version: 0.7.3(@types/node@25.0.10)
+        specifier: ^0.8.0
+        version: 0.8.0(@types/node@25.0.10)
       tailwindcss:
         specifier: ^4.1.12
         version: 4.1.12
@@ -7444,8 +7444,8 @@ packages:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
     engines: {node: '>= 0.8.0'}
 
-  seshat-scribe@0.7.3:
-    resolution: {integrity: sha512-czmc4A58eGerjiZbeXa6/mbglirJ1+rbSsTyBOKbSCE34WZB9hOViraKG8/mSz2chCo5BfBWHyX2fcOWlStlWA==}
+  seshat-scribe@0.8.0:
+    resolution: {integrity: sha512-i32MvaQIFjSQSukmX/5gayzDgzxP344QieXHQCTwbPU+TZG2HeYzp50aePi74xl7lRmovEGSjwyyQSpR7Vi/zg==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
@@ -16959,7 +16959,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  seshat-scribe@0.7.3(@types/node@25.0.10):
+  seshat-scribe@0.8.0(@types/node@25.0.10):
     dependencies:
       '@google/genai': 1.38.0
       '@inquirer/prompts': 8.2.0(@types/node@25.0.10)
