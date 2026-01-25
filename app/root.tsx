@@ -1,5 +1,9 @@
 import { useSWEffect } from '@remix-pwa/sw'
-import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
+import {
+  type LinksFunction,
+  type LoaderFunctionArgs,
+  type MetaFunction,
+} from '@remix-run/node'
 import {
   isRouteErrorResponse,
   Links,
@@ -13,7 +17,7 @@ import {
 } from '@remix-run/react'
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
-import { createTitle } from '@/utils/meta'
+import { createMetaTags, createTitle, SITE_DOMAIN } from '@/utils/meta'
 import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
@@ -28,6 +32,14 @@ export function headers() {
   return {
     'Permissions-Policy': 'unload=()',
   }
+}
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return createMetaTags({
+    title: 'Loke.dev',
+    description: 'Lokes personal website and blog',
+    url: data?.requestUrl || SITE_DOMAIN,
+  })
 }
 
 export const links: LinksFunction = () => [
@@ -96,6 +108,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ENV: {
       TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
     },
+    requestUrl: request.url,
   }
 }
 
@@ -121,7 +134,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="apple-mobile-web-app-title" content="Loke.dev" />
 
         {/* PWA related meta tags */}
-        <meta name="description" content="Lokes personal website and blog" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
 
