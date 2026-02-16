@@ -21,7 +21,7 @@ export const loader = async () => {
       const imageTag = imageUrl
         ? `
       <image:image>
-        <image:loc>${imageUrl}</image:loc>
+        <image:loc>${escapeXml(imageUrl)}</image:loc>
         <image:title>${escapeXml(post.title)}</image:title>
       </image:image>`
         : ''
