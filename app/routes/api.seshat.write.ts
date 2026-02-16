@@ -1,5 +1,7 @@
-import { execSync } from 'child_process'
+import path from 'node:path'
 import { json, type ActionFunctionArgs } from '@remix-run/node'
+import { generate } from 'seshat-scribe/dist/commands/generate.js'
+import { loadConfig } from 'seshat-scribe/dist/config.js'
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
@@ -13,24 +15,30 @@ export async function action({ request }: ActionFunctionArgs) {
       return json({ error: 'Topic is required' }, { status: 400 })
     }
 
-    // Execute seshat write command with --topic flag
-    const output = execSync(
-      `pnpm exec seshat write --topic "${topic.replace(/"/g, '\\"')}"`,
-      {
-        encoding: 'utf-8',
-        cwd: process.cwd(),
-        env: {
-          ...process.env,
-          GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-          SANITY_WRITE_TOKEN: process.env.SANITY_WRITE_TOKEN,
-        },
-      }
-    )
+    if (!process.env.GEMINI_API_KEY) {
+      return json(
+        { error: 'GEMINI_API_KEY environment variable is not set' },
+        { status: 500 }
+      )
+    }
+
+    if (!process.env.SANITY_WRITE_TOKEN) {
+      return json(
+        { error: 'SANITY_WRITE_TOKEN environment variable is not set' },
+        { status: 500 }
+      )
+    }
+
+    const configPath = path.join(process.cwd(), 'seshat.config.json')
+    const config = await loadConfig(configPath)
+
+    config.topic = topic
+
+    await generate({ topic })
 
     return json({
       success: true,
       message: 'Blog post generated successfully',
-      output,
     })
   } catch (error) {
     console.error('Error generating blog post:', error)
