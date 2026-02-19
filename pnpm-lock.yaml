@@ -84,8 +84,8 @@ importers:
         specifier: ^5.4.0
         version: 5.4.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@portabletext/sanity-bridge@2.0.0(@types/react@19.2.8))(@types/node@25.3.0)(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(babel-plugin-react-compiler@1.0.0)(jiti@2.6.1)(lightningcss@1.30.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.3.8(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(tsx@4.21.0)(typescript@5.9.2)(yaml@2.8.1)
       seshat-scribe:
-        specifier: ^3.0.0
-        version: 3.0.0(@types/node@25.3.0)
+        specifier: ^3.0.1
+        version: 3.0.1(@types/node@25.3.0)
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
@@ -7569,8 +7569,8 @@ packages:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
     engines: {node: '>= 0.8.0'}
 
-  seshat-scribe@3.0.0:
-    resolution: {integrity: sha512-Yp8B615HvrXRru0jIlZb6JK9Z6p1sAMUkXTA4hv0Ol2aptaL9Q1koONMGs6qLI12NTvZCFNT/kxRNcL0dZpWUQ==}
+  seshat-scribe@3.0.1:
+    resolution: {integrity: sha512-/LbTDIw5zdAqzuVZCoi6YgTSlbJmGr7CWSB3+FZqlNXK4BzRbNrxMhUawwntLpL/Kx2ZrVYZtOSvP0wsM66wVg==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
@@ -17206,7 +17206,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  seshat-scribe@3.0.0(@types/node@25.3.0):
+  seshat-scribe@3.0.1(@types/node@25.3.0):
     dependencies:
       '@google/genai': 1.42.0
       '@inquirer/prompts': 8.2.1(@types/node@25.3.0)
