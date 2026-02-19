@@ -4,6 +4,10 @@ import { generate } from 'seshat-scribe/dist/commands/generate.js'
 import { loadConfig } from 'seshat-scribe/dist/config.js'
 import { dataset, projectId } from '@/lib/sanity/projectDetails'
 
+export const config = {
+  maxDuration: 300,
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 })

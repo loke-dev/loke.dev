@@ -14,6 +14,9 @@ export const GenerateContentAction: DocumentActionComponent = (
     setError(null)
 
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 300000)
+
       const response = await fetch('/api/seshat/write', {
         method: 'POST',
         headers: {
@@ -22,7 +25,10 @@ export const GenerateContentAction: DocumentActionComponent = (
         body: JSON.stringify({
           topicId: id,
         }),
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         const errorData = await response
