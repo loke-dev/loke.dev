@@ -55,6 +55,22 @@ export const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
+      // Content Topics for Seshat
+      S.listItem()
+        .title('Content Topics')
+        .id('content-topics')
+        .icon(() => '✦')
+        .child(
+          S.documentTypeList('contentTopic')
+            .title('Content Topics')
+            .defaultOrdering([
+              { field: 'active', direction: 'desc' },
+              { field: 'name', direction: 'asc' },
+            ])
+        ),
+
+      S.divider(),
+
       // Posts with custom ordering
       S.listItem()
         .title('Posts')

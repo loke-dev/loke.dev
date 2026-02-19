@@ -41,7 +41,7 @@
     "react-dom": "^19.2.3",
     "resend": "^6.0.2",
     "sanity": "^5.4.0",
-    "seshat-scribe": "^2.0.0",
+    "seshat-scribe": "^3.0.0",
     "sharp": "^0.34.5",
     "shiki": "^3.21.0",
     "sonner": "^2.0.7",

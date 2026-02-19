@@ -2,6 +2,7 @@ import path from 'node:path'
 import { json, type ActionFunctionArgs } from '@remix-run/node'
 import { generate } from 'seshat-scribe/dist/commands/generate.js'
 import { loadConfig } from 'seshat-scribe/dist/config.js'
+import { dataset, projectId } from '@/lib/sanity/projectDetails'
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
@@ -9,12 +10,10 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    const { topic } = await request.json()
+    const body = await request.json()
+    const { topic, topicId } = body
 
-    if (!topic || typeof topic !== 'string') {
-      return json({ error: 'Topic is required' }, { status: 400 })
-    }
-
+    // Validate environment variables
     if (!process.env.GEMINI_API_KEY) {
       return json(
         { error: 'GEMINI_API_KEY environment variable is not set' },
@@ -29,17 +28,46 @@ export async function action({ request }: ActionFunctionArgs) {
       )
     }
 
-    const configPath = path.join(process.cwd(), 'seshat.config.json')
-    const config = await loadConfig(configPath)
+    // New Sanity-native mode with topicId
+    if (topicId) {
+      if (typeof topicId !== 'string') {
+        return json({ error: 'topicId must be a string' }, { status: 400 })
+      }
 
-    config.topic = topic
+      await generate({
+        topicId,
+        sanityProject: projectId,
+        sanityDataset: dataset,
+      })
 
-    await generate({ topic })
+      return json({
+        success: true,
+        message: 'Blog post generated successfully from content topic',
+      })
+    }
 
-    return json({
-      success: true,
-      message: 'Blog post generated successfully',
-    })
+    // Legacy file-based mode with topic override
+    if (topic) {
+      if (typeof topic !== 'string') {
+        return json({ error: 'topic must be a string' }, { status: 400 })
+      }
+
+      const configPath = path.join(process.cwd(), 'seshat.config.json')
+      await loadConfig(configPath) // Validate config exists
+
+      await generate({ topic })
+
+      return json({
+        success: true,
+        message: 'Blog post generated successfully',
+      })
+    }
+
+    // No topic or topicId provided
+    return json(
+      { error: 'Either topic or topicId is required' },
+      { status: 400 }
+    )
   } catch (error) {
     console.error('Error generating blog post:', error)
     return json(

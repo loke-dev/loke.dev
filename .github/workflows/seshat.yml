@@ -1,14 +1,20 @@
-name: Seshat Scribe
+name: Seshat Scribe - Multi-Topic Scheduler
 on:
   schedule:
-    - cron: '0 9 * * *'
+    # Run hourly to check for due topics
+    - cron: '0 * * * *'
   workflow_dispatch:
+    inputs:
+      topicId:
+        description: 'Specific topic ID to generate (optional - leave empty to check all due topics)'
+        required: false
+        type: string
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  write:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,17 +34,60 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Summon Seshat
+      # Check which topics are due for generation (scheduled runs only)
+      - name: Check due topics
+        if: github.event_name == 'schedule'
+        id: check_due
+        env:
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+        run: |
+          TOPICS=$(pnpm exec seshat check-due \
+            --sanity-project ${{ secrets.SANITY_PROJECT_ID }} \
+            --sanity-dataset production \
+            --json)
+          echo "topics=$TOPICS" >> $GITHUB_OUTPUT
+          echo "Found due topics: $TOPICS"
+
+      # Generate posts for all due topics
+      - name: Generate for due topics
+        if: github.event_name == 'schedule' && steps.check_due.outputs.topics != '[]'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
-        run: pnpm exec seshat write
-
-      - name: Commit and push changes
         run: |
-          git config user.name "loke-dev"
-          git config user.email "hi@loke.dev"
-          git add .
-          git commit -m "✦ chronicler: new entry added by Seshat" || echo "No changes to commit"
-          git pull --rebase
-          git push
+          TOPICS='${{ steps.check_due.outputs.topics }}'
+          echo "Processing topics: $TOPICS"
+
+          for TOPIC_ID in $(echo $TOPICS | jq -r '.[]'); do
+            echo "✦ Generating content for topic: $TOPIC_ID"
+            pnpm exec seshat write \
+              --topic-id "$TOPIC_ID" \
+              --sanity-project ${{ secrets.SANITY_PROJECT_ID }} \
+              --sanity-dataset production || echo "⚠️  Failed for topic: $TOPIC_ID"
+          done
+
+      # Manual generation for specific topic (workflow_dispatch only)
+      - name: Generate for specific topic
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.topicId
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+        run: |
+          echo "✦ Manual generation for topic: ${{ github.event.inputs.topicId }}"
+          pnpm exec seshat write \
+            --topic-id "${{ github.event.inputs.topicId }}" \
+            --sanity-project ${{ secrets.SANITY_PROJECT_ID }} \
+            --sanity-dataset production
+
+      # Summary
+      - name: Summary
+        if: always()
+        run: |
+          echo "✨ Seshat workflow completed"
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "Mode: Scheduled check"
+            echo "Due topics: ${{ steps.check_due.outputs.topics }}"
+          else
+            echo "Mode: Manual dispatch"
+            echo "Topic ID: ${{ github.event.inputs.topicId || 'none' }}"
+          fi
