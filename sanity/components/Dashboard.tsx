@@ -581,12 +581,11 @@ export function Dashboard() {
     setSeshatLoading(true)
     setSeshatStatus({
       type: 'info',
-      message: 'Generating blog post... This may take a minute.',
+      message: 'Starting background generation...',
     })
 
     try {
-      // Use absolute URL path to avoid Sanity Studio routing issues
-      const apiUrl = window.location.origin + '/api/seshat/write'
+      const apiUrl = window.location.origin + '/api/seshat/trigger'
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -600,13 +599,14 @@ export function Dashboard() {
       if (response.ok && data.success) {
         setSeshatStatus({
           type: 'success',
-          message: 'Blog post generated successfully! Check the Posts section.',
+          message:
+            'Generation started in background! Check GitHub Actions for progress. The post will appear when complete.',
         })
         setSeshatTopic('')
       } else {
         setSeshatStatus({
           type: 'error',
-          message: data.error || 'Failed to generate blog post',
+          message: data.error || 'Failed to start generation',
         })
       }
     } catch {

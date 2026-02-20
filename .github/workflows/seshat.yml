@@ -9,6 +9,10 @@ on:
         description: 'Specific topic ID to generate (optional - leave empty to check all due topics)'
         required: false
         type: string
+      topic:
+        description: 'Custom topic string to generate (optional - overrides topicId)'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -66,14 +70,27 @@ jobs:
               --sanity-dataset production || echo "⚠️  Failed for topic: $TOPIC_ID"
           done
 
-      # Manual generation for specific topic (workflow_dispatch only)
-      - name: Generate for specific topic
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.topicId
+      # Manual generation with custom topic string (workflow_dispatch only)
+      - name: Generate with custom topic
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.topic
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
         run: |
-          echo "✦ Manual generation for topic: ${{ github.event.inputs.topicId }}"
+          echo "✦ Manual generation for custom topic: ${{ github.event.inputs.topic }}"
+          pnpm exec seshat write \
+            --topic "${{ github.event.inputs.topic }}" \
+            --sanity-project ${{ secrets.SANITY_PROJECT_ID }} \
+            --sanity-dataset production
+
+      # Manual generation for specific topic ID (workflow_dispatch only)
+      - name: Generate for specific topic
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.topicId && !github.event.inputs.topic
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+        run: |
+          echo "✦ Manual generation for topic ID: ${{ github.event.inputs.topicId }}"
           pnpm exec seshat write \
             --topic-id "${{ github.event.inputs.topicId }}" \
             --sanity-project ${{ secrets.SANITY_PROJECT_ID }} \
@@ -89,5 +106,11 @@ jobs:
             echo "Due topics: ${{ steps.check_due.outputs.topics }}"
           else
             echo "Mode: Manual dispatch"
-            echo "Topic ID: ${{ github.event.inputs.topicId || 'none' }}"
+            if [ -n "${{ github.event.inputs.topic }}" ]; then
+              echo "Custom topic: ${{ github.event.inputs.topic }}"
+            elif [ -n "${{ github.event.inputs.topicId }}" ]; then
+              echo "Topic ID: ${{ github.event.inputs.topicId }}"
+            else
+              echo "No topic specified"
+            fi
           fi

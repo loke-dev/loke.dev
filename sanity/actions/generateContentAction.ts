@@ -54,11 +54,7 @@ export const GenerateContentAction: DocumentActionComponent = (
   }
 
   return {
-    label: isGenerating
-      ? 'Starting...'
-      : error
-        ? 'Retry'
-        : 'Generate in Background',
+    label: isGenerating ? 'Starting...' : error ? 'Retry' : 'Generate',
     icon: Sparkles,
     tone: error ? 'critical' : 'primary',
     disabled: isGenerating || !published?.active,

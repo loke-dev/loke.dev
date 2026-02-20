@@ -7,10 +7,21 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const body = await request.json()
-    const { topicId } = body
+    const { topicId, topic } = body
 
-    if (!topicId || typeof topicId !== 'string') {
-      return json({ error: 'topicId is required' }, { status: 400 })
+    if (!topicId && !topic) {
+      return json(
+        { error: 'Either topicId or topic is required' },
+        { status: 400 }
+      )
+    }
+
+    if (topicId && typeof topicId !== 'string') {
+      return json({ error: 'topicId must be a string' }, { status: 400 })
+    }
+
+    if (topic && typeof topic !== 'string') {
+      return json({ error: 'topic must be a string' }, { status: 400 })
     }
 
     const githubToken = process.env.GITHUB_TOKEN
@@ -25,6 +36,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const [owner, repo] = githubRepo.split('/')
 
+    const inputs: Record<string, string> = {}
+    if (topicId) inputs.topicId = topicId
+    if (topic) inputs.topic = topic
+
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/workflows/seshat.yml/dispatches`,
       {
@@ -37,9 +52,7 @@ export async function action({ request }: ActionFunctionArgs) {
         },
         body: JSON.stringify({
           ref: 'master',
-          inputs: {
-            topicId,
-          },
+          inputs,
         }),
       }
     )
