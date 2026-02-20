@@ -45,10 +45,11 @@ jobs:
         env:
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
         run: |
-          TOPICS=$(pnpm exec seshat check-due \
+          OUTPUT=$(pnpm exec seshat check-due \
             --sanity-project ${{ secrets.SANITY_PROJECT_ID }} \
             --sanity-dataset production \
             --json)
+          TOPICS=$(echo "$OUTPUT" | tail -1)
           echo "topics=$TOPICS" >> $GITHUB_OUTPUT
           echo "Found due topics: $TOPICS"
 
