@@ -1,4 +1,5 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node'
+import { Client } from '@upstash/qstash'
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
@@ -24,61 +25,67 @@ export async function action({ request }: ActionFunctionArgs) {
       return json({ error: 'topic must be a string' }, { status: 400 })
     }
 
-    const githubToken = process.env.GITHUB_TOKEN
-    const githubRepo = process.env.GITHUB_REPOSITORY || 'loke-dev/loke.dev'
+    const appUrl = process.env.APP_URL
 
-    if (!githubToken) {
+    if (!appUrl) {
+      const directWorkerUrl = new URL(
+        '/api/seshat/write',
+        request.url
+      ).toString()
+
+      const workerResponse = await fetch(directWorkerUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topicId, topic }),
+      })
+
+      if (!workerResponse.ok) {
+        const errorData = await workerResponse.json().catch(() => ({}))
+        return json(
+          {
+            error: 'Worker execution failed',
+            details: errorData.error || errorData.details,
+          },
+          { status: workerResponse.status }
+        )
+      }
+
+      return json({
+        success: true,
+        message: 'Content generation completed',
+      })
+    }
+
+    const qstashToken = process.env.QSTASH_TOKEN
+
+    if (!qstashToken) {
       return json(
-        { error: 'GITHUB_TOKEN environment variable is not set' },
+        { error: 'QSTASH_TOKEN environment variable is not set' },
         { status: 500 }
       )
     }
 
-    const [owner, repo] = githubRepo.split('/')
+    const workerUrl = `${appUrl}/api/seshat/worker`
 
-    const inputs: Record<string, string> = {}
-    if (topicId) inputs.topicId = topicId
-    if (topic) inputs.topic = topic
+    const qstash = new Client({ token: qstashToken })
 
-    const response = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/seshat.yml/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/vnd.github+json',
-          Authorization: `Bearer ${githubToken}`,
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ref: 'master',
-          inputs,
-        }),
-      }
-    )
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('GitHub API error:', errorText)
-      return json(
-        {
-          error: 'Failed to trigger GitHub Action',
-          details: errorText,
-        },
-        { status: response.status }
-      )
-    }
+    await qstash.publishJSON({
+      url: workerUrl,
+      body: { topicId, topic },
+      retries: 3,
+    })
 
     return json({
       success: true,
-      message:
-        'Content generation started in background. Check GitHub Actions for progress.',
+      message: 'Content generation queued successfully',
     })
   } catch (error) {
-    console.error('Error triggering GitHub Action:', error)
+    console.error('Error queuing content generation:', error)
     return json(
       {
-        error: 'Failed to trigger generation',
+        error: 'Failed to queue generation',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }

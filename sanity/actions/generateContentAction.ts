@@ -65,7 +65,7 @@ export const GenerateContentAction: DocumentActionComponent = (
       error ||
       (!published?.active
         ? 'Topic must be active to generate'
-        : 'Starts background generation via GitHub Actions. Check Actions tab for progress.'),
+        : 'Queue content generation for this topic'),
     onHandle: handleGenerate,
   }
 }

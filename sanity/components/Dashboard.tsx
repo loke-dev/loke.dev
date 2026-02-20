@@ -600,7 +600,8 @@ export function Dashboard() {
         setSeshatStatus({
           type: 'success',
           message:
-            'Generation started in background! Check GitHub Actions for progress. The post will appear when complete.',
+            data.message ||
+            'Content generation queued successfully! The post will appear when complete.',
         })
         setSeshatTopic('')
       } else {

@@ -40,7 +40,7 @@ Always use `pnpm` as the package manager. Never use npm or yarn.
 - **Email**: Resend API
 - **CAPTCHA**: Cloudflare Turnstile
 - **Analytics**: Vercel Analytics
-- **Automated Content**: Seshat Scribe (GitHub Actions daily at 9 AM)
+- **Automated Content**: Seshat Scribe (QStash scheduled generation per topic)
 
 ### Project Structure
 
