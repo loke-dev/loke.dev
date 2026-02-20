@@ -25,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     const githubToken = process.env.GITHUB_TOKEN
-    const githubRepo = process.env.GITHUB_REPOSITORY || 'lokecarlsson/loke.dev'
+    const githubRepo = process.env.GITHUB_REPOSITORY || 'loke-dev/loke.dev'
 
     if (!githubToken) {
       return json(
