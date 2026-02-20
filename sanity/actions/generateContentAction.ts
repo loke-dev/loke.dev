@@ -14,10 +14,7 @@ export const GenerateContentAction: DocumentActionComponent = (
     setError(null)
 
     try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 300000)
-
-      const response = await fetch('/api/seshat/write', {
+      const response = await fetch('/api/seshat/trigger', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,10 +22,7 @@ export const GenerateContentAction: DocumentActionComponent = (
         body: JSON.stringify({
           topicId: id,
         }),
-        signal: controller.signal,
       })
-
-      clearTimeout(timeoutId)
 
       if (!response.ok) {
         const errorData = await response
@@ -61,16 +55,18 @@ export const GenerateContentAction: DocumentActionComponent = (
 
   return {
     label: isGenerating
-      ? 'Generating...'
+      ? 'Starting...'
       : error
-        ? 'Retry Generation'
-        : 'Generate Now',
+        ? 'Retry'
+        : 'Generate in Background',
     icon: Sparkles,
     tone: error ? 'critical' : 'primary',
     disabled: isGenerating || !published?.active,
     title:
       error ||
-      (!published?.active ? 'Topic must be active to generate' : undefined),
+      (!published?.active
+        ? 'Topic must be active to generate'
+        : 'Starts background generation via GitHub Actions. Check Actions tab for progress.'),
     onHandle: handleGenerate,
   }
 }
