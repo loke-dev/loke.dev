@@ -28,7 +28,10 @@ export const GenerateContentAction: DocumentActionComponent = (
         const errorData = await response
           .json()
           .catch(() => ({ error: 'Unknown error' }))
-        throw new Error(errorData.error || `HTTP ${response.status}`)
+        const errorMsg = errorData.details
+          ? `${errorData.error}: ${errorData.details}`
+          : errorData.error || `HTTP ${response.status}`
+        throw new Error(errorMsg)
       }
 
       const result = await response.json()
