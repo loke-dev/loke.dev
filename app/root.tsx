@@ -1,4 +1,3 @@
-import { parseWithZod } from '@conform-to/zod'
 import {
   type LinksFunction,
   type LoaderFunctionArgs,
@@ -11,16 +10,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useFetchers,
   useLocation,
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
-import { z } from 'zod'
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { createMetaTags, createTitle, SITE_DOMAIN } from '@/utils/meta'
-import { getEffectiveTheme, getTheme } from '@/utils/theme.server'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
@@ -97,13 +93,9 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const hints = getHints(request)
-  const theme = getTheme(request)
-  const effectiveTheme = getEffectiveTheme(request)
 
   return {
-    theme,
-    systemTheme: hints.theme,
-    effectiveTheme,
+    effectiveTheme: hints.theme as 'light' | 'dark',
     ENV: {
       TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
     },
@@ -111,32 +103,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-const ThemeFormSchema = z.object({
-  theme: z.enum(['system', 'light', 'dark']),
-})
-
 // The Layout export is used across the root component, ErrorBoundary, and HydrateFallback
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<typeof loader>('root')
-  const fetchers = useFetchers()
   const location = useLocation()
 
-  const pendingThemeFetcher = fetchers.find(
-    (f) => f.formAction === '/resources/theme-switch'
-  )
-  let optimisticEffectiveTheme: 'light' | 'dark' | undefined
-  if (pendingThemeFetcher?.formData) {
-    const submission = parseWithZod(pendingThemeFetcher.formData, {
-      schema: ThemeFormSchema,
-    })
-    if (submission.status === 'success') {
-      const { theme } = submission.value
-      optimisticEffectiveTheme =
-        theme === 'system' ? (data?.systemTheme ?? 'light') : theme
-    }
-  }
-
-  const isDark = (optimisticEffectiveTheme ?? data?.effectiveTheme) === 'dark'
+  const isDark = data?.effectiveTheme === 'dark'
   const isStudioRoute = location.pathname.startsWith('/studio')
 
   return (

@@ -1,8 +1,8 @@
-name: Seshat Scribe - Multi-Topic Scheduler
+name: Seshat Scribe - Multi-Topic Scheduler (DISABLED - Using QStash)
 on:
-  schedule:
-    # Run once daily at 9 AM UTC
-    - cron: '0 9 * * *'
+  # schedule:
+  #   # Disabled in favor of QStash scheduling
+  #   - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       topicId:
