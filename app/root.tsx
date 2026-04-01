@@ -121,18 +121,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const fetchers = useFetchers()
   const location = useLocation()
 
-  const pendingThemeFetcher = fetchers.find(
-    (f) => f.formAction === '/resources/theme-switch'
-  )
+  const themeFetcher = fetchers.find((f) => f.key === 'theme-switch')
   let optimisticEffectiveTheme: 'light' | 'dark' | undefined
-  if (pendingThemeFetcher?.formData) {
-    const submission = parseWithZod(pendingThemeFetcher.formData, {
+
+  if (themeFetcher?.formData) {
+    const submission = parseWithZod(themeFetcher.formData, {
       schema: ThemeFormSchema,
     })
     if (submission.status === 'success') {
       const { theme } = submission.value
       optimisticEffectiveTheme =
         theme === 'system' ? (data?.systemTheme ?? 'light') : theme
+    }
+  } else if (themeFetcher?.state === 'idle') {
+    const fetcherData = themeFetcher.data as
+      | { effectiveTheme?: 'light' | 'dark' }
+      | undefined
+    if (fetcherData?.effectiveTheme) {
+      optimisticEffectiveTheme = fetcherData.effectiveTheme
     }
   }
 

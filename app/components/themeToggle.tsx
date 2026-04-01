@@ -39,7 +39,7 @@ export function ThemeToggle() {
   const theme = data?.theme || 'system'
   const systemTheme = data?.systemTheme || 'light'
 
-  const fetcher = useFetcher()
+  const fetcher = useFetcher({ key: 'theme-switch' })
   const optimisticMode = useOptimisticThemeMode()
   const mode = optimisticMode ?? theme
 
