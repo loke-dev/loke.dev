@@ -1,4 +1,4 @@
-import { useSWEffect } from '@remix-pwa/sw'
+import { parseWithZod } from '@conform-to/zod'
 import {
   type LinksFunction,
   type LoaderFunctionArgs,
@@ -11,10 +11,12 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useFetchers,
   useLocation,
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
+import { z } from 'zod'
 import { ClientHintCheck } from '@/utils/client-hint-check'
 import { getHints } from '@/utils/hints'
 import { createMetaTags, createTitle, SITE_DOMAIN } from '@/utils/meta'
@@ -59,9 +61,6 @@ export const links: LinksFunction = () => [
     href: 'https://vitals.vercel-insights.com',
     crossOrigin: 'anonymous',
   },
-
-  // PWA manifest
-  { rel: 'manifest', href: '/manifest.json' },
 
   // Favicon links
   { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -112,11 +111,32 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
+const ThemeFormSchema = z.object({
+  theme: z.enum(['system', 'light', 'dark']),
+})
+
 // The Layout export is used across the root component, ErrorBoundary, and HydrateFallback
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<typeof loader>('root')
+  const fetchers = useFetchers()
   const location = useLocation()
-  const isDark = data?.effectiveTheme === 'dark'
+
+  const pendingThemeFetcher = fetchers.find(
+    (f) => f.formAction === '/resources/theme-switch'
+  )
+  let optimisticEffectiveTheme: 'light' | 'dark' | undefined
+  if (pendingThemeFetcher?.formData) {
+    const submission = parseWithZod(pendingThemeFetcher.formData, {
+      schema: ThemeFormSchema,
+    })
+    if (submission.status === 'success') {
+      const { theme } = submission.value
+      optimisticEffectiveTheme =
+        theme === 'system' ? (data?.systemTheme ?? 'light') : theme
+    }
+  }
+
+  const isDark = (optimisticEffectiveTheme ?? data?.effectiveTheme) === 'dark'
   const isStudioRoute = location.pathname.startsWith('/studio')
 
   return (
@@ -125,19 +145,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content={isDark ? '#030711' : '#ffffff'} />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        <meta name="application-name" content="Loke.dev" />
-        <meta name="apple-mobile-web-app-title" content="Loke.dev" />
-
-        {/* PWA related meta tags */}
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="mobile-web-app-capable" content="yes" />
-
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <ClientHintCheck />
         <Links />
         <Meta />
@@ -172,8 +179,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // The default export renders the happy path
 export default function App() {
-  useSWEffect()
-
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
