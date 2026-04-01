@@ -96,9 +96,9 @@ export const links: LinksFunction = () => [
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const theme = await getTheme(request)
   const hints = getHints(request)
-  const effectiveTheme = await getEffectiveTheme(request)
+  const theme = getTheme(request)
+  const effectiveTheme = getEffectiveTheme(request)
 
   return {
     theme,
@@ -121,24 +121,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const fetchers = useFetchers()
   const location = useLocation()
 
-  const themeFetcher = fetchers.find((f) => f.key === 'theme-switch')
+  const pendingThemeFetcher = fetchers.find(
+    (f) => f.formAction === '/resources/theme-switch'
+  )
   let optimisticEffectiveTheme: 'light' | 'dark' | undefined
-
-  if (themeFetcher?.formData) {
-    const submission = parseWithZod(themeFetcher.formData, {
+  if (pendingThemeFetcher?.formData) {
+    const submission = parseWithZod(pendingThemeFetcher.formData, {
       schema: ThemeFormSchema,
     })
     if (submission.status === 'success') {
       const { theme } = submission.value
       optimisticEffectiveTheme =
         theme === 'system' ? (data?.systemTheme ?? 'light') : theme
-    }
-  } else if (themeFetcher?.state === 'idle') {
-    const fetcherData = themeFetcher.data as
-      | { effectiveTheme?: 'light' | 'dark' }
-      | undefined
-    if (fetcherData?.effectiveTheme) {
-      optimisticEffectiveTheme = fetcherData.effectiveTheme
     }
   }
 

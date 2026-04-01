@@ -10,7 +10,7 @@ const ThemeFormSchema = z.object({
 })
 
 type RootLoaderData = {
-  theme: Theme
+  theme: 'light' | 'dark' | null
   systemTheme: 'light' | 'dark'
   effectiveTheme: 'light' | 'dark'
 }
@@ -39,7 +39,7 @@ export function ThemeToggle() {
   const theme = data?.theme || 'system'
   const systemTheme = data?.systemTheme || 'light'
 
-  const fetcher = useFetcher({ key: 'theme-switch' })
+  const fetcher = useFetcher()
   const optimisticMode = useOptimisticThemeMode()
   const mode = optimisticMode ?? theme
 

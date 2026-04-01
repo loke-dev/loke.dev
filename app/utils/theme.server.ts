@@ -1,53 +1,39 @@
-import { createCookieSessionStorage } from '@remix-run/node'
+import * as cookie from 'cookie'
 import { z } from 'zod'
 import { getHints } from '@/utils/hints'
 
-export const ThemeSchema = z.enum(['system', 'light', 'dark'])
+const cookieName = 'loke-dev-theme'
+
+export const ThemeSchema = z.enum(['light', 'dark', 'system'])
 export type Theme = z.infer<typeof ThemeSchema>
 
-const themeStorage = createCookieSessionStorage({
-  cookie: {
-    name: 'loke-dev-theme',
-    sameSite: 'lax',
-    path: '/',
-    httpOnly: true,
-    secrets: ['theme-secret'],
-    secure: process.env.NODE_ENV === 'production',
-  },
-})
-
-const THEME_KEY = 'theme'
-
-export async function getTheme(request: Request): Promise<Theme> {
-  const cookieSession = await themeStorage.getSession(
-    request.headers.get('Cookie')
-  )
-  const themeValue = cookieSession.get(THEME_KEY)
-
-  if (themeValue) {
-    const result = ThemeSchema.safeParse(themeValue)
-    if (result.success) return result.data
-  }
-
-  return 'system'
+export function getTheme(request: Request): 'light' | 'dark' | null {
+  const cookieHeader = request.headers.get('cookie')
+  if (!cookieHeader) return null
+  const parsed = cookie.parse(cookieHeader)[cookieName]
+  if (parsed === 'light' || parsed === 'dark') return parsed
+  return null
 }
 
-export async function setTheme(theme: Theme) {
-  const cookieSession = await themeStorage.getSession()
-  cookieSession.set(THEME_KEY, theme)
-
-  return themeStorage.commitSession(cookieSession)
-}
-
-export async function getEffectiveTheme(
-  request: Request
-): Promise<'light' | 'dark'> {
-  const theme = await getTheme(request)
-  const hints = getHints(request)
-
+export function setTheme(theme: Theme): string {
   if (theme === 'system') {
-    return hints.theme === 'dark' ? 'dark' : 'light'
+    return cookie.serialize(cookieName, '', {
+      path: '/',
+      maxAge: -1,
+      sameSite: 'lax',
+    })
   }
+  return cookie.serialize(cookieName, theme, {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
+}
 
-  return theme === 'dark' ? 'dark' : 'light'
+export function getEffectiveTheme(request: Request): 'light' | 'dark' {
+  const theme = getTheme(request)
+  if (theme) return theme
+  const hints = getHints(request)
+  return hints.theme === 'dark' ? 'dark' : 'light'
 }
