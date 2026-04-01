@@ -60,11 +60,22 @@ export function ThemeToggle() {
     system: 'light',
   }
 
+  function handleSubmit() {
+    const next = nextTheme[mode]
+    const secure = window.location.protocol === 'https:' ? '; Secure' : ''
+    if (next === 'system') {
+      document.cookie = `loke-dev-theme=; Path=/; Max-Age=0; SameSite=Lax${secure}`
+    } else {
+      document.cookie = `loke-dev-theme=${next}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax${secure}`
+    }
+  }
+
   return (
     <fetcher.Form
       method="POST"
       action="/resources/theme-switch"
       preventScrollReset
+      onSubmit={handleSubmit}
     >
       <input type="hidden" name="theme" value={nextTheme[mode]} />
       <Button
