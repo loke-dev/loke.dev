@@ -1,21 +1,16 @@
-import { data, redirect, type ActionFunctionArgs } from '@remix-run/node'
+import { data, type ActionFunctionArgs } from '@remix-run/node'
 import { z } from 'zod'
 import { setTheme, ThemeSchema } from '@/utils/theme.server'
 
 const ThemeFormSchema = z.object({
   theme: ThemeSchema,
-  redirectTo: z.string().optional(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData()
   const theme = formData.get('theme')
-  const redirectTo = formData.get('redirectTo')
 
-  const result = ThemeFormSchema.safeParse({
-    theme,
-    redirectTo: redirectTo ? String(redirectTo) : undefined,
-  })
+  const result = ThemeFormSchema.safeParse({ theme })
 
   if (!result.success) {
     return data(
@@ -24,16 +19,7 @@ export async function action({ request }: ActionFunctionArgs) {
     )
   }
 
-  const { theme: parsedTheme, redirectTo: parsedRedirectTo } = result.data
+  const cookie = await setTheme(result.data.theme)
 
-  const cookie = await setTheme(parsedTheme)
-  const responseInit = {
-    headers: { 'Set-Cookie': cookie },
-  }
-
-  if (parsedRedirectTo && typeof parsedRedirectTo === 'string') {
-    return redirect(parsedRedirectTo, responseInit)
-  }
-
-  return data({ success: true }, responseInit)
+  return data({ success: true }, { headers: { 'Set-Cookie': cookie } })
 }

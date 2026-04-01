@@ -1,10 +1,5 @@
 import { parseWithZod } from '@conform-to/zod'
-import {
-  useFetcher,
-  useFetchers,
-  useLocation,
-  useMatches,
-} from '@remix-run/react'
+import { useFetcher, useFetchers, useMatches } from '@remix-run/react'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { z } from 'zod'
 import { type Theme } from '@/utils/theme.server'
@@ -12,7 +7,6 @@ import { Button } from '@/components/ui/button'
 
 const ThemeFormSchema = z.object({
   theme: z.enum(['system', 'light', 'dark']),
-  redirectTo: z.string().optional(),
 })
 
 type RootLoaderData = {
@@ -46,7 +40,6 @@ export function ThemeToggle() {
   const systemTheme = data?.systemTheme || 'light'
 
   const fetcher = useFetcher()
-  const location = useLocation()
   const optimisticMode = useOptimisticThemeMode()
   const mode = optimisticMode ?? theme
 
@@ -74,7 +67,6 @@ export function ThemeToggle() {
       preventScrollReset
     >
       <input type="hidden" name="theme" value={nextTheme[mode]} />
-      <input type="hidden" name="redirectTo" value={location.pathname} />
       <Button
         variant="ghost"
         size="icon"
