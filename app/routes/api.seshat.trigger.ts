@@ -8,54 +8,35 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const body = await request.json()
-    const { topicId, topic } = body
+    const { topicId } = body
 
-    if (!topicId && !topic) {
-      return json(
-        { error: 'Either topicId or topic is required' },
-        { status: 400 }
-      )
-    }
-
-    if (topicId && typeof topicId !== 'string') {
-      return json({ error: 'topicId must be a string' }, { status: 400 })
-    }
-
-    if (topic && typeof topic !== 'string') {
-      return json({ error: 'topic must be a string' }, { status: 400 })
+    if (!topicId || typeof topicId !== 'string') {
+      return json({ error: 'topicId is required' }, { status: 400 })
     }
 
     const appUrl = process.env.APP_URL
 
     if (!appUrl) {
-      const directWorkerUrl = new URL(
-        '/api/seshat/write',
-        request.url
-      ).toString()
+      const writeUrl = new URL('/api/seshat/write', request.url).toString()
 
-      const workerResponse = await fetch(directWorkerUrl, {
+      const writeResponse = await fetch(writeUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topicId, topic }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topicId }),
       })
 
-      if (!workerResponse.ok) {
-        const errorData = await workerResponse.json().catch(() => ({}))
+      if (!writeResponse.ok) {
+        const errorData = await writeResponse.json().catch(() => ({}))
+        const details = errorData.details
+          ? `${errorData.error}: ${errorData.details}`
+          : errorData.error
         return json(
-          {
-            error: 'Worker execution failed',
-            details: errorData.error || errorData.details,
-          },
-          { status: workerResponse.status }
+          { error: 'Generation failed', details },
+          { status: writeResponse.status }
         )
       }
 
-      return json({
-        success: true,
-        message: 'Content generation completed',
-      })
+      return json({ success: true, message: 'Content generation completed' })
     }
 
     const qstashToken = process.env.QSTASH_TOKEN
@@ -73,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     await qstash.publishJSON({
       url: workerUrl,
-      body: { topicId, topic },
+      body: { topicId },
       retries: 3,
     })
 
