@@ -36,14 +36,19 @@ export async function generate({
       'researching'
     )
 
-    const research = await researchTopic(topic.topic, context)
+    const research = await researchTopic(topic.topic, context, {
+      primaryKeyword: topic.seo?.primaryKeyword,
+      targetAudience: topic.seo?.targetAudience,
+      contentAngle: topic.seo?.contentAngle,
+    })
 
-    const plan = await planContent(
-      topic.topic,
-      topic.tone,
-      research,
-      topic.generation?.targetWordCount
-    )
+    const plan = await planContent(topic.topic, topic.tone, research, {
+      primaryKeyword: topic.seo?.primaryKeyword,
+      secondaryKeywords: topic.seo?.secondaryKeywords,
+      targetAudience: topic.seo?.targetAudience,
+      contentAngle: topic.seo?.contentAngle,
+      targetWordCount: topic.generation?.targetWordCount,
+    })
 
     await setGenerationStatus(topicId, sanityProject, sanityDataset, 'writing')
 
@@ -56,6 +61,9 @@ export async function generate({
         targetWordCount: topic.generation?.targetWordCount,
         includeCodeExamples: topic.generation?.includeCodeExamples,
         customInstructions: topic.generation?.customInstructions,
+        targetAudience: topic.seo?.targetAudience,
+        contentAngle: topic.seo?.contentAngle,
+        persona: topic.seo?.persona,
       }
     )
 

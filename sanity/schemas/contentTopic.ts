@@ -15,13 +15,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      description: 'What kind of content does this topic generate?',
-      rows: 3,
-    }),
-    defineField({
       name: 'active',
       title: 'Active',
       type: 'boolean',
@@ -35,15 +28,103 @@ export default defineType({
       title: 'Subject Matter',
       type: 'string',
       description:
-        'The subject matter scope for content generation (e.g., "React, hooks, performance")',
+        'The subject area for content generation (e.g. "React performance", "TypeScript generics", "CSS container queries")',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'tone',
       title: 'Writing Tone',
       type: 'string',
-      description: 'The tone and style of the generated content',
-      initialValue: 'Professional yet witty',
+      description:
+        'Voice and style. Be specific — this goes directly into the prompt. E.g. "Direct and opinionated, slightly sarcastic, no corporate fluff"',
+      initialValue:
+        'Direct and opinionated. Casual but technically precise. Occasional dry humor.',
+    }),
+
+    // SEO Targeting
+    defineField({
+      name: 'seo',
+      title: 'SEO Targeting',
+      type: 'object',
+      description:
+        'Control what the AI targets for search ranking. The more specific, the better.',
+      fields: [
+        defineField({
+          name: 'primaryKeyword',
+          title: 'Primary Keyword',
+          type: 'string',
+          description:
+            'Lock in the exact keyword phrase to rank for. If empty, the AI picks one from research. Example: "react server components performance"',
+        }),
+        defineField({
+          name: 'secondaryKeywords',
+          title: 'Secondary Keywords',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description:
+            'Additional keyword phrases to weave in naturally. 3–5 is ideal.',
+          options: { layout: 'tags' },
+        }),
+        defineField({
+          name: 'targetAudience',
+          title: 'Target Audience',
+          type: 'string',
+          description:
+            'Who is this for, specifically. This shapes research, title, and how deep the content goes. E.g. "mid-level React devs who know hooks but haven\'t touched RSC yet"',
+        }),
+        defineField({
+          name: 'contentAngle',
+          title: 'Content Angle',
+          type: 'text',
+          rows: 2,
+          description:
+            'A specific perspective or hook for the article. E.g. "Compare the three main approaches with real benchmark numbers", "Focus on the migration path from the old API", "Cover the gotchas that the docs don\'t mention"',
+        }),
+        defineField({
+          name: 'persona',
+          title: 'Author Persona',
+          type: 'string',
+          description:
+            'The voice behind the article. E.g. "Senior frontend engineer with 7 years React experience, opinionated about performance, has shipped to millions of users"',
+        }),
+      ],
+    }),
+
+    // Generation Options
+    defineField({
+      name: 'generation',
+      title: 'Generation Options',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'targetWordCount',
+          title: 'Target Word Count',
+          type: 'number',
+          description:
+            'Leave empty for default (1500). Longer posts (2000–3000) tend to rank better for competitive keywords.',
+        }),
+        defineField({
+          name: 'includeCodeExamples',
+          title: 'Include Code Examples',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'customInstructions',
+          title: 'Custom Instructions',
+          type: 'text',
+          description:
+            'Any extra instructions appended to the writer prompt. E.g. "Always mention Next.js App Router compatibility", "Include a comparison table"',
+          rows: 3,
+        }),
+        defineField({
+          name: 'enableImageGeneration',
+          title: 'Enable Image Generation',
+          type: 'boolean',
+          description: 'Generate a header image via Imagen 4',
+          initialValue: true,
+        }),
+      ],
     }),
 
     // Schedule
@@ -52,109 +133,16 @@ export default defineType({
       title: 'Schedule (Cron Expression)',
       type: 'string',
       description:
-        'Cron expression for scheduled generation (e.g., "0 9 * * *" for daily at 9 AM UTC)',
+        'Cron expression for QStash scheduled generation. E.g. "0 9 * * 1" = every Monday at 9 AM UTC',
       validation: (Rule) => Rule.required(),
       initialValue: '0 9 * * *',
     }),
-    defineField({
-      name: 'nextRunTime',
-      title: 'Next Scheduled Run',
-      type: 'datetime',
-      description: 'When this topic will next generate content',
-      readOnly: true,
-    }),
-    defineField({
-      name: 'lastGeneratedAt',
-      title: 'Last Generated',
-      type: 'datetime',
-      description: 'When content was last generated for this topic',
-      readOnly: true,
-    }),
 
-    // Generation Options
-    defineField({
-      name: 'generation',
-      title: 'Generation Options',
-      type: 'object',
-      description: 'Content generation settings',
-      fields: [
-        defineField({
-          name: 'targetWordCount',
-          title: 'Target Word Count',
-          type: 'number',
-          description:
-            'Target word count for posts (leave empty for AI decision)',
-        }),
-        defineField({
-          name: 'includeCodeExamples',
-          title: 'Include Code Examples',
-          type: 'boolean',
-          description: 'Emphasize code examples in content',
-          initialValue: true,
-        }),
-        defineField({
-          name: 'seoOptimized',
-          title: 'SEO Optimized',
-          type: 'boolean',
-          description: 'Generate SEO-optimized content',
-          initialValue: true,
-        }),
-        defineField({
-          name: 'customInstructions',
-          title: 'Custom Instructions',
-          type: 'text',
-          description: 'Additional instructions for content generation',
-          rows: 3,
-        }),
-        defineField({
-          name: 'enableImageGeneration',
-          title: 'Enable Image Generation',
-          type: 'boolean',
-          description:
-            'Generate AI images for posts (requires paid Gemini API tier)',
-          initialValue: true,
-        }),
-      ],
-    }),
-
-    // Sanity Overrides
-    defineField({
-      name: 'sanityOverride',
-      title: 'Sanity Overrides',
-      type: 'object',
-      description: 'Optional overrides for Sanity configuration',
-      options: { collapsed: true },
-      fields: [
-        defineField({
-          name: 'documentType',
-          title: 'Document Type',
-          type: 'string',
-          description: 'Sanity document type to create (default: "post")',
-          initialValue: 'post',
-        }),
-        defineField({
-          name: 'imageFormat',
-          title: 'Image Format',
-          type: 'string',
-          description: 'Format for generated images',
-          options: {
-            list: [
-              { title: 'PNG', value: 'png' },
-              { title: 'JPG', value: 'jpg' },
-              { title: 'SVG', value: 'svg' },
-            ],
-          },
-          initialValue: 'png',
-        }),
-      ],
-    }),
-
-    // Generation Status
+    // Status (read-only)
     defineField({
       name: 'generationStatus',
       title: 'Generation Status',
       type: 'string',
-      description: 'Current status of content generation',
       options: {
         list: [
           { title: 'Idle', value: 'idle' },
@@ -168,13 +156,16 @@ export default defineType({
       initialValue: 'idle',
       readOnly: true,
     }),
-
-    // Statistics
+    defineField({
+      name: 'lastGeneratedAt',
+      title: 'Last Generated',
+      type: 'datetime',
+      readOnly: true,
+    }),
     defineField({
       name: 'totalGenerated',
       title: 'Total Generated',
       type: 'number',
-      description: 'Total number of posts generated for this topic',
       initialValue: 0,
       readOnly: true,
     }),
@@ -182,7 +173,6 @@ export default defineType({
       name: 'lastError',
       title: 'Last Error',
       type: 'text',
-      description: 'Last generation error (if any)',
       readOnly: true,
       rows: 2,
     }),
@@ -190,7 +180,6 @@ export default defineType({
       name: 'lastGeneratedPostId',
       title: 'Last Generated Post',
       type: 'reference',
-      description: 'Reference to the most recently generated post',
       to: [{ type: 'post' }],
       readOnly: true,
     }),
@@ -200,12 +189,21 @@ export default defineType({
       title: 'name',
       subtitle: 'topic',
       active: 'active',
-      schedule: 'cronSchedule',
+      status: 'generationStatus',
     },
-    prepare({ title, subtitle, active, schedule }) {
+    prepare({ title, subtitle, active, status }) {
+      const statusEmoji: Record<string, string> = {
+        idle: '○',
+        researching: '🔍',
+        writing: '✍️',
+        uploading: '⬆️',
+        done: '✓',
+        error: '✗',
+      }
+      const emoji = statusEmoji[status] ?? '○'
       return {
-        title: `${active ? '✓' : '○'} ${title}`,
-        subtitle: `${subtitle} • ${schedule}`,
+        title: `${active ? emoji : '—'} ${title}`,
+        subtitle,
       }
     },
   },
@@ -217,11 +215,6 @@ export default defineType({
         { field: 'active', direction: 'desc' },
         { field: 'name', direction: 'asc' },
       ],
-    },
-    {
-      title: 'Name',
-      name: 'nameAsc',
-      by: [{ field: 'name', direction: 'asc' }],
     },
     {
       title: 'Last Generated',

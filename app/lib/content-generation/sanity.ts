@@ -19,10 +19,16 @@ export interface ContentTopic {
   topic: string
   tone: string
   cronSchedule: string
+  seo?: {
+    primaryKeyword?: string
+    secondaryKeywords?: string[]
+    targetAudience?: string
+    contentAngle?: string
+    persona?: string
+  }
   generation?: {
     targetWordCount?: number
     includeCodeExamples?: boolean
-    seoOptimized?: boolean
     customInstructions?: string
     enableImageGeneration?: boolean
   }

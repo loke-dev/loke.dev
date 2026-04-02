@@ -5,38 +5,68 @@ export interface ResearchResult {
   keyFacts: string[]
   recentDevelopments: string[]
   popularQuestions: string[]
+  semanticKeywords: string[]
+  searchIntent: string
   freshAngle: string
   avoidAngles: string[]
 }
 
+export interface ResearchOptions {
+  primaryKeyword?: string
+  targetAudience?: string
+  contentAngle?: string
+}
+
 export async function researchTopic(
   topic: string,
-  context: RepositoryContext
+  context: RepositoryContext,
+  options: ResearchOptions = {}
 ): Promise<ResearchResult> {
   const ai = getGenAI()
 
   const avoidList =
     context.recentTitles.length > 0
-      ? `\nAlready covered titles to avoid duplicating:\n${context.recentTitles
+      ? `\nAlready published on this site (avoid duplicating these angles):\n${context.recentTitles
           .slice(0, 10)
           .map((t) => `- ${t}`)
           .join('\n')}`
       : ''
 
-  const prompt = `You are a research assistant helping a developer blogger write about: "${topic}"
+  const keywordHint = options.primaryKeyword
+    ? `\nTarget keyword to rank for: "${options.primaryKeyword}" — research what's currently ranking for this exact phrase and what those articles are missing.`
+    : ''
 
-Research this topic and extract the most valuable information for a developer audience.${avoidList}
+  const audienceHint = options.targetAudience
+    ? `\nTarget audience: ${options.targetAudience} — tailor facts and questions to their specific knowledge level and pain points.`
+    : ''
+
+  const angleHint = options.contentAngle
+    ? `\nContent angle to research toward: ${options.contentAngle}`
+    : ''
+
+  const prompt = `You are an expert technical content researcher. Research this topic for a developer blog post: "${topic}"
+${keywordHint}${audienceHint}${angleHint}${avoidList}
+
+Use Google Search to find:
+1. What's currently ranking for this topic and what angles they take
+2. Questions developers are actually asking (Stack Overflow, Reddit, GitHub discussions)
+3. Recent developments, version changes, or ecosystem shifts in the last 12 months
+4. Specific numbers, benchmarks, or statistics that add credibility
+5. The semantic keywords that Google expects to see in authoritative content on this topic (LSI/co-occurring terms)
+6. What the top results are missing — the content gap that a new article could fill
 
 Return a JSON object with this exact structure:
 {
-  "keyFacts": ["fact 1", "fact 2", "fact 3"],
-  "recentDevelopments": ["recent change or trend 1", "recent change or trend 2"],
-  "popularQuestions": ["question developers commonly have about this", "another question"],
-  "freshAngle": "a specific, non-obvious angle or take on this topic that hasn't been covered to death",
-  "avoidAngles": ["generic angle to avoid", "another overused take"]
+  "keyFacts": ["specific fact with numbers/versions where possible", "another concrete fact", "another"],
+  "recentDevelopments": ["specific recent change or trend", "another — include versions/dates when known"],
+  "popularQuestions": ["exact question developers search for", "another question", "another"],
+  "semanticKeywords": ["term Google expects to see in authoritative articles on this topic", "another related term", "another", "another", "another"],
+  "searchIntent": "one of: informational | tutorial | comparison | troubleshooting | reference",
+  "freshAngle": "one specific, non-obvious angle that top results are missing — be concrete, not vague",
+  "avoidAngles": ["generic angle that's been done to death", "another overused take on this topic"]
 }
 
-Focus on practical, real-world developer concerns. Be specific, not generic.`
+Be specific throughout. Vague facts like "React is popular" are useless. Concrete facts like "React 19 ships with the Actions API, replacing the useTransition workaround pattern" are valuable.`
 
   const response = await ai.models.generateContent({
     model: FLASH_MODEL,
@@ -54,6 +84,8 @@ Focus on practical, real-world developer concerns. Be specific, not generic.`
       keyFacts: [],
       recentDevelopments: [],
       popularQuestions: [],
+      semanticKeywords: [],
+      searchIntent: 'informational',
       freshAngle: topic,
       avoidAngles: [],
     }
@@ -66,6 +98,8 @@ Focus on practical, real-world developer concerns. Be specific, not generic.`
       keyFacts: [],
       recentDevelopments: [],
       popularQuestions: [],
+      semanticKeywords: [],
+      searchIntent: 'informational',
       freshAngle: topic,
       avoidAngles: [],
     }

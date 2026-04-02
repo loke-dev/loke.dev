@@ -12,6 +12,14 @@ export interface ContentPlan {
   imagePrompt: string
 }
 
+export interface PlanOptions {
+  primaryKeyword?: string
+  secondaryKeywords?: string[]
+  targetAudience?: string
+  contentAngle?: string
+  targetWordCount?: number
+}
+
 const BAD_TITLE_PATTERNS = [
   'Ultimate Guide',
   'Complete Guide',
@@ -22,52 +30,93 @@ const BAD_TITLE_PATTERNS = [
   'The Power of',
   'Unlock the',
   'Supercharge Your',
+  'A Guide to',
+  'Introduction to',
+  'Getting Started with',
+  'How to Use',
 ]
 
 export async function planContent(
   topic: string,
   tone: string,
   research: ResearchResult,
-  targetWordCount?: number
+  options: PlanOptions = {}
 ): Promise<ContentPlan> {
   const ai = getGenAI()
 
-  const wordCountNote = targetWordCount
-    ? `Target article length: ~${targetWordCount} words.`
-    : 'Target article length: 1200–2000 words.'
+  const wordCountNote = options.targetWordCount
+    ? `Target article length: ~${options.targetWordCount} words.`
+    : 'Target article length: 1500–2500 words.'
+
+  const keywordInstruction = options.primaryKeyword
+    ? `PRIMARY KEYWORD (locked — use this exactly): "${options.primaryKeyword}"
+This keyword must appear in: the title, the slug, the meta description, and naturally 3–5 times in the article.`
+    : `Choose the primary keyword from the research. Pick the phrase with the best balance of search volume and specificity — prefer long-tail over broad terms.`
+
+  const audienceNote = options.targetAudience
+    ? `Target audience: ${options.targetAudience}`
+    : 'Target audience: experienced web developers'
+
+  const angleNote = options.contentAngle
+    ? `Content angle: ${options.contentAngle}`
+    : `Content angle: ${research.freshAngle}`
+
+  const secondaryKwNote =
+    options.secondaryKeywords && options.secondaryKeywords.length > 0
+      ? `Locked secondary keywords (include these): ${options.secondaryKeywords.join(', ')}`
+      : `Suggested secondary keywords from research: ${research.semanticKeywords.slice(0, 5).join(', ')}`
 
   const prompt = `You are an SEO specialist planning a blog post for a developer audience.
 
 Topic: "${topic}"
 Tone: ${tone}
 ${wordCountNote}
+${audienceNote}
+${angleNote}
+Search intent: ${research.searchIntent}
 
-Research summary:
+${keywordInstruction}
+
+${secondaryKwNote}
+
+Research to draw from:
 - Fresh angle: ${research.freshAngle}
-- Key facts: ${research.keyFacts.slice(0, 3).join('; ')}
-- Popular questions: ${research.popularQuestions.slice(0, 2).join('; ')}
+- Key facts: ${research.keyFacts.slice(0, 4).join('; ')}
+- Popular questions developers search for: ${research.popularQuestions.slice(0, 3).join('; ')}
+- Recent developments: ${research.recentDevelopments.slice(0, 2).join('; ')}
 
 Avoid these overused title patterns: ${BAD_TITLE_PATTERNS.join(', ')}
-Avoid these overused angles: ${research.avoidAngles.join('; ')}
+Avoid these angles (already covered to death): ${research.avoidAngles.join('; ')}
+
+Title rules:
+- Must contain or closely relate to the primary keyword
+- Specific and concrete — name the exact thing, not the category
+- 50–65 characters for optimal SERP display
+- For tutorials/how-to intent: include a specific outcome ("Build X that does Y")
+- For informational: make a claim or observation that's interesting on its own
+- No clickbait, no "you won't believe", no exclamation marks
+
+Heading rules:
+- H2s should map to specific questions from the research
+- At least one H2 should target a secondary keyword phrase naturally
+- Mix "how to X" with "why X" and "when to use X" headings
 
 Return a JSON object:
 {
-  "title": "Specific, compelling title that a developer would actually click",
-  "slug": "url-friendly-slug-max-60-chars",
-  "metaDescription": "150-160 char meta description with primary keyword, action-oriented",
-  "primaryKeyword": "main keyword phrase",
-  "secondaryKeywords": ["related keyword 1", "related keyword 2", "related keyword 3"],
+  "title": "Specific compelling title 50–65 chars",
+  "slug": "url-friendly-slug-under-60-chars",
+  "metaDescription": "150–160 char description. Start with the primary keyword or a close variant. End with a clear value proposition.",
+  "primaryKeyword": "the exact primary keyword phrase",
+  "secondaryKeywords": ["secondary keyword 1", "secondary keyword 2", "secondary keyword 3", "secondary keyword 4"],
   "tags": ["tag1", "tag2", "tag3"],
-  "headings": ["H2 heading 1", "H2 heading 2", "H2 heading 3", "H2 heading 4"],
-  "imagePrompt": "Description for a blog header image (no text in image, visual metaphor for the topic)"
-}
-
-The title should be specific and direct — not generic. Make it feel like it was written by someone who actually cares about the topic.`
+  "headings": ["H2 heading 1", "H2 heading 2", "H2 heading 3", "H2 heading 4", "H2 heading 5"],
+  "imagePrompt": "Vivid description for a blog header illustration. No text in image. Specific visual metaphor tied to the exact topic."
+}`
 
   const response = await ai.models.generateContent({
     model: FLASH_MODEL,
     contents: prompt,
-    config: { temperature: 0.9 },
+    config: { temperature: 0.8 },
   })
 
   const text = response.text?.trim() || ''
@@ -76,11 +125,11 @@ The title should be specific and direct — not generic. Make it feel like it wa
 
   const plan = JSON.parse(jsonMatch[0]) as ContentPlan
 
-  // Ensure slug is clean
   plan.slug = plan.slug
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
     .slice(0, 96)
 
   return plan

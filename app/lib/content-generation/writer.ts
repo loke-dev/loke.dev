@@ -21,6 +21,9 @@ export async function writeArticle(
     targetWordCount?: number
     includeCodeExamples?: boolean
     customInstructions?: string
+    targetAudience?: string
+    contentAngle?: string
+    persona?: string
   } = {}
 ): Promise<string> {
   const ai = getGenAI()
@@ -36,7 +39,27 @@ export async function writeArticle(
     ? `\nAdditional instructions: ${options.customInstructions}`
     : ''
 
-  const prompt = `Write a technical blog post in markdown for experienced web developers. Write like a senior engineer who has strong opinions and has been burned by the wrong approach before.
+  const personaLine = options.persona
+    ? `You are writing as: ${options.persona}`
+    : 'You are writing as a senior web developer with strong opinions, shaped by years of real production experience.'
+
+  const audienceLine = options.targetAudience
+    ? `Writing for: ${options.targetAudience} — pitch the depth and assumed knowledge accordingly.`
+    : 'Writing for: experienced web developers.'
+
+  const angleLine = options.contentAngle
+    ? `Angle: ${options.contentAngle} — this is the specific lens through which the whole article should be framed.`
+    : ''
+
+  const semanticNote =
+    research.semanticKeywords.length > 0
+      ? `Semantic keywords to weave in naturally (these signal topical authority to Google): ${research.semanticKeywords.join(', ')}`
+      : ''
+
+  const prompt = `Write a technical blog post in markdown. ${personaLine}
+
+${audienceLine}
+${angleLine}
 
 **Title:** ${plan.title}
 **Primary keyword:** ${plan.primaryKeyword}
@@ -68,7 +91,8 @@ ${research.popularQuestions.map((q) => `- ${q}`).join('\n')}
 - No frontmatter, no title at the top — start directly with the content
 - No summary conclusion. End on a concrete takeaway, a parting shot, or a gotcha — not a recap.
 - Include at least one moment where you push back on conventional advice or an "obvious" solution
-- Mention the primary keyword naturally 3–5 times total${customNote}
+- Mention the primary keyword naturally 3–5 times total
+- ${semanticNote}${customNote}
 
 Write the full article now. Make it the kind of post a developer bookmarks because it's actually useful, not just comprehensive.`
 
