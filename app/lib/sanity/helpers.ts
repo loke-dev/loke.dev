@@ -19,7 +19,7 @@ export function getPostImageUrl(
   const builder = urlFor(post.image)
     .width(width)
     .quality(quality)
-    .format('webp')
+    .auto('format')
   return height ? builder.height(height).url() : builder.url()
 }
 
@@ -31,7 +31,7 @@ export function getPostImageSrcSet(
 ): string | null {
   if (!post.image) return null
   const parts = widths.map((w) => {
-    const b = urlFor(post.image).width(w).quality(quality).format('webp')
+    const b = urlFor(post.image).width(w).quality(quality).auto('format')
     const u = height
       ? b.height(Math.round((height * w) / widths[widths.length - 1])).url()
       : b.url()
@@ -65,7 +65,7 @@ export function getProjectImageUrl(
   const builder = urlFor(project.image)
     .width(width)
     .quality(quality)
-    .format('webp')
+    .auto('format')
   return height ? builder.height(height).url() : builder.url()
 }
 
@@ -77,7 +77,7 @@ export function getProjectImageSrcSet(
 ): string | null {
   if (!project.image) return null
   const parts = widths.map((w) => {
-    const b = urlFor(project.image).width(w).quality(quality).format('webp')
+    const b = urlFor(project.image).width(w).quality(quality).auto('format')
     const u = height
       ? b.height(Math.round((height * w) / widths[widths.length - 1])).url()
       : b.url()
