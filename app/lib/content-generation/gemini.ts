@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai'
 
-export const FLASH_MODEL = 'gemini-2.5-flash-preview-05-20'
-export const PRO_MODEL = 'gemini-2.5-pro-preview-06-05'
+export const FLASH_MODEL = 'gemini-2.5-flash'
+export const PRO_MODEL = 'gemini-2.5-pro'
 export const IMAGE_MODEL = 'imagen-4.0-generate-001'
 
 let _client: GoogleGenAI | null = null
