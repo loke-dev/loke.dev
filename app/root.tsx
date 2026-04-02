@@ -14,6 +14,7 @@ import {
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { createMetaTags, createTitle, SITE_DOMAIN } from '@/utils/meta'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
@@ -24,9 +25,7 @@ import { Toaster } from '@/components/ui/toast'
 import tailwindStyles from '@/styles/tailwind.css?url'
 
 export function headers() {
-  return {
-    'Permissions-Policy': 'unload=()',
-  }
+  return getSecurityHeaders()
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -52,6 +51,13 @@ export const links: LinksFunction = () => [
     rel: 'preconnect',
     href: 'https://vitals.vercel-insights.com',
     crossOrigin: 'anonymous',
+  },
+
+  {
+    rel: 'alternate',
+    type: 'application/rss+xml',
+    title: 'Loke.dev',
+    href: '/rss.xml',
   },
 
   { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -107,7 +113,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#030711" />
         <Links />
         <Meta />
-        { }
+        {}
         <script dangerouslySetInnerHTML={{ __html: envScript }} />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
@@ -150,7 +156,7 @@ export default function App() {
 
   return (
     <>
-      { }
+      {}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: schemaScript }}

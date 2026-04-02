@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { defer, type LoaderFunctionArgs } from '@remix-run/node'
 import { Await, MetaFunction, useLoaderData } from '@remix-run/react'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getPostBySlug, getRelatedPosts } from '@/utils/sanity.queries'
 import { setFlashMessage } from '@/utils/session.server'
@@ -48,8 +49,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 // Blog posts rarely change - use aggressive caching with stale-while-revalidate
 export function headers() {
   return {
+    ...getSecurityHeaders(),
     'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
-    'Permissions-Policy': 'unload=()',
   }
 }
 

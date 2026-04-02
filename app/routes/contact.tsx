@@ -10,6 +10,7 @@ import { useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { z } from 'zod'
 import { verifyTurnstileToken } from '@/utils/captcha.server'
 import { sendContactEmail } from '@/utils/email.server'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { checkRateLimit, getRateLimitHeaders } from '@/utils/rate-limit.server'
 import { getContactPage } from '@/utils/sanity.queries'
@@ -37,6 +38,7 @@ const ContactSchema = z.object({
 
 export function headers() {
   return {
+    ...getSecurityHeaders(),
     'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
   }
 }

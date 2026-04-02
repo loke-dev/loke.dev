@@ -1,5 +1,6 @@
 import type { MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getAboutPage } from '@/utils/sanity.queries'
 import { Page, PageHeader, Section } from '@/components/layout'
@@ -17,6 +18,7 @@ export const meta: MetaFunction = () => {
 
 export function headers() {
   return {
+    ...getSecurityHeaders(),
     'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
   }
 }
@@ -40,7 +42,6 @@ export default function About() {
             alt="3D clay avatar"
             width={512}
             quality={90}
-            format="webp"
             fit="cover"
             className="rounded-lg w-64 h-auto"
           />

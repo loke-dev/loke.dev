@@ -6,6 +6,7 @@ import {
   useLoaderData,
 } from '@remix-run/react'
 import { toast } from 'sonner'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
 import { getFlashMessage } from '@/utils/session.server'
@@ -25,8 +26,8 @@ export const meta: MetaFunction = () => {
 // HTTP headers with stale-while-revalidate for better caching
 export function headers() {
   return {
+    ...getSecurityHeaders(),
     'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
-    'Permissions-Policy': 'unload=()',
   }
 }
 

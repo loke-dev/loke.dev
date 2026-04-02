@@ -1,6 +1,7 @@
 import { type LinksFunction, type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { ArrowRight } from 'lucide-react'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { buildImageUrl } from '@/utils/image-helpers'
 import { createMetaTags } from '@/utils/meta'
 import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
@@ -29,8 +30,8 @@ export const meta: MetaFunction = () => {
 
 export function headers() {
   return {
+    ...getSecurityHeaders(),
     'Cache-Control': 'public, max-age=120, stale-while-revalidate=600',
-    'Permissions-Policy': 'unload=()',
   }
 }
 

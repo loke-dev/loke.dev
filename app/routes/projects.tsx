@@ -1,5 +1,6 @@
 import type { MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import { getSecurityHeaders } from '@/utils/headers.server'
 import { createMetaTags, SITE_DOMAIN } from '@/utils/meta'
 import { getProjectsPage } from '@/utils/sanity.queries'
 import { Grid, Page, PageHeader, Section } from '@/components/layout'
@@ -19,6 +20,7 @@ export const meta: MetaFunction = () => {
 
 export function headers() {
   return {
+    ...getSecurityHeaders(),
     'Cache-Control': 'public, max-age=600, stale-while-revalidate=3600',
   }
 }
