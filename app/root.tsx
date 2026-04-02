@@ -14,8 +14,6 @@ import {
   useRouteError,
   useRouteLoaderData,
 } from '@remix-run/react'
-import { ClientHintCheck } from '@/utils/client-hint-check'
-import { getHints } from '@/utils/hints'
 import { createMetaTags, createTitle, SITE_DOMAIN } from '@/utils/meta'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Footer } from '@/components/footer'
@@ -25,7 +23,6 @@ import { NetworkStatusIndicator } from '@/components/network-status'
 import { Toaster } from '@/components/ui/toast'
 import tailwindStyles from '@/styles/tailwind.css?url'
 
-// Add HTTP headers for bfcache support
 export function headers() {
   return {
     'Permissions-Policy': 'unload=()',
@@ -44,7 +41,6 @@ export const links: LinksFunction = () => [
   { rel: 'preload', href: tailwindStyles, as: 'style' },
   { rel: 'stylesheet', href: tailwindStyles },
 
-  // Preconnects
   { rel: 'dns-prefetch', href: 'https://cdn.sanity.io' },
   {
     rel: 'preconnect',
@@ -58,7 +54,6 @@ export const links: LinksFunction = () => [
     crossOrigin: 'anonymous',
   },
 
-  // Favicon links
   { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
   {
     rel: 'icon',
@@ -72,11 +67,7 @@ export const links: LinksFunction = () => [
     sizes: '16x16',
     href: '/favicon-16x16.png',
   },
-
-  // Apple touch icon links
   { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-
-  // Android chrome icons
   {
     rel: 'icon',
     type: 'image/png',
@@ -92,10 +83,7 @@ export const links: LinksFunction = () => [
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const hints = getHints(request)
-
   return {
-    effectiveTheme: hints.theme as 'light' | 'dark',
     ENV: {
       TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
     },
@@ -103,28 +91,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-// The Layout export is used across the root component, ErrorBoundary, and HydrateFallback
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<typeof loader>('root')
   const location = useLocation()
-
-  const isDark = data?.effectiveTheme === 'dark'
   const isStudioRoute = location.pathname.startsWith('/studio')
 
+  // ENV is trusted server-side data (env var keys only, no user input)
+  const envScript = `window.ENV = ${JSON.stringify(data?.ENV || {})}`
+
   return (
-    <html lang="en" className={`min-h-screen ${isDark ? 'dark' : ''}`}>
+    <html lang="en" className="dark min-h-screen">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content={isDark ? '#030711' : '#ffffff'} />
-        <ClientHintCheck />
+        <meta name="theme-color" content="#030711" />
         <Links />
         <Meta />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data?.ENV || {})}`,
-          }}
-        />
+        { }
+        <script dangerouslySetInnerHTML={{ __html: envScript }} />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <NavigationProgress />
@@ -140,7 +124,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         )}
         <NetworkStatusIndicator />
-        <Toaster theme={isDark ? 'dark' : 'light'} />
+        <Toaster theme="dark" />
         <ScrollRestoration />
         <Scripts />
         <DeferredAnalytics />
@@ -149,7 +133,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
-// The default export renders the happy path
 export default function App() {
   const personSchema = {
     '@context': 'https://schema.org',
@@ -162,18 +145,21 @@ export default function App() {
       'Full-stack web developer specializing in React, Remix, and modern JavaScript',
   }
 
+  // personSchema is static trusted data
+  const schemaScript = JSON.stringify(personSchema)
+
   return (
     <>
+      { }
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        dangerouslySetInnerHTML={{ __html: schemaScript }}
       />
       <Outlet />
     </>
   )
 }
 
-// Error boundary handles errors
 export function ErrorBoundary() {
   const error = useRouteError()
 
