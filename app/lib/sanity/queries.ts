@@ -1,3 +1,6 @@
+// Backward-compatible tags projection: prefer new tags[] array, fall back to legacy tag string
+const TAGS_PROJECTION = `"tags": select(defined(tags) && count(tags) > 0 => tags, defined(tag) => [tag], [])`
+
 // Lightweight query for list views (no body content)
 export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) {
   _id,
@@ -6,7 +9,7 @@ export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))
   description,
   date,
   lastModified,
-  tag,
+  ${TAGS_PROJECTION},
   image,
   imageAlt
 }`
@@ -19,7 +22,7 @@ export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.
   description,
   date,
   lastModified,
-  tag,
+  ${TAGS_PROJECTION},
   image,
   imageAlt
 }`
@@ -34,7 +37,7 @@ export const POST_BY_SLUG_QUERY = `*[_type == "post" && slug.current == $slug][0
   description,
   date,
   lastModified,
-  tag,
+  ${TAGS_PROJECTION},
   image,
   imageAlt,
   body
@@ -44,14 +47,14 @@ export const POST_SLUGS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")
   slug
 }`
 
-// Optimized query for related posts - fetches only what's needed
-export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && tag == $postTag && slug.current != $currentSlug] | order(date desc) [0...$limit] {
+// Optimized query for related posts - handles both legacy tag string and new tags array
+export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && ($postTag in coalesce(tags, []) || tag == $postTag) && slug.current != $currentSlug] | order(date desc) [0...$limit] {
   _id,
   title,
   slug,
   description,
   date,
-  tag,
+  ${TAGS_PROJECTION},
   image,
   imageAlt
 }`

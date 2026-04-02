@@ -45,11 +45,12 @@ export function getRelatedPosts<T extends PostListItem>(
   allPosts: T[],
   maxPosts = 3
 ): T[] {
+  const currentTags = new Set(currentPost.tags)
   return allPosts
     .filter(
       (post) =>
         post.slug.current !== currentPost.slug.current &&
-        post.tag === currentPost.tag
+        post.tags.some((t) => currentTags.has(t))
     )
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, maxPosts)

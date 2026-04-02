@@ -27,7 +27,7 @@ type MetaTagsOptions = {
   type?: 'website' | 'article'
   author?: string
   publishedTime?: string
-  keywords?: string
+  keywords?: string | string[]
 }
 
 export function createTitle(options: TitleOptions = {}): string {
@@ -87,8 +87,14 @@ export function createMetaTags(options: MetaTagsOptions) {
     { name: 'twitter:creator', content: TWITTER_HANDLE },
   ]
 
-  if (keywords) {
-    metaTags.push({ name: 'keywords', content: keywords })
+  const keywordsArr = Array.isArray(keywords)
+    ? keywords
+    : keywords
+      ? [keywords]
+      : []
+
+  if (keywordsArr.length > 0) {
+    metaTags.push({ name: 'keywords', content: keywordsArr.join(', ') })
   }
 
   if (type === 'article' && publishedTime) {
@@ -96,8 +102,8 @@ export function createMetaTags(options: MetaTagsOptions) {
       { property: 'article:published_time', content: publishedTime },
       { property: 'article:author', content: author }
     )
-    if (keywords) {
-      metaTags.push({ property: 'article:tag', content: keywords })
+    for (const tag of keywordsArr) {
+      metaTags.push({ property: 'article:tag', content: tag })
     }
   }
 

@@ -87,13 +87,14 @@ export async function getAllPostSlugs(): Promise<PostSlug[]> {
 }
 
 export async function getRelatedPosts(
-  tagValue: string | null,
+  tags: string[] | null,
   currentSlug: string,
   limit: number = 3
 ): Promise<PostListItem[]> {
-  if (!tagValue) return []
+  const firstTag = tags?.[0]
+  if (!firstTag) return []
   return client.fetch<PostListItem[]>(RELATED_POSTS_QUERY, {
-    postTag: tagValue,
+    postTag: firstTag,
     currentSlug,
     limit,
   })

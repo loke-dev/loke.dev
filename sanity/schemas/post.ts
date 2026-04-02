@@ -40,10 +40,20 @@ export default defineType({
       type: 'date',
     }),
     defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        layout: 'tags',
+      },
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
       name: 'tag',
-      title: 'Tag',
+      title: 'Tag (legacy)',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      hidden: true,
     }),
     defineField({
       name: 'image',
@@ -138,10 +148,12 @@ export default defineType({
     select: {
       title: 'title',
       date: 'date',
+      tags: 'tags',
       tag: 'tag',
       media: 'image',
     },
-    prepare({ title, date, tag, media }) {
+    prepare({ title, date, tags, tag, media }) {
+      const allTags: string[] = tags?.length ? tags : tag ? [tag] : []
       const formattedDate = date
         ? new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -151,7 +163,7 @@ export default defineType({
         : 'No date'
       return {
         title,
-        subtitle: `${tag ? `[${tag}]` : ''} ${formattedDate}`,
+        subtitle: `${allTags.length ? `[${allTags.join(', ')}]` : ''} ${formattedDate}`,
         media,
       }
     },

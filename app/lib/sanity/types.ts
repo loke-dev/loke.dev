@@ -16,7 +16,7 @@ export interface PostListItem {
   description: string
   date: string
   lastModified?: string
-  tag: string
+  tags: string[]
   image?: SanityImage
   imageAlt?: string
   // Optional: only available when calculated from body
