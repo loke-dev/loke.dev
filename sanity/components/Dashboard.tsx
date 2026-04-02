@@ -286,63 +286,82 @@ const ActionText = styled.div`
   font-weight: 500;
 `
 
-const SeshatSection = styled(Card)`
+const GenerateSection = styled(Card)`
   margin-bottom: 2rem;
   background: linear-gradient(135deg, var(--card-bg-color) 0%, #1e3a5f 100%);
   border-color: #3b82f6;
 `
 
-const SeshatForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`
-
-const InputGroup = styled.div`
+const TopicList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 `
 
-const Label = styled.label`
+const TopicRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--card-bg2-color, #1f2937);
+  border-radius: 8px;
+  gap: 1rem;
+`
+
+const TopicInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`
+
+const TopicName = styled.div`
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--card-fg-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid var(--card-border-color);
-  border-radius: 6px;
-  background: var(--card-bg2-color, #1f2937);
-  color: var(--card-fg-color);
-  font-size: 0.875rem;
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-  }
-
-  &::placeholder {
-    color: #6b7280;
-  }
+const TopicMeta = styled.div`
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
 `
 
-const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
-  padding: 0.75rem 1.5rem;
+const StatusBadge = styled.span<{ $status: string }>`
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: ${({ $status }) => {
+    if ($status === 'done') return '#10b98120'
+    if ($status === 'error') return '#ef444420'
+    if ($status === 'idle' || !$status) return '#6b728020'
+    return '#3b82f620'
+  }};
+  color: ${({ $status }) => {
+    if ($status === 'done') return '#10b981'
+    if ($status === 'error') return '#ef4444'
+    if ($status === 'idle' || !$status) return '#9ca3af'
+    return '#3b82f6'
+  }};
+`
+
+const GenerateButton = styled.button`
+  padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s;
-  background: ${(props) =>
-    props.$variant === 'primary' ? '#3b82f6' : '#4b5563'};
+  background: #3b82f6;
   color: white;
+  white-space: nowrap;
+  flex-shrink: 0;
 
-  &:hover {
-    background: ${(props) =>
-      props.$variant === 'primary' ? '#2563eb' : '#374151'};
+  &:hover:not(:disabled) {
+    background: #2563eb;
   }
 
   &:disabled {
@@ -355,6 +374,7 @@ const StatusMessage = styled.div<{ $type: 'success' | 'error' | 'info' }>`
   padding: 0.75rem;
   border-radius: 6px;
   font-size: 0.875rem;
+  margin-top: 0.75rem;
   background: ${(props) => {
     if (props.$type === 'success') return '#10b98120'
     if (props.$type === 'error') return '#ef444420'
@@ -380,7 +400,7 @@ interface Post {
   title: string
   slug: { current: string }
   date: string
-  tag: string
+  tags: string[]
 }
 
 interface Project {
@@ -389,6 +409,15 @@ interface Project {
   title: string
   slug: { current: string }
   year: number
+}
+
+interface ContentTopic {
+  _id: string
+  name: string
+  topic: string
+  generationStatus?: string
+  lastGeneratedAt?: string
+  lastError?: string
 }
 
 interface MonthlyData {
@@ -424,6 +453,7 @@ const MONTHS = [
   'Nov',
   'Dec',
 ]
+
 const TAG_COLORS: Record<string, string> = {
   technology: '#3b82f6',
   design: '#ec4899',
@@ -431,6 +461,8 @@ const TAG_COLORS: Record<string, string> = {
   thoughts: '#f59e0b',
   default: '#6366f1',
 }
+
+const ACTIVE_STATUSES = new Set(['researching', 'writing', 'uploading'])
 
 export function Dashboard() {
   const client = useClient({ apiVersion: '2024-01-01' })
@@ -447,9 +479,11 @@ export function Dashboard() {
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([])
   const [tagData, setTagData] = useState<TagData[]>([])
   const [loading, setLoading] = useState(true)
-  const [seshatTopic, setSeshatTopic] = useState('')
-  const [seshatLoading, setSeshatLoading] = useState(false)
-  const [seshatStatus, setSeshatStatus] = useState<{
+
+  const [topics, setTopics] = useState<ContentTopic[]>([])
+  const [generatingId, setGeneratingId] = useState<string | null>(null)
+  const [topicStatus, setTopicStatus] = useState<{
+    id: string
     type: 'success' | 'error' | 'info'
     message: string
   } | null>(null)
@@ -460,6 +494,8 @@ export function Dashboard() {
         const currentYear = new Date().getFullYear()
         const lastYear = currentYear - 1
 
+        const tagsProjection = `"tags": select(defined(tags) && count(tags) > 0 => tags, defined(tag) => [tag], [])`
+
         const [
           postsCount,
           projectsCount,
@@ -469,7 +505,8 @@ export function Dashboard() {
           posts,
           allPosts,
           allProjects,
-          tags,
+          rawTags,
+          activeTopics,
         ] = await Promise.all([
           client.fetch<number>(`count(*[_type == "post"])`),
           client.fetch<number>(`count(*[_type == "project"])`),
@@ -483,28 +520,31 @@ export function Dashboard() {
             `count(*[_type == "project" && featured == true])`
           ),
           client.fetch<Post[]>(
-            `*[_type == "post"] | order(date desc)[0...5] { _id, _createdAt, _updatedAt, title, slug, date, tag }`
+            `*[_type == "post"] | order(date desc)[0...5] { _id, _createdAt, _updatedAt, title, slug, date, ${tagsProjection} }`
           ),
           client.fetch<Post[]>(
-            `*[_type == "post"] | order(_updatedAt desc)[0...10] { _id, _createdAt, _updatedAt, title, slug, date, tag }`
+            `*[_type == "post"] | order(_updatedAt desc)[0...10] { _id, _createdAt, _updatedAt, title, slug, date, ${tagsProjection} }`
           ),
           client.fetch<Project[]>(
             `*[_type == "project"] | order(_createdAt desc)[0...5] { _id, _createdAt, title, slug, year }`
           ),
-          client.fetch<TagData[]>(
-            `*[_type == "post" && defined(tag)] { tag } | order(tag) { "tag": tag, "count": count(*[_type == "post" && tag == ^.tag]) }`
+          client.fetch<string[]>(
+            `array::unique(*[_type == "post"][defined(tags) || defined(tag)][].tags[])`
+          ),
+          client.fetch<ContentTopic[]>(
+            `*[_type == "contentTopic" && active == true] | order(name asc) { _id, name, topic, generationStatus, lastGeneratedAt, lastError }`
           ),
         ])
 
-        // Deduplicate tags
-        const uniqueTags = tags.reduce((acc: TagData[], curr) => {
-          if (!acc.find((t) => t.tag === curr.tag)) {
-            acc.push(curr)
-          }
-          return acc
-        }, [])
+        const tagCounts: Record<string, number> = {}
+        for (const tag of rawTags) {
+          if (tag) tagCounts[tag] = (tagCounts[tag] || 0) + 1
+        }
+        const uniqueTags: TagData[] = Object.entries(tagCounts)
+          .map(([tag, count]) => ({ tag, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 6)
 
-        // Calculate monthly data for the current year
         const monthly: MonthlyData[] = MONTHS.map((month, index) => {
           const monthNum = String(index + 1).padStart(2, '0')
           const startDate = `${currentYear}-${monthNum}-01`
@@ -518,7 +558,6 @@ export function Dashboard() {
           return { month, count }
         })
 
-        // Combine recent activity
         const activity = [...allPosts.slice(0, 5), ...allProjects.slice(0, 3)]
           .sort(
             (a, b) =>
@@ -532,13 +571,14 @@ export function Dashboard() {
           totalProjects: projectsCount,
           postsThisYear: postsThisYearCount,
           postsLastYear: postsLastYearCount,
-          totalWords: postsCount * 800, // Estimate
+          totalWords: postsCount * 800,
           featuredProjects: featuredCount,
         })
         setRecentPosts(posts)
         setRecentActivity(activity)
         setMonthlyData(monthly)
-        setTagData(uniqueTags.sort((a, b) => b.count - a.count).slice(0, 6))
+        setTagData(uniqueTags)
+        setTopics(activeTopics)
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
       } finally {
@@ -548,6 +588,84 @@ export function Dashboard() {
 
     fetchData()
   }, [client])
+
+  // Poll generationStatus for whichever topic is actively generating
+  useEffect(() => {
+    if (!generatingId) return
+
+    const interval = setInterval(async () => {
+      const updated = await client.fetch<ContentTopic>(
+        `*[_type == "contentTopic" && _id == $id][0] { _id, name, topic, generationStatus, lastGeneratedAt, lastError }`,
+        { id: generatingId }
+      )
+      if (!updated) return
+
+      setTopics((prev) =>
+        prev.map((t) => (t._id === updated._id ? updated : t))
+      )
+
+      if (updated.generationStatus === 'done') {
+        setGeneratingId(null)
+        setTopicStatus({
+          id: updated._id,
+          type: 'success',
+          message: 'Post generated successfully!',
+        })
+        setTimeout(() => setTopicStatus(null), 5000)
+      } else if (updated.generationStatus === 'error') {
+        setGeneratingId(null)
+        setTopicStatus({
+          id: updated._id,
+          type: 'error',
+          message: updated.lastError || 'Generation failed',
+        })
+        setTimeout(() => setTopicStatus(null), 10000)
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [generatingId, client])
+
+  const handleGenerate = async (topicId: string) => {
+    setGeneratingId(topicId)
+    setTopicStatus({
+      id: topicId,
+      type: 'info',
+      message: 'Starting generation...',
+    })
+
+    try {
+      const response = await fetch(
+        window.location.origin + '/api/seshat/trigger',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topicId }),
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setGeneratingId(null)
+        setTopicStatus({
+          id: topicId,
+          type: 'error',
+          message: data.details || data.error || 'Failed to start generation',
+        })
+        setTimeout(() => setTopicStatus(null), 10000)
+      }
+      // On success the poller above picks up status from Sanity
+    } catch {
+      setGeneratingId(null)
+      setTopicStatus({
+        id: topicId,
+        type: 'error',
+        message: 'Failed to connect to the server',
+      })
+      setTimeout(() => setTopicStatus(null), 5000)
+    }
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -572,52 +690,6 @@ export function Dashboard() {
 
   const getTagColor = (tag: string) => {
     return TAG_COLORS[tag.toLowerCase()] || TAG_COLORS.default
-  }
-
-  const handleSeshatSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!seshatTopic.trim()) return
-
-    setSeshatLoading(true)
-    setSeshatStatus({
-      type: 'info',
-      message: 'Starting background generation...',
-    })
-
-    try {
-      const apiUrl = window.location.origin + '/api/seshat/trigger'
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topic: seshatTopic }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok && data.success) {
-        setSeshatStatus({
-          type: 'success',
-          message:
-            data.message ||
-            'Content generation queued successfully! The post will appear when complete.',
-        })
-        setSeshatTopic('')
-      } else {
-        setSeshatStatus({
-          type: 'error',
-          message: data.error || 'Failed to start generation',
-        })
-      }
-    } catch {
-      setSeshatStatus({
-        type: 'error',
-        message: 'Failed to connect to the server',
-      })
-    } finally {
-      setSeshatLoading(false)
-    }
   }
 
   const maxMonthlyCount = Math.max(...monthlyData.map((d) => d.count), 1)
@@ -648,34 +720,56 @@ export function Dashboard() {
         <Subtitle>Welcome back! Here&apos;s your content overview.</Subtitle>
       </Header>
 
-      <SeshatSection>
-        <CardTitle>✦ Seshat Scribe - AI Blog Generator</CardTitle>
-        <SeshatForm onSubmit={handleSeshatSubmit}>
-          <InputGroup>
-            <Label htmlFor="seshat-topic">Custom Topic</Label>
-            <Input
-              id="seshat-topic"
-              type="text"
-              placeholder="e.g., Building a GraphQL API with Node.js"
-              value={seshatTopic}
-              onChange={(e) => setSeshatTopic(e.target.value)}
-              disabled={seshatLoading}
-            />
-          </InputGroup>
-          {seshatStatus && (
-            <StatusMessage $type={seshatStatus.type}>
-              {seshatStatus.message}
-            </StatusMessage>
-          )}
-          <Button
-            type="submit"
-            $variant="primary"
-            disabled={seshatLoading || !seshatTopic.trim()}
-          >
-            {seshatLoading ? '⏳ Generating...' : '✦ Generate Blog Post'}
-          </Button>
-        </SeshatForm>
-      </SeshatSection>
+      <GenerateSection>
+        <CardTitle>✦ AI Blog Generator</CardTitle>
+        {topics.length === 0 ? (
+          <EmptyState>
+            No active content topics found. Create one in Content Topics.
+          </EmptyState>
+        ) : (
+          <TopicList>
+            {topics.map((topic) => {
+              const isGenerating =
+                generatingId === topic._id ||
+                ACTIVE_STATUSES.has(topic.generationStatus || '')
+              const thisStatus =
+                topicStatus?.id === topic._id ? topicStatus : null
+              const statusLabel = isGenerating
+                ? (topic.generationStatus ?? 'starting…')
+                : (topic.generationStatus ?? 'idle')
+
+              return (
+                <div key={topic._id}>
+                  <TopicRow>
+                    <TopicInfo>
+                      <TopicName>{topic.name}</TopicName>
+                      <TopicMeta>
+                        {topic.lastGeneratedAt
+                          ? `Last: ${formatRelativeTime(topic.lastGeneratedAt)}`
+                          : 'Never generated'}
+                      </TopicMeta>
+                    </TopicInfo>
+                    <StatusBadge $status={statusLabel}>
+                      {isGenerating ? `⏳ ${statusLabel}` : statusLabel}
+                    </StatusBadge>
+                    <GenerateButton
+                      onClick={() => handleGenerate(topic._id)}
+                      disabled={!!generatingId}
+                    >
+                      Generate
+                    </GenerateButton>
+                  </TopicRow>
+                  {thisStatus && (
+                    <StatusMessage $type={thisStatus.type}>
+                      {thisStatus.message}
+                    </StatusMessage>
+                  )}
+                </div>
+              )
+            })}
+          </TopicList>
+        )}
+      </GenerateSection>
 
       <Grid>
         <StatCard $accent="#3b82f6">
@@ -767,8 +861,10 @@ export function Dashboard() {
                   href={`/studio/structure/posts;${post._id}`}
                 >
                   <div>
-                    {post.tag && (
-                      <Tag $color={getTagColor(post.tag)}>{post.tag}</Tag>
+                    {post.tags?.[0] && (
+                      <Tag $color={getTagColor(post.tags[0])}>
+                        {post.tags[0]}
+                      </Tag>
                     )}
                     <ItemTitle>{post.title}</ItemTitle>
                   </div>
@@ -803,13 +899,13 @@ export function Dashboard() {
         {recentActivity.length > 0 ? (
           recentActivity.map((item) => (
             <ActivityItem key={item._id}>
-              <ActivityDot $color={'tag' in item ? '#3b82f6' : '#10b981'} />
+              <ActivityDot $color={'tags' in item ? '#3b82f6' : '#10b981'} />
               <ActivityContent>
                 <ActivityTitle>
-                  {'tag' in item ? '📝' : '🚀'} {item.title}
+                  {'tags' in item ? '📝' : '🚀'} {item.title}
                 </ActivityTitle>
                 <ActivityTime>
-                  {'tag' in item ? 'Post' : 'Project'} •{' '}
+                  {'tags' in item ? 'Post' : 'Project'} •{' '}
                   {formatRelativeTime(item._createdAt)}
                 </ActivityTime>
               </ActivityContent>
