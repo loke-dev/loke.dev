@@ -1,7 +1,5 @@
-import path from 'node:path'
 import { json, type ActionFunctionArgs } from '@remix-run/node'
-import { generate } from 'seshat-scribe/dist/commands/generate.js'
-import { loadConfig } from 'seshat-scribe/dist/config.js'
+import { generate } from '@/lib/content-generation'
 import { dataset, projectId } from '@/lib/sanity/projectDetails'
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -11,9 +9,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const body = await request.json()
-    const { topic, topicId } = body
+    const { topicId } = body
 
-    // Validate environment variables
     if (!process.env.GEMINI_API_KEY) {
       return json(
         { error: 'GEMINI_API_KEY environment variable is not set' },
@@ -28,46 +25,17 @@ export async function action({ request }: ActionFunctionArgs) {
       )
     }
 
-    // New Sanity-native mode with topicId
-    if (topicId) {
-      if (typeof topicId !== 'string') {
-        return json({ error: 'topicId must be a string' }, { status: 400 })
-      }
-
-      await generate({
-        topicId,
-        sanityProject: projectId,
-        sanityDataset: dataset,
-      })
-
-      return json({
-        success: true,
-        message: 'Blog post generated successfully from content topic',
-      })
+    if (!topicId || typeof topicId !== 'string') {
+      return json({ error: 'topicId is required' }, { status: 400 })
     }
 
-    // Legacy file-based mode with topic override
-    if (topic) {
-      if (typeof topic !== 'string') {
-        return json({ error: 'topic must be a string' }, { status: 400 })
-      }
+    await generate({
+      topicId,
+      sanityProject: projectId,
+      sanityDataset: dataset,
+    })
 
-      const configPath = path.join(process.cwd(), 'seshat.config.json')
-      await loadConfig(configPath) // Validate config exists
-
-      await generate({ topic })
-
-      return json({
-        success: true,
-        message: 'Blog post generated successfully',
-      })
-    }
-
-    // No topic or topicId provided
-    return json(
-      { error: 'Either topic or topicId is required' },
-      { status: 400 }
-    )
+    return json({ success: true, message: 'Blog post generated successfully' })
   } catch (error) {
     console.error('Error generating blog post:', error)
     return json(

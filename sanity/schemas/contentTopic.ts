@@ -149,6 +149,26 @@ export default defineType({
       ],
     }),
 
+    // Generation Status
+    defineField({
+      name: 'generationStatus',
+      title: 'Generation Status',
+      type: 'string',
+      description: 'Current status of content generation',
+      options: {
+        list: [
+          { title: 'Idle', value: 'idle' },
+          { title: 'Researching', value: 'researching' },
+          { title: 'Writing', value: 'writing' },
+          { title: 'Uploading', value: 'uploading' },
+          { title: 'Done', value: 'done' },
+          { title: 'Error', value: 'error' },
+        ],
+      },
+      initialValue: 'idle',
+      readOnly: true,
+    }),
+
     // Statistics
     defineField({
       name: 'totalGenerated',
