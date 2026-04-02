@@ -29,7 +29,7 @@ export function createArticleSchema(post: Post) {
       '@type': 'WebPage',
       '@id': `${SITE_DOMAIN}/blog/${post.slug.current}`,
     },
-    keywords: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags,
+    keywords: post.tags.join(', '),
     wordCount: post.wordCount || 0,
     timeRequired: `PT${post.readingTime || 0}M`,
   }
