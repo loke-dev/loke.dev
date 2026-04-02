@@ -42,7 +42,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     image: imageUrl || undefined,
     type: 'article',
     publishedTime: new Date(post.date).toISOString(),
-    keywords: post.tag,
+    keywords: post.tags,
   })
 }
 
@@ -72,7 +72,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   // Body highlighting is typically fast; compute it eagerly to avoid showing a placeholder
   const body = await processBodyWithHighlighting(post.body)
-  const relatedPosts = getRelatedPosts(post.tag, params.slug, 3)
+  const relatedPosts = getRelatedPosts(post.tags, params.slug, 3)
 
   return defer(
     { post: { ...post, body }, relatedPosts },
@@ -92,7 +92,11 @@ export default function BlogPostPage() {
   }
 
   const articleSchema = createArticleSchema(post)
-  const breadcrumbSchema = createBreadcrumbSchema(post)
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: 'Home', url: SITE_DOMAIN },
+    { name: 'Blog', url: `${SITE_DOMAIN}/blog` },
+    { name: post.title, url: `${SITE_DOMAIN}/blog/${post.slug.current}` },
+  ])
   const imageUrl = getPostImageUrl(post, 1200)
   const heroSrcSet = getPostImageSrcSet(post, [640, 768, 1024, 1280, 1600])
 

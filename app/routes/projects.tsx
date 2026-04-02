@@ -7,6 +7,10 @@ import { Grid, Page, PageHeader, Section } from '@/components/layout'
 import { ProjectCard } from '@/components/projectCard'
 import { client } from '@/lib/sanity/client'
 import { PROJECTS_QUERY } from '@/lib/sanity/queries'
+import {
+  createBreadcrumbSchema,
+  createProjectSchema,
+} from '@/lib/sanity/schema'
 import type { Project } from '@/lib/sanity/types'
 
 export const meta: MetaFunction = () => {
@@ -38,8 +42,22 @@ export default function Projects() {
   const featuredProjects = projects.filter((project) => project.featured)
   const otherProjects = projects.filter((project) => !project.featured)
 
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: 'Home', url: SITE_DOMAIN },
+    { name: 'Projects', url: `${SITE_DOMAIN}/projects` },
+  ])
+  const projectSchemas = projects.map(createProjectSchema)
+
   return (
     <Page>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectSchemas) }}
+      />
       <PageHeader title={page.title} description={page.description} />
 
       {featuredProjects.length > 0 && (

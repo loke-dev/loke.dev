@@ -1,6 +1,6 @@
 import { AUTHOR_NAME, DEFAULT_IMAGE, SITE_DOMAIN } from '@/utils/meta'
 import { getPostImageUrl } from './helpers'
-import type { Post } from './types'
+import type { Post, Project } from './types'
 
 export function createArticleSchema(post: Post) {
   const imageUrl = getPostImageUrl(post, 1200, 630) || DEFAULT_IMAGE
@@ -29,35 +29,40 @@ export function createArticleSchema(post: Post) {
       '@type': 'WebPage',
       '@id': `${SITE_DOMAIN}/blog/${post.slug.current}`,
     },
-    keywords: post.tag,
+    keywords: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags,
     wordCount: post.wordCount || 0,
     timeRequired: `PT${post.readingTime || 0}M`,
   }
 }
 
-export function createBreadcrumbSchema(post: Post) {
+export function createBreadcrumbSchema(
+  items: Array<{ name: string; url: string }>
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: SITE_DOMAIN,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Blog',
-        item: `${SITE_DOMAIN}/blog`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: post.title,
-        item: `${SITE_DOMAIN}/blog/${post.slug.current}`,
-      },
-    ],
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  }
+}
+
+export function createProjectSchema(project: Project) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: project.title,
+    description: project.description,
+    url: project.url || `${SITE_DOMAIN}/projects`,
+    author: {
+      '@type': 'Person',
+      name: AUTHOR_NAME,
+      url: SITE_DOMAIN,
+    },
+    applicationCategory: 'WebApplication',
+    operatingSystem: 'Web',
   }
 }

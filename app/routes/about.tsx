@@ -6,6 +6,7 @@ import { getAboutPage } from '@/utils/sanity.queries'
 import { Page, PageHeader, Section } from '@/components/layout'
 import { OptimizedImage } from '@/components/optimized-image'
 import { PortableText } from '@/components/PortableText'
+import { createBreadcrumbSchema } from '@/lib/sanity/schema'
 
 export const meta: MetaFunction = () => {
   return createMetaTags({
@@ -28,11 +29,20 @@ export async function loader() {
   return { page }
 }
 
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: 'Home', url: SITE_DOMAIN },
+  { name: 'About', url: `${SITE_DOMAIN}/about` },
+])
+
 export default function About() {
   const { page } = useLoaderData<typeof loader>()
 
   return (
     <Page>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <PageHeader title={page.title} />
 
       <div className="prose prose-gray dark:prose-invert">
