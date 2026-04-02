@@ -1,5 +1,4 @@
 import path from 'path'
-import { remixPWA } from '@remix-pwa/dev'
 import { vitePlugin as remix } from '@remix-run/dev'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
@@ -10,8 +9,6 @@ declare module '@remix-run/node' {
     v3_singleFetch: true
   }
 }
-
-const isProduction = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
   plugins: [
@@ -26,7 +23,6 @@ export default defineConfig({
     }),
     tailwindcss(),
     tsconfigPaths(),
-    ...(isProduction ? [remixPWA()] : []),
   ],
   resolve: {
     alias: {

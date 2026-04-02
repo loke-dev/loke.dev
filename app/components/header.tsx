@@ -1,6 +1,5 @@
 import { Link } from '@remix-run/react'
 import { Menu } from 'lucide-react'
-import { ThemeToggle } from '@/components/themeToggle'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -42,8 +41,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon" className="h-9 w-9 p-0">
