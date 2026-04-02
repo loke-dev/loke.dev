@@ -139,8 +139,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function App() {
-  const personSchema = {
+// Static schema.org data — no user input, safe for JSON serialization
+const SITE_SCHEMAS = [
+  {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Loke',
@@ -149,17 +150,42 @@ export default function App() {
     jobTitle: 'Web Developer',
     description:
       'Full-stack web developer specializing in React, Remix, and modern JavaScript',
-  }
+    knowsAbout: [
+      'React',
+      'TypeScript',
+      'Remix',
+      'Node.js',
+      'SvelteKit',
+      'Next.js',
+      'Web Performance',
+      'SEO',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Loke.dev',
+    url: 'https://loke.dev',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://loke.dev/blog?q={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  },
+]
 
-  // personSchema is static trusted data
-  const schemaScript = JSON.stringify(personSchema)
+const siteSchemaScript = JSON.stringify(SITE_SCHEMAS)
 
+export default function App() {
   return (
     <>
       {}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: schemaScript }}
+        dangerouslySetInnerHTML={{ __html: siteSchemaScript }}
       />
       <Outlet />
     </>
