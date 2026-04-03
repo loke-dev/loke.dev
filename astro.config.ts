@@ -6,6 +6,9 @@ import { defineConfig } from 'astro/config'
 export default defineConfig({
   site: 'https://loke.dev',
   output: 'server',
+  build: {
+    inlineStylesheets: 'always',
+  },
   adapter: vercel({
     webAnalytics: { enabled: true },
     imageService: true,

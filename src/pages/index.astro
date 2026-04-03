@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets'
+import { Picture } from 'astro:assets'
 import profileImage from '@/assets/loke-clay.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogPostCard from '@/components/BlogPostCard.astro'
@@ -59,9 +59,10 @@ const hasAccentDot = heroTitleParts.length === 2
           <div class="relative overflow-hidden rounded-xl border aspect-square md:aspect-[4/3] bg-gradient-to-br from-primary/20 to-muted">
             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div class="h-48 w-48 sm:h-64 sm:w-64 overflow-hidden rounded-full border-4 bg-muted">
-                <Image
+                <Picture
                   src={profileImage}
                   alt="Profile avatar"
+                  formats={['avif', 'webp']}
                   widths={[192, 256, 384, 512]}
                   sizes="(min-width: 640px) 256px, 192px"
                   fetchpriority="high"
