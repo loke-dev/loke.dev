@@ -11,7 +11,7 @@ export const GET: APIRoute = async ({ url }) => {
   }
 
   const posts = await client.fetch(
-    `*[_type == "post" && !(_id in path("drafts.**")) && _id != $excludeId && (count((coalesce(tags, []))[@ in $tags]) > 0 || tag in $tags)] | order(date desc) [0...3] {
+    `*[_type == "post" && !(_id in path("drafts.**")) && _id != $excludeId && (count(tags[@ in $tags]) > 0 || tag in $tags)] | order(date desc) [0...3] {
       _id, title, slug, description, date
     }`,
     { excludeId, tags }
