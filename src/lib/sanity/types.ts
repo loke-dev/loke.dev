@@ -70,7 +70,7 @@ export interface AboutPageSection {
 export interface AboutPage {
   title: string
   intro: string
-  sections: AboutPageSection[]
+  sections?: AboutPageSection[]
 }
 
 export interface BlogPage {
