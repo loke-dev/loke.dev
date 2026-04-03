@@ -8,7 +8,8 @@ import { SITE_DOMAIN } from '@/utils/meta'
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
 
 const pageParam = Astro.url.searchParams.get('page')
-const currentPage = Math.max(1, parseInt(pageParam ?? '1', 10))
+const parsed = parseInt(pageParam ?? '1', 10)
+const currentPage = Math.max(1, isNaN(parsed) ? 1 : parsed)
 
 const [paginatedResult, page] = await Promise.all([
   getPaginatedPosts(currentPage),
