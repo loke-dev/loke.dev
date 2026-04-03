@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import ContactForm from '@/components/ContactForm'
+import { getContactPage } from '@/utils/sanity.queries'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
+
+const page = await getContactPage()
+---
+
+<BaseLayout
+  title="Contact"
+  description={page?.description ?? 'Get in touch with Loke.'}
+  url={`${SITE_DOMAIN}/contact`}
+>
+  <div class="max-w-2xl mx-auto px-4 py-20">
+    <h1 class="text-4xl font-bold mb-4">{page?.title ?? 'Contact'}</h1>
+    {page?.description && <p class="text-muted-foreground mb-12">{page.description}</p>}
+
+    <ContactForm client:load />
+
+    {page?.alternativeContactTitle && (
+      <div class="mt-12 border-t pt-8">
+        <h2 class="text-2xl font-bold mb-4">{page.alternativeContactTitle}</h2>
+        {page.alternativeContactDescription && (
+          <p class="text-muted-foreground">{page.alternativeContactDescription}</p>
+        )}
+      </div>
+    )}
+  </div>
+</BaseLayout>
