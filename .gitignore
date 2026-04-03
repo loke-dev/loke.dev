@@ -8,6 +8,7 @@ node_modules
 
 # Sanity
 /sanity/dist
+/.sanity
 /dist
 /.astro
 /.vercel

@@ -1,5 +1,4 @@
 import reactPlugin from "eslint-plugin-react";
-import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import tseslint from "@typescript-eslint/eslint-plugin";
@@ -84,7 +83,6 @@ export default [
     plugins: {
       react: reactPlugin,
       "jsx-a11y": jsxA11yPlugin,
-      "react-refresh": reactRefreshPlugin,
       "react-hooks": reactHooksPlugin,
     },
     languageOptions: {
@@ -107,16 +105,8 @@ export default [
     rules: {
       ...reactPlugin.configs.recommended.rules,
       ...reactPlugin.configs["jsx-runtime"].rules,
-      ...reactRefreshPlugin.configs.recommended.rules,
       ...jsxA11yPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
-      "react-refresh/only-export-components": [
-        "error",
-        {
-          allowConstantExport: false,
-          allowExportNames: ["meta", "links", "headers", "loader", "action", "handle", "shouldRevalidate"]
-        }
-      ],
     },
   },
 
