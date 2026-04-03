@@ -8,6 +8,9 @@ node_modules
 
 # Sanity
 /sanity/dist
+/dist
+/.astro
+/.vercel
 
 # Service Worker
 /public/entry.worker.js

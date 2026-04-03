@@ -1,0 +1,83 @@
+---
+import { ClientRouter } from 'astro:transitions'
+import Header from '@/components/Header.astro'
+import Footer from '@/components/Footer.astro'
+import Seo from '@/components/Seo.astro'
+import '@/styles/global.css'
+
+interface Props {
+  title: string
+  description: string
+  url?: string
+  image?: string
+  type?: 'website' | 'article'
+  author?: string
+  publishedTime?: string
+  keywords?: string | string[]
+}
+
+const { title, description, url, image, type, author, publishedTime, keywords } = Astro.props
+const canonicalUrl = url ?? Astro.url.href
+const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <Seo
+      title={title}
+      description={description}
+      url={canonicalUrl}
+      image={image}
+      type={type}
+      author={author}
+      publishedTime={publishedTime}
+      keywords={keywords}
+    />
+    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+    <link rel="preconnect" href="https://vitals.vercel-insights.com" crossorigin />
+    <link rel="alternate" type="application/rss+xml" title="Loke.dev" href="/rss.xml" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
+    <ClientRouter />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Person',
+          '@id': 'https://loke.dev/#person',
+          name: 'Loke',
+          url: 'https://loke.dev',
+          sameAs: ['https://github.com/loke-dev', 'https://twitter.com/loke_dev'],
+        },
+        {
+          '@type': 'WebSite',
+          '@id': 'https://loke.dev/#website',
+          url: 'https://loke.dev',
+          name: 'Loke.dev',
+          publisher: { '@id': 'https://loke.dev/#person' },
+        },
+      ],
+    })} />
+  </head>
+  <body class="min-h-screen bg-background text-foreground">
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <div id="env-data" data-turnstile-key={turnstileSiteKey} hidden />
+  </body>
+</html>

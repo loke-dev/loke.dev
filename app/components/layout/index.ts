@@ -1,5 +1,0 @@
-export { Container } from './container'
-export { Page } from './page'
-export { PageHeader } from './page-header'
-export { Section } from './section'
-export { Grid } from './grid'

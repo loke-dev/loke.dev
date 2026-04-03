@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PortableText from '@/components/PortableText.astro'
+import { getAboutPage } from '@/utils/sanity.queries'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600')
+
+const page = await getAboutPage()
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
+    { '@type': 'ListItem', position: 2, name: 'About', item: `${SITE_DOMAIN}/about` },
+  ],
+}
+---
+
+<BaseLayout
+  title="About"
+  description="Learn about my journey as a full-stack web developer, my skills in React, Remix, TypeScript, and modern web technologies, and how I build accessible, performant applications."
+  url={`${SITE_DOMAIN}/about`}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <div class="container mx-auto max-w-4xl px-4 py-12">
+    <header class="mb-10">
+      <h1 class="text-4xl font-bold tracking-tight">{page.title}</h1>
+    </header>
+
+    <div class="prose prose-invert max-w-none">
+      <div class="flex justify-center mb-6">
+        <img
+          src="/loke_clay.png"
+          alt="3D clay avatar"
+          loading="eager"
+          fetchpriority="high"
+          width={512}
+          height={512}
+          class="rounded-lg w-64 h-auto"
+        />
+      </div>
+
+      <p class="lead text-lg text-muted-foreground">{page.intro}</p>
+
+      {page.sections?.map((section) => (
+        <section class="mt-10">
+          <h2 class="text-2xl font-bold mb-4">{section.title}</h2>
+          <PortableText value={section.content} />
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

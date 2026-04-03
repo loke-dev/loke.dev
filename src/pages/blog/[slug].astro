@@ -1,0 +1,102 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PortableText from '@/components/PortableText.astro'
+import RelatedPosts from '@/components/RelatedPosts'
+import { getPostBySlug } from '@/utils/sanity.queries'
+import { formatDate, getPostImageUrl, getPostImageSrcSet } from '@/lib/sanity/helpers'
+import { createArticleSchema, createBreadcrumbSchema } from '@/lib/sanity/schema'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+
+const { slug } = Astro.params
+
+if (!slug) {
+  return Astro.redirect('/blog', 302)
+}
+
+const post = await getPostBySlug(slug)
+
+if (!post) {
+  return Astro.redirect('/blog', 302)
+}
+
+const tags = post.tags ?? []
+const imageUrl = getPostImageUrl(post, 1200, 630)
+const heroSrcSet = getPostImageSrcSet(post, [640, 768, 1024, 1280, 1600])
+const canonicalUrl = `${SITE_DOMAIN}/blog/${slug}`
+
+const articleSchema = createArticleSchema(post)
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: 'Home', url: SITE_DOMAIN },
+  { name: 'Blog', url: `${SITE_DOMAIN}/blog` },
+  { name: post.title, url: canonicalUrl },
+])
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.description}
+  url={canonicalUrl}
+  image={imageUrl ?? undefined}
+  type="article"
+  publishedTime={post.date}
+  keywords={tags}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <article class="mx-auto max-w-3xl px-4 py-12">
+    {imageUrl && (
+      <div class="mb-8 -mx-4 sm:-mx-6">
+        <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+          <img
+            src={imageUrl}
+            srcset={heroSrcSet ?? undefined}
+            sizes="(min-width: 1280px) 1200px, (min-width: 768px) 768px, 100vw"
+            alt={post.imageAlt ?? `Cover image for ${post.title}`}
+            class="absolute inset-0 h-full w-full object-cover"
+            fetchpriority="high"
+            loading="eager"
+            decoding="async"
+            width={1200}
+            height={675}
+          />
+        </div>
+      </div>
+    )}
+
+    <header class="mb-8 text-center">
+      {tags.length > 0 && (
+        <div class="mb-4 flex flex-wrap justify-center gap-2">
+          {tags.map((tag) => (
+            <span class="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+      <h1 class="text-4xl font-bold tracking-tight">{post.title}</h1>
+      <p class="mt-4 text-xl text-muted-foreground">{post.description}</p>
+      <div class="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+        <time datetime={post.date}>{formatDate(post.date)}</time>
+        {post.lastModified && (
+          <span>· Updated {formatDate(post.lastModified)}</span>
+        )}
+        {post.readingTime && (
+          <span>· {post.readingTime} min read</span>
+        )}
+      </div>
+    </header>
+
+    <PortableText value={post.body} />
+  </article>
+
+  <div class="mx-auto max-w-3xl px-4 pb-12">
+    <RelatedPosts
+      client:visible
+      currentPostId={post._id}
+      tags={tags}
+    />
+  </div>
+</BaseLayout>

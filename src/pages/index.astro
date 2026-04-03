@@ -1,0 +1,148 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import BlogPostCard from '@/components/BlogPostCard.astro'
+import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600')
+
+const [allPosts, page] = await Promise.all([
+  getAllPublishedPosts(),
+  getHomePage(),
+])
+const latestPosts = allPosts.slice(0, 3)
+
+const heroTitleParts = page.heroTitle.split('.')
+const hasAccentDot = heroTitleParts.length === 2
+---
+
+<BaseLayout
+  title="Loke.dev - Web Developer"
+  description={page.heroDescription ?? 'Full-stack web developer.'}
+  url={SITE_DOMAIN}
+>
+  <div class="flex flex-col items-center">
+    <!-- Hero -->
+    <section class="w-full max-w-6xl px-4 py-20 md:py-32">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-6">
+          <h1 class="text-6xl md:text-8xl font-bold tracking-tight">
+            {hasAccentDot ? (
+              <>
+                {heroTitleParts[0]}<span class="text-accent">.</span>{heroTitleParts[1]}
+              </>
+            ) : (
+              page.heroTitle
+            )}
+          </h1>
+          <p class="text-lg text-muted-foreground">
+            {page.heroDescription}
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a
+              href="/projects"
+              class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              View Projects
+            </a>
+            <a
+              href="/contact"
+              class="inline-flex items-center justify-center rounded-md border border-input bg-background px-6 py-3 text-base font-medium transition-colors hover:bg-secondary"
+            >
+              Contact Me
+            </a>
+          </div>
+        </div>
+        <div class="relative p-1">
+          <div class="relative overflow-hidden rounded-xl border aspect-square md:aspect-[4/3] bg-gradient-to-br from-primary/20 to-muted">
+            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div class="h-48 w-48 sm:h-64 sm:w-64 overflow-hidden rounded-full border-4 bg-muted">
+                <img
+                  src="/loke_clay.png"
+                  alt="Profile avatar"
+                  fetchpriority="high"
+                  loading="eager"
+                  width={256}
+                  height={256}
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technologies -->
+    <section class="w-full bg-muted/50 py-16">
+      <div class="container px-4 mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">
+          {page.technologiesSectionTitle}
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center justify-center">
+          {page.technologies.map((tech) => (
+            <div class="flex items-center justify-center p-4 bg-background rounded-lg shadow-sm h-20">
+              <span class="font-medium">{tech}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Blog Posts -->
+    <section class="w-full max-w-6xl px-4 py-20" id="blog">
+      <div class="flex flex-col items-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 text-center">
+          {page.blogSectionTitle}
+        </h2>
+        <p class="text-muted-foreground text-center max-w-2xl">
+          {page.blogSectionDescription}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {latestPosts.map((post) => (
+          <BlogPostCard post={post} imageWidth={500} imageHeight={281} />
+        ))}
+      </div>
+
+      <div class="flex justify-center mt-12">
+        <a
+          href="/blog"
+          aria-label="View All Articles"
+          class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          View All Articles
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="ml-2"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="w-full bg-primary/10 py-16">
+      <div class="container px-4 mx-auto max-w-3xl">
+        <h2 class="text-2xl font-bold mb-4">{page.ctaTitle}</h2>
+        <p class="mb-6">{page.ctaDescription}</p>
+        <a
+          href="/contact"
+          class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          {page.ctaButtonText}
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
