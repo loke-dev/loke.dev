@@ -33,6 +33,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
     "@eslint/js": "^9.34.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@tailwindcss/typography": "^0.5.16",
