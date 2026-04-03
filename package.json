@@ -11,7 +11,8 @@
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,astro,md,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,astro,md,json}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "studio": "sanity dev --port 3333"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.2",

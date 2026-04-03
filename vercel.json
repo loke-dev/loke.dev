@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/studio/:path*",
+      "destination": "https://loke-dev.sanity.studio/:path*"
+    }
+  ]
+}
