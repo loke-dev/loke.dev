@@ -3,6 +3,7 @@ import { humanizeContent } from './humanizer'
 import { generateBlogImage } from './image-gen'
 import { markdownToPortableText } from './portable-text'
 import { researchTopic } from './researcher'
+import { curateResources } from './resource-curator'
 import {
   createPost,
   fetchTopic,
@@ -69,6 +70,8 @@ export async function generate({
 
     const humanized = await humanizeContent(rawArticle)
 
+    const curatedResources = await curateResources(humanized, research)
+
     const body = markdownToPortableText(humanized)
 
     await setGenerationStatus(
@@ -88,7 +91,8 @@ export async function generate({
       body,
       imageBuffer,
       sanityProject,
-      sanityDataset
+      sanityDataset,
+      curatedResources.length ? curatedResources : undefined
     )
 
     await finalizeTopicRecord(topicId, postId, sanityProject, sanityDataset)

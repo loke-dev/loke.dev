@@ -1,9 +1,16 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PortableText from '@/components/PortableText.astro'
+import PostAdjacentNav from '@/components/PostAdjacentNav.astro'
+import PostResources from '@/components/PostResources.astro'
 import RelatedPosts from '@/components/RelatedPosts.astro'
-import { getPostBySlug, getRelatedPosts } from '@/utils/sanity.queries'
+import {
+  getAdjacentPosts,
+  getPostBySlug,
+  getRelatedPosts,
+} from '@/utils/sanity.queries'
 import { formatDate, getSanityImageUrl, getSanityImageSrcSet } from '@/lib/sanity/helpers'
+import { getPostUpdatedDisplay } from '@/lib/sanity/post-display'
 import { createArticleSchema, createBreadcrumbSchema } from '@/lib/sanity/schema'
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 import { CACHE_CONTROL } from '@/utils/cache-control'
@@ -24,7 +31,11 @@ if (!post) {
 }
 
 const tags = post.tags ?? []
-const relatedPosts = await getRelatedPosts(post._id, tags, 3)
+const [relatedPosts, adjacent] = await Promise.all([
+  getRelatedPosts(post._id, tags, 3),
+  getAdjacentPosts(post.date),
+])
+const updatedMeta = getPostUpdatedDisplay(post)
 const imageUrl = getSanityImageUrl(post.image, 1200, 630)
 const heroSrcSet = getSanityImageSrcSet(post.image, [640, 768, 1024, 1280, 1600])
 const canonicalUrl = `${SITE_DOMAIN}/blog/${slug}`
@@ -83,21 +94,35 @@ const breadcrumbSchema = createBreadcrumbSchema([
       )}
       <h1 class="text-4xl font-bold tracking-tight">{post.title}</h1>
       <p class="mt-4 text-xl text-muted-foreground">{post.description}</p>
-      <div class="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-        <time datetime={post.date}>{formatDate(post.date)}</time>
-        {post.lastModified && (
-          <span>· Updated {formatDate(post.lastModified)}</span>
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+        <span>
+          Published{' '}
+          <time datetime={post.date}>{formatDate(post.date)}</time>
+        </span>
+        {updatedMeta && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>
+              Updated{' '}
+              <time datetime={updatedMeta.datetime}>{updatedMeta.label}</time>
+            </span>
+          </>
         )}
-        {post.readingTime && (
-          <span>· {post.readingTime} min read</span>
-        )}
+        {post.readingTime ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{post.readingTime} min read</span>
+          </>
+        ) : null}
       </div>
     </header>
 
     <PortableText value={post.body} />
+    {post.resources?.length ? <PostResources resources={post.resources} /> : null}
   </article>
 
-  <div class="mx-auto max-w-3xl px-4 pb-12">
+  <div class="mx-auto max-w-3xl px-4 pb-16">
+    <PostAdjacentNav prev={adjacent.prev} next={adjacent.next} />
     <RelatedPosts posts={relatedPosts} />
   </div>
 </BaseLayout>

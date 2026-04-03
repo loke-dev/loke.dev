@@ -7,12 +7,17 @@ import {
   POST_BY_SLUG_QUERY,
   POST_COUNT_QUERY,
   POST_LIST_QUERY,
+  POST_NEXT_QUERY,
   POST_PAGINATED_QUERY,
+  POST_PREV_QUERY,
   POST_SLUGS_QUERY,
   PROJECTS_PAGE_QUERY,
   RELATED_POSTS_QUERY,
 } from '@/lib/sanity/queries'
-import { calculateReadingTime } from '@/lib/sanity/reading-time'
+import {
+  calculateReadingTime,
+  readingTimeFromPlainText,
+} from '@/lib/sanity/reading-time'
 import type {
   AboutPage,
   BlogPage,
@@ -36,6 +41,16 @@ export type {
 
 export const POSTS_PER_PAGE = 10
 
+type PostListFetchRow = PostListItem & { plainBody?: string | null }
+
+function mapPostListRow(row: PostListFetchRow): PostListItem {
+  const { plainBody, ...rest } = row
+  return {
+    ...rest,
+    readingTime: readingTimeFromPlainText(plainBody ?? ''),
+  }
+}
+
 export interface PaginatedPostsResult {
   posts: PostListItem[]
   totalCount: number
@@ -51,10 +66,12 @@ export async function getPaginatedPosts(
   const start = (page - 1) * POSTS_PER_PAGE
   const end = start + POSTS_PER_PAGE
 
-  const [posts, totalCount] = await Promise.all([
-    client.fetch<PostListItem[]>(POST_PAGINATED_QUERY, { start, end }),
+  const [rawPosts, totalCount] = await Promise.all([
+    client.fetch<PostListFetchRow[]>(POST_PAGINATED_QUERY, { start, end }),
     client.fetch<number>(POST_COUNT_QUERY),
   ])
+
+  const posts = rawPosts.map(mapPostListRow)
 
   const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE)
 
@@ -69,7 +86,8 @@ export async function getPaginatedPosts(
 }
 
 export async function getAllPublishedPosts(): Promise<PostListItem[]> {
-  return client.fetch<PostListItem[]>(POST_LIST_QUERY)
+  const rows = await client.fetch<PostListFetchRow[]>(POST_LIST_QUERY)
+  return rows.map(mapPostListRow)
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
@@ -91,11 +109,22 @@ export async function getRelatedPosts(
   limit: number = 3
 ): Promise<PostListItem[]> {
   if (tags.length === 0) return []
-  return client.fetch<PostListItem[]>(RELATED_POSTS_QUERY, {
+  const rows = await client.fetch<PostListFetchRow[]>(RELATED_POSTS_QUERY, {
     excludeId,
     tags,
     limit,
   })
+  return rows.map(mapPostListRow)
+}
+
+export async function getAdjacentPosts(
+  date: string
+): Promise<{ prev: PostListItem | null; next: PostListItem | null }> {
+  const [prev, next] = await Promise.all([
+    client.fetch<PostListItem | null>(POST_PREV_QUERY, { date }),
+    client.fetch<PostListItem | null>(POST_NEXT_QUERY, { date }),
+  ])
+  return { prev, next }
 }
 
 export async function getHomePage(): Promise<HomePage> {

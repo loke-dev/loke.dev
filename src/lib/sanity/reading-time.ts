@@ -27,7 +27,15 @@ export function calculateReadingTime(body: unknown[]): {
   }
 
   countWordsInBlocks(body)
-  const readingTime = Math.ceil(wordCount / wordsPerMinute)
+  const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
 
   return { readingTime, wordCount }
+}
+
+export function readingTimeFromPlainText(
+  text: string | null | undefined
+): number {
+  if (!text?.trim()) return 1
+  const words = text.trim().split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.ceil(words / 200))
 }

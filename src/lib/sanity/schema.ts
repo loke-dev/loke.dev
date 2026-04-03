@@ -2,6 +2,12 @@ import { AUTHOR_NAME, SITE_DOMAIN } from '@/utils/meta'
 import { getSanityImageUrl } from './helpers'
 import type { Post, Project } from './types'
 
+function resolveDateModifiedIso(post: Post): string {
+  if (post.lastModified) return new Date(post.lastModified).toISOString()
+  if (post._updatedAt) return new Date(post._updatedAt).toISOString()
+  return new Date(post.date).toISOString()
+}
+
 export function createArticleSchema(post: Post, fallbackImageUrl: string) {
   const imageUrl = getSanityImageUrl(post.image, 1200, 630) || fallbackImageUrl
 
@@ -12,9 +18,7 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
     description: post.description,
     image: imageUrl,
     datePublished: new Date(post.date).toISOString(),
-    dateModified: post.lastModified
-      ? new Date(post.lastModified).toISOString()
-      : new Date(post.date).toISOString(),
+    dateModified: resolveDateModifiedIso(post),
     author: {
       '@type': 'Person',
       name: AUTHOR_NAME,

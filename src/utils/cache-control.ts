@@ -4,5 +4,6 @@ export const CACHE_CONTROL = {
   blogPost: 'public, s-maxage=3600, stale-while-revalidate=86400',
   staticPage: 'public, s-maxage=600, stale-while-revalidate=3600',
   contact: 'public, s-maxage=300, stale-while-revalidate=3600',
+  changelog: 'public, s-maxage=300, stale-while-revalidate=900',
   xmlFeed: 'public, s-maxage=3600',
 } as const

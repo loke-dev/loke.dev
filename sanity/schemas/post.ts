@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'post',
@@ -119,6 +119,30 @@ export default defineType({
           type: 'callout',
           title: 'Callout',
         },
+      ],
+    }),
+    defineField({
+      name: 'resources',
+      title: 'Resources',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+        }),
       ],
     }),
   ],

@@ -1,5 +1,11 @@
 import type { PortableTextBlock } from '@portabletext/react'
 
+export interface PostResource {
+  _key?: string
+  title: string
+  url: string
+}
+
 export interface SanityImage {
   asset: {
     _ref: string
@@ -16,18 +22,18 @@ export interface PostListItem {
   description: string
   date: string
   lastModified?: string
+  _updatedAt?: string
   tags: string[]
   image?: SanityImage
   imageAlt?: string
-  // Optional: only available when calculated from body
   readingTime?: number
 }
 
-// Full post type with body content (for detail pages)
 export interface Post extends PostListItem {
   body: PortableTextBlock[]
   readingTime?: number
   wordCount?: number
+  resources?: PostResource[]
 }
 
 export type PostSlug = { slug: { current: string } }

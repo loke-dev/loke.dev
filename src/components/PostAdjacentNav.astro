@@ -1,0 +1,50 @@
+---
+import type { PostListItem } from '@/lib/sanity/types'
+
+interface Props {
+  prev: PostListItem | null
+  next: PostListItem | null
+}
+
+const { prev, next } = Astro.props
+---
+
+{
+  (prev || next) && (
+    <nav
+      class="not-prose mt-12 grid gap-4 sm:grid-cols-2"
+      aria-label="Adjacent posts"
+    >
+      {prev ? (
+        <a
+          href={`/blog/${prev.slug.current}`}
+          class="surface-adjacent group flex flex-col rounded-xl border border-border bg-card/80 p-5 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:shadow-[0_20px_48px_-24px_oklch(72%_0.18_70/0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <span class="text-xs font-medium uppercase tracking-wider text-accent">
+            Previous
+          </span>
+          <span class="mt-2 text-base font-semibold text-foreground transition-colors group-hover:text-accent">
+            {prev.title}
+          </span>
+        </a>
+      ) : (
+        <span class="hidden sm:block" />
+      )}
+      {next ? (
+        <a
+          href={`/blog/${next.slug.current}`}
+          class="surface-adjacent group flex flex-col rounded-xl border border-border bg-card/80 p-5 text-right transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:shadow-[0_20px_48px_-24px_oklch(72%_0.18_70/0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:col-start-2"
+        >
+          <span class="text-xs font-medium uppercase tracking-wider text-accent">
+            Next
+          </span>
+          <span class="mt-2 text-base font-semibold text-foreground transition-colors group-hover:text-accent">
+            {next.title}
+          </span>
+        </a>
+      ) : (
+        <span class="hidden sm:block sm:col-start-2" />
+      )}
+    </nav>
+  )
+}

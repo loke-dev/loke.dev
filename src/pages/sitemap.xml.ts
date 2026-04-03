@@ -6,7 +6,14 @@ import { getAllPublishedPosts } from '@/utils/sanity.queries'
 export const GET: APIRoute = async () => {
   const posts = await getAllPublishedPosts()
 
-  const staticUrls = ['/', '/blog', '/about', '/projects', '/contact']
+  const staticUrls = [
+    '/',
+    '/blog',
+    '/changelog',
+    '/about',
+    '/projects',
+    '/contact',
+  ]
   const postUrls = posts.map((p) => `/blog/${p.slug.current}`)
 
   const allUrls = [...staticUrls, ...postUrls]

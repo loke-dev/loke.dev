@@ -1,0 +1,124 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { fetchRecentRepoCommits, getGithubRepoConfig } from '@/lib/github.server'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.changelog)
+
+const gh = getGithubRepoConfig()
+const commits = gh ? await fetchRecentRepoCommits(gh.owner, gh.repo, 50) : []
+const repoHref = gh ? `https://github.com/${gh.owner}/${gh.repo}` : null
+
+function formatWhen(iso: string): string {
+  return new Date(iso).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+---
+
+<BaseLayout
+  title="Changelog"
+  description="Recent commits from the site's GitHub repository."
+  url={`${SITE_DOMAIN}/changelog`}
+>
+  <div class="container mx-auto max-w-2xl px-4 py-12 md:py-16">
+    <header class="mb-12 border-b border-border/80 pb-10">
+      <h1 class="text-4xl font-bold tracking-tight md:text-5xl">Changelog</h1>
+      <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+        What actually landed in the repo — subject lines plus the longer explanation when
+        there is one.
+        {gh ? (
+          <>
+            {' '}
+            <span class="text-foreground/80">{gh.owner}/{gh.repo}</span>
+          </>
+        ) : null}
+      </p>
+      {repoHref && (
+        <a
+          href={repoHref}
+          class="interactive-button mt-6 inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-accent/40 hover:text-accent"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Repository on GitHub
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </a>
+      )}
+    </header>
+
+    {!gh && (
+      <p class="rounded-xl border border-dashed border-accent/40 bg-accent/5 p-6 leading-relaxed text-muted-foreground">
+        Set <span class="font-mono text-foreground">GITHUB_OWNER</span> and{' '}
+        <span class="font-mono text-foreground">GITHUB_REPO</span> in your environment to
+        load commits. A <span class="font-mono text-foreground">GITHUB_TOKEN</span> unlocks a
+        higher rate limit but is optional for public repos.
+      </p>
+    )}
+
+    {gh && commits.length === 0 && (
+      <p class="leading-relaxed text-muted-foreground">
+        No commits returned. The repository might be private without a token, or the API rate
+        limit was hit.
+      </p>
+    )}
+
+    <ol class="mt-6 list-none space-y-0 p-0">
+      {commits.map((c) => (
+        <li class="relative border-b border-border/70 py-8 last:border-b-0 md:py-10">
+          <div class="flex flex-col gap-4 md:flex-row md:gap-8">
+            <div class="shrink-0 md:w-28">
+              <time
+                datetime={c.committedAt}
+                class="text-sm font-medium tabular-nums text-muted-foreground"
+              >
+                {formatWhen(c.committedAt)}
+              </time>
+            </div>
+            <div class="min-w-0 flex-1 space-y-3">
+              <h2 class="text-lg font-semibold leading-snug tracking-tight text-foreground md:text-xl">
+                {c.subject}
+              </h2>
+              {c.body ? (
+                <p class="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground md:text-base">
+                  {c.body}
+                </p>
+              ) : null}
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-muted-foreground md:text-sm">
+                <a
+                  href={c.url}
+                  class="font-mono text-accent transition-colors hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {c.sha}
+                </a>
+                <span aria-hidden="true" class="text-border">
+                  ·
+                </span>
+                <span>{c.authorName}</span>
+              </div>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</BaseLayout>

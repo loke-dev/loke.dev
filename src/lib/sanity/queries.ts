@@ -1,27 +1,26 @@
 const TAGS_PROJECTION = `"tags": select(defined(tags) && count(tags) > 0 => tags, defined(tag) => [tag], [])`
 
-export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) {
-  _id,
+const PLAIN_BODY = `"plainBody": pt::text(body)`
+
+const POST_LIST_BODY = `_id,
   title,
   slug,
   description,
   date,
   lastModified,
+  _updatedAt,
   ${TAGS_PROJECTION},
   image,
-  imageAlt
+  imageAlt`
+
+export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) {
+  ${POST_LIST_BODY},
+  ${PLAIN_BODY}
 }`
 
 export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) [$start...$end] {
-  _id,
-  title,
-  slug,
-  description,
-  date,
-  lastModified,
-  ${TAGS_PROJECTION},
-  image,
-  imageAlt
+  ${POST_LIST_BODY},
+  ${PLAIN_BODY}
 }`
 
 export const POST_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**"))])`
@@ -33,10 +32,12 @@ export const POST_BY_SLUG_QUERY = `*[_type == "post" && slug.current == $slug][0
   description,
   date,
   lastModified,
+  _updatedAt,
   ${TAGS_PROJECTION},
   image,
   imageAlt,
-  body
+  body,
+  resources
 }`
 
 export const POST_SLUGS_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] {
@@ -49,9 +50,31 @@ export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.*
   slug,
   description,
   date,
+  lastModified,
+  _updatedAt,
   ${TAGS_PROJECTION},
   image,
-  imageAlt
+  imageAlt,
+  ${PLAIN_BODY}
+}`
+
+const ADJACENT_POST_FIELDS = `_id,
+  title,
+  slug,
+  description,
+  date,
+  lastModified,
+  _updatedAt,
+  ${TAGS_PROJECTION},
+  image,
+  imageAlt`
+
+export const POST_PREV_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && date < $date] | order(date desc) [0] {
+  ${ADJACENT_POST_FIELDS}
+}`
+
+export const POST_NEXT_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && date > $date] | order(date asc) [0] {
+  ${ADJACENT_POST_FIELDS}
 }`
 
 export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) {

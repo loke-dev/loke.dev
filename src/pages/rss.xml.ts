@@ -28,15 +28,17 @@ export const GET: APIRoute = async () => {
       const postUrl = `${SITE_DOMAIN}/blog/${post.slug.current}`
       const pubDate = new Date(post.date).toUTCString()
       const imageUrl = getSanityImageUrl(post.image, 1200)
+      const safePostUrl = escapeXml(postUrl)
+      const safeImageUrl = imageUrl ? escapeXml(imageUrl) : ''
       return `
     <item>
       <title>${escapeXml(post.title)}</title>
       <description>${escapeXml(post.description ?? '')}</description>
-      <link>${postUrl}</link>
-      <guid isPermaLink="true">${postUrl}</guid>
+      <link>${safePostUrl}</link>
+      <guid isPermaLink="true">${safePostUrl}</guid>
       <pubDate>${pubDate}</pubDate>
-      <author>${SITE_CONTACT_EMAIL} (${AUTHOR_NAME})</author>
-      ${imageUrl ? `<enclosure url="${imageUrl}" type="image/jpeg" length="0" />` : ''}
+      <author>${escapeXml(`${SITE_CONTACT_EMAIL} (${AUTHOR_NAME})`)}</author>
+      ${safeImageUrl ? `<enclosure url="${safeImageUrl}" type="image/jpeg" length="0" />` : ''}
     </item>`
     })
     .join('')
@@ -46,10 +48,10 @@ export const GET: APIRoute = async () => {
   <channel>
     <title>${escapeXml(SITE_NAME)}</title>
     <description>${escapeXml(SITE_RSS_DESCRIPTION)}</description>
-    <link>${SITE_DOMAIN}</link>
+    <link>${escapeXml(SITE_DOMAIN)}</link>
     <language>en-us</language>
     <ttl>60</ttl>
-    <atom:link href="${SITE_DOMAIN}/rss.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${escapeXml(`${SITE_DOMAIN}/rss.xml`)}" rel="self" type="application/rss+xml" />
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}
   </channel>
 </rss>`

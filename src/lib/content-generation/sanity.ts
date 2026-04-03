@@ -1,4 +1,5 @@
 import { createClient } from '@sanity/client'
+import { keyResourcesForSanity } from './resource-curator'
 import type { ContentPlan } from './seo-planner'
 
 function getSanityWriteClient(projectId: string, dataset: string) {
@@ -68,7 +69,8 @@ export async function createPost(
   body: unknown[],
   imageBuffer: Buffer | null,
   projectId: string,
-  dataset: string
+  dataset: string,
+  resources?: Array<{ title: string; url: string }>
 ): Promise<{ postId: string; slug: string }> {
   const client = getSanityWriteClient(projectId, dataset)
 
@@ -106,6 +108,10 @@ export async function createPost(
   if (imageRef) {
     doc.image = imageRef
     doc.imageAlt = `Header image for ${plan.title}`
+  }
+
+  if (resources?.length) {
+    doc.resources = keyResourcesForSanity(resources)
   }
 
   const result = await client.create(doc)

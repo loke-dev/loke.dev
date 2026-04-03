@@ -1,6 +1,7 @@
 ---
 import type { PostListItem } from '@/lib/sanity/types'
 import { formatDate, getSanityImageUrl, getSanityImageSrcSet } from '@/lib/sanity/helpers'
+import { getPostUpdatedDisplay } from '@/lib/sanity/post-display'
 
 interface Props {
   post: PostListItem
@@ -20,9 +21,10 @@ const srcSet = getSanityImageSrcSet(
   listQuality,
   imageWidth
 )
+const updatedDisplay = getPostUpdatedDisplay(post)
 ---
 
-<article class="group flex h-full flex-col overflow-hidden rounded-lg border transition-colors hover:bg-muted/50">
+<article class="surface-interactive group flex h-full flex-col overflow-hidden rounded-lg border transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/35 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
   <a
     href={`/blog/${post.slug.current}`}
     class="flex h-full flex-col"
@@ -39,19 +41,27 @@ const srcSet = getSanityImageSrcSet(
           decoding="async"
           width={imageWidth}
           height={imageHeight}
-          class="h-full w-full object-cover transition-transform group-hover:scale-105"
+          class="h-full w-full object-cover"
         />
       </div>
     )}
     <div class="flex flex-1 flex-col p-6">
-      <div class="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+      <div class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-muted-foreground">
         <time datetime={post.date}>{formatDate(post.date)}</time>
-        {post.readingTime && (
+        {post.readingTime ? (
           <>
             <span aria-hidden="true">·</span>
             <span>{post.readingTime} min read</span>
           </>
-        )}
+        ) : null}
+        {updatedDisplay ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>
+              Updated <time datetime={updatedDisplay.datetime}>{updatedDisplay.label}</time>
+            </span>
+          </>
+        ) : null}
       </div>
       <h2
         id={`post-title-${post.slug.current}`}

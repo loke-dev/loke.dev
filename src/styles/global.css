@@ -185,3 +185,67 @@
     }
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-frame {
+    transition: box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+
+  .hero-frame:hover {
+    box-shadow: 0 32px 90px -42px oklch(72% 0.2 70 / 0.55);
+    border-color: oklch(72.49% 0.207 70.06 / 0.45);
+  }
+
+  .surface-interactive:hover {
+    transform: translateY(-2px);
+  }
+
+  .interactive-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .interactive-button:active {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface-interactive:hover,
+  .interactive-button:hover,
+  .interactive-button:active {
+    transform: none;
+  }
+}
+
+.surface-interactive,
+.interactive-button {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-link-animate {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-link-animate::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    border-radius: 999px;
+    background-color: var(--accent);
+    transition: width 0.22s ease;
+  }
+
+  .nav-link-animate:hover::after,
+  .nav-link-animate:focus-visible::after {
+    width: 100%;
+  }
+}
