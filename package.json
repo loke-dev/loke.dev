@@ -56,7 +56,15 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.2",
-    "vite": "^7.3.1"
+    "vite": "7.3.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "7.3.1"
+    },
+    "patchedDependencies": {
+      "vite@7.3.1": "patches/vite@7.3.1.patch"
+    }
   },
   "engines": {
     "node": ">=20.0.0"
