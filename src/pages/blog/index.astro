@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogPostCard from '@/components/BlogPostCard.astro'
 import Pagination from '@/components/Pagination.astro'
-import { getPaginatedPosts, getBlogPage, POSTS_PER_PAGE } from '@/utils/sanity.queries'
+import { getPaginatedPosts, getBlogPage } from '@/utils/sanity.queries'
 import { SITE_DOMAIN } from '@/utils/meta'
 
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
@@ -33,7 +33,7 @@ const breadcrumbSchema = {
   description="In-depth articles, practical guides, and insights on modern web development. Topics include React, TypeScript, database optimization, AI integration, and building resilient web applications."
   url={`${SITE_DOMAIN}/blog`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <div class="container mx-auto max-w-5xl px-4 py-12">
     <header class="mb-10">

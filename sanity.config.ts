@@ -1,12 +1,12 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
-import { dataset, projectId } from './app/lib/sanity/projectDetails'
 import { GenerateContentAction } from './sanity/actions/generateContentAction'
 import { SyncSchedulesAction } from './sanity/actions/syncSchedulesAction'
 import { useUnpublishAction } from './sanity/actions/unpublishAction'
 import { singletonTypes, structure } from './sanity/deskStructure'
 import { schemaTypes } from './sanity/schemas'
+import { dataset, projectId } from './src/lib/sanity/projectDetails'
 
 export default defineConfig({
   name: 'default',

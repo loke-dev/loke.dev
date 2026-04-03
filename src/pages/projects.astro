@@ -41,8 +41,8 @@ const projectSchemas = projects.map((project) => ({
   description="Portfolio of web development projects including GitDash, blog templates for Remix, Next.js, and SvelteKit, VSCode themes, and open-source tools. Built with React, TypeScript, and modern frameworks."
   url={`${SITE_DOMAIN}/projects`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(projectSchemas)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(projectSchemas)} />
 
   <div class="container mx-auto max-w-4xl px-4 py-12">
     <header class="mb-10">

@@ -9,6 +9,7 @@ export default defineConfig({
   adapter: vercel({ webAnalytics: { enabled: true } }),
   integrations: [react()],
   vite: {
-    plugins: [tailwindcss()],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    plugins: [tailwindcss() as any],
   },
 })

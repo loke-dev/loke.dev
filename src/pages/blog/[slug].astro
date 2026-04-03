@@ -43,8 +43,8 @@ const breadcrumbSchema = createBreadcrumbSchema([
   publishedTime={post.date}
   keywords={tags}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <article class="mx-auto max-w-3xl px-4 py-12">
     {imageUrl && (
