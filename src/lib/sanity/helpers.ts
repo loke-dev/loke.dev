@@ -27,14 +27,14 @@ export function getPostImageSrcSet(
   post: PostListItem | Post,
   widths: number[],
   height?: number,
-  quality: number = 80
+  quality: number = 80,
+  layoutWidth?: number
 ): string | null {
   if (!post.image) return null
+  const refW = layoutWidth ?? widths[Math.floor(widths.length / 2)]!
   const parts = widths.map((w) => {
     const b = urlFor(post.image).width(w).quality(quality).auto('format')
-    const u = height
-      ? b.height(Math.round((height * w) / widths[widths.length - 1])).url()
-      : b.url()
+    const u = height ? b.height(Math.round((height * w) / refW)).url() : b.url()
     return `${u} ${w}w`
   })
   return parts.join(', ')
@@ -74,14 +74,14 @@ export function getProjectImageSrcSet(
   project: Project,
   widths: number[],
   height?: number,
-  quality: number = 80
+  quality: number = 80,
+  layoutWidth?: number
 ): string | null {
   if (!project.image) return null
+  const refW = layoutWidth ?? widths[Math.floor(widths.length / 2)]!
   const parts = widths.map((w) => {
     const b = urlFor(project.image).width(w).quality(quality).auto('format')
-    const u = height
-      ? b.height(Math.round((height * w) / widths[widths.length - 1])).url()
-      : b.url()
+    const u = height ? b.height(Math.round((height * w) / refW)).url() : b.url()
     return `${u} ${w}w`
   })
   return parts.join(', ')

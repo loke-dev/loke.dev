@@ -12,6 +12,12 @@ export default defineConfig({
   adapter: vercel({
     webAnalytics: { enabled: true },
     imageService: true,
+    imagesConfig: {
+      sizes: [
+        192, 256, 320, 384, 512, 640, 750, 768, 828, 1024, 1080, 1200, 1280,
+        1600, 1920, 2048, 3840,
+      ],
+    },
   }),
   integrations: [solid()],
   vite: {

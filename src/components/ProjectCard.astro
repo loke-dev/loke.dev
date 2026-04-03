@@ -11,11 +11,14 @@ const { project, featured = false } = Astro.props
 
 const width = featured ? 800 : 500
 const height = featured ? 450 : 375
-const imageUrl = getProjectImageUrl(project, width, height)
+const listQuality = 72
+const imageUrl = getProjectImageUrl(project, width, height, listQuality)
 const srcSet = getProjectImageSrcSet(
   project,
   [Math.round(width / 2), width, Math.round(width * 1.5)],
-  height
+  height,
+  listQuality,
+  width
 )
 ---
 

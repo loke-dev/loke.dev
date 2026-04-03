@@ -10,11 +10,14 @@ interface Props {
 
 const { post, imageWidth = 600, imageHeight = 338 } = Astro.props
 
-const imageUrl = getPostImageUrl(post, imageWidth, imageHeight)
+const listQuality = 72
+const imageUrl = getPostImageUrl(post, imageWidth, imageHeight, listQuality)
 const srcSet = getPostImageSrcSet(
   post,
   [Math.round(imageWidth / 2), imageWidth, Math.round(imageWidth * 1.5)],
-  imageHeight
+  imageHeight,
+  listQuality,
+  imageWidth
 )
 ---
 
