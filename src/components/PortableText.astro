@@ -9,6 +9,15 @@ interface Props {
   value: Post['body']
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 const { value } = Astro.props
 const builder = imageUrlBuilder(client)
 
@@ -26,8 +35,8 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
       },
       callout: ({ value }) => {
         const v = value as { text?: string; tone?: string }
-        const tone = v.tone ?? 'info'
-        return `<div class="callout callout-${tone} not-prose my-6 p-4 rounded-lg border-l-4" role="note"><p>${v.text ?? ''}</p></div>`
+        const tone = (v.tone ?? 'info').replace(/[^a-z0-9-]/g, '')
+        return `<div class="callout callout-${escapeHtml(tone)} not-prose my-6 p-4 rounded-lg border-l-4" role="note"><p>${escapeHtml(v.text ?? '')}</p></div>`
       },
       image: ({ value }) => {
         const v = value as Record<string, unknown>
@@ -38,19 +47,20 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
         const alt = String(v.alt ?? '')
         return `<figure class="my-8">
           <picture>
-            <source srcset="${src800} 800w, ${src1200} 1200w" sizes="(max-width: 800px) 100vw, 800px" />
-            <img src="${src400}" alt="${alt.replace(/"/g, '&quot;')}" loading="lazy" decoding="async" class="rounded-lg w-full" />
+            <source srcset="${src400} 400w, ${src800} 800w, ${src1200} 1200w" sizes="(max-width: 400px) 100vw, (max-width: 800px) 100vw, 800px" />
+            <img src="${src400}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" class="rounded-lg w-full" />
           </picture>
-          ${alt ? `<figcaption class="text-sm text-center text-muted-foreground mt-2">${alt}</figcaption>` : ''}
+          ${alt ? `<figcaption class="text-sm text-center text-muted-foreground mt-2">${escapeHtml(alt)}</figcaption>` : ''}
         </figure>`
       },
     },
     marks: {
       link: ({ children, value }) => {
         const v = value as { href: string; blank?: boolean }
+        const href = /^javascript:/i.test(v.href) ? '#' : v.href
         const target = v.blank ? ' target="_blank"' : ''
         const rel = v.blank ? ' rel="noopener noreferrer"' : ''
-        return `<a href="${v.href}"${target}${rel}>${children}</a>`
+        return `<a href="${href}"${target}${rel}>${children}</a>`
       },
     },
   },
