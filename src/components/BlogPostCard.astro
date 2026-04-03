@@ -1,0 +1,80 @@
+---
+import type { PostListItem } from '@/lib/sanity/types'
+import { formatDate, getPostImageUrl, getPostImageSrcSet } from '@/lib/sanity/helpers'
+
+interface Props {
+  post: PostListItem
+  imageWidth?: number
+  imageHeight?: number
+}
+
+const { post, imageWidth = 600, imageHeight = 338 } = Astro.props
+
+const imageUrl = getPostImageUrl(post, imageWidth, imageHeight)
+const srcSet = getPostImageSrcSet(
+  post,
+  [Math.round(imageWidth / 2), imageWidth, Math.round(imageWidth * 1.5)],
+  imageHeight
+)
+---
+
+<article class="group flex h-full flex-col overflow-hidden rounded-lg border transition-colors hover:bg-muted/50">
+  <a
+    href={`/blog/${post.slug.current}`}
+    class="flex h-full flex-col"
+    aria-labelledby={`post-title-${post.slug.current}`}
+  >
+    {imageUrl && (
+      <div class="aspect-video w-full overflow-hidden bg-muted">
+        <img
+          src={imageUrl}
+          srcset={srcSet || undefined}
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          alt={post.imageAlt || ''}
+          loading="lazy"
+          decoding="async"
+          width={imageWidth}
+          height={imageHeight}
+          class="h-full w-full object-cover transition-transform group-hover:scale-105"
+        />
+      </div>
+    )}
+    <div class="flex flex-1 flex-col p-6">
+      <div class="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+        <time datetime={post.date}>{formatDate(post.date)}</time>
+        {post.readingTime && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{post.readingTime} min read</span>
+          </>
+        )}
+      </div>
+      <h2
+        id={`post-title-${post.slug.current}`}
+        class="mb-2 text-xl font-bold tracking-tight group-hover:underline"
+      >
+        {post.title}
+      </h2>
+      <p class="flex-1 text-muted-foreground line-clamp-3">
+        {post.description}
+      </p>
+      {post.tags && post.tags.length > 0 && (
+        <div class="mt-3 flex flex-wrap gap-1">
+          {post.tags.map((tag) => (
+            <span class="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+      <div class="mt-4">
+        <span class="inline-flex items-center gap-1 text-sm font-medium text-primary group-hover:underline">
+          Read article
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </a>
+</article>

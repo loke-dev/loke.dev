@@ -1,0 +1,63 @@
+---
+interface Props {
+  currentPage: number
+  totalPages: number
+  basePath?: string
+}
+
+const { currentPage, totalPages, basePath = '/blog' } = Astro.props
+const prevUrl = currentPage > 1 ? (currentPage === 2 ? basePath : `${basePath}?page=${currentPage - 1}`) : null
+const nextUrl = currentPage < totalPages ? `${basePath}?page=${currentPage + 1}` : null
+---
+
+{totalPages > 1 && (
+  <nav class="flex items-center justify-center gap-4 mt-12" aria-label="Pagination">
+    {prevUrl ? (
+      <a
+        href={prevUrl}
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-sm transition-colors hover:bg-secondary"
+        aria-label="Previous page"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </a>
+    ) : (
+      <span
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-sm opacity-50 pointer-events-none"
+        aria-disabled="true"
+        aria-label="Previous page"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </span>
+    )}
+
+    <span class="text-sm text-muted-foreground">
+      Page {currentPage} of {totalPages}
+    </span>
+
+    {nextUrl ? (
+      <a
+        href={nextUrl}
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-sm transition-colors hover:bg-secondary"
+        aria-label="Next page"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </a>
+    ) : (
+      <span
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-sm opacity-50 pointer-events-none"
+        aria-disabled="true"
+        aria-label="Next page"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </span>
+    )}
+  </nav>
+)}
