@@ -152,6 +152,7 @@ export default [
       ...tseslint.configs.recommended.rules,
       ...importPlugin.configs.recommended.rules,
       ...importPlugin.configs.typescript.rules,
+      "import/no-unresolved": ["error", { ignore: ["^astro:", "^@astrojs/"] }],
       "no-restricted-imports": [
         "error",
         {
