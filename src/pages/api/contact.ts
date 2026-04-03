@@ -7,7 +7,6 @@ const ContactSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
   message: z.string().min(10).max(2000),
-  honeypot: z.string().optional(),
   captchaToken: z.string().min(1),
 })
 
@@ -64,6 +63,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return Response.json({ ok: false, error: 'Invalid JSON' }, { status: 400 })
   }
 
+  if (
+    typeof body === 'object' &&
+    body !== null &&
+    'honeypot' in body &&
+    body.honeypot
+  ) {
+    return Response.json({ ok: true })
+  }
+
   const parsed = ContactSchema.safeParse(body)
   if (!parsed.success) {
     return Response.json(
@@ -72,11 +80,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     )
   }
 
-  const { name, email, message, honeypot, captchaToken } = parsed.data
-
-  if (honeypot) {
-    return Response.json({ ok: true })
-  }
+  const { name, email, message, captchaToken } = parsed.data
 
   const ip = clientAddress ?? 'unknown'
   const rateLimit = checkRateLimit(ip)
@@ -104,18 +108,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   try {
-    await sendContactEmail({ name, email, message, honeypot })
+    await sendContactEmail({ name, email, message })
     return Response.json({ ok: true })
-  } catch (error) {
-    console.error('Contact form error:', error)
+  } catch (err) {
+    console.error('Contact form error:', err)
     return Response.json(
-      {
-        ok: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to send message. Please try again.',
-      },
+      { ok: false, error: 'Failed to send message. Please try again.' },
       { status: 500 }
     )
   }
