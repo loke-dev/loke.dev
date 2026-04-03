@@ -1,4 +1,4 @@
-import react from '@astrojs/react'
+import solid from '@astrojs/solid-js'
 import vercel from '@astrojs/vercel'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
@@ -10,7 +10,7 @@ export default defineConfig({
     webAnalytics: { enabled: true },
     imageService: true,
   }),
-  integrations: [react()],
+  integrations: [solid()],
   vite: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plugins: [tailwindcss() as any],

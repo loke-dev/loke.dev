@@ -31,7 +31,7 @@ Always use `pnpm` as the package manager. Never use npm or yarn.
 - **Framework**: Astro 6 with `@astrojs/vercel` SSR adapter
 - **CMS**: Sanity.io for content management (headless only)
 - **Styling**: Tailwind CSS v4 (no JS config file)
-- **React islands**: MobileMenu, ContactForm, RelatedPosts — everything else is static Astro
+- **Client JS**: `Header.astro` ships a small vanilla TS script for the mobile `<dialog>` menu; `ContactForm` is a **SolidJS** island (`client:load`); related posts are server-rendered — everything else is static Astro
 - **Code Highlighting**: Shiki (server-side, zero client JS)
 - **Email**: Resend API
 - **CAPTCHA**: Cloudflare Turnstile (vanilla CDN widget)
@@ -44,14 +44,13 @@ Always use `pnpm` as the package manager. Never use npm or yarn.
 src/
 ├── components/
 │   ├── BlogPostCard.astro
-│   ├── ContactForm.tsx      # React island (client:load)
+│   ├── ContactForm.tsx      # Solid island (client:load)
 │   ├── Footer.astro
-│   ├── Header.astro
-│   ├── MobileMenu.tsx       # React island (client:media)
+│   ├── Header.astro         # Mobile nav: vanilla TS + native dialog
 │   ├── Pagination.astro
 │   ├── PortableText.astro   # Server-side rich text via @portabletext/to-html
 │   ├── ProjectCard.astro
-│   ├── RelatedPosts.tsx     # React island (client:visible)
+│   ├── RelatedPosts.astro   # Server-rendered related posts
 │   └── Seo.astro
 ├── layouts/
 │   └── BaseLayout.astro     # HTML shell with schema.org, Turnstile CDN
@@ -59,19 +58,20 @@ src/
 │   ├── content-generation/  # Gemini AI content generation
 │   └── sanity/              # Sanity client, queries, types, helpers
 ├── middleware.ts             # Security headers on all responses
+├── scripts/
+│   └── mobile-menu.ts       # Vanilla TS for mobile nav dialog
 ├── pages/
 │   ├── index.astro
 │   ├── about.astro
 │   ├── blog/
 │   │   ├── index.astro      # Paginated blog list
-│   │   └── [slug].astro     # Blog post with Shiki + RelatedPosts
+│   │   └── [slug].astro     # Blog post with Shiki + RelatedPosts.astro
 │   ├── contact.astro
 │   ├── projects.astro
 │   ├── rss.xml.ts
 │   ├── sitemap.xml.ts
 │   └── api/
 │       ├── contact.ts
-│       ├── related-posts.ts
 │       └── seshat/
 │           ├── write.ts
 │           ├── trigger.ts
@@ -105,13 +105,12 @@ import { client } from '@/lib/sanity/client'
 
 Astro ships zero JS by default. Client-side JS is opt-in via `client:*` directives.
 
-**React islands (only 3):**
+**Client bundles:**
 
-- `MobileMenu.tsx` — `client:media="(max-width: 767px)"`
-- `ContactForm.tsx` — `client:load`
-- `RelatedPosts.tsx` — `client:visible`
+- `Header.astro` — bundled `<script>` imports `@/scripts/mobile-menu` (runs when `matchMedia('(max-width: 767px)')` matches)
+- `ContactForm.tsx` — Solid island, `client:load`
 
-Everything else renders as static HTML.
+Everything else renders as static HTML unless it imports a client script.
 
 ### Sanity CMS Integration
 
@@ -164,7 +163,7 @@ Cache headers set per page in frontmatter via `Astro.response.headers.set('Cache
 ### General Rules
 
 1. **No comments in code** — code should be self-documenting
-2. **Minimize `useEffect`** — only use in React islands where client-side side effects are genuinely needed
+2. **Minimize ad-hoc effects** — prefer server data and small vanilla scripts; in Solid islands use `onMount` only when the browser API genuinely requires it
 3. **Use path aliases** — always use `@/` prefix for internal imports
 4. **No markdown documentation files** — documentation goes in code or CLAUDE.md
 

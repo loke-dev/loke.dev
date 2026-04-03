@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { createSignal, onMount, Show } from 'solid-js'
 import { z } from 'zod'
 
 const ContactSchema = z.object({
@@ -25,20 +25,21 @@ type TurnstileWindow = Window & {
 }
 
 export default function ContactForm() {
-  const [state, setState] = useState<FormState>({ status: 'idle' })
-  const [captchaToken, setCaptchaToken] = useState('')
-  const turnstileRef = useRef<HTMLDivElement>(null)
-  const widgetIdRef = useRef<string | undefined>(undefined)
+  const [state, setState] = createSignal<FormState>({ status: 'idle' })
+  const [captchaToken, setCaptchaToken] = createSignal('')
+  let widgetId: string | undefined
 
-  useEffect(() => {
+  onMount(() => {
     const siteKey =
       (document.getElementById('env-data') as HTMLElement | null)?.dataset
         .turnstileKey ?? '1x00000000000000000000AA'
 
+    const el = document.getElementById('turnstile-widget')
+
     const mountWidget = () => {
       const win = window as TurnstileWindow
-      if (win.turnstile && turnstileRef.current) {
-        widgetIdRef.current = win.turnstile.render(turnstileRef.current, {
+      if (win.turnstile && el) {
+        widgetId = win.turnstile.render(el, {
           sitekey: siteKey,
           callback: (token: string) => setCaptchaToken(token),
           'expired-callback': () => setCaptchaToken(''),
@@ -58,12 +59,22 @@ export default function ContactForm() {
     return () => {
       window.removeEventListener('load', mountWidget)
     }
-  }, [])
+  })
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function resetTurnstile() {
+    if (widgetId) {
+      ;(window as TurnstileWindow).turnstile?.reset(widgetId)
+    }
+    setCaptchaToken('')
+  }
+
+  async function handleSubmit(
+    e: SubmitEvent & { currentTarget: HTMLFormElement }
+  ) {
     e.preventDefault()
+    const form = e.currentTarget
 
-    if (!captchaToken) {
+    if (!captchaToken()) {
       setState({
         status: 'invalid',
         errors: { captchaToken: 'Please complete the CAPTCHA' },
@@ -71,7 +82,7 @@ export default function ContactForm() {
       return
     }
 
-    const formData = new FormData(e.currentTarget)
+    const formData = new FormData(form)
     const raw = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
@@ -97,7 +108,7 @@ export default function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...parsed.data,
-          captchaToken,
+          captchaToken: captchaToken(),
           honeypot: formData.get('honeypot'),
         }),
       })
@@ -110,125 +121,135 @@ export default function ContactForm() {
           status: 'error',
           message: body.error ?? 'Failed to send. Please try again.',
         })
-        if (widgetIdRef.current) {
-          ;(window as TurnstileWindow).turnstile?.reset(widgetIdRef.current)
-        }
-        setCaptchaToken('')
+        resetTurnstile()
       }
     } catch {
       setState({ status: 'error', message: 'Network error. Please try again.' })
-      if (widgetIdRef.current) {
-        ;(window as TurnstileWindow).turnstile?.reset(widgetIdRef.current)
-      }
-      setCaptchaToken('')
+      resetTurnstile()
     }
   }
 
-  const errors = state.status === 'invalid' ? state.errors : {}
-  const isSubmitting = state.status === 'submitting'
-
-  if (state.status === 'success') {
-    return (
-      <div className="p-6 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400">
-        <p className="font-medium">Message sent!</p>
-        <p className="text-sm mt-1">
-          I&apos;ll get back to you as soon as possible.
-        </p>
-      </div>
-    )
+  const errors = () => {
+    const s = state()
+    return s.status === 'invalid' ? s.errors : {}
   }
 
+  const isSubmitting = () => state().status === 'submitting'
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-      {state.status === 'error' && (
-        <div
-          role="alert"
-          className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
-        >
-          {state.message}
-        </div>
-      )}
+    <Show
+      when={state().status === 'success'}
+      fallback={
+        <form onSubmit={handleSubmit} class="space-y-6" noValidate>
+          {(() => {
+            const s = state()
+            return s.status === 'error' ? (
+              <div
+                role="alert"
+                class="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+              >
+                {s.message}
+              </div>
+            ) : null
+          })()}
 
-      <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-medium">
-          Name
-        </label>
-        <input
-          id="name"
-          name="name"
-          placeholder="Your name"
-          required
-          aria-invalid={!!errors.name}
-          aria-describedby={errors.name ? 'name-error' : undefined}
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        {errors.name && (
-          <p id="name-error" className="text-sm text-red-500" role="alert">
-            {errors.name}
-          </p>
-        )}
+          <div class="space-y-2">
+            <label class="flex flex-col gap-2">
+              <span class="text-sm font-medium">Name</span>
+              <input
+                id="name"
+                name="name"
+                placeholder="Your name"
+                required
+                aria-invalid={errors().name ? true : undefined}
+                aria-describedby={errors().name ? 'name-error' : undefined}
+                class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+            </label>
+            <Show when={errors().name}>
+              {(msg) => (
+                <p id="name-error" class="text-sm text-red-500" role="alert">
+                  {msg()}
+                </p>
+              )}
+            </Show>
+          </div>
+
+          <div class="space-y-2">
+            <label class="flex flex-col gap-2">
+              <span class="text-sm font-medium">Email</span>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="your.email@example.com"
+                required
+                aria-invalid={errors().email ? true : undefined}
+                aria-describedby={errors().email ? 'email-error' : undefined}
+                class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+            </label>
+            <Show when={errors().email}>
+              {(msg) => (
+                <p id="email-error" class="text-sm text-red-500" role="alert">
+                  {msg()}
+                </p>
+              )}
+            </Show>
+          </div>
+
+          <div class="space-y-2">
+            <label class="flex flex-col gap-2">
+              <span class="text-sm font-medium">Message</span>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="How can I help you?"
+                rows={6}
+                required
+                aria-invalid={errors().message ? true : undefined}
+                aria-describedby={
+                  errors().message ? 'message-error' : undefined
+                }
+                class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-y"
+              />
+            </label>
+            <Show when={errors().message}>
+              {(msg) => (
+                <p id="message-error" class="text-sm text-red-500" role="alert">
+                  {msg()}
+                </p>
+              )}
+            </Show>
+          </div>
+
+          <div class="hidden" aria-hidden="true">
+            <input name="honeypot" tabIndex={-1} autocomplete="off" />
+          </div>
+
+          <div id="turnstile-widget" />
+          <Show when={errors().captchaToken}>
+            {(msg) => (
+              <p class="text-sm text-red-500" role="alert">
+                {msg()}
+              </p>
+            )}
+          </Show>
+
+          <button
+            type="submit"
+            disabled={isSubmitting() || !captchaToken()}
+            class="px-6 py-2 rounded-md bg-accent text-accent-foreground font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent/90 transition-colors"
+          >
+            {isSubmitting() ? 'Sending...' : 'Send Message'}
+          </button>
+        </form>
+      }
+    >
+      <div class="p-6 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400">
+        <p class="font-medium">Message sent!</p>
+        <p class="text-sm mt-1">I'll get back to you as soon as possible.</p>
       </div>
-
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="your.email@example.com"
-          required
-          aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? 'email-error' : undefined}
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        {errors.email && (
-          <p id="email-error" className="text-sm text-red-500" role="alert">
-            {errors.email}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="message" className="text-sm font-medium">
-          Message
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          placeholder="How can I help you?"
-          rows={6}
-          required
-          aria-invalid={!!errors.message}
-          aria-describedby={errors.message ? 'message-error' : undefined}
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-y"
-        />
-        {errors.message && (
-          <p id="message-error" className="text-sm text-red-500" role="alert">
-            {errors.message}
-          </p>
-        )}
-      </div>
-
-      <div style={{ display: 'none' }} aria-hidden="true">
-        <input name="honeypot" tabIndex={-1} autoComplete="off" />
-      </div>
-
-      <div ref={turnstileRef} />
-      {errors.captchaToken && (
-        <p className="text-sm text-red-500" role="alert">
-          {errors.captchaToken}
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={isSubmitting || !captchaToken}
-        className="px-6 py-2 rounded-md bg-accent text-accent-foreground font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent/90 transition-colors"
-      >
-        {isSubmitting ? 'Sending...' : 'Send Message'}
-      </button>
-    </form>
+    </Show>
   )
 }

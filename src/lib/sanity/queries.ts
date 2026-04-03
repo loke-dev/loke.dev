@@ -47,8 +47,7 @@ export const POST_SLUGS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")
   slug
 }`
 
-// Optimized query for related posts - handles both legacy tag string and new tags array
-export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && ($postTag in coalesce(tags, []) || tag == $postTag) && slug.current != $currentSlug] | order(date desc) [0...$limit] {
+export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && _id != $excludeId && (count(coalesce(tags, [])[@ in $tags]) > 0 || (defined(tag) && tag in $tags))] | order(date desc) [0...$limit] {
   _id,
   title,
   slug,

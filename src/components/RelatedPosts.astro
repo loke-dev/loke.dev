@@ -1,0 +1,30 @@
+---
+import type { PostListItem } from '@/lib/sanity/types'
+
+interface Props {
+  posts: PostListItem[]
+}
+
+const { posts } = Astro.props
+---
+
+{
+  posts.length > 0 && (
+    <aside aria-label="Related posts">
+      <h2 class="text-xl font-semibold mb-4">Related Posts</h2>
+      <ul class="space-y-3">
+        {posts.map((post) => (
+          <li>
+            <a
+              href={`/blog/${post.slug.current}`}
+              class="block group hover:text-accent transition-colors"
+            >
+              <span class="font-medium group-hover:underline">{post.title}</span>
+              <p class="text-sm text-muted-foreground line-clamp-2">{post.description}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )
+}

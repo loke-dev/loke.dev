@@ -1,6 +1,4 @@
-import reactPlugin from "eslint-plugin-react";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
-import reactHooksPlugin from "eslint-plugin-react-hooks";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import importPlugin from "eslint-plugin-import";
@@ -12,11 +10,18 @@ export default [
     ignores: [
       "node_modules/**",
       ".cache/**",
+      ".astro/**",
+      ".vercel/**",
       "build/**",
       ".env",
       "dist/**",
       "coverage/**",
       "public/**",
+      "sanity/**",
+      "studio/**",
+      "scripts/**",
+      "sanity.cli.ts",
+      "sanity.config.ts",
       "!**/.server",
       "!**/.client"
     ]
@@ -56,7 +61,6 @@ export default [
         performance: "readonly",
         queueMicrotask: "readonly",
         reportError: "readonly",
-        __REACT_DEVTOOLS_GLOBAL_HOOK__: "readonly",
         DOMException: "readonly",
         URL: "readonly",
         URLSearchParams: "readonly",
@@ -77,13 +81,10 @@ export default [
     },
   },
 
-  // React config
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
+    files: ["**/*.{jsx,tsx}"],
     plugins: {
-      react: reactPlugin,
       "jsx-a11y": jsxA11yPlugin,
-      "react-hooks": reactHooksPlugin,
     },
     languageOptions: {
       parserOptions: {
@@ -92,21 +93,8 @@ export default [
         },
       },
     },
-    settings: {
-      react: {
-        version: "detect",
-      },
-      formComponents: ["Form"],
-      linkComponents: [
-        { name: "Link", linkAttribute: "to" },
-        { name: "NavLink", linkAttribute: "to" },
-      ],
-    },
     rules: {
-      ...reactPlugin.configs.recommended.rules,
-      ...reactPlugin.configs["jsx-runtime"].rules,
       ...jsxA11yPlugin.configs.recommended.rules,
-      ...reactHooksPlugin.configs.recommended.rules,
     },
   },
 
