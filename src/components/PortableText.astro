@@ -1,6 +1,6 @@
 ---
 import { toHTML } from '@portabletext/to-html'
-import imageUrlBuilder from '@sanity/image-url'
+import { createImageUrlBuilder } from '@sanity/image-url'
 import { client } from '@/lib/sanity/client'
 import { processBodyWithHighlighting } from '@/lib/sanity/process-body.server'
 import type { Post } from '@/lib/sanity/types'
@@ -19,7 +19,7 @@ function escapeHtml(s: string): string {
 }
 
 const { value } = Astro.props
-const builder = imageUrlBuilder(client)
+const builder = createImageUrlBuilder(client)
 
 const processedBlocks = await processBodyWithHighlighting(value)
 
