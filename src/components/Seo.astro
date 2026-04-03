@@ -1,5 +1,6 @@
 ---
-import { createTitle, DEFAULT_IMAGE, SITE_NAME, TWITTER_HANDLE, AUTHOR_NAME } from '@/utils/meta'
+import { createTitle, SITE_NAME, TWITTER_HANDLE, AUTHOR_NAME } from '@/utils/meta'
+import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 
 interface Props {
   title: string
@@ -12,16 +13,20 @@ interface Props {
   keywords?: string | string[]
 }
 
+const defaultImageUrl = await getDefaultProfileOgUrl()
+
 const {
   title,
   description,
   url = 'https://loke.dev',
-  image = DEFAULT_IMAGE,
+  image: imageProp,
   type = 'website',
   author = AUTHOR_NAME,
   publishedTime,
   keywords,
 } = Astro.props
+
+const image = imageProp ?? defaultImageUrl
 
 const fullTitle = createTitle(title)
 const keywordsArr = Array.isArray(keywords) ? keywords : keywords ? [keywords] : []

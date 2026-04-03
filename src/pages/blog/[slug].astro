@@ -5,6 +5,7 @@ import RelatedPosts from '@/components/RelatedPosts'
 import { getPostBySlug } from '@/utils/sanity.queries'
 import { formatDate, getPostImageUrl, getPostImageSrcSet } from '@/lib/sanity/helpers'
 import { createArticleSchema, createBreadcrumbSchema } from '@/lib/sanity/schema'
+import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 import { SITE_DOMAIN } from '@/utils/meta'
 
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
@@ -26,7 +27,9 @@ const imageUrl = getPostImageUrl(post, 1200, 630)
 const heroSrcSet = getPostImageSrcSet(post, [640, 768, 1024, 1280, 1600])
 const canonicalUrl = `${SITE_DOMAIN}/blog/${slug}`
 
-const articleSchema = createArticleSchema(post)
+const defaultImageUrl = await getDefaultProfileOgUrl()
+
+const articleSchema = createArticleSchema(post, defaultImageUrl)
 const breadcrumbSchema = createBreadcrumbSchema([
   { name: 'Home', url: SITE_DOMAIN },
   { name: 'Blog', url: `${SITE_DOMAIN}/blog` },
