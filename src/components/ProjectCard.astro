@@ -26,7 +26,7 @@ const srcSet = getProjectImageSrcSet(
         src={imageUrl}
         srcset={srcSet || undefined}
         sizes={featured ? '(min-width: 1024px) 33vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'}
-        alt={project.title}
+        alt={project.image?.alt || project.title}
         loading="lazy"
         decoding="async"
         width={width}
@@ -48,13 +48,15 @@ const srcSet = getProjectImageSrcSet(
         {project.description}
       </p>
 
-      <div class="flex flex-wrap gap-2">
-        {project.technologies.map((tech) => (
-          <span class="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
-            {tech}
-          </span>
-        ))}
-      </div>
+      {project.technologies?.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {project.technologies.map((tech) => (
+            <span class="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
+              {tech}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
 
     <div class="flex gap-3 px-6 pb-6 mt-auto">
@@ -63,6 +65,7 @@ const srcSet = getProjectImageSrcSet(
           href={project.url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`Visit ${project.title} (opens in new tab)`}
           class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Visit Project
@@ -73,6 +76,7 @@ const srcSet = getProjectImageSrcSet(
           href={project.github}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`View ${project.title} on GitHub (opens in new tab)`}
           class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary"
         >
           GitHub
