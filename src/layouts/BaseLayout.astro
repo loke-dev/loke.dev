@@ -36,6 +36,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
       publishedTime={publishedTime}
       keywords={keywords}
     />
+    <slot name="head" />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
@@ -49,8 +50,6 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
       async
       defer
     ></script>
-    <ClientRouter />
-
     <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@graph': [
@@ -70,6 +69,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
         },
       ],
     })} />
+    <ClientRouter />
   </head>
   <body class="min-h-screen bg-background text-foreground">
     <Header />

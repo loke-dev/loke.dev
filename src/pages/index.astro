@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets'
+import { Picture, getImage } from 'astro:assets'
 import profileImage from '@/assets/loke-clay.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogPostCard from '@/components/BlogPostCard.astro'
@@ -16,6 +16,21 @@ const latestPosts = allPosts.slice(0, 3)
 
 const heroTitleParts = page.heroTitle.split('.')
 const hasAccentDot = heroTitleParts.length === 2
+
+const heroLcpSizes = '(min-width: 640px) 256px, 192px'
+const heroLcpWidths = [192, 256, 384, 512] as const
+const heroLcpAvif = await Promise.all(
+  heroLcpWidths.map((w) =>
+    getImage({
+      src: profileImage,
+      width: w,
+      height: w,
+      format: 'avif',
+      quality: 85,
+    })
+  )
+)
+const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidths[i]}w`).join(', ')
 ---
 
 <BaseLayout
@@ -23,6 +38,14 @@ const hasAccentDot = heroTitleParts.length === 2
   description={page.heroDescription ?? 'Full-stack web developer.'}
   url={SITE_DOMAIN}
 >
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    imagesrcset={heroLcpAvifSrcset}
+    imagesizes={heroLcpSizes}
+    fetchpriority="high"
+  />
   <div class="flex flex-col items-center">
     <!-- Hero -->
     <section class="w-full max-w-6xl px-4 py-20 md:py-32">
@@ -64,7 +87,7 @@ const hasAccentDot = heroTitleParts.length === 2
                   alt="Profile avatar"
                   formats={['avif', 'webp']}
                   widths={[192, 256, 384, 512]}
-                  sizes="(min-width: 640px) 256px, 192px"
+                  sizes={heroLcpSizes}
                   fetchpriority="high"
                   loading="eager"
                   decoding="async"
