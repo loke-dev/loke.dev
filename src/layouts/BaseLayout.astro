@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions'
+import { ClientRouter } from 'astro:transitions'
 import Header from '@/components/Header.astro'
 import Footer from '@/components/Footer.astro'
 import Seo from '@/components/Seo.astro'
@@ -50,7 +50,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
       async
       defer
     ></script>
-    <ViewTransitions />
+    <ClientRouter />
 
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
