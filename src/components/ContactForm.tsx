@@ -28,16 +28,17 @@ export default function ContactForm() {
   const [state, setState] = useState<FormState>({ status: 'idle' })
   const [captchaToken, setCaptchaToken] = useState('')
   const turnstileRef = useRef<HTMLDivElement>(null)
-
-  const siteKey =
-    (document.getElementById('env-data') as HTMLElement | null)?.dataset
-      .turnstileKey ?? '1x00000000000000000000AA'
+  const widgetIdRef = useRef<string | undefined>(undefined)
 
   useEffect(() => {
+    const siteKey =
+      (document.getElementById('env-data') as HTMLElement | null)?.dataset
+        .turnstileKey ?? '1x00000000000000000000AA'
+
     const mountWidget = () => {
       const win = window as TurnstileWindow
       if (win.turnstile && turnstileRef.current) {
-        win.turnstile.render(turnstileRef.current, {
+        widgetIdRef.current = win.turnstile.render(turnstileRef.current, {
           sitekey: siteKey,
           callback: (token: string) => setCaptchaToken(token),
           'expired-callback': () => setCaptchaToken(''),
@@ -57,7 +58,7 @@ export default function ContactForm() {
     return () => {
       window.removeEventListener('load', mountWidget)
     }
-  }, [siteKey])
+  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -109,9 +110,17 @@ export default function ContactForm() {
           status: 'error',
           message: body.error ?? 'Failed to send. Please try again.',
         })
+        if (widgetIdRef.current) {
+          ;(window as TurnstileWindow).turnstile?.reset(widgetIdRef.current)
+        }
+        setCaptchaToken('')
       }
     } catch {
       setState({ status: 'error', message: 'Network error. Please try again.' })
+      if (widgetIdRef.current) {
+        ;(window as TurnstileWindow).turnstile?.reset(widgetIdRef.current)
+      }
+      setCaptchaToken('')
     }
   }
 
