@@ -14,7 +14,7 @@ export default function MobileMenu({ navLinks }: { navLinks: NavLink[] }) {
     if (!dialog) return
     if (open) {
       dialog.showModal()
-    } else {
+    } else if (dialog.open) {
       dialog.close()
     }
   }, [open])
@@ -27,29 +27,25 @@ export default function MobileMenu({ navLinks }: { navLinks: NavLink[] }) {
     return () => dialog.removeEventListener('close', handleClose)
   }, [])
 
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    const handleClick = (e: MouseEvent) => {
-      const rect = dialog.getBoundingClientRect()
-      if (
-        e.clientX < rect.left ||
-        e.clientX > rect.right ||
-        e.clientY < rect.top ||
-        e.clientY > rect.bottom
-      ) {
-        setOpen(false)
-      }
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+    if (e.target === dialogRef.current) {
+      setOpen(false)
     }
-    dialog.addEventListener('click', handleClick)
-    return () => dialog.removeEventListener('click', handleClick)
-  }, [])
+  }
+
+  const handleBackdropKeyDown = (e: React.KeyboardEvent<HTMLDialogElement>) => {
+    if (e.key === 'Escape') {
+      setOpen(false)
+    }
+  }
 
   return (
     <div className="md:hidden">
       <button
         onClick={() => setOpen(true)}
         aria-label="Open navigation menu"
+        aria-expanded={open}
+        aria-controls="mobile-nav-dialog"
         className="p-2 text-muted-foreground hover:text-foreground"
       >
         <svg
@@ -69,8 +65,14 @@ export default function MobileMenu({ navLinks }: { navLinks: NavLink[] }) {
         </svg>
       </button>
 
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <dialog
         ref={dialogRef}
+        id="mobile-nav-dialog"
+        onClick={handleBackdropClick}
+        onKeyDown={handleBackdropKeyDown}
+        aria-modal="true"
+        aria-label="Navigation menu"
         className="mobile-menu-dialog fixed inset-0 m-0 h-full w-3/4 max-w-sm ml-auto bg-background border-l p-6 shadow-lg"
       >
         <button

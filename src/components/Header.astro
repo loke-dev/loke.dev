@@ -26,6 +26,6 @@ const navLinks = [
       ))}
     </nav>
 
-    <MobileMenu navLinks={navLinks} client:load />
+    <MobileMenu navLinks={navLinks} client:media="(max-width: 767px)" />
   </div>
 </header>
