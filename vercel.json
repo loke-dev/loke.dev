@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/studio/:path*",
-      "destination": "https://loke-dev.sanity.studio/:path*"
+      "destination": "https://loke-dev.sanity.studio/studio/:path*"
     }
   ]
 }

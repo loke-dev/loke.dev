@@ -23,5 +23,13 @@ export default defineConfig({
   vite: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plugins: [tailwindcss() as any],
+    server: {
+      proxy: {
+        '/studio': {
+          target: 'http://127.0.0.1:3333',
+          changeOrigin: true,
+        },
+      },
+    },
   },
 })
