@@ -1,3 +1,4 @@
+/** @jsxImportSource solid-js */
 import { createSignal, onMount, Show } from 'solid-js'
 import { z } from 'zod'
 
