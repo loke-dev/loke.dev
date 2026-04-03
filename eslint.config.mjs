@@ -17,11 +17,8 @@ export default [
       "dist/**",
       "coverage/**",
       "public/**",
-      "sanity/**",
       "studio/**",
       "scripts/**",
-      "sanity.cli.ts",
-      "sanity.config.ts",
       "!**/.server",
       "!**/.client"
     ]
