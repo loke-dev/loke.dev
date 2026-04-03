@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useClient } from 'sanity'
 import styled from 'styled-components'
+import { appApiUrl } from '../lib/appSiteOrigin'
 
 const Container = styled.div`
   padding: 2rem;
@@ -635,14 +636,11 @@ export function Dashboard() {
     })
 
     try {
-      const response = await fetch(
-        window.location.origin + '/api/seshat/trigger',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topicId }),
-        }
-      )
+      const response = await fetch(appApiUrl('/api/seshat/trigger'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topicId }),
+      })
 
       const data = await response.json()
 

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { type DocumentActionComponent } from 'sanity'
+import { appApiUrl } from '../lib/appSiteOrigin'
 
 export const SyncSchedulesAction: DocumentActionComponent = () => {
   const [isSyncing, setIsSyncing] = useState(false)
@@ -13,7 +14,7 @@ export const SyncSchedulesAction: DocumentActionComponent = () => {
     setSuccess(null)
 
     try {
-      const response = await fetch('/api/seshat/schedule-sync', {
+      const response = await fetch(appApiUrl('/api/seshat/schedule-sync'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

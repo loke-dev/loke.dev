@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { type DocumentActionComponent, type DocumentActionProps } from 'sanity'
+import { appApiUrl } from '../lib/appSiteOrigin'
 
 export const GenerateContentAction: DocumentActionComponent = (
   props: DocumentActionProps
@@ -14,7 +15,7 @@ export const GenerateContentAction: DocumentActionComponent = (
     setError(null)
 
     try {
-      const response = await fetch('/api/seshat/trigger', {
+      const response = await fetch(appApiUrl('/api/seshat/trigger'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
