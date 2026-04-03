@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
-
-const DOMAIN = 'https://loke.dev'
 
 export const GET: APIRoute = async () => {
   const posts = await getAllPublishedPosts()
@@ -12,7 +12,7 @@ export const GET: APIRoute = async () => {
   const allUrls = [...staticUrls, ...postUrls]
 
   const urlset = allUrls
-    .map((url) => `  <url><loc>${DOMAIN}${url}</loc></url>`)
+    .map((url) => `  <url><loc>${SITE_DOMAIN}${url}</loc></url>`)
     .join('\n')
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -23,7 +23,7 @@ ${urlset}
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, s-maxage=3600',
+      'Cache-Control': CACHE_CONTROL.xmlFeed,
     },
   })
 }

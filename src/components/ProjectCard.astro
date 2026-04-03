@@ -1,6 +1,6 @@
 ---
 import type { Project } from '@/lib/sanity/types'
-import { getProjectImageUrl, getProjectImageSrcSet } from '@/lib/sanity/helpers'
+import { getSanityImageUrl, getSanityImageSrcSet } from '@/lib/sanity/helpers'
 
 interface Props {
   project: Project
@@ -12,10 +12,11 @@ const { project, featured = false } = Astro.props
 const width = featured ? 800 : 500
 const height = featured ? 450 : 375
 const listQuality = 72
-const imageUrl = getProjectImageUrl(project, width, height, listQuality)
-const srcSet = getProjectImageSrcSet(
-  project,
-  [Math.round(width / 2), width, Math.round(width * 1.5)],
+const srcWidths = [Math.round(width / 2), width, Math.round(width * 1.5)]
+const imageUrl = getSanityImageUrl(project.image, width, height, listQuality)
+const srcSet = getSanityImageSrcSet(
+  project.image,
+  srcWidths,
   height,
   listQuality,
   width

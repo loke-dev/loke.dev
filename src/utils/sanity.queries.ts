@@ -68,7 +68,6 @@ export async function getPaginatedPosts(
   }
 }
 
-// Keep for backward compatibility (e.g., RSS feed, sitemap)
 export async function getAllPublishedPosts(): Promise<PostListItem[]> {
   return client.fetch<PostListItem[]>(POST_LIST_QUERY)
 }
@@ -99,7 +98,6 @@ export async function getRelatedPosts(
   })
 }
 
-// Page singleton queries
 export async function getHomePage(): Promise<HomePage> {
   return client.fetch<HomePage>(HOME_PAGE_QUERY)
 }

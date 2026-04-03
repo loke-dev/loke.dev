@@ -1,7 +1,5 @@
-// Backward-compatible tags projection: prefer new tags[] array, fall back to legacy tag string
 const TAGS_PROJECTION = `"tags": select(defined(tags) && count(tags) > 0 => tags, defined(tag) => [tag], [])`
 
-// Lightweight query for list views (no body content)
 export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) {
   _id,
   title,
@@ -14,7 +12,6 @@ export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))
   imageAlt
 }`
 
-// Paginated query for blog index
 export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) [$start...$end] {
   _id,
   title,
@@ -27,7 +24,6 @@ export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.
   imageAlt
 }`
 
-// Count query for pagination metadata
 export const POST_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**"))])`
 
 export const POST_BY_SLUG_QUERY = `*[_type == "post" && slug.current == $slug][0] {
@@ -104,7 +100,6 @@ export const PROJECT_SLUGS_QUERY = `*[_type == "project"] {
   slug
 }`
 
-// Page singleton queries
 export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0] {
   heroTitle,
   heroDescription,

@@ -4,9 +4,10 @@ import profileImage from '@/assets/loke-clay.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PortableText from '@/components/PortableText.astro'
 import { getAboutPage } from '@/utils/sanity.queries'
+import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600')
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 const page = await getAboutPage()
 

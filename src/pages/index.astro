@@ -4,9 +4,10 @@ import profileImage from '@/assets/loke-clay.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogPostCard from '@/components/BlogPostCard.astro'
 import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
+import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600')
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.home)
 
 const [allPosts, page] = await Promise.all([
   getAllPublishedPosts(),
@@ -47,7 +48,6 @@ const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidth
     fetchpriority="high"
   />
   <div class="flex flex-col items-center">
-    <!-- Hero -->
     <section class="w-full max-w-6xl px-4 py-20 md:py-32">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div class="space-y-6">
@@ -103,7 +103,6 @@ const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidth
       </div>
     </section>
 
-    <!-- Technologies -->
     <section class="w-full bg-muted/50 py-16">
       <div class="container px-4 mx-auto">
         <h2 class="text-3xl font-bold text-center mb-12">
@@ -119,7 +118,6 @@ const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidth
       </div>
     </section>
 
-    <!-- Recent Blog Posts -->
     <section class="w-full max-w-6xl px-4 py-20" id="blog">
       <div class="flex flex-col items-center mb-12">
         <h2 class="text-3xl font-bold mb-4 text-center">
@@ -161,7 +159,6 @@ const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidth
       </div>
     </section>
 
-    <!-- CTA -->
     <section class="w-full bg-primary/10 py-16">
       <div class="container px-4 mx-auto max-w-3xl">
         <h2 class="text-2xl font-bold mb-4">{page.ctaTitle}</h2>

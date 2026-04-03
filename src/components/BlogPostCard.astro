@@ -1,6 +1,6 @@
 ---
 import type { PostListItem } from '@/lib/sanity/types'
-import { formatDate, getPostImageUrl, getPostImageSrcSet } from '@/lib/sanity/helpers'
+import { formatDate, getSanityImageUrl, getSanityImageSrcSet } from '@/lib/sanity/helpers'
 
 interface Props {
   post: PostListItem
@@ -11,10 +11,11 @@ interface Props {
 const { post, imageWidth = 600, imageHeight = 338 } = Astro.props
 
 const listQuality = 72
-const imageUrl = getPostImageUrl(post, imageWidth, imageHeight, listQuality)
-const srcSet = getPostImageSrcSet(
-  post,
-  [Math.round(imageWidth / 2), imageWidth, Math.round(imageWidth * 1.5)],
+const srcWidths = [Math.round(imageWidth / 2), imageWidth, Math.round(imageWidth * 1.5)]
+const imageUrl = getSanityImageUrl(post.image, imageWidth, imageHeight, listQuality)
+const srcSet = getSanityImageSrcSet(
+  post.image,
+  srcWidths,
   imageHeight,
   listQuality,
   imageWidth

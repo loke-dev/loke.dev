@@ -4,10 +4,11 @@ import ProjectCard from '@/components/ProjectCard.astro'
 import { client } from '@/lib/sanity/client'
 import { PROJECTS_QUERY } from '@/lib/sanity/queries'
 import { getProjectsPage } from '@/utils/sanity.queries'
+import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 import type { Project } from '@/lib/sanity/types'
 
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600')
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 const [projects, page] = await Promise.all([
   client.fetch<Project[]>(PROJECTS_QUERY),

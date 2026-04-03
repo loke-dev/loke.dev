@@ -15,7 +15,6 @@ interface RateLimitEntry {
   resetTime: number
 }
 
-// TODO: replace with persistent store (Redis/KV) once available
 const rateLimitMap = new Map<string, RateLimitEntry>()
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000
 const MAX_ATTEMPTS = 3

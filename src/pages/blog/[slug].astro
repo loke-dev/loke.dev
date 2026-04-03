@@ -3,12 +3,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import PortableText from '@/components/PortableText.astro'
 import RelatedPosts from '@/components/RelatedPosts.astro'
 import { getPostBySlug, getRelatedPosts } from '@/utils/sanity.queries'
-import { formatDate, getPostImageUrl, getPostImageSrcSet } from '@/lib/sanity/helpers'
+import { formatDate, getSanityImageUrl, getSanityImageSrcSet } from '@/lib/sanity/helpers'
 import { createArticleSchema, createBreadcrumbSchema } from '@/lib/sanity/schema'
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
+import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogPost)
 
 const { slug } = Astro.params
 
@@ -24,8 +25,8 @@ if (!post) {
 
 const tags = post.tags ?? []
 const relatedPosts = await getRelatedPosts(post._id, tags, 3)
-const imageUrl = getPostImageUrl(post, 1200, 630)
-const heroSrcSet = getPostImageSrcSet(post, [640, 768, 1024, 1280, 1600])
+const imageUrl = getSanityImageUrl(post.image, 1200, 630)
+const heroSrcSet = getSanityImageSrcSet(post.image, [640, 768, 1024, 1280, 1600])
 const canonicalUrl = `${SITE_DOMAIN}/blog/${slug}`
 
 const defaultImageUrl = await getDefaultProfileOgUrl()

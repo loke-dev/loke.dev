@@ -2,9 +2,10 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ContactForm from '@/components/ContactForm'
 import { getContactPage } from '@/utils/sanity.queries'
+import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.contact)
 
 const page = await getContactPage()
 ---

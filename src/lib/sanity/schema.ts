@@ -1,9 +1,9 @@
 import { AUTHOR_NAME, SITE_DOMAIN } from '@/utils/meta'
-import { getPostImageUrl } from './helpers'
+import { getSanityImageUrl } from './helpers'
 import type { Post, Project } from './types'
 
 export function createArticleSchema(post: Post, fallbackImageUrl: string) {
-  const imageUrl = getPostImageUrl(post, 1200, 630) || fallbackImageUrl
+  const imageUrl = getSanityImageUrl(post.image, 1200, 630) || fallbackImageUrl
 
   return {
     '@context': 'https://schema.org',
