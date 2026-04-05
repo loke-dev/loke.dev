@@ -1,6 +1,31 @@
 import { Client } from '@upstash/qstash'
 import type { APIRoute } from 'astro'
 
+const SANITY_HOSTED_STUDIO_ORIGINS = new Set(['sanity.io', 'www.sanity.io'])
+
+function resolveAppOrigin(requestUrl: string): string {
+  const requestOrigin = new URL(requestUrl).origin
+  const configured = process.env.APP_URL
+
+  if (!configured) return requestOrigin
+
+  try {
+    const parsed = new URL(configured)
+    if (
+      (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') ||
+      parsed.hostname.endsWith('.sanity.studio') ||
+      parsed.hostname.endsWith('.sanity.io') ||
+      SANITY_HOSTED_STUDIO_ORIGINS.has(parsed.hostname)
+    ) {
+      return requestOrigin
+    }
+
+    return parsed.origin
+  } catch {
+    return requestOrigin
+  }
+}
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json()
@@ -9,18 +34,14 @@ export const POST: APIRoute = async ({ request }) => {
     if (!topicId || typeof topicId !== 'string') {
       return Response.json({ error: 'topicId is required' }, { status: 400 })
     }
-
-    const appUrl = process.env.APP_URL
-
-    if (!appUrl) {
+    const qstashToken = process.env.QSTASH_TOKEN
+    if (!qstashToken) {
       const writeUrl = new URL('/api/seshat/write', request.url).toString()
-
       const writeResponse = await fetch(writeUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topicId }),
       })
-
       if (!writeResponse.ok) {
         const errorData = await writeResponse.json().catch(() => ({}))
         const details = errorData.details
@@ -31,23 +52,14 @@ export const POST: APIRoute = async ({ request }) => {
           { status: writeResponse.status }
         )
       }
-
       return Response.json({
         success: true,
         message: 'Content generation completed',
       })
     }
 
-    const qstashToken = process.env.QSTASH_TOKEN
-
-    if (!qstashToken) {
-      return Response.json(
-        { error: 'QSTASH_TOKEN environment variable is not set' },
-        { status: 500 }
-      )
-    }
-
-    const workerUrl = `${appUrl}/api/seshat/worker`
+    const appOrigin = resolveAppOrigin(request.url)
+    const workerUrl = `${appOrigin}/api/seshat/worker`
 
     const qstash = new Client({ token: qstashToken })
 

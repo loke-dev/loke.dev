@@ -483,6 +483,9 @@ export function Dashboard() {
 
   const [topics, setTopics] = useState<ContentTopic[]>([])
   const [generatingId, setGeneratingId] = useState<string | null>(null)
+  const [generationStartedAt, setGenerationStartedAt] = useState<number | null>(
+    null
+  )
   const [topicStatus, setTopicStatus] = useState<{
     id: string
     type: 'success' | 'error' | 'info'
@@ -607,6 +610,7 @@ export function Dashboard() {
 
       if (updated.generationStatus === 'done') {
         setGeneratingId(null)
+        setGenerationStartedAt(null)
         setTopicStatus({
           id: updated._id,
           type: 'success',
@@ -615,20 +619,35 @@ export function Dashboard() {
         setTimeout(() => setTopicStatus(null), 5000)
       } else if (updated.generationStatus === 'error') {
         setGeneratingId(null)
+        setGenerationStartedAt(null)
         setTopicStatus({
           id: updated._id,
           type: 'error',
           message: updated.lastError || 'Generation failed',
         })
         setTimeout(() => setTopicStatus(null), 10000)
+      } else if (
+        updated.generationStatus === 'idle' &&
+        generationStartedAt &&
+        Date.now() - generationStartedAt > 30000
+      ) {
+        setGeneratingId(null)
+        setGenerationStartedAt(null)
+        setTopicStatus({
+          id: updated._id,
+          type: 'error',
+          message: 'Generation did not start from queue. Please retry.',
+        })
+        setTimeout(() => setTopicStatus(null), 10000)
       }
     }, 3000)
 
     return () => clearInterval(interval)
-  }, [generatingId, client])
+  }, [generatingId, generationStartedAt, client])
 
   const handleGenerate = async (topicId: string) => {
     setGeneratingId(topicId)
+    setGenerationStartedAt(Date.now())
     setTopicStatus({
       id: topicId,
       type: 'info',
@@ -646,6 +665,7 @@ export function Dashboard() {
 
       if (!response.ok) {
         setGeneratingId(null)
+        setGenerationStartedAt(null)
         setTopicStatus({
           id: topicId,
           type: 'error',
@@ -656,6 +676,7 @@ export function Dashboard() {
       // On success the poller above picks up status from Sanity
     } catch {
       setGeneratingId(null)
+      setGenerationStartedAt(null)
       setTopicStatus({
         id: topicId,
         type: 'error',

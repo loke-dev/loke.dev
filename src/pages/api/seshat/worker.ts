@@ -3,11 +3,23 @@ import type { APIRoute } from 'astro'
 import { generate } from '@/lib/content-generation'
 import { dataset, projectId } from '@/lib/sanity/projectDetails'
 
-export const POST: APIRoute = async ({ request }) => {
-  const qstashToken = process.env.QSTASH_CURRENT_SIGNING_KEY
-  const qstashSigningKey = process.env.QSTASH_NEXT_SIGNING_KEY
+function normalizeSecret(value: string | undefined) {
+  if (!value) return undefined
+  const normalized = value.trim().replace(/^['"]|['"]$/g, '')
+  return normalized || undefined
+}
 
-  if (!qstashToken || !qstashSigningKey) {
+export const POST: APIRoute = async ({ request }) => {
+  const currentSigningKey = normalizeSecret(
+    process.env.QSTASH_CURRENT_SIGNING_KEY
+  )
+  const nextSigningKey = normalizeSecret(process.env.QSTASH_NEXT_SIGNING_KEY)
+
+  if (
+    !currentSigningKey &&
+    !nextSigningKey &&
+    !process.env.QSTASH_REGION?.trim()
+  ) {
     return Response.json(
       { error: 'QStash configuration missing' },
       { status: 500 }
@@ -15,8 +27,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const receiver = new Receiver({
-    currentSigningKey: qstashToken,
-    nextSigningKey: qstashSigningKey,
+    currentSigningKey,
+    nextSigningKey,
   })
 
   const signature = request.headers.get('upstash-signature')
@@ -25,11 +37,23 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const body = await request.text()
+  const upstashRegion = request.headers.get('upstash-region')
 
   try {
-    await receiver.verify({ signature, body })
+    await receiver.verify({
+      signature,
+      body,
+      upstashRegion: upstashRegion ?? undefined,
+    })
   } catch (error) {
     console.error('QStash signature verification failed:', error)
+    const message = error instanceof Error ? error.message : ''
+    if (message.includes('No signing keys available')) {
+      return Response.json(
+        { error: 'QStash signing keys are not configured correctly' },
+        { status: 500 }
+      )
+    }
     return Response.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
