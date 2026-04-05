@@ -1,6 +1,14 @@
 function withoutTrailingSlash(url: string) {
   return url.replace(/\/$/, '')
 }
+function isSanityHostedStudioHost(hostname: string) {
+  return (
+    hostname.endsWith('.sanity.studio') ||
+    hostname === 'sanity.io' ||
+    hostname === 'www.sanity.io' ||
+    hostname.endsWith('.sanity.io')
+  )
+}
 
 export function getAppSiteOrigin(): string {
   const fromEnv = process.env.SANITY_STUDIO_APP_SITE_URL
@@ -19,7 +27,7 @@ export function getAppSiteOrigin(): string {
     return withoutTrailingSlash(origin)
   }
 
-  if (hostname.endsWith('.sanity.studio')) {
+  if (isSanityHostedStudioHost(hostname)) {
     return 'https://loke.dev'
   }
 
