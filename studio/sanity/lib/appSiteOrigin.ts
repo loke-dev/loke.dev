@@ -1,6 +1,8 @@
 function withoutTrailingSlash(url: string) {
   return url.replace(/\/$/, '')
 }
+
+const DEFAULT_APP_SITE_ORIGIN = 'https://loke.dev'
 function isSanityHostedStudioHost(hostname: string) {
   return (
     hostname.endsWith('.sanity.studio') ||
@@ -9,13 +11,30 @@ function isSanityHostedStudioHost(hostname: string) {
     hostname.endsWith('.sanity.io')
   )
 }
+function resolveConfiguredAppOrigin(value: string): string | null {
+  try {
+    const parsed = new URL(value)
+    if (
+      (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') ||
+      isSanityHostedStudioHost(parsed.hostname)
+    ) {
+      return null
+    }
+    return withoutTrailingSlash(parsed.origin)
+  } catch {
+    return null
+  }
+}
 
 export function getAppSiteOrigin(): string {
   const fromEnv = process.env.SANITY_STUDIO_APP_SITE_URL
-  if (fromEnv) return withoutTrailingSlash(fromEnv)
+  if (fromEnv) {
+    const resolvedFromEnv = resolveConfiguredAppOrigin(fromEnv)
+    if (resolvedFromEnv) return resolvedFromEnv
+  }
 
   if (typeof window === 'undefined') {
-    return 'https://loke.dev'
+    return DEFAULT_APP_SITE_ORIGIN
   }
 
   const { origin, hostname, port, protocol } = window.location
@@ -28,7 +47,7 @@ export function getAppSiteOrigin(): string {
   }
 
   if (isSanityHostedStudioHost(hostname)) {
-    return 'https://loke.dev'
+    return DEFAULT_APP_SITE_ORIGIN
   }
 
   return withoutTrailingSlash(origin)
