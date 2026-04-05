@@ -27,6 +27,7 @@ const updatedDisplay = getPostUpdatedDisplay(post)
 <article class="surface-interactive group flex h-full flex-col overflow-hidden rounded-lg border transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/35 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
   <a
     href={`/blog/${post.slug.current}`}
+    data-astro-prefetch="hover"
     class="flex h-full flex-col"
     aria-labelledby={`post-title-${post.slug.current}`}
   >

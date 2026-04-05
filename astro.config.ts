@@ -3,6 +3,8 @@ import vercel from '@astrojs/vercel'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 
+const isrBypassToken = process.env.VERCEL_ISR_BYPASS_TOKEN
+
 export default defineConfig({
   site: 'https://loke.dev',
   output: 'server',
@@ -11,6 +13,11 @@ export default defineConfig({
   },
   adapter: vercel({
     webAnalytics: { enabled: true },
+    isr: {
+      ...(isrBypassToken ? { bypassToken: isrBypassToken } : {}),
+      // ISR cache keys ignore search params, so keep /blog (uses ?page=) out of ISR.
+      exclude: [/^\/blog\/?$/, /^\/api\/.+/],
+    },
     imageService: true,
     imagesConfig: {
       sizes: [

@@ -18,6 +18,7 @@ const { prev, next } = Astro.props
       {prev ? (
         <a
           href={`/blog/${prev.slug.current}`}
+          data-astro-prefetch="hover"
           class="surface-adjacent group flex flex-col rounded-xl border border-border bg-card/80 p-5 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:shadow-[0_20px_48px_-24px_oklch(72%_0.18_70/0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <span class="text-xs font-medium uppercase tracking-wider text-accent">
@@ -33,6 +34,7 @@ const { prev, next } = Astro.props
       {next ? (
         <a
           href={`/blog/${next.slug.current}`}
+          data-astro-prefetch="hover"
           class="surface-adjacent group flex flex-col rounded-xl border border-border bg-card/80 p-5 text-right transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:shadow-[0_20px_48px_-24px_oklch(72%_0.18_70/0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:col-start-2"
         >
           <span class="text-xs font-medium uppercase tracking-wider text-accent">

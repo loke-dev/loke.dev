@@ -35,9 +35,9 @@ function mergeSeshatCors(response: Response, origin: string | null) {
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context
   const pathname = url.pathname
-  const origin = request.headers.get('Origin')
 
   if (pathname.startsWith(SESHAT_PREFIX) && request.method === 'OPTIONS') {
+    const origin = request.headers.get('Origin')
     if (!origin || !SESHAT_ALLOWED_ORIGINS.has(origin)) {
       return new Response(null, { status: 403 })
     }
@@ -50,6 +50,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next()
 
   if (pathname.startsWith(SESHAT_PREFIX)) {
+    const origin = request.headers.get('Origin')
     mergeSeshatCors(response, origin)
   }
 
