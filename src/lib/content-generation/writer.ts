@@ -1,4 +1,4 @@
-import { getGenAI, pickOne, PRO_MODEL } from './gemini'
+import { FLASH_MODEL, getGenAI, pickOne } from './gemini'
 import type { ResearchResult } from './researcher'
 import type { ContentPlan } from './seo-planner'
 
@@ -97,7 +97,7 @@ ${research.popularQuestions.map((q) => `- ${q}`).join('\n')}
 Write the full article now. Make it the kind of post a developer bookmarks because it's actually useful, not just comprehensive.`
 
   const response = await ai.models.generateContent({
-    model: PRO_MODEL,
+    model: FLASH_MODEL,
     contents: prompt,
     config: { temperature: 1.0 },
   })
