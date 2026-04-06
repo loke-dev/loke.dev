@@ -636,7 +636,7 @@ export function Dashboard() {
         setTopicStatus({
           id: updated._id,
           type: 'error',
-          message: 'Generation did not start from queue. Please retry.',
+          message: 'Generation did not start. Please retry.',
         })
         setTimeout(() => setTopicStatus(null), 10000)
       }

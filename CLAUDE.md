@@ -74,9 +74,7 @@ src/
 │       ├── contact.ts
 │       └── seshat/
 │           ├── write.ts
-│           ├── trigger.ts
-│           ├── schedule-sync.ts
-│           └── worker.ts
+│           └── trigger.ts
 ├── styles/
 │   └── global.css           # Tailwind v4 + CSS custom properties
 └── utils/

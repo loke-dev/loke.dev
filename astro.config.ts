@@ -13,6 +13,7 @@ export default defineConfig({
   },
   adapter: vercel({
     webAnalytics: { enabled: true },
+    maxDuration: 300,
     isr: {
       ...(isrBypassToken ? { bypassToken: isrBypassToken } : {}),
       // ISR cache keys ignore search params, so keep /blog (uses ?page=) out of ISR.

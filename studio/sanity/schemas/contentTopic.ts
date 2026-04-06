@@ -133,8 +133,7 @@ export default defineType({
       title: 'Schedule (Cron Expression)',
       type: 'string',
       description:
-        'Cron expression for QStash scheduled generation. E.g. "0 9 * * 1" = every Monday at 9 AM UTC',
-      validation: (Rule) => Rule.required(),
+        'Cron expression for optional automated generation. E.g. \"0 9 * * 1\" = every Monday at 9 AM UTC',
       initialValue: '0 9 * * *',
     }),
 
