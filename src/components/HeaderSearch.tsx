@@ -1,4 +1,3 @@
-/** @jsxImportSource solid-js */
 import { createSignal, onCleanup, onMount, Show } from 'solid-js'
 import { formatDate } from '@/utils/format-date'
 import type { SearchPayload } from '@/lib/sanity/search-types'
