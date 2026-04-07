@@ -18,53 +18,73 @@ type PortableTextBlock = {
 }
 
 function createTextBlock(text: string, style: string): PortableTextBlock {
+  const { children, markDefs } = parseInlineFormatting(text)
   return {
     _key: generateKey(),
     _type: 'block',
     style,
-    children: parseInlineFormatting(text),
-    markDefs: [],
+    children,
+    markDefs,
   }
 }
 
-function parseInlineFormatting(text: string): PortableTextSpan[] {
-  const parts = text.split(/(\*\*.*?\*\*|__.*?__|`.*?`|\[.*?\]\(.*?\))/g)
+function parseInlineFormatting(text: string): {
+  children: PortableTextSpan[]
+  markDefs: unknown[]
+} {
+  const parts = text.split(/(\s*\*\*.*?\*\*|__.*?__|`.*?`|\s*\[.*?\]\(.*?\))/g)
   const children: PortableTextSpan[] = []
+  const markDefs: unknown[] = []
 
   for (const part of parts) {
     if (!part) continue
 
-    if (part.startsWith('**') && part.endsWith('**')) {
+    const linkMatch = part.match(/^\s*\[(.*?)\]\((.*?)\)\s*$/)
+    if (linkMatch) {
+      const linkKey = generateKey()
+      const href = linkMatch[2]
+      const blank = /^https?:\/\//i.test(href)
+      markDefs.push({
+        _type: 'link',
+        _key: linkKey,
+        href,
+        ...(blank ? { blank: true } : {}),
+      })
       children.push({
         _key: generateKey(),
         _type: 'span',
-        text: part.slice(2, -2),
+        text: linkMatch[1],
+        marks: [linkKey],
+      })
+      continue
+    }
+
+    const trimmed = part.replace(/^\s+/, '')
+    if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+      children.push({
+        _key: generateKey(),
+        _type: 'span',
+        text: trimmed.slice(2, -2),
         marks: ['strong'],
       })
-    } else if (part.startsWith('__') && part.endsWith('__')) {
+    } else if (trimmed.startsWith('__') && trimmed.endsWith('__')) {
       children.push({
         _key: generateKey(),
         _type: 'span',
-        text: part.slice(2, -2),
+        text: trimmed.slice(2, -2),
         marks: ['strong'],
       })
-    } else if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
+    } else if (
+      trimmed.startsWith('`') &&
+      trimmed.endsWith('`') &&
+      trimmed.length > 2
+    ) {
       children.push({
         _key: generateKey(),
         _type: 'span',
-        text: part.slice(1, -1),
+        text: trimmed.slice(1, -1),
         marks: ['code'],
       })
-    } else if (/\[(.*?)\]\((.*?)\)/.test(part)) {
-      const match = part.match(/\[(.*?)\]\((.*?)\)/)
-      if (match) {
-        children.push({
-          _key: generateKey(),
-          _type: 'span',
-          text: match[1],
-          marks: [],
-        })
-      }
     } else {
       children.push({
         _key: generateKey(),
@@ -75,9 +95,13 @@ function parseInlineFormatting(text: string): PortableTextSpan[] {
     }
   }
 
-  return children.length > 0
-    ? children
-    : [{ _key: generateKey(), _type: 'span', text, marks: [] }]
+  return {
+    children:
+      children.length > 0
+        ? children
+        : [{ _key: generateKey(), _type: 'span', text, marks: [] }],
+    markDefs,
+  }
 }
 
 export function markdownToPortableText(markdown: string): PortableTextBlock[] {

@@ -33,11 +33,13 @@ const { resources } = Astro.props
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
           </svg>
         </span>
-        <h2 class="text-lg font-semibold tracking-tight text-foreground">Resources</h2>
+        <h2 id="resources" class="text-lg font-semibold tracking-tight text-foreground scroll-mt-24">
+        Resources
+      </h2>
       </div>
       <ul class="mt-5 space-y-3">
-        {resources.map((r) => (
-          <li>
+        {resources.map((r, i) => (
+          <li id={`resource-ref-${i + 1}`} class="scroll-mt-24">
             <a
               href={r.url}
               class="group flex items-start gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-background/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
@@ -45,9 +47,11 @@ const { resources } = Astro.props
               rel="noopener noreferrer"
             >
               <span
-                class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent shadow-[0_0_8px_oklch(72%_0.2_70/0.6)]"
+                class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-accent/15 text-xs font-semibold tabular-nums text-accent ring-1 ring-accent/20"
                 aria-hidden="true"
-              />
+              >
+                {i + 1}
+              </span>
               <span class="font-medium text-foreground underline decoration-accent/50 underline-offset-4 transition-all group-hover:decoration-accent group-hover:text-accent">
                 {r.title}
               </span>

@@ -117,6 +117,7 @@ ${sourcesBlock}
 
 **Writing rules:**
 - Sound like a human wrote this after shipping real work: relaxed, curious, a little opinionated, never performatively excited. Educate and entertain without sounding like a keynote or a tutorial brochure.
+- Do not add your own bracket reference numbers after links. The pipeline will append same-page links to the Resources list for URLs that appear there.
 - Never use the em dash character (Unicode U+2014) or spaced en dash as a clause hinge. Prefer commas, periods, colons, parentheses, or split into two sentences. This is mandatory in body text.
 - Do not use semicolons to glue clauses in prose. Use a full stop and a new sentence, or a comma. Keep semicolons only inside code blocks where the language requires them.
 - Small rough edges are fine: occasional fragments, starting with And or But, mild repetition humans use. Do not aim for textbook polish.

@@ -4,6 +4,7 @@ import { generateBlogImage } from './image-gen'
 import { markdownToPortableText } from './portable-text'
 import { researchTopic } from './researcher'
 import { curateResources, mergeResourceLinks } from './resource-curator'
+import { applyResourceRefMarkers } from './resource-reference-markers'
 import {
   createPost,
   fetchTopic,
@@ -73,7 +74,12 @@ export async function generate({
     const curatedExtras = await curateResources(humanized, research)
     const curatedResources = mergeResourceLinks(research, curatedExtras)
 
-    const body = markdownToPortableText(humanized)
+    const withRefs =
+      curatedResources.length > 0
+        ? applyResourceRefMarkers(humanized, curatedResources)
+        : humanized
+
+    const body = markdownToPortableText(withRefs)
 
     await setGenerationStatus(
       topicId,
