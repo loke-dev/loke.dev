@@ -36,6 +36,23 @@ export interface ContentTopic {
   active: boolean
 }
 
+export type TopicScheduleRow = {
+  _id: string
+  cronSchedule: string
+  lastGeneratedAt: string | null
+  generationStatus: string | null
+}
+
+export async function fetchTopicsForScheduler(
+  projectId: string,
+  dataset: string
+): Promise<TopicScheduleRow[]> {
+  const client = getSanityWriteClient(projectId, dataset)
+  return client.fetch(
+    `*[_type == "contentTopic" && active == true && defined(cronSchedule) && cronSchedule != ""] { _id, cronSchedule, lastGeneratedAt, generationStatus }`
+  )
+}
+
 export async function fetchTopic(
   topicId: string,
   projectId: string,
