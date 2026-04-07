@@ -58,9 +58,10 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
       link: ({ children, value }) => {
         const v = value as { href: string; blank?: boolean }
         const href = /^javascript:/i.test(v.href) ? '#' : v.href
+        const safeHref = escapeHtml(href)
         const target = v.blank ? ' target="_blank"' : ''
         const rel = v.blank ? ' rel="noopener noreferrer"' : ''
-        return `<a href="${href}"${target}${rel}>${children}</a>`
+        return `<a href="${safeHref}"${target}${rel}>${children}</a>`
       },
     },
   },

@@ -84,8 +84,8 @@ export async function writeArticle(
 
   const sourcesBlock =
     research.citableSources.length > 0
-      ? `**Sources you may cite with markdown links when they support a claim (use only these URLs, do not invent links):**\n${research.citableSources
-          .slice(0, 12)
+      ? `**Sources for the Resources section** (do not paste these as markdown links in the article; readers get them as a link list after the post; only these URLs, never invent):**\n${research.citableSources
+          .slice(0, 3)
           .map((s) => `- ${s.title}: ${s.url}${s.note ? ` (${s.note})` : ''}`)
           .join('\n')}`
       : ''
@@ -127,11 +127,10 @@ ${sourcesBlock}
 **Article shape:**
 - This is a problem-led post. Open into the pain fast. The reader should feel you are describing something they could have pasted from Google or a ticket.
 - Deliver a clear solution path: prerequisites, steps, tradeoffs, and what to check when it still fails.
-- Cite sources from the list above as inline markdown links where they add value (not a bare bibliography at the end). If there are at least 3 URLs, use at least 3 distinct ones in the body when honest. If there are fewer, cite every URL that fits and do not invent links.
+- Do not use markdown links in the article body. Name tools, sites, and docs in plain text only. URLs are listed in a separate Resources section after publish.
 
 **Writing rules:**
 - Sound like a human wrote this after shipping real work: relaxed, curious, a little opinionated, never performatively excited. Educate and entertain without sounding like a keynote or a tutorial brochure.
-- Do not add your own bracket reference numbers after links. The pipeline will append same-page links to the Resources list for URLs that appear there.
 - Never use the em dash character (Unicode U+2014) or spaced en dash as a clause hinge. Prefer commas, periods, colons, parentheses, or split into two sentences. This is mandatory in body text.
 - Do not use semicolons to glue clauses in prose. Use a full stop and a new sentence, or a comma. Keep semicolons only inside code blocks where the language requires them.
 - Small rough edges are fine: occasional fragments, starting with And or But, mild repetition humans use. Do not aim for textbook polish.

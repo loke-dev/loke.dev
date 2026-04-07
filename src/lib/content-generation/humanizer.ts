@@ -81,6 +81,7 @@ BANNED phrases (if any appear, cut or rewrite the sentence):
 ${BANNED_PHRASES.map((p) => `- "${p}"`).join('\n')}
 
 Structural rules:
+- No markdown links in the body. If you see [label](url), rewrite as plain text (the name or a short description). URLs belong in the site's Resources list, not inline.
 - Shatter paragraph uniformity. Mix one-sentence paragraphs with longer ones. Even paragraph length is an AI tell.
 - Vary sentence rhythm. Three short sentences. Then one that runs longer and sets up the next point without wrapping up too neatly.
 - Start sentences with conjunctions sometimes. "But that's the wrong mental model." "And it gets worse."

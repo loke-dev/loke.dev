@@ -1,4 +1,8 @@
 import { generateKey } from './gemini'
+import {
+  normalizeExternalHref,
+  segmentPlainTextWithLinks,
+} from './markdown-link-utils'
 
 type PortableTextSpan = {
   _key: string
@@ -17,6 +21,8 @@ type PortableTextBlock = {
   code?: string
 }
 
+const INLINE_TOKEN_RE = /(\*\*[\s\S]*?\*\*|__[\s\S]*?__|`[^`]*`)/g
+
 function createTextBlock(text: string, style: string): PortableTextBlock {
   const { children, markDefs } = parseInlineFormatting(text)
   return {
@@ -32,66 +38,71 @@ function parseInlineFormatting(text: string): {
   children: PortableTextSpan[]
   markDefs: unknown[]
 } {
-  const parts = text.split(/(\s*\*\*.*?\*\*|__.*?__|`.*?`|\s*\[.*?\]\(.*?\))/g)
   const children: PortableTextSpan[] = []
   const markDefs: unknown[] = []
 
-  for (const part of parts) {
-    if (!part) continue
-
-    const linkMatch = part.match(/^\s*\[(.*?)\]\((.*?)\)\s*$/)
-    if (linkMatch) {
-      const linkKey = generateKey()
-      const href = linkMatch[2]
-      const blank = /^https?:\/\//i.test(href)
-      markDefs.push({
-        _type: 'link',
-        _key: linkKey,
-        href,
-        ...(blank ? { blank: true } : {}),
-      })
+  const pushLeadingWhitespace = (raw: string) => {
+    const leadingWs = raw.match(/^(\s+)/)
+    if (leadingWs && raw.length > leadingWs[1].length) {
       children.push({
         _key: generateKey(),
         _type: 'span',
-        text: linkMatch[1],
-        marks: [linkKey],
-      })
-      continue
-    }
-
-    const trimmed = part.replace(/^\s+/, '')
-    if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-      children.push({
-        _key: generateKey(),
-        _type: 'span',
-        text: trimmed.slice(2, -2),
-        marks: ['strong'],
-      })
-    } else if (trimmed.startsWith('__') && trimmed.endsWith('__')) {
-      children.push({
-        _key: generateKey(),
-        _type: 'span',
-        text: trimmed.slice(2, -2),
-        marks: ['strong'],
-      })
-    } else if (
-      trimmed.startsWith('`') &&
-      trimmed.endsWith('`') &&
-      trimmed.length > 2
-    ) {
-      children.push({
-        _key: generateKey(),
-        _type: 'span',
-        text: trimmed.slice(1, -1),
-        marks: ['code'],
-      })
-    } else {
-      children.push({
-        _key: generateKey(),
-        _type: 'span',
-        text: part,
+        text: leadingWs[1],
         marks: [],
       })
+      return raw.slice(leadingWs[1].length)
+    }
+    return raw
+  }
+
+  const emitTextRemainder = (remainder: string, extraMarks: string[]) => {
+    if (!remainder) return
+    children.push({
+      _key: generateKey(),
+      _type: 'span',
+      text: remainder,
+      marks: extraMarks,
+    })
+  }
+
+  const emitPlain = (plain: string, extraMarks: string[]) => {
+    for (const piece of segmentPlainTextWithLinks(plain)) {
+      if (piece.kind === 'text') {
+        const remainder = pushLeadingWhitespace(piece.text)
+        emitTextRemainder(remainder, extraMarks)
+      } else {
+        const linkKey = generateKey()
+        const href = normalizeExternalHref(piece.rawUrl)
+        const blank = /^https?:\/\//i.test(href)
+        markDefs.push({
+          _type: 'link',
+          _key: linkKey,
+          href,
+          ...(blank ? { blank: true } : {}),
+        })
+        let labelRest = pushLeadingWhitespace(piece.label)
+        if (!labelRest) labelRest = href
+        emitTextRemainder(labelRest, [...extraMarks, linkKey])
+      }
+    }
+  }
+
+  for (const part of text.split(INLINE_TOKEN_RE)) {
+    if (!part) continue
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      emitPlain(part.slice(2, -2), ['strong'])
+    } else if (
+      part.startsWith('__') &&
+      part.endsWith('__') &&
+      part.length > 4
+    ) {
+      emitPlain(part.slice(2, -2), ['strong'])
+    } else if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
+      const inner = part.slice(1, -1)
+      const remainder = pushLeadingWhitespace(inner)
+      emitTextRemainder(remainder, ['code'])
+    } else {
+      emitPlain(part, [])
     }
   }
 
@@ -114,8 +125,8 @@ export function markdownToPortableText(markdown: string): PortableTextBlock[] {
 
   const flushParagraph = () => {
     if (currentParagraph.length === 0) return
-    const text = currentParagraph.join('\n').trim()
-    if (text) blocks.push(createTextBlock(text, 'normal'))
+    const paraText = currentParagraph.join('\n').trim()
+    if (paraText) blocks.push(createTextBlock(paraText, 'normal'))
     currentParagraph = []
   }
 

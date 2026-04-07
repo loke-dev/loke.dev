@@ -144,9 +144,9 @@ Collect:
 7. The content gap: what exhausted developers still cannot find in one clear article
 
 citableSources rules (critical):
-- Every URL must be a link you actually saw in search results or grounding. Never invent or guess URLs.
+- Optional list. Include 0 to 3 entries only when grounding gave URLs that directly back a specific claim or thread worth citing. An empty array is fine and often best. Never pad with weak or tangential links.
+- Every URL must be one you actually saw in search results or grounding. Never invent or guess URLs.
 - Prefer primary threads: Stack Overflow questions, GitHub issues or discussions, Reddit posts, HN threads, official issues trackers.
-- Include 4 to 12 entries when the web actually provides them. Use fewer only if search is thin.
 - sourceType must be one of: stackoverflow | github_issue | github_discussion | reddit | hackernews | forum | docs | article | social | other
 
 Return a JSON object with this exact structure:

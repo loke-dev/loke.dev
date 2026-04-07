@@ -1,10 +1,10 @@
 import { analyzeExistingPosts } from './analyzer'
 import { humanizeContent } from './humanizer'
 import { generateBlogImage } from './image-gen'
+import { stripMarkdownLinksOutsideCodeFences } from './markdown-link-utils'
 import { markdownToPortableText } from './portable-text'
 import { researchTopic } from './researcher'
 import { curateResources, mergeResourceLinks } from './resource-curator'
-import { applyResourceRefMarkers } from './resource-reference-markers'
 import {
   createPost,
   fetchTopic,
@@ -77,16 +77,12 @@ export async function generate({
     )
 
     const humanized = await humanizeContent(rawArticle)
+    const bodyMarkdown = stripMarkdownLinksOutsideCodeFences(humanized)
 
-    const curatedExtras = await curateResources(humanized, research)
-    const curatedResources = mergeResourceLinks(research, curatedExtras)
+    const curatedExtras = await curateResources(bodyMarkdown, research)
+    const postResources = mergeResourceLinks(research, curatedExtras)
 
-    const withRefs =
-      curatedResources.length > 0
-        ? applyResourceRefMarkers(humanized, curatedResources)
-        : humanized
-
-    const body = markdownToPortableText(withRefs)
+    const body = markdownToPortableText(bodyMarkdown)
 
     await setGenerationStatus(
       topicId,
@@ -106,7 +102,7 @@ export async function generate({
       imageBuffer,
       sanityProject,
       sanityDataset,
-      curatedResources.length ? curatedResources : undefined
+      postResources.length ? postResources : undefined
     )
 
     await finalizeTopicRecord(topicId, postId, sanityProject, sanityDataset)
