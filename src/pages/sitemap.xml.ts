@@ -12,6 +12,7 @@ export const GET: APIRoute = async () => {
     '/changelog',
     '/about',
     '/projects',
+    '/search',
     '/contact',
   ]
   const postUrls = posts.map((p) => `/blog/${p.slug.current}`)

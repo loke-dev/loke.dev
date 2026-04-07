@@ -1,13 +1,7 @@
 import { urlFor } from './image'
 import type { SanityImage } from './types'
 
-export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
+export { formatDate } from '@/utils/format-date'
 
 export function getSanityImageUrl(
   image: SanityImage | undefined,

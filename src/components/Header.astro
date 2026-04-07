@@ -1,4 +1,6 @@
 ---
+import HeaderSearch from '@/components/HeaderSearch'
+
 const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' },
@@ -7,7 +9,7 @@ const navLinks = [
 ]
 ---
 
-<header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+<header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
   <div class="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
     <a href="/" class="flex items-center">
       <span class="text-xl font-bold tracking-tight">loke.dev</span>
@@ -24,43 +26,16 @@ const navLinks = [
       ))}
     </nav>
 
-    <div id="mobile-nav-root" class="md:hidden">
-      <button
-        type="button"
-        data-mobile-nav-open
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="mobile-nav-dialog"
-        class="p-2 text-muted-foreground hover:text-foreground"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-
-      <dialog
-        id="mobile-nav-dialog"
-        aria-modal="true"
-        aria-label="Navigation menu"
-        class="mobile-menu-dialog fixed inset-0 m-0 h-full w-3/4 max-w-sm ml-auto bg-background border-l p-6 shadow-lg"
-      >
+    <div class="flex items-center gap-0.5">
+      <HeaderSearch client:load />
+      <div id="mobile-nav-root" class="md:hidden">
         <button
           type="button"
-          data-mobile-nav-close
-          aria-label="Close navigation menu"
-          class="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground"
+          data-mobile-nav-open
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="mobile-nav-dialog"
+          class="p-2 text-muted-foreground hover:text-foreground"
         >
           <svg
             width="20"
@@ -73,22 +48,52 @@ const navLinks = [
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
 
-        <nav class="flex flex-col gap-6 mt-8" aria-label="Mobile navigation">
-          {navLinks.map(({ href, label }) => (
-            <a
-              href={href}
-              class="nav-link-animate text-base font-medium text-muted-foreground transition-colors hover:text-accent"
+        <dialog
+          id="mobile-nav-dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          class="mobile-menu-dialog fixed inset-0 m-0 h-full w-3/4 max-w-sm ml-auto bg-background border-l p-6 shadow-lg"
+        >
+          <button
+            type="button"
+            data-mobile-nav-close
+            aria-label="Close navigation menu"
+            class="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
             >
-              {label}
-            </a>
-          ))}
-        </nav>
-      </dialog>
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+
+          <nav class="flex flex-col gap-6 mt-8" aria-label="Mobile navigation">
+            {navLinks.map(({ href, label }) => (
+              <a
+                href={href}
+                class="nav-link-animate text-base font-medium text-muted-foreground transition-colors hover:text-accent"
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+        </dialog>
+      </div>
     </div>
   </div>
 </header>

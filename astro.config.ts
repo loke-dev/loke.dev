@@ -17,7 +17,7 @@ export default defineConfig({
     isr: {
       ...(isrBypassToken ? { bypassToken: isrBypassToken } : {}),
       // ISR cache keys ignore search params, so keep /blog (uses ?page=) out of ISR.
-      exclude: [/^\/blog\/?$/, /^\/api\/.+/],
+      exclude: [/^\/blog\/?$/, /^\/search\/?$/, /^\/api\/.+/],
     },
     imageService: true,
     imagesConfig: {

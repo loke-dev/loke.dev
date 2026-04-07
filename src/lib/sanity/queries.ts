@@ -165,3 +165,17 @@ export const CONTACT_PAGE_QUERY = `*[_type == "contactPage" && _id == "contactPa
   alternativeContactTitle,
   alternativeContactDescription
 }`
+
+export const SEARCH_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && (lower(title) match $pattern || lower(description) match $pattern || lower(coalesce(pt::text(body), "")) match $pattern)] | order(date desc) [0...10] {
+  title,
+  "slug": slug.current,
+  description,
+  date
+}`
+
+export const SEARCH_PROJECTS_QUERY = `*[_type == "project" && (lower(title) match $pattern || lower(description) match $pattern || count(coalesce(technologies, [])[lower(@) match $pattern]) > 0)] | order(order asc, year desc) [0...10] {
+  title,
+  description,
+  url,
+  github
+}`

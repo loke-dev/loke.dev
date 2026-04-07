@@ -1,0 +1,154 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { formatDate } from '@/lib/sanity/helpers'
+import { runSearch, type SearchPayload } from '@/lib/sanity/search.server'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', 'private, no-store')
+
+const q = Astro.url.searchParams.get('q') ?? ''
+let payload: SearchPayload | null = null
+let serverError: string | null = null
+
+if (q.trim().length >= 2) {
+  const result = await runSearch(q)
+  if (result.ok) {
+    payload = result.data
+  } else {
+    serverError = result.error
+  }
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
+    { '@type': 'ListItem', position: 2, name: 'Search', item: `${SITE_DOMAIN}/search` },
+  ],
+}
+
+const totalHits =
+  payload !== null ? payload.posts.length + payload.projects.length : 0
+---
+
+<BaseLayout
+  title="Search"
+  description="Search blog posts and projects on loke.dev."
+  url={`${SITE_DOMAIN}/search`}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <div class="container mx-auto max-w-3xl px-4 py-12">
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold tracking-tight">Search</h1>
+      <p class="mt-2 text-muted-foreground">
+        Find posts and projects by title, description, or content.
+      </p>
+    </header>
+
+    <form method="get" action="/search" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <label class="sr-only" for="search-q">Search query</label>
+      <input
+        id="search-q"
+        name="q"
+        type="search"
+        value={q}
+        minlength={2}
+        maxlength={100}
+        required
+        autocomplete="off"
+        placeholder="e.g. react, sanity, database"
+        class="h-11 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      />
+      <button
+        type="submit"
+        class="inline-flex h-11 shrink-0 items-center justify-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+      >
+        Search
+      </button>
+    </form>
+
+    <p class="mt-2 text-xs text-muted-foreground">Minimum 2 characters.</p>
+
+    {serverError && (
+      <div
+        class="mt-8 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        role="alert"
+      >
+        {serverError}
+      </div>
+    )}
+
+    {payload && !serverError && (
+      <div class="mt-10 space-y-10">
+        <p class="text-sm text-muted-foreground">
+          {totalHits === 0
+            ? `No results for "${payload.query}".`
+            : `${totalHits} result${totalHits === 1 ? '' : 's'} for "${payload.query}".`}
+        </p>
+
+        {payload.posts.length > 0 && (
+          <section aria-labelledby="search-posts-heading">
+            <h2 id="search-posts-heading" class="mb-4 text-xl font-semibold">
+              Blog posts
+            </h2>
+            <ul class="flex flex-col gap-3">
+              {payload.posts.map((post) => (
+                <li>
+                  <a
+                    href={`/blog/${post.slug}`}
+                    data-astro-prefetch="hover"
+                    class="surface-interactive block rounded-lg border p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/35 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]"
+                  >
+                    <span class="font-medium">{post.title}</span>
+                    <span class="mt-1 block text-xs text-muted-foreground">
+                      {formatDate(post.date)}
+                    </span>
+                    <span class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                      {post.description}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {payload.projects.length > 0 && (
+          <section aria-labelledby="search-projects-heading">
+            <h2 id="search-projects-heading" class="mb-4 text-xl font-semibold">
+              Projects
+            </h2>
+            <ul class="flex flex-col gap-3">
+              {payload.projects.map((project) => {
+                const href = project.url ?? project.github ?? '/projects'
+                const external = Boolean(project.url ?? project.github)
+                return (
+                  <li>
+                    <a
+                      href={href}
+                      target={external ? '_blank' : undefined}
+                      rel={external ? 'noopener noreferrer' : undefined}
+                      class="surface-interactive block rounded-lg border p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/35 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]"
+                    >
+                      <span class="font-medium">{project.title}</span>
+                      {external && (
+                        <span class="ml-2 text-xs font-normal text-muted-foreground">
+                          Opens in new tab
+                        </span>
+                      )}
+                      <span class="mt-2 line-clamp-2 block text-sm text-muted-foreground">
+                        {project.description}
+                      </span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )}
+      </div>
+    )}
+  </div>
+</BaseLayout>
