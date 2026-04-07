@@ -3,7 +3,7 @@ import { humanizeContent } from './humanizer'
 import { generateBlogImage } from './image-gen'
 import { markdownToPortableText } from './portable-text'
 import { researchTopic } from './researcher'
-import { curateResources } from './resource-curator'
+import { curateResources, mergeResourceLinks } from './resource-curator'
 import {
   createPost,
   fetchTopic,
@@ -70,7 +70,8 @@ export async function generate({
 
     const humanized = await humanizeContent(rawArticle)
 
-    const curatedResources = await curateResources(humanized, research)
+    const curatedExtras = await curateResources(humanized, research)
+    const curatedResources = mergeResourceLinks(research, curatedExtras)
 
     const body = markdownToPortableText(humanized)
 

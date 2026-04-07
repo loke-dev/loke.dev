@@ -82,6 +82,8 @@ ${secondaryKwNote}
 
 Research to draw from:
 - Fresh angle: ${research.freshAngle}
+- Real developer pain to center the post (use in title or H2s where honest): ${(research.developerPainPoints ?? []).slice(0, 5).join(' | ') || 'infer from questions below'}
+- Community signal (this traffic is searching for answers): ${(research.communitySignals ?? []).slice(0, 5).join(' | ') || 'n/a'}
 - Key facts: ${research.keyFacts.slice(0, 4).join('; ')}
 - Popular questions developers search for: ${research.popularQuestions.slice(0, 3).join('; ')}
 - Recent developments: ${research.recentDevelopments.slice(0, 2).join('; ')}
@@ -95,6 +97,7 @@ Title rules:
 - Do not use em dashes (U+2014) in title, meta description, or any heading text
 - 50–65 characters for optimal SERP display
 - For tutorials/how-to intent: include a specific outcome ("Build X that does Y")
+- For troubleshooting intent: promise relief from a concrete failure mode developers recognize
 - For informational: make a claim or observation that's interesting on its own
 - No clickbait, no "you won't believe", no exclamation marks
 

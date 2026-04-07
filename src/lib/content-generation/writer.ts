@@ -56,6 +56,30 @@ export async function writeArticle(
       ? `Semantic keywords to weave in naturally (these signal topical authority to Google): ${research.semanticKeywords.join(', ')}`
       : ''
 
+  const painBlock =
+    research.developerPainPoints.length > 0
+      ? `**Problems developers actually hit (center the narrative here):**\n${research.developerPainPoints
+          .slice(0, 6)
+          .map((p) => `- ${p}`)
+          .join('\n')}`
+      : ''
+
+  const communityBlock =
+    research.communitySignals.length > 0
+      ? `**Where this shows up in the wild (use to prove relevance, not name-drop for cred):**\n${research.communitySignals
+          .slice(0, 8)
+          .map((c) => `- ${c}`)
+          .join('\n')}`
+      : ''
+
+  const sourcesBlock =
+    research.citableSources.length > 0
+      ? `**Sources you may cite with markdown links when they support a claim (use only these URLs, do not invent links):**\n${research.citableSources
+          .slice(0, 12)
+          .map((s) => `- ${s.title}: ${s.url}${s.note ? ` (${s.note})` : ''}`)
+          .join('\n')}`
+      : ''
+
   const prompt = `Write a technical blog post in markdown. ${personaLine}
 
 ${audienceLine}
@@ -79,6 +103,17 @@ ${research.keyFacts.map((f) => `- ${f}`).join('\n')}
 
 **Questions this post should answer:**
 ${research.popularQuestions.map((q) => `- ${q}`).join('\n')}
+
+${painBlock}
+
+${communityBlock}
+
+${sourcesBlock}
+
+**Article shape:**
+- This is a problem-led post. Open into the pain fast. The reader should feel you are describing something they could have pasted from Google or a ticket.
+- Deliver a clear solution path: prerequisites, steps, tradeoffs, and what to check when it still fails.
+- Cite sources from the list above as inline markdown links where they add value (not a bare bibliography at the end). If there are at least 3 URLs, use at least 3 distinct ones in the body when honest. If there are fewer, cite every URL that fits and do not invent links.
 
 **Writing rules:**
 - Sound like a human wrote this after shipping real work: relaxed, curious, a little opinionated, never performatively excited. Educate and entertain without sounding like a keynote or a tutorial brochure.
