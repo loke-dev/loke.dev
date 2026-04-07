@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@sanity/vision": "^5.19.0",
+    "cronstrue": "^3.14.0",
     "esbuild": "^0.28.0",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",

@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { CronScheduleInput } from '../components/CronScheduleInput'
 
 export default defineType({
   name: 'contentTopic',
@@ -202,8 +203,12 @@ export default defineType({
       title: 'Schedule (cron)',
       group: 'schedule',
       type: 'string',
-      description: 'UTC. Example: `0 9 * * 1` = Mondays 09:00.',
+      description:
+        'UTC. Five fields: minute hour day-of-month month day-of-week.',
       initialValue: '0 9 * * *',
+      components: {
+        input: CronScheduleInput,
+      },
     }),
 
     defineField({

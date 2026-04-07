@@ -465,6 +465,8 @@ const TAG_COLORS: Record<string, string> = {
 
 const ACTIVE_STATUSES = new Set(['researching', 'writing', 'uploading'])
 
+const ACTIVE_TOPICS_QUERY = `*[_type == "contentTopic" && active == true] | order(name asc) { _id, name, topic, generationStatus, lastGeneratedAt, lastError }`
+
 export function Dashboard() {
   const client = useClient({ apiVersion: '2024-01-01' })
   const [stats, setStats] = useState<Stats>({
@@ -482,10 +484,7 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   const [topics, setTopics] = useState<ContentTopic[]>([])
-  const [generatingId, setGeneratingId] = useState<string | null>(null)
-  const [generationStartedAt, setGenerationStartedAt] = useState<number | null>(
-    null
-  )
+  const [inFlightTopicIds, setInFlightTopicIds] = useState<string[]>([])
   const [topicStatus, setTopicStatus] = useState<{
     id: string
     type: 'success' | 'error' | 'info'
@@ -535,9 +534,7 @@ export function Dashboard() {
           client.fetch<string[]>(
             `array::unique(*[_type == "post"][defined(tags) || defined(tag)][].tags[])`
           ),
-          client.fetch<ContentTopic[]>(
-            `*[_type == "contentTopic" && active == true] | order(name asc) { _id, name, topic, generationStatus, lastGeneratedAt, lastError }`
-          ),
+          client.fetch<ContentTopic[]>(ACTIVE_TOPICS_QUERY),
         ])
 
         const tagCounts: Record<string, number> = {}
@@ -593,65 +590,39 @@ export function Dashboard() {
     fetchData()
   }, [client])
 
-  // Poll generationStatus for whichever topic is actively generating
+  const anyTopicBusyOnServer = topics.some((t) =>
+    ACTIVE_STATUSES.has(t.generationStatus || '')
+  )
+
   useEffect(() => {
-    if (!generatingId) return
+    const shouldPoll = anyTopicBusyOnServer || inFlightTopicIds.length > 0
+    if (!shouldPoll) return
 
-    const interval = setInterval(async () => {
-      const updated = await client.fetch<ContentTopic>(
-        `*[_type == "contentTopic" && _id == $id][0] { _id, name, topic, generationStatus, lastGeneratedAt, lastError }`,
-        { id: generatingId }
-      )
-      if (!updated) return
-
-      setTopics((prev) =>
-        prev.map((t) => (t._id === updated._id ? updated : t))
-      )
-
-      if (updated.generationStatus === 'done') {
-        setGeneratingId(null)
-        setGenerationStartedAt(null)
-        setTopicStatus({
-          id: updated._id,
-          type: 'success',
-          message: 'Post generated successfully!',
-        })
-        setTimeout(() => setTopicStatus(null), 5000)
-      } else if (updated.generationStatus === 'error') {
-        setGeneratingId(null)
-        setGenerationStartedAt(null)
-        setTopicStatus({
-          id: updated._id,
-          type: 'error',
-          message: updated.lastError || 'Generation failed',
-        })
-        setTimeout(() => setTopicStatus(null), 10000)
-      } else if (
-        updated.generationStatus === 'idle' &&
-        generationStartedAt &&
-        Date.now() - generationStartedAt > 30000
-      ) {
-        setGeneratingId(null)
-        setGenerationStartedAt(null)
-        setTopicStatus({
-          id: updated._id,
-          type: 'error',
-          message: 'Generation did not start. Please retry.',
-        })
-        setTimeout(() => setTopicStatus(null), 10000)
-      }
+    const id = setInterval(async () => {
+      const fresh = await client.fetch<ContentTopic[]>(ACTIVE_TOPICS_QUERY)
+      setTopics(fresh)
     }, 3000)
 
-    return () => clearInterval(interval)
-  }, [generatingId, generationStartedAt, client])
+    return () => clearInterval(id)
+  }, [anyTopicBusyOnServer, inFlightTopicIds.length, client])
 
   const handleGenerate = async (topicId: string) => {
-    setGeneratingId(topicId)
-    setGenerationStartedAt(Date.now())
+    if (
+      inFlightTopicIds.includes(topicId) ||
+      ACTIVE_STATUSES.has(
+        topics.find((t) => t._id === topicId)?.generationStatus || ''
+      )
+    ) {
+      return
+    }
+
+    setInFlightTopicIds((prev) =>
+      prev.includes(topicId) ? prev : [...prev, topicId]
+    )
     setTopicStatus({
       id: topicId,
       type: 'info',
-      message: 'Starting generation...',
+      message: 'Generation running…',
     })
 
     try {
@@ -664,25 +635,40 @@ export function Dashboard() {
       const data = await response.json()
 
       if (!response.ok) {
-        setGeneratingId(null)
-        setGenerationStartedAt(null)
         setTopicStatus({
           id: topicId,
           type: 'error',
-          message: data.details || data.error || 'Failed to start generation',
+          message: data.details || data.error || 'Failed to generate',
         })
-        setTimeout(() => setTopicStatus(null), 10000)
+        setTimeout(
+          () => setTopicStatus((s) => (s?.id === topicId ? null : s)),
+          10000
+        )
+      } else {
+        const fresh = await client.fetch<ContentTopic[]>(ACTIVE_TOPICS_QUERY)
+        setTopics(fresh)
+        setTopicStatus({
+          id: topicId,
+          type: 'success',
+          message: 'Post generated successfully!',
+        })
+        setTimeout(
+          () => setTopicStatus((s) => (s?.id === topicId ? null : s)),
+          5000
+        )
       }
-      // On success the poller above picks up status from Sanity
     } catch {
-      setGeneratingId(null)
-      setGenerationStartedAt(null)
       setTopicStatus({
         id: topicId,
         type: 'error',
         message: 'Failed to connect to the server',
       })
-      setTimeout(() => setTopicStatus(null), 5000)
+      setTimeout(
+        () => setTopicStatus((s) => (s?.id === topicId ? null : s)),
+        5000
+      )
+    } finally {
+      setInFlightTopicIds((prev) => prev.filter((id) => id !== topicId))
     }
   }
 
@@ -749,7 +735,7 @@ export function Dashboard() {
           <TopicList>
             {topics.map((topic) => {
               const isGenerating =
-                generatingId === topic._id ||
+                inFlightTopicIds.includes(topic._id) ||
                 ACTIVE_STATUSES.has(topic.generationStatus || '')
               const thisStatus =
                 topicStatus?.id === topic._id ? topicStatus : null
@@ -773,7 +759,10 @@ export function Dashboard() {
                     </StatusBadge>
                     <GenerateButton
                       onClick={() => handleGenerate(topic._id)}
-                      disabled={!!generatingId}
+                      disabled={
+                        inFlightTopicIds.includes(topic._id) ||
+                        ACTIVE_STATUSES.has(topic.generationStatus || '')
+                      }
                     >
                       Generate
                     </GenerateButton>
