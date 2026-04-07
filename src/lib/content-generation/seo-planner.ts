@@ -1,4 +1,5 @@
 import { FLASH_MODEL, getGenAI } from './gemini'
+import { normalizeGeneratedBlogMarkdown } from './normalize-generated-markdown'
 import type { ResearchResult } from './researcher'
 
 export interface ContentPlan {
@@ -49,9 +50,9 @@ export async function planContent(
     : 'Target article length: 1500–2500 words.'
 
   const keywordInstruction = options.primaryKeyword
-    ? `PRIMARY KEYWORD (locked — use this exactly): "${options.primaryKeyword}"
-This keyword must appear in: the title, the slug, the meta description, and naturally 3–5 times in the article.`
-    : `Choose the primary keyword from the research. Pick the phrase with the best balance of search volume and specificity — prefer long-tail over broad terms.`
+    ? `PRIMARY KEYWORD (locked; use this exactly): "${options.primaryKeyword}"
+This keyword must appear in: the title, the slug, the meta description, and naturally about 3 to 5 times in the article.`
+    : `Choose the primary keyword from the research. Pick the phrase with the best balance of search volume and specificity. Prefer long-tail over broad terms.`
 
   const audienceNote = options.targetAudience
     ? `Target audience: ${options.targetAudience}`
@@ -90,7 +91,8 @@ Avoid these angles (already covered to death): ${research.avoidAngles.join('; ')
 
 Title rules:
 - Must contain or closely relate to the primary keyword
-- Specific and concrete — name the exact thing, not the category
+- Specific and concrete: name the exact thing, not the category
+- Do not use em dashes (U+2014) in title, meta description, or any heading text
 - 50–65 characters for optimal SERP display
 - For tutorials/how-to intent: include a specific outcome ("Build X that does Y")
 - For informational: make a claim or observation that's interesting on its own
@@ -124,6 +126,11 @@ Return a JSON object:
   if (!jsonMatch) throw new Error('SEO planner returned invalid JSON')
 
   const plan = JSON.parse(jsonMatch[0]) as ContentPlan
+
+  plan.title = normalizeGeneratedBlogMarkdown(plan.title)
+  plan.metaDescription = normalizeGeneratedBlogMarkdown(plan.metaDescription)
+  plan.imagePrompt = normalizeGeneratedBlogMarkdown(plan.imagePrompt)
+  plan.headings = plan.headings.map((h) => normalizeGeneratedBlogMarkdown(h))
 
   plan.slug = plan.slug
     .toLowerCase()

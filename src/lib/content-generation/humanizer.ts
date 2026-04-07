@@ -1,4 +1,5 @@
 import { FLASH_MODEL, getGenAI } from './gemini'
+import { normalizeGeneratedBlogMarkdown } from './normalize-generated-markdown'
 
 const BANNED_PHRASES = [
   'delve',
@@ -53,39 +54,57 @@ const BANNED_PHRASES = [
   'last but not least',
   'the bottom line',
   'at the end of the day',
+  'tapestry',
+  'pivotal moment',
+  'plays a pivotal',
+  'instrumental in',
+  'shed light',
+  'shedding light',
+  'deep dive',
+  'unlock insights',
+  'rich ecosystem',
+  'ever-evolving',
+  'paradigm shift',
+  'synergy',
+  'holistic approach',
 ]
 
 export async function humanizeContent(markdown: string): Promise<string> {
   const ai = getGenAI()
 
-  const prompt = `You are a ruthless technical editor who despises AI-generated writing. Your job is to rewrite this blog post so it reads like it came from a real senior developer who has strong opinions and actually ships code — not a language model trying to sound helpful.
+  const prompt = `You are a ruthless technical editor who despises AI-generated writing. Rewrite this blog post so it reads like a real senior developer with strong opinions who actually ships code, not a language model trying to sound helpful or upbeat.
 
-BANNED phrases — if any of these appear, cut them or rewrite the sentence entirely:
+Hard ban on typography: do not output the em dash character (U+2014) or spaced en dash used as a clause hinge anywhere in your rewrite, including headings. Use commas, periods, colons, parentheses, or two sentences instead.
+Do not use semicolons between clauses in body prose. Prefer a period and a new sentence, or a comma if it still reads clearly. Semicolons inside fenced code blocks must remain exactly as needed for the language.
+
+BANNED phrases (if any appear, cut or rewrite the sentence):
 ${BANNED_PHRASES.map((p) => `- "${p}"`).join('\n')}
 
-Structural rules — these are non-negotiable:
-- Shatter paragraph uniformity. Mix 1-sentence paragraphs with longer ones. AI writing has suspiciously even paragraph lengths.
-- Vary sentence rhythm violently. Three short sentences. Then one that runs longer and sets up the next point without wrapping up cleanly.
+Structural rules:
+- Shatter paragraph uniformity. Mix one-sentence paragraphs with longer ones. Even paragraph length is an AI tell.
+- Vary sentence rhythm. Three short sentences. Then one that runs longer and sets up the next point without wrapping up too neatly.
 - Start sentences with conjunctions sometimes. "But that's the wrong mental model." "And it gets worse."
-- Cut filler ruthlessly. Every sentence must earn its place. Delete anything that doesn't add information or voice.
-- No summary conclusions. Real blog posts don't end with "In conclusion, we learned X, Y, Z." End on something concrete or a parting opinion.
-- Remove all throat-clearing. Opening sentences that explain what the article will cover — cut them.
+- Cut filler ruthlessly. Every sentence must earn its place. Delete anything that adds neither information nor voice.
+- No summary conclusions. Do not end with "In conclusion, we learned X, Y, Z." End on something concrete or a parting opinion.
+- Remove throat-clearing. Cut openings that explain what the article will cover.
 
 Voice rules:
-- Take actual positions. Don't hedge with "it depends" or "there are tradeoffs." Pick a side and defend it.
+- Relaxed and natural, like explaining to a sharp colleague. Educational and mildly entertaining. No cheese, no forced wit, no influencer energy.
+- Take clear positions where it helps. Shallow "it depends" with no default is boring: pick what you would actually do first, then qualify if needed.
+- Small human imperfections are fine: occasional fragments, slightly informal grammar, a redundant phrase if it sounds spoken. Do not polish into sterility.
 - Use contractions naturally. "You're" not "you are". "It's" not "it is". "Don't" not "do not".
-- Use specific, real examples. Not "a popular framework" — name it. Not "a large file" — give a size.
+- Use specific, real examples. Not "a popular framework": name it. Not "a large file": give a size.
 - First person is fine. "I've been burned by this." "My preferred approach is..."
-- One moment of dry technical humor per section — understated, not forced. The kind of thing that gets a knowing nod, not a laugh.
-- Occasionally contradict conventional wisdom with a specific reason why.
+- At most one understated dry joke per section. Knowing nod territory, not punchlines.
+- Give the reader reasons to keep going: tension, stakes, or curiosity across section breaks.
 
-What NOT to change:
-- All facts, data, and technical accuracy must remain intact
-- All code examples stay exactly as-is
-- Markdown structure (##, ###, code blocks, lists) stays intact
-- SEO keywords should still appear naturally
+Do not change:
+- Facts, data, or technical accuracy
+- Code blocks and their contents (character-for-character identical inside every fenced block)
+- Markdown structure (##, ###, lists). You may reword heading bullets but keep the same hierarchy count and order of sections unless a heading is pure fluff
+- SEO keywords should still read naturally in prose
 
-Here is the article to rewrite:
+Article to rewrite:
 
 ${markdown}`
 
@@ -97,12 +116,11 @@ ${markdown}`
 
   let content = response.text?.trim() || markdown
 
-  // Strip wrapping code blocks if model added them
   if (content.startsWith('```')) {
     content = content
       .replace(/^```(?:markdown|md)?\n/, '')
       .replace(/\n```$/, '')
   }
 
-  return content
+  return normalizeGeneratedBlogMarkdown(content)
 }

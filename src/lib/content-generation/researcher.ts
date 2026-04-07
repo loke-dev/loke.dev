@@ -1,5 +1,6 @@
 import type { RepositoryContext } from './analyzer'
 import { FLASH_MODEL, getGenAI } from './gemini'
+import { normalizeGeneratedBlogMarkdown } from './normalize-generated-markdown'
 
 export interface ResearchResult {
   keyFacts: string[]
@@ -15,6 +16,19 @@ export interface ResearchOptions {
   primaryKeyword?: string
   targetAudience?: string
   contentAngle?: string
+}
+
+function stripResearchStrings(r: ResearchResult): ResearchResult {
+  const s = normalizeGeneratedBlogMarkdown
+  return {
+    keyFacts: r.keyFacts.map(s),
+    recentDevelopments: r.recentDevelopments.map(s),
+    popularQuestions: r.popularQuestions.map(s),
+    semanticKeywords: r.semanticKeywords.map(s),
+    searchIntent: s(r.searchIntent),
+    freshAngle: s(r.freshAngle),
+    avoidAngles: r.avoidAngles.map(s),
+  }
 }
 
 export async function researchTopic(
@@ -33,11 +47,11 @@ export async function researchTopic(
       : ''
 
   const keywordHint = options.primaryKeyword
-    ? `\nTarget keyword to rank for: "${options.primaryKeyword}" — research what's currently ranking for this exact phrase and what those articles are missing.`
+    ? `\nTarget keyword to rank for: "${options.primaryKeyword}". Research what is currently ranking for this exact phrase and what those articles are missing.`
     : ''
 
   const audienceHint = options.targetAudience
-    ? `\nTarget audience: ${options.targetAudience} — tailor facts and questions to their specific knowledge level and pain points.`
+    ? `\nTarget audience: ${options.targetAudience}. Tailor facts and questions to their knowledge level and pain points.`
     : ''
 
   const angleHint = options.contentAngle
@@ -53,16 +67,16 @@ Use Google Search to find:
 3. Recent developments, version changes, or ecosystem shifts in the last 12 months
 4. Specific numbers, benchmarks, or statistics that add credibility
 5. The semantic keywords that Google expects to see in authoritative content on this topic (LSI/co-occurring terms)
-6. What the top results are missing — the content gap that a new article could fill
+6. What the top results are missing: the content gap a new article could fill
 
 Return a JSON object with this exact structure:
 {
   "keyFacts": ["specific fact with numbers/versions where possible", "another concrete fact", "another"],
-  "recentDevelopments": ["specific recent change or trend", "another — include versions/dates when known"],
+  "recentDevelopments": ["specific recent change or trend", "another; include versions/dates when known"],
   "popularQuestions": ["exact question developers search for", "another question", "another"],
   "semanticKeywords": ["term Google expects to see in authoritative articles on this topic", "another related term", "another", "another", "another"],
   "searchIntent": "one of: informational | tutorial | comparison | troubleshooting | reference",
-  "freshAngle": "one specific, non-obvious angle that top results are missing — be concrete, not vague",
+  "freshAngle": "one specific, non-obvious angle that top results are missing; be concrete, not vague",
   "avoidAngles": ["generic angle that's been done to death", "another overused take on this topic"]
 }
 
@@ -92,7 +106,7 @@ Be specific throughout. Vague facts like "React is popular" are useless. Concret
   }
 
   try {
-    return JSON.parse(jsonMatch[0]) as ResearchResult
+    return stripResearchStrings(JSON.parse(jsonMatch[0]) as ResearchResult)
   } catch {
     return {
       keyFacts: [],
