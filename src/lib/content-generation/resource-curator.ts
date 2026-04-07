@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import { FLASH_MODEL, generateKey, getGenAI } from './gemini'
+import { normalizeUrlForDedup } from './grounding-sources'
+import { sanitizeHttpResourceUrl } from './markdown-link-utils'
 import type { ResearchResult } from './researcher'
 
 const MAX_RESOURCES = 3
@@ -38,8 +40,8 @@ export function mergeResourceLinks(
   const seen = new Set<string>()
   const out: Array<{ title: string; url: string }> = []
   const push = (title: string, url: string) => {
-    const u = url.trim()
-    if (!isHttpUrl(u) || seen.has(u)) return
+    const u = sanitizeHttpResourceUrl(url)
+    if (!u || !isHttpUrl(u) || seen.has(u)) return
     seen.add(u)
     out.push({ title: title.trim().slice(0, 200), url: u })
   }
@@ -57,6 +59,10 @@ export async function curateResources(
   research: ResearchResult
 ): Promise<Array<{ title: string; url: string }>> {
   const ai = getGenAI()
+
+  const allowedNorm = new Set(
+    (research.citableSources ?? []).map((c) => normalizeUrlForDedup(c.url))
+  )
 
   const researchBlob = [
     ...(research.keyFacts ?? []).map((f) => `- ${f}`),
@@ -87,7 +93,8 @@ Return JSON only, no markdown fences:
 Rules:
 - Default: {"resources":[]}. Add 0 or 1 item only. If the article already cites enough or nothing is essential, return {"resources":[]}.
 - Only real https (or http for legacy docs). No affiliate or spam.
-- Titles under 80 characters. No duplicate URLs.`
+- Titles under 80 characters. No duplicate URLs.
+- Every url must be copied exactly from "URLs already discovered" above. Never invent or paraphrase a URL.`
 
   const response = await ai.models.generateContent({
     model: FLASH_MODEL,
@@ -107,9 +114,18 @@ Rules:
   if (!checked.success) return []
 
   return checked.data.resources
-    .filter((r) => isHttpUrl(r.url))
+    .map((r) => {
+      const url = sanitizeHttpResourceUrl(r.url.trim())
+      if (!url) return null
+      return { title: r.title.trim(), url }
+    })
+    .filter(
+      (r): r is { title: string; url: string } =>
+        r !== null &&
+        isHttpUrl(r.url) &&
+        allowedNorm.has(normalizeUrlForDedup(r.url))
+    )
     .slice(0, MAX_CURATED_EXTRAS)
-    .map((r) => ({ title: r.title.trim(), url: r.url.trim() }))
 }
 
 export function keyResourcesForSanity(

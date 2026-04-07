@@ -1,5 +1,59 @@
 export const CODE_FENCE_RE = /(```[\s\S]*?```)/g
 
+export function sanitizeHttpResourceUrl(raw: string): string | null {
+  let s = raw.trim().replace(/[\u0000-\u001f\u007f]+/g, '')
+  if (!s) return null
+  if (s.startsWith('//')) s = `https:${s}`
+  else if (!/^https?:\/\//i.test(s)) {
+    try {
+      s = new URL(`https://${s}`).href
+    } catch {
+      return null
+    }
+  }
+  for (;;) {
+    try {
+      const u = new URL(s)
+      if (u.protocol !== 'http:' && u.protocol !== 'https:') return null
+      return u.href
+    } catch {
+      if (s.length < 12) return null
+      const last = s.at(-1)
+      if (!last || !/[)\].,'"〉%;]/.test(last)) return null
+      s = s.slice(0, -1)
+    }
+  }
+}
+
+function escapeForRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+export function stripResourceUrlMentionsOutsideCodeFences(
+  markdown: string,
+  resources: Array<{ title: string; url: string }>
+): string {
+  if (!resources.length) return markdown
+
+  const sorted = [...resources].sort((a, b) => b.url.length - a.url.length)
+
+  return markdown
+    .split(CODE_FENCE_RE)
+    .map((chunk) => {
+      if (chunk.startsWith('```')) return chunk
+      let prose = chunk
+      for (const { title, url } of sorted) {
+        const safe = sanitizeHttpResourceUrl(url)
+        if (!safe) continue
+        const re = new RegExp(escapeForRegExp(safe), 'gi')
+        const replacement = title.trim() || safe
+        prose = prose.replace(re, replacement)
+      }
+      return prose
+    })
+    .join('')
+}
+
 export function normalizeExternalHref(raw: string): string {
   const t = raw.trim()
   if (

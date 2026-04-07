@@ -1,10 +1,14 @@
 import { analyzeExistingPosts } from './analyzer'
 import { humanizeContent } from './humanizer'
 import { generateBlogImage } from './image-gen'
-import { stripMarkdownLinksOutsideCodeFences } from './markdown-link-utils'
+import {
+  stripMarkdownLinksOutsideCodeFences,
+  stripResourceUrlMentionsOutsideCodeFences,
+} from './markdown-link-utils'
 import { markdownToPortableText } from './portable-text'
 import { researchTopic } from './researcher'
 import { curateResources, mergeResourceLinks } from './resource-curator'
+import { filterResourcesWithSuccessfulHttp } from './resource-url-health'
 import {
   createPost,
   fetchTopic,
@@ -80,9 +84,21 @@ export async function generate({
     const bodyMarkdown = stripMarkdownLinksOutsideCodeFences(humanized)
 
     const curatedExtras = await curateResources(bodyMarkdown, research)
-    const postResources = mergeResourceLinks(research, curatedExtras)
+    let postResources = mergeResourceLinks(research, curatedExtras)
 
-    const body = markdownToPortableText(bodyMarkdown)
+    if (
+      (research.groundingWebSourceCount ?? 0) === 0 &&
+      postResources.length > 0
+    ) {
+      postResources = await filterResourcesWithSuccessfulHttp(postResources)
+    }
+
+    const bodyMarkdownForSanity = stripResourceUrlMentionsOutsideCodeFences(
+      bodyMarkdown,
+      postResources
+    )
+
+    const body = markdownToPortableText(bodyMarkdownForSanity)
 
     await setGenerationStatus(
       topicId,

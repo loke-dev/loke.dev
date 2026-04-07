@@ -128,6 +128,7 @@ ${sourcesBlock}
 - This is a problem-led post. Open into the pain fast. The reader should feel you are describing something they could have pasted from Google or a ticket.
 - Deliver a clear solution path: prerequisites, steps, tradeoffs, and what to check when it still fails.
 - Do not use markdown links in the article body. Name tools, sites, and docs in plain text only. URLs are listed in a separate Resources section after publish.
+- Do not paste bare https URLs in the prose. If you need to point somewhere, name it ("the React docs", "the MDN fetch page") without a URL string.
 
 **Writing rules:**
 - Sound like a human wrote this after shipping real work: relaxed, curious, a little opinionated, never performatively excited. Educate and entertain without sounding like a keynote or a tutorial brochure.

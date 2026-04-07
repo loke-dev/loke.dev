@@ -25,6 +25,11 @@ jobs:
         working-directory: studio
         run: pnpm install --frozen-lockfile
 
+      - name: Require SANITY_AUTH_TOKEN
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: test -n "$SANITY_AUTH_TOKEN" || (echo '::error::Add repository secret SANITY_AUTH_TOKEN (https://sanity.io/manage → your project → API). Use a token with access to deploy Studio; it is not the same as SANITY_WRITE_TOKEN.' && exit 1)
+
       - name: Deploy to Sanity Hosting
         working-directory: studio
         env:

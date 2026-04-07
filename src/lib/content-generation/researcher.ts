@@ -1,5 +1,9 @@
 import type { RepositoryContext } from './analyzer'
 import { FLASH_MODEL, getGenAI } from './gemini'
+import {
+  extractWebSourcesFromGrounding,
+  normalizeUrlForDedup,
+} from './grounding-sources'
 import { normalizeGeneratedBlogMarkdown } from './normalize-generated-markdown'
 
 export type SourceType =
@@ -32,6 +36,7 @@ export interface ResearchResult {
   developerPainPoints: string[]
   communitySignals: string[]
   citableSources: CitableSource[]
+  groundingWebSourceCount?: number
 }
 
 export interface ResearchOptions {
@@ -46,6 +51,48 @@ export interface ResearchOptions {
 
 function normalizeSourceTitle(text: string): string {
   return normalizeGeneratedBlogMarkdown(text)
+}
+
+function reconcileCitableSources(
+  parsed: CitableSource[],
+  grounded: Array<{ title: string; url: string }>
+): CitableSource[] {
+  if (grounded.length === 0) {
+    return parsed.slice(0, 3)
+  }
+  const byNorm = new Map<string, { title: string; url: string }>()
+  for (const g of grounded) {
+    const k = normalizeUrlForDedup(g.url)
+    if (!byNorm.has(k)) byNorm.set(k, g)
+  }
+  const out: CitableSource[] = []
+  const seenHref = new Set<string>()
+
+  for (const p of parsed) {
+    const k = normalizeUrlForDedup(p.url)
+    const g = byNorm.get(k)
+    if (!g) continue
+    if (seenHref.has(g.url)) continue
+    seenHref.add(g.url)
+    out.push({
+      ...p,
+      url: g.url,
+      title: p.title.trim() ? p.title : g.title,
+    })
+  }
+
+  for (const g of grounded) {
+    if (out.length >= 3) break
+    if (seenHref.has(g.url)) continue
+    seenHref.add(g.url)
+    out.push({
+      title: g.title,
+      url: g.url,
+      sourceType: 'article',
+    })
+  }
+
+  return out.slice(0, 3)
 }
 
 function stripResearchStrings(r: ResearchResult): ResearchResult {
@@ -176,6 +223,10 @@ Be specific throughout. Vague facts like "React is popular" are useless. Concret
     },
   })
 
+  const grounded = extractWebSourcesFromGrounding(
+    response.candidates?.[0]?.groundingMetadata
+  )
+
   const text = response.text?.trim() || ''
   const jsonMatch = text.match(/\{[\s\S]*\}/)
   if (!jsonMatch) {
@@ -190,6 +241,7 @@ Be specific throughout. Vague facts like "React is popular" are useless. Concret
       developerPainPoints: [],
       communitySignals: [],
       citableSources: [],
+      groundingWebSourceCount: grounded.length,
     }
   }
 
@@ -205,9 +257,15 @@ Be specific throughout. Vague facts like "React is popular" are useless. Concret
       avoidAngles: raw.avoidAngles ?? [],
       developerPainPoints: raw.developerPainPoints ?? [],
       communitySignals: raw.communitySignals ?? [],
-      citableSources: raw.citableSources ?? [],
+      citableSources: reconcileCitableSources(
+        raw.citableSources ?? [],
+        grounded
+      ),
     }
-    return stripResearchStrings(merged)
+    return {
+      ...stripResearchStrings(merged),
+      groundingWebSourceCount: grounded.length,
+    }
   } catch {
     return {
       keyFacts: [],
@@ -220,6 +278,7 @@ Be specific throughout. Vague facts like "React is popular" are useless. Concret
       developerPainPoints: [],
       communitySignals: [],
       citableSources: [],
+      groundingWebSourceCount: grounded.length,
     }
   }
 }
