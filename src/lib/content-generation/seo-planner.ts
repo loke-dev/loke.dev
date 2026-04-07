@@ -19,6 +19,7 @@ export interface PlanOptions {
   targetAudience?: string
   contentAngle?: string
   targetWordCount?: number
+  articleIntent?: string
 }
 
 const BAD_TITLE_PATTERNS = [
@@ -67,6 +68,11 @@ This keyword must appear in: the title, the slug, the meta description, and natu
       ? `Locked secondary keywords (include these): ${options.secondaryKeywords.join(', ')}`
       : `Suggested secondary keywords from research: ${research.semanticKeywords.slice(0, 5).join(', ')}`
 
+  const shapeNote =
+    options.articleIntent && options.articleIntent !== 'auto'
+      ? `Editor preferred article shape: ${options.articleIntent.replace(/_/g, ' ')}. Match title and headings to that shape when research supports it.`
+      : ''
+
   const prompt = `You are an SEO specialist planning a blog post for a developer audience.
 
 Topic: "${topic}"
@@ -75,7 +81,7 @@ ${wordCountNote}
 ${audienceNote}
 ${angleNote}
 Search intent: ${research.searchIntent}
-
+${shapeNote ? `${shapeNote}\n` : ''}
 ${keywordInstruction}
 
 ${secondaryKwNote}

@@ -20,6 +20,12 @@ export interface ContentTopic {
   topic: string
   tone: string
   cronSchedule: string
+  problemLed?: {
+    realWorldProblem?: string
+    promisedOutcome?: string
+    researchSeeds?: string[]
+    articleIntent?: string
+  }
   seo?: {
     primaryKeyword?: string
     secondaryKeywords?: string[]

@@ -5,142 +5,211 @@ export default defineType({
   title: 'Content Topic',
   type: 'document',
   icon: () => '✦',
+  groups: [
+    { name: 'identity', title: 'Identity', default: true },
+    { name: 'problem', title: 'Problem & research' },
+    { name: 'seo', title: 'SEO' },
+    { name: 'generation', title: 'Generation' },
+    { name: 'schedule', title: 'Schedule' },
+    { name: 'status', title: 'Status' },
+  ],
   fields: [
-    // Identity
     defineField({
       name: 'name',
       title: 'Topic Name',
+      group: 'identity',
       type: 'string',
-      description: 'Display name for this content topic',
+      description: 'Internal label in the Studio (not the blog title).',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'active',
       title: 'Active',
+      group: 'identity',
       type: 'boolean',
-      description: 'Whether this topic is active for scheduled generation',
+      description: 'Whether this topic is active for scheduled generation.',
       initialValue: true,
     }),
-
-    // Content Settings
     defineField({
       name: 'topic',
-      title: 'Subject Matter',
+      title: 'Subject line',
+      group: 'identity',
       type: 'string',
       description:
-        'The subject area for content generation (e.g. "React performance", "TypeScript generics", "CSS container queries")',
+        'Short seed for the pipeline (shown to research and SEO). Pair with **Real-world problem focus** for problem-led posts. Examples: "Vite SSR import.meta in libraries", "Next.js 15 cookies in middleware", "PostgreSQL connection pool exhaustion in Node"',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'tone',
-      title: 'Writing Tone',
+      title: 'Writing tone',
+      group: 'identity',
       type: 'string',
       description:
-        'Voice and style. Be specific — this goes directly into the prompt. E.g. "Direct and opinionated, slightly sarcastic, no corporate fluff"',
+        'Voice and style passed straight into the writer. Be specific. Example: direct, a little sarcastic, no startup slogans.',
       initialValue:
         'Direct and opinionated. Casual but technically precise. Occasional dry humor.',
     }),
 
-    // SEO Targeting
     defineField({
-      name: 'seo',
-      title: 'SEO Targeting',
+      name: 'problemLed',
+      title: 'Real-world problem focus',
+      group: 'problem',
       type: 'object',
       description:
-        'Control what the AI targets for search ranking. The more specific, the better.',
+        'Fill this when you want a post anchored in something developers actually bump into (Stack Overflow style pain, GitHub issues, Reddit threads). Leave empty only for broader exploratory topics.',
       fields: [
         defineField({
-          name: 'primaryKeyword',
-          title: 'Primary Keyword',
-          type: 'string',
+          name: 'realWorldProblem',
+          title: 'Concrete problem',
+          type: 'text',
+          rows: 5,
           description:
-            'Lock in the exact keyword phrase to rank for. If empty, the AI picks one from research. Example: "react server components performance"',
+            'What breaks, for whom, and when. Quote error messages, versions, or repro sketches if you know them. This steers research toward community signals and citable threads.',
         }),
         defineField({
-          name: 'secondaryKeywords',
-          title: 'Secondary Keywords',
+          name: 'promisedOutcome',
+          title: 'Promised outcome',
+          type: 'text',
+          rows: 3,
+          description:
+            'After reading, the dev should be able to ______. Example: "ship a fix without disabling strict mode", "know which flag to flip and why"',
+        }),
+        defineField({
+          name: 'researchSeeds',
+          title: 'Research seeds',
           type: 'array',
           of: [{ type: 'string' }],
           description:
-            'Additional keyword phrases to weave in naturally. 3–5 is ideal.',
+            'Optional. Exact URLs or search phrases to run first (e.g. full Stack Overflow or GitHub issue URL, or `site:stackoverflow.com my error text`). Speeds up grounding.',
           options: { layout: 'tags' },
         }),
         defineField({
-          name: 'targetAudience',
-          title: 'Target Audience',
+          name: 'articleIntent',
+          title: 'Article shape',
           type: 'string',
           description:
-            'Who is this for, specifically. This shapes research, title, and how deep the content goes. E.g. "mid-level React devs who know hooks but haven\'t touched RSC yet"',
-        }),
-        defineField({
-          name: 'contentAngle',
-          title: 'Content Angle',
-          type: 'text',
-          rows: 2,
-          description:
-            'A specific perspective or hook for the article. E.g. "Compare the three main approaches with real benchmark numbers", "Focus on the migration path from the old API", "Cover the gotchas that the docs don\'t mention"',
-        }),
-        defineField({
-          name: 'persona',
-          title: 'Author Persona',
-          type: 'string',
-          description:
-            'The voice behind the article. E.g. "Senior frontend engineer with 7 years React experience, opinionated about performance, has shipped to millions of users"',
+            'Biases outline and SEO plan. Choose **Auto** to let research pick search intent.',
+          initialValue: 'auto',
+          options: {
+            list: [
+              { title: 'Auto (follow research)', value: 'auto' },
+              {
+                title: 'Troubleshooting – fix a failure',
+                value: 'troubleshooting',
+              },
+              { title: 'How-to – ship a specific outcome', value: 'how_to' },
+              {
+                title: 'Explainer – mental model / why it works',
+                value: 'explainer',
+              },
+              {
+                title: 'Comparison – choose between options',
+                value: 'comparison',
+              },
+            ],
+            layout: 'radio',
+          },
         }),
       ],
     }),
 
-    // Generation Options
+    defineField({
+      name: 'seo',
+      title: 'SEO targeting',
+      group: 'seo',
+      type: 'object',
+      description: 'What the model should optimize for in search.',
+      fields: [
+        defineField({
+          name: 'primaryKeyword',
+          title: 'Primary keyword',
+          type: 'string',
+          description:
+            'Exact phrase to rank for, if empty the AI picks one. Example: `next.js middleware cookies not working`',
+        }),
+        defineField({
+          name: 'secondaryKeywords',
+          title: 'Secondary keywords',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description:
+            'Extra phrases to work in naturally. Three to five is plenty.',
+          options: { layout: 'tags' },
+        }),
+        defineField({
+          name: 'targetAudience',
+          title: 'Target audience',
+          type: 'string',
+          description:
+            'Who this is for. Shapes depth and jargon. Example: mid-level React devs who have not shipped RSC to production.',
+        }),
+        defineField({
+          name: 'contentAngle',
+          title: 'Content angle',
+          type: 'text',
+          rows: 2,
+          description:
+            'Extra editorial hook beyond the problem block. Examples: migration path, benchmark numbers, docs vs reality.',
+        }),
+        defineField({
+          name: 'persona',
+          title: 'Author persona',
+          type: 'string',
+          description:
+            'Who is "speaking". Example: senior frontend engineer, opinionated about perf, shipped at scale.',
+        }),
+      ],
+    }),
+
     defineField({
       name: 'generation',
-      title: 'Generation Options',
+      title: 'Generation options',
+      group: 'generation',
       type: 'object',
       fields: [
         defineField({
           name: 'targetWordCount',
-          title: 'Target Word Count',
+          title: 'Target word count',
           type: 'number',
           description:
-            'Leave empty for default (1500). Longer posts (2000–3000) tend to rank better for competitive keywords.',
+            'Default about 1500 if empty. Longer can help competitive keywords.',
         }),
         defineField({
           name: 'includeCodeExamples',
-          title: 'Include Code Examples',
+          title: 'Include code examples',
           type: 'boolean',
           initialValue: true,
         }),
         defineField({
           name: 'customInstructions',
-          title: 'Custom Instructions',
+          title: 'Custom instructions',
           type: 'text',
-          description:
-            'Any extra instructions appended to the writer prompt. E.g. "Always mention Next.js App Router compatibility", "Include a comparison table"',
+          description: 'Appended to the writer prompt only.',
           rows: 3,
         }),
         defineField({
           name: 'enableImageGeneration',
-          title: 'Enable Image Generation',
+          title: 'Enable image generation',
           type: 'boolean',
-          description: 'Generate a header image via Imagen 4',
+          description: 'Header image via Imagen.',
           initialValue: true,
         }),
       ],
     }),
 
-    // Schedule
     defineField({
       name: 'cronSchedule',
-      title: 'Schedule (Cron Expression)',
+      title: 'Schedule (cron)',
+      group: 'schedule',
       type: 'string',
-      description:
-        'Cron expression for optional automated generation. E.g. \"0 9 * * 1\" = every Monday at 9 AM UTC',
+      description: 'UTC. Example: `0 9 * * 1` = Mondays 09:00.',
       initialValue: '0 9 * * *',
     }),
 
-    // Status (read-only)
     defineField({
       name: 'generationStatus',
-      title: 'Generation Status',
+      title: 'Generation status',
+      group: 'status',
       type: 'string',
       options: {
         list: [
@@ -157,27 +226,31 @@ export default defineType({
     }),
     defineField({
       name: 'lastGeneratedAt',
-      title: 'Last Generated',
+      title: 'Last generated',
+      group: 'status',
       type: 'datetime',
       readOnly: true,
     }),
     defineField({
       name: 'totalGenerated',
-      title: 'Total Generated',
+      title: 'Total generated',
+      group: 'status',
       type: 'number',
       initialValue: 0,
       readOnly: true,
     }),
     defineField({
       name: 'lastError',
-      title: 'Last Error',
+      title: 'Last error',
+      group: 'status',
       type: 'text',
       readOnly: true,
       rows: 2,
     }),
     defineField({
       name: 'lastGeneratedPostId',
-      title: 'Last Generated Post',
+      title: 'Last generated post',
+      group: 'status',
       type: 'reference',
       to: [{ type: 'post' }],
       readOnly: true,
@@ -208,7 +281,7 @@ export default defineType({
   },
   orderings: [
     {
-      title: 'Active First',
+      title: 'Active first',
       name: 'activeFirst',
       by: [
         { field: 'active', direction: 'desc' },
@@ -216,7 +289,7 @@ export default defineType({
       ],
     },
     {
-      title: 'Last Generated',
+      title: 'Last generated',
       name: 'lastGeneratedDesc',
       by: [{ field: 'lastGeneratedAt', direction: 'desc' }],
     },

@@ -24,6 +24,8 @@ export async function writeArticle(
     targetAudience?: string
     contentAngle?: string
     persona?: string
+    realWorldProblem?: string
+    promisedOutcome?: string
   } = {}
 ): Promise<string> {
   const ai = getGenAI()
@@ -49,6 +51,14 @@ export async function writeArticle(
 
   const angleLine = options.contentAngle
     ? `Angle: ${options.contentAngle}. This is the specific lens for the whole article.`
+    : ''
+
+  const editorProblemLine = options.realWorldProblem
+    ? `**Editor problem brief (stay aligned, this is the contract with the reader):**\n${options.realWorldProblem}`
+    : ''
+
+  const editorOutcomeLine = options.promisedOutcome
+    ? `**Editor outcome promise (spell out how the reader knows they are done):**\n${options.promisedOutcome}`
     : ''
 
   const semanticNote =
@@ -94,6 +104,10 @@ ${angleLine}
 **Opening hook:**
 ${hook}
 Never open with "In this post", "In this article", "Today we'll", "Welcome to", or any variation. Never start by explaining what you are about to say; just say it.
+
+${editorProblemLine}
+
+${editorOutcomeLine}
 
 **Heading structure (adapt freely, don't follow robotically):**
 ${plan.headings.map((h) => `- ${h}`).join('\n')}

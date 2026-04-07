@@ -38,6 +38,10 @@ export interface ResearchOptions {
   primaryKeyword?: string
   targetAudience?: string
   contentAngle?: string
+  realWorldProblem?: string
+  promisedOutcome?: string
+  researchSeeds?: string[]
+  articleIntent?: string
 }
 
 function normalizeSourceTitle(text: string): string {
@@ -96,11 +100,29 @@ export async function researchTopic(
     : ''
 
   const angleHint = options.contentAngle
-    ? `\nContent angle to research toward: ${options.contentAngle}`
+    ? `\nContent angle SEO field: ${options.contentAngle}`
     : ''
 
+  const problemHint = options.realWorldProblem
+    ? `\nEditor-defined problem focus (authoritative on what hurts in production): ${options.realWorldProblem}`
+    : ''
+
+  const outcomeHint = options.promisedOutcome
+    ? `\nEditor-defined outcome the finished post must enable: ${options.promisedOutcome}`
+    : ''
+
+  const seedsHint =
+    options.researchSeeds && options.researchSeeds.length > 0
+      ? `\nRun these seeds first (paste into search as given if they are URLs or exact queries): ${options.researchSeeds.join(' | ')}`
+      : ''
+
+  const intentHint =
+    options.articleIntent && options.articleIntent !== 'auto'
+      ? `\nEditor preferred article shape: ${options.articleIntent.replace(/_/g, ' ')}. Set searchIntent and depth to match when consistent with evidence (troubleshooting, tutorial, informational, comparison, reference).`
+      : ''
+
   const prompt = `You are an expert technical content researcher. The goal is a high-relevance developer blog post that solves a real problem people are hitting in the wild, not a generic overview. Topic seed: "${topic}"
-${keywordHint}${audienceHint}${angleHint}${avoidList}
+${keywordHint}${audienceHint}${angleHint}${problemHint}${outcomeHint}${seedsHint}${intentHint}${avoidList}
 
 Use Google Search aggressively. Run multiple targeted queries, for example:
 - site:stackoverflow.com plus the topic, error text, or framework name
