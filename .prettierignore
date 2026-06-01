@@ -3,7 +3,6 @@
 .env.*
 .git
 .next
-.vercel
 .wrangler
 *.min.js
 build
