@@ -19,6 +19,7 @@ export default [
       "public/**",
       "studio/**",
       "scripts/**",
+      "worker-configuration.d.ts",
       "!**/.server",
       "!**/.client"
     ]

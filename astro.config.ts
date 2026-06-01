@@ -1,9 +1,8 @@
+import cloudflare from '@astrojs/cloudflare'
 import solid from '@astrojs/solid-js'
-import vercel from '@astrojs/vercel'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
-
-const isrBypassToken = process.env.VERCEL_ISR_BYPASS_TOKEN
+import type { PluginOption } from 'vite'
 
 export default defineConfig({
   site: 'https://loke.dev',
@@ -11,26 +10,13 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'always',
   },
-  adapter: vercel({
-    webAnalytics: { enabled: true },
-    maxDuration: 300,
-    isr: {
-      ...(isrBypassToken ? { bypassToken: isrBypassToken } : {}),
-      // ISR cache keys ignore search params, so keep /blog (uses ?page=) out of ISR.
-      exclude: [/^\/blog\/?$/, /^\/search\/?$/, /^\/api\/.+/],
-    },
-    imageService: true,
-    imagesConfig: {
-      sizes: [
-        192, 256, 320, 384, 512, 640, 750, 768, 828, 1024, 1080, 1200, 1280,
-        1600, 1920, 2048, 3840,
-      ],
-    },
+  adapter: cloudflare({
+    imageService: 'compile',
+    prerenderEnvironment: 'node',
   }),
   integrations: [solid()],
   vite: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plugins: [tailwindcss() as any],
+    plugins: [tailwindcss() as PluginOption],
     server: {
       proxy: {
         '/studio': {

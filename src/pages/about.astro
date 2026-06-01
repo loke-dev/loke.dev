@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets'
 import profileImage from '@/assets/loke-clay.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PortableText from '@/components/PortableText.astro'
@@ -35,17 +34,14 @@ const breadcrumbSchema = {
 
     <div class="prose prose-invert max-w-none">
       <div class="flex justify-center mb-6">
-        <Image
-          src={profileImage}
+        <img
+          src={profileImage.src}
           alt="3D clay avatar"
-          widths={[256, 384, 512, 640]}
-          sizes="256px"
           loading="eager"
           fetchpriority="high"
           decoding="async"
           width={512}
           height={512}
-          quality={85}
           class="h-auto w-64 rounded-lg"
         />
       </div>

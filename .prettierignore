@@ -4,6 +4,7 @@
 .git
 .next
 .vercel
+.wrangler
 *.min.js
 build
 coverage
@@ -11,3 +12,4 @@ dist
 node_modules
 pnpm-lock.yaml
 public
+worker-configuration.d.ts

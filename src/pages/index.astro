@@ -1,5 +1,4 @@
 ---
-import { Picture, getImage } from 'astro:assets'
 import profileImage from '@/assets/loke-clay.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogPostCard from '@/components/BlogPostCard.astro'
@@ -16,19 +15,6 @@ const heroTitleParts = page.heroTitle.split('.')
 const hasAccentDot = heroTitleParts.length === 2
 
 const heroLcpSizes = '(min-width: 640px) 256px, 192px'
-const heroLcpWidths = [192, 256, 384, 512] as const
-const heroLcpAvif = await Promise.all(
-  heroLcpWidths.map((w) =>
-    getImage({
-      src: profileImage,
-      width: w,
-      height: w,
-      format: 'avif',
-      quality: 85,
-    })
-  )
-)
-const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidths[i]}w`).join(', ')
 ---
 
 <BaseLayout
@@ -40,7 +26,7 @@ const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidth
     slot="head"
     rel="preload"
     as="image"
-    imagesrcset={heroLcpAvifSrcset}
+    href={profileImage.src}
     imagesizes={heroLcpSizes}
     fetchpriority="high"
   />
@@ -79,18 +65,14 @@ const heroLcpAvifSrcset = heroLcpAvif.map((img, i) => `${img.src} ${heroLcpWidth
           <div class="hero-frame relative aspect-square overflow-hidden rounded-xl border border-accent/25 bg-gradient-to-br from-primary/25 via-accent/10 to-muted shadow-[0_28px_80px_-40px_oklch(72%_0.18_70/0.45)] md:aspect-[4/3]">
             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div class="h-48 w-48 overflow-hidden rounded-full border-4 border-accent/35 bg-muted shadow-[0_0_0_1px_oklch(1_0_0/0.06)] sm:h-64 sm:w-64">
-                <Picture
-                  src={profileImage}
+                <img
+                  src={profileImage.src}
                   alt="Profile avatar"
-                  formats={['avif', 'webp']}
-                  widths={[192, 256, 384, 512]}
-                  sizes={heroLcpSizes}
                   fetchpriority="high"
                   loading="eager"
                   decoding="async"
                   width={512}
                   height={512}
-                  quality={85}
                   class="h-full w-full object-cover"
                 />
               </div>

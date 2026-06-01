@@ -2,9 +2,13 @@ import type { APIRoute } from 'astro'
 import { generate } from '@/lib/content-generation'
 import { dataset, projectId } from '@/lib/sanity/projectDetails'
 
+interface WriteRequestBody {
+  topicId?: unknown
+}
+
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json()
+    const body = (await request.json()) as WriteRequestBody
     const { topicId } = body
 
     if (!process.env.GEMINI_API_KEY) {

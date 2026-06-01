@@ -40,7 +40,7 @@ const imageUrl = getSanityImageUrl(post.image, 1200, 630)
 const heroSrcSet = getSanityImageSrcSet(post.image, [640, 768, 1024, 1280, 1600])
 const canonicalUrl = `${SITE_DOMAIN}/blog/${slug}`
 
-const defaultImageUrl = await getDefaultProfileOgUrl()
+const defaultImageUrl = getDefaultProfileOgUrl()
 
 const articleSchema = createArticleSchema(post, defaultImageUrl)
 const breadcrumbSchema = createBreadcrumbSchema([
