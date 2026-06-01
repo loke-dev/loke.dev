@@ -1,9 +1,11 @@
-import { createHighlighter, type Highlighter } from 'shiki'
+import {
+  createHighlighter,
+  createJavaScriptRegexEngine,
+  type Highlighter,
+} from 'shiki'
 
 let highlighter: Highlighter | null = null
 
-// Simple in-memory cache for highlighted snippets
-// Keyed by `${lang}::${hash(code)}`
 const highlightCache = new Map<string, string>()
 const MAX_CACHE_ENTRIES = 500
 
@@ -33,6 +35,7 @@ async function getHighlighter(): Promise<Highlighter> {
     highlighter = await createHighlighter({
       themes: ['min-dark', 'catppuccin-latte'],
       langs: [...SUPPORTED_LANGUAGES],
+      engine: createJavaScriptRegexEngine(),
     })
   }
   return highlighter
@@ -84,7 +87,6 @@ export async function highlightCode(
     },
   })
 
-  // Simple LRU-ish behavior: if over capacity, delete oldest
   if (highlightCache.size >= MAX_CACHE_ENTRIES) {
     const firstKey = highlightCache.keys().next().value
     if (firstKey) highlightCache.delete(firstKey)
@@ -102,7 +104,6 @@ function simpleHash(input: string): number {
   return hash >>> 0
 }
 
-// Optional: allow preloading at server start to avoid first-request cost
 export async function preloadHighlighter() {
   await getHighlighter()
 }

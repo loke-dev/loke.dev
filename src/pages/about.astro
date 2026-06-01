@@ -1,5 +1,9 @@
 ---
-import profileImage from '@/assets/loke-clay.png'
+import profileAvif256 from '@/assets/loke-clay-256.avif'
+import profileAvif512 from '@/assets/loke-clay-512.avif'
+import profilePng512 from '@/assets/loke-clay-512.png'
+import profileWebp256 from '@/assets/loke-clay-256.webp'
+import profileWebp512 from '@/assets/loke-clay-512.webp'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PortableText from '@/components/PortableText.astro'
 import { getAboutPage } from '@/utils/sanity.queries'
@@ -9,6 +13,9 @@ import { SITE_DOMAIN } from '@/utils/meta'
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 const page = await getAboutPage()
+const profileSizes = '256px'
+const profileAvifSrcset = `${profileAvif256.src} 256w, ${profileAvif512.src} 512w`
+const profileWebpSrcset = `${profileWebp256.src} 256w, ${profileWebp512.src} 512w`
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -34,16 +41,20 @@ const breadcrumbSchema = {
 
     <div class="prose prose-invert max-w-none">
       <div class="flex justify-center mb-6">
-        <img
-          src={profileImage.src}
-          alt="3D clay avatar"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          width={512}
-          height={512}
-          class="h-auto w-64 rounded-lg"
-        />
+        <picture>
+          <source type="image/avif" srcset={profileAvifSrcset} sizes={profileSizes} />
+          <source type="image/webp" srcset={profileWebpSrcset} sizes={profileSizes} />
+          <img
+            src={profilePng512.src}
+            alt="3D clay avatar"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            width={512}
+            height={512}
+            class="h-auto w-64 rounded-lg"
+          />
+        </picture>
       </div>
 
       <p class="lead text-lg text-muted-foreground">{page.intro}</p>

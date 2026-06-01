@@ -1,5 +1,9 @@
 ---
-import profileImage from '@/assets/loke-clay.png'
+import profileAvif256 from '@/assets/loke-clay-256.avif'
+import profileAvif512 from '@/assets/loke-clay-512.avif'
+import profilePng512 from '@/assets/loke-clay-512.png'
+import profileWebp256 from '@/assets/loke-clay-256.webp'
+import profileWebp512 from '@/assets/loke-clay-512.webp'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogPostCard from '@/components/BlogPostCard.astro'
 import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
@@ -15,6 +19,8 @@ const heroTitleParts = page.heroTitle.split('.')
 const hasAccentDot = heroTitleParts.length === 2
 
 const heroLcpSizes = '(min-width: 640px) 256px, 192px'
+const profileAvifSrcset = `${profileAvif256.src} 256w, ${profileAvif512.src} 512w`
+const profileWebpSrcset = `${profileWebp256.src} 256w, ${profileWebp512.src} 512w`
 ---
 
 <BaseLayout
@@ -26,8 +32,10 @@ const heroLcpSizes = '(min-width: 640px) 256px, 192px'
     slot="head"
     rel="preload"
     as="image"
-    href={profileImage.src}
+    href={profileAvif512.src}
+    imagesrcset={profileAvifSrcset}
     imagesizes={heroLcpSizes}
+    type="image/avif"
     fetchpriority="high"
   />
   <div class="flex flex-col items-center">
@@ -65,16 +73,20 @@ const heroLcpSizes = '(min-width: 640px) 256px, 192px'
           <div class="hero-frame relative aspect-square overflow-hidden rounded-xl border border-accent/25 bg-gradient-to-br from-primary/25 via-accent/10 to-muted shadow-[0_28px_80px_-40px_oklch(72%_0.18_70/0.45)] md:aspect-[4/3]">
             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div class="h-48 w-48 overflow-hidden rounded-full border-4 border-accent/35 bg-muted shadow-[0_0_0_1px_oklch(1_0_0/0.06)] sm:h-64 sm:w-64">
-                <img
-                  src={profileImage.src}
-                  alt="Profile avatar"
-                  fetchpriority="high"
-                  loading="eager"
-                  decoding="async"
-                  width={512}
-                  height={512}
-                  class="h-full w-full object-cover"
-                />
+                <picture>
+                  <source type="image/avif" srcset={profileAvifSrcset} sizes={heroLcpSizes} />
+                  <source type="image/webp" srcset={profileWebpSrcset} sizes={heroLcpSizes} />
+                  <img
+                    src={profilePng512.src}
+                    alt="Profile avatar"
+                    fetchpriority="high"
+                    loading="eager"
+                    decoding="async"
+                    width={512}
+                    height={512}
+                    class="h-full w-full object-cover"
+                  />
+                </picture>
               </div>
             </div>
           </div>
