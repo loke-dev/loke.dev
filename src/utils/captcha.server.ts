@@ -1,3 +1,7 @@
+interface TurnstileVerifyResponse {
+  success?: boolean
+}
+
 export async function verifyTurnstileToken(token: string): Promise<boolean> {
   // In development, always return true for test tokens
   if (process.env.NODE_ENV === 'development') {
@@ -31,7 +35,7 @@ export async function verifyTurnstileToken(token: string): Promise<boolean> {
       }
     )
 
-    const result = await response.json()
+    const result = (await response.json()) as TurnstileVerifyResponse
     return result.success === true
   } catch (error) {
     console.error('CAPTCHA verification failed:', error)

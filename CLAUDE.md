@@ -28,14 +28,14 @@ Always use `pnpm` as the package manager. Never use npm or yarn.
 
 ### Tech Stack
 
-- **Framework**: Astro 6 with `@astrojs/vercel` SSR adapter
+- **Framework**: Astro 6 with `@astrojs/cloudflare` SSR adapter on Cloudflare Workers
 - **CMS**: Sanity.io for content management (headless only)
 - **Styling**: Tailwind CSS v4 (no JS config file)
 - **Client JS**: `Header.astro` ships a small vanilla TS script for the mobile `<dialog>` menu; `ContactForm` is a **SolidJS** island (`client:load`); related posts are server-rendered — everything else is static Astro
 - **Code Highlighting**: Shiki (server-side, zero client JS)
 - **Email**: Resend API
 - **CAPTCHA**: Cloudflare Turnstile (vanilla CDN widget)
-- **Analytics**: Vercel Analytics (via `@astrojs/vercel` adapter option)
+- **Analytics**: Cloudflare dashboard observability via Workers
 - **Automated Content**: Seshat Scribe (Gemini AI + Sanity write)
 
 ### Project Structure
@@ -146,6 +146,7 @@ Required (see `env.example`):
 - `GEMINI_API_KEY` — Seshat content generation
 - `VITE_SANITY_PROJECT_ID` / `VITE_SANITY_DATASET` — Sanity CMS (public, client-accessible)
 - `SANITY_WRITE_TOKEN` — Sanity write access for Seshat
+- `CLOUDFLARE_ZONE_ID` / `CLOUDFLARE_API_TOKEN` — cache purge for Sanity revalidation
 
 ### Caching Strategy
 
@@ -155,6 +156,8 @@ Cache headers set per page in frontmatter via `Astro.response.headers.set('Cache
 - Blog list: `s-maxage=60, stale-while-revalidate=300`
 - Blog post: `s-maxage=3600, stale-while-revalidate=86400`
 - Projects / About: `s-maxage=600, stale-while-revalidate=3600`
+
+Sanity publish webhooks call `/api/revalidate`, which purges the affected Cloudflare cache URLs via the Cloudflare API.
 
 ## Code Conventions
 

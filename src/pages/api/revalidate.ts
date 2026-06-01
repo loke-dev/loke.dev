@@ -12,6 +12,13 @@ interface RevalidatePayload {
   paths?: string[]
 }
 
+interface CloudflarePurgeResponse {
+  success: boolean
+  errors: Array<{ code?: number; message: string }>
+  messages: Array<{ code?: number; message: string }>
+  result?: { id?: string }
+}
+
 const TYPE_PATHS: Record<string, string[]> = {
   post: ['/', '/blog', '/rss.xml', '/sitemap.xml'],
   homePage: ['/'],
@@ -114,6 +121,73 @@ function collectPaths(payload: RevalidatePayload): string[] {
   return [...paths]
 }
 
+function getPurgeOrigins(url: URL): string[] {
+  const configuredHosts = process.env.CLOUDFLARE_PURGE_HOSTS?.split(',')
+    .map((host) => host.trim())
+    .filter(Boolean)
+
+  if (configuredHosts?.length) {
+    return configuredHosts.map((host) => {
+      if (host.startsWith('http://') || host.startsWith('https://')) {
+        return host.replace(/\/+$/, '')
+      }
+      return `https://${host.replace(/\/+$/, '')}`
+    })
+  }
+
+  return [`${url.protocol}//${url.host}`]
+}
+
+function buildPurgeUrls(paths: string[], url: URL): string[] {
+  return getPurgeOrigins(url).flatMap((origin) =>
+    paths.map((path) => new URL(path, origin).href)
+  )
+}
+
+async function purgeCloudflareCache(files: string[]) {
+  const zoneId = process.env.CLOUDFLARE_ZONE_ID
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+
+  if (!zoneId || !apiToken) {
+    return {
+      ok: false,
+      status: 500,
+      result: {
+        success: false,
+        errors: [
+          {
+            message:
+              'Missing Cloudflare cache purge config. Set CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN.',
+          },
+        ],
+        messages: [],
+      } satisfies CloudflarePurgeResponse,
+    }
+  }
+
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ files }),
+    }
+  )
+
+  const result = (await response
+    .json()
+    .catch(() => null)) as CloudflarePurgeResponse | null
+
+  return {
+    ok: response.ok && result?.success === true,
+    status: response.status,
+    result,
+  }
+}
+
 function getIncomingSecret(request: Request): string | null {
   const authorization = request.headers.get('authorization')
   if (authorization?.startsWith('Bearer ')) {
@@ -125,17 +199,6 @@ function getIncomingSecret(request: Request): string | null {
 export const POST: APIRoute = async ({ request, url }) => {
   const sharedSecret = process.env.REVALIDATE_WEBHOOK_SECRET
   const sanityWebhookSecret = process.env.SANITY_WEBHOOK_SECRET
-  const bypassToken = process.env.VERCEL_ISR_BYPASS_TOKEN
-
-  if (!bypassToken) {
-    return Response.json(
-      {
-        ok: false,
-        error: 'Missing VERCEL_ISR_BYPASS_TOKEN',
-      },
-      { status: 500 }
-    )
-  }
 
   const rawBody = await request.text()
   const signature = request.headers.get(SIGNATURE_HEADER_NAME)
@@ -207,43 +270,17 @@ export const POST: APIRoute = async ({ request, url }) => {
   }
 
   const paths = collectPaths(payload)
-  const origin = `${url.protocol}//${url.host}`
-
-  const revalidated = await Promise.all(
-    paths.map(async (path) => {
-      try {
-        const response = await fetch(new URL(path, origin), {
-          method: 'HEAD',
-          headers: {
-            'x-prerender-revalidate': bypassToken,
-          },
-        })
-        return {
-          path,
-          ok: response.ok,
-          status: response.status,
-          cacheStatus: response.headers.get('x-vercel-cache'),
-        }
-      } catch (error) {
-        return {
-          path,
-          ok: false,
-          status: 500,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        }
-      }
-    })
-  )
-
-  const ok = revalidated.every((result) => result.ok)
+  const purgeUrls = buildPurgeUrls(paths, url)
+  const purge = await purgeCloudflareCache(purgeUrls)
 
   return Response.json(
     {
-      ok,
-      count: revalidated.length,
+      ok: purge.ok,
+      count: purgeUrls.length,
       authMethod,
-      revalidated,
+      purged: purgeUrls,
+      cloudflare: purge.result,
     },
-    { status: ok ? 200 : 207 }
+    { status: purge.ok ? 200 : purge.status }
   )
 }
