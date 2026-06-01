@@ -11,7 +11,7 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   adapter: cloudflare({
-    imageService: 'cloudflare-binding',
+    imageService: 'compile',
     prerenderEnvironment: 'node',
   }),
   integrations: [solid()],
