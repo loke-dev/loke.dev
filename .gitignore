@@ -13,7 +13,6 @@ node_modules
 /.sanity
 /dist
 /.astro
-/.vercel
 
 # Service Worker
 /public/entry.worker.js
