@@ -1,17 +1,24 @@
 {
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "loke-dev",
-  "main": "./src/worker.ts",
-  "compatibility_date": "2026-06-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "./dist",
-  },
-  "observability": {
-    "enabled": true,
-  },
-  "triggers": {
-    "crons": ["45 23 * * *"],
-  },
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "loke-dev",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-06-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./dist",
+	},
+	"images": {
+		"binding": "IMAGES",
+	},
+	"observability": {
+		"enabled": true,
+	},
+	"triggers": {
+		"crons": [
+			"45 23 * * *"
+		],
+	},
 }
