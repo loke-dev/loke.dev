@@ -1,9 +1,9 @@
 export const CACHE_CONTROL = {
-  home: 'public, s-maxage=120, stale-while-revalidate=600',
-  blogIndex: 'public, s-maxage=60, stale-while-revalidate=300',
-  blogPost: 'public, s-maxage=3600, stale-while-revalidate=86400',
-  staticPage: 'public, s-maxage=600, stale-while-revalidate=3600',
-  contact: 'public, s-maxage=300, stale-while-revalidate=3600',
-  changelog: 'public, s-maxage=300, stale-while-revalidate=900',
-  xmlFeed: 'public, s-maxage=3600',
+  home: 'public, s-maxage=3600, stale-while-revalidate=86400',
+  blogIndex: 'public, s-maxage=1800, stale-while-revalidate=86400',
+  blogPost: 'public, s-maxage=86400, stale-while-revalidate=604800',
+  staticPage: 'public, s-maxage=3600, stale-while-revalidate=86400',
+  contact: 'public, s-maxage=3600, stale-while-revalidate=86400',
+  changelog: 'public, s-maxage=3600, stale-while-revalidate=86400',
+  xmlFeed: 'public, s-maxage=3600, stale-while-revalidate=86400',
 } as const

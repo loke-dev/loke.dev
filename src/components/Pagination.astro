@@ -6,8 +6,18 @@ interface Props {
 }
 
 const { currentPage, totalPages, basePath = '/blog' } = Astro.props
-const prevUrl = currentPage > 1 ? (currentPage === 2 ? basePath : `${basePath}?page=${currentPage - 1}`) : null
-const nextUrl = currentPage < totalPages ? `${basePath}?page=${currentPage + 1}` : null
+const prevUrl =
+  currentPage > 1
+    ? currentPage === 2
+      ? basePath
+      : `${basePath}/page/${currentPage - 1}`
+    : null
+const nextUrl =
+  currentPage < totalPages
+    ? currentPage === 1
+      ? `${basePath}/page/2`
+      : `${basePath}/page/${currentPage + 1}`
+    : null
 ---
 
 {totalPages > 1 && (

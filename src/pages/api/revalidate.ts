@@ -1,6 +1,13 @@
 import { timingSafeEqual } from 'node:crypto'
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook'
 import type { APIRoute } from 'astro'
+import {
+  buildPurgeUrls,
+  purgeCloudflareCache,
+  SSR_WARM_PATHS,
+  triggerSiteDeploy,
+  warmCachePaths,
+} from '@/lib/revalidate.server'
 
 export const prerender = false
 
@@ -12,13 +19,6 @@ interface RevalidatePayload {
   paths?: string[]
 }
 
-interface CloudflarePurgeResponse {
-  success: boolean
-  errors: Array<{ code?: number; message: string }>
-  messages: Array<{ code?: number; message: string }>
-  result?: { id?: string }
-}
-
 const TYPE_PATHS: Record<string, string[]> = {
   post: ['/', '/blog', '/rss.xml', '/sitemap.xml'],
   homePage: ['/'],
@@ -27,6 +27,7 @@ const TYPE_PATHS: Record<string, string[]> = {
   projectsPage: ['/projects'],
   project: ['/', '/projects'],
   contactPage: ['/contact'],
+  changelog: ['/changelog'],
 }
 
 function normalizePath(path: string): string | null {
@@ -121,73 +122,6 @@ function collectPaths(payload: RevalidatePayload): string[] {
   return [...paths]
 }
 
-function getPurgeOrigins(url: URL): string[] {
-  const configuredHosts = process.env.CLOUDFLARE_PURGE_HOSTS?.split(',')
-    .map((host) => host.trim())
-    .filter(Boolean)
-
-  if (configuredHosts?.length) {
-    return configuredHosts.map((host) => {
-      if (host.startsWith('http://') || host.startsWith('https://')) {
-        return host.replace(/\/+$/, '')
-      }
-      return `https://${host.replace(/\/+$/, '')}`
-    })
-  }
-
-  return [`${url.protocol}//${url.host}`]
-}
-
-function buildPurgeUrls(paths: string[], url: URL): string[] {
-  return getPurgeOrigins(url).flatMap((origin) =>
-    paths.map((path) => new URL(path, origin).href)
-  )
-}
-
-async function purgeCloudflareCache(files: string[]) {
-  const zoneId = process.env.CLOUDFLARE_ZONE_ID
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-
-  if (!zoneId || !apiToken) {
-    return {
-      ok: false,
-      status: 500,
-      result: {
-        success: false,
-        errors: [
-          {
-            message:
-              'Missing Cloudflare cache purge config. Set CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN.',
-          },
-        ],
-        messages: [],
-      } satisfies CloudflarePurgeResponse,
-    }
-  }
-
-  const response = await fetch(
-    `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ files }),
-    }
-  )
-
-  const result = (await response
-    .json()
-    .catch(() => null)) as CloudflarePurgeResponse | null
-
-  return {
-    ok: response.ok && result?.success === true,
-    status: response.status,
-    result,
-  }
-}
-
 function getIncomingSecret(request: Request): string | null {
   const authorization = request.headers.get('authorization')
   if (authorization?.startsWith('Bearer ')) {
@@ -270,15 +204,33 @@ export const POST: APIRoute = async ({ request, url }) => {
   }
 
   const paths = collectPaths(payload)
-  const purgeUrls = buildPurgeUrls(paths, url)
+  const deploy = await triggerSiteDeploy(paths)
+
+  if (deploy.ok) {
+    return Response.json({
+      ok: true,
+      count: paths.length,
+      authMethod,
+      paths,
+      deploy,
+      message:
+        'Deploy triggered. Static pages rebuild in GitHub Actions; cache purges after deploy.',
+    })
+  }
+
+  const purgeUrls = buildPurgeUrls([...paths, ...SSR_WARM_PATHS], url)
   const purge = await purgeCloudflareCache(purgeUrls)
+  const warmed = await warmCachePaths([...paths, ...SSR_WARM_PATHS], url)
 
   return Response.json(
     {
       ok: purge.ok,
       count: purgeUrls.length,
       authMethod,
+      paths,
+      deploy,
       purged: purgeUrls,
+      warmed,
       cloudflare: purge.result,
     },
     { status: purge.ok ? 200 : purge.status }

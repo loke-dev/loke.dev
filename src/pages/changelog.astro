@@ -1,4 +1,6 @@
 ---
+export const prerender = true
+
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { fetchRecentRepoCommits, getGithubRepoConfig } from '@/lib/github.server'
 import { CACHE_CONTROL } from '@/utils/cache-control'

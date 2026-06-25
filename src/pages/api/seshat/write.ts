@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro'
 import { generate } from '@/lib/content-generation'
 import { dataset, projectId } from '@/lib/sanity/projectDetails'
 
+export const prerender = false
+
 interface WriteRequestBody {
   topicId?: unknown
 }

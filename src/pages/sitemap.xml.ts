@@ -1,10 +1,13 @@
 import type { APIRoute } from 'astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
-import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { getAllPublishedPosts, getBlogTotalPages } from '@/utils/sanity.queries'
+
+export const prerender = true
 
 export const GET: APIRoute = async () => {
   const posts = await getAllPublishedPosts()
+  const totalPages = await getBlogTotalPages()
 
   const staticUrls = [
     '/',
@@ -15,9 +18,16 @@ export const GET: APIRoute = async () => {
     '/search',
     '/contact',
   ]
+  const blogPageUrls =
+    totalPages > 1
+      ? Array.from(
+          { length: totalPages - 1 },
+          (_, index) => `/blog/page/${index + 2}`
+        )
+      : []
   const postUrls = posts.map((p) => `/blog/${p.slug.current}`)
 
-  const allUrls = [...staticUrls, ...postUrls]
+  const allUrls = [...staticUrls, ...blogPageUrls, ...postUrls]
 
   const urlset = allUrls
     .map((url) => `  <url><loc>${SITE_DOMAIN}${url}</loc></url>`)

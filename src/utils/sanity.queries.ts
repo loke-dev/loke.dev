@@ -103,6 +103,11 @@ export async function getAllPostSlugs(): Promise<PostSlug[]> {
   return client.fetch<PostSlug[]>(POST_SLUGS_QUERY)
 }
 
+export async function getBlogTotalPages(): Promise<number> {
+  const totalCount = await client.fetch<number>(POST_COUNT_QUERY)
+  return Math.max(1, Math.ceil(totalCount / POSTS_PER_PAGE))
+}
+
 export async function getRelatedPosts(
   excludeId: string,
   tags: string[],

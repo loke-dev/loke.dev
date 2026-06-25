@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro'
 import { runSeshatScheduler } from '@/lib/content-generation/scheduler'
 
+export const prerender = false
+
 function authorizeCron(request: Request) {
   const secret = process.env.CRON_SECRET
   if (!secret) return false

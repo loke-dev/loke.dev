@@ -3,18 +3,38 @@ export const prerender = true
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogListSection from '@/components/BlogListSection.astro'
-import { getPaginatedPosts, getBlogPage } from '@/utils/sanity.queries'
+import {
+  getBlogPage,
+  getBlogTotalPages,
+  getPaginatedPosts,
+} from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 
+export async function getStaticPaths() {
+  const totalPages = await getBlogTotalPages()
+  if (totalPages < 2) return []
+
+  return Array.from({ length: totalPages - 1 }, (_, index) => ({
+    params: { page: String(index + 2) },
+  }))
+}
+
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
 
+const pageParam = Astro.params.page
+const currentPage = Math.max(2, parseInt(pageParam ?? '2', 10))
+
 const [paginatedResult, page] = await Promise.all([
-  getPaginatedPosts(1),
+  getPaginatedPosts(currentPage),
   getBlogPage(),
 ])
 
 const { posts, totalPages } = paginatedResult
+
+if (currentPage > totalPages) {
+  return Astro.redirect('/blog', 302)
+}
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -29,14 +49,14 @@ const breadcrumbSchema = {
 <BaseLayout
   title="Blog"
   description="In-depth articles, practical guides, and insights on modern web development. Topics include React, TypeScript, database optimization, AI integration, and building resilient web applications."
-  url={`${SITE_DOMAIN}/blog`}
+  url={`${SITE_DOMAIN}/blog/page/${currentPage}`}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <BlogListSection
     page={page}
     posts={posts}
-    currentPage={1}
+    currentPage={currentPage}
     totalPages={totalPages}
   />
 </BaseLayout>

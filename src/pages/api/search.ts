@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro'
 import { runSearch } from '@/lib/sanity/search.server'
 
+export const prerender = false
+
 interface RateBucket {
   count: number
   resetTime: number

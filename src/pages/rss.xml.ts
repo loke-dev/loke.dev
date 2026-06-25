@@ -10,6 +10,8 @@ import {
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
 import { getSanityImageUrl } from '@/lib/sanity/helpers'
 
+export const prerender = true
+
 function escapeXml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
