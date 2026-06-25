@@ -22,4 +22,6 @@ Then run the app in production mode:
 pnpm start
 ```
 
-Now you'll need to pick a host to deploy it to.
+## Hosting
+
+This website is configured to use Cloudflare workers. You are free to adapt it to any hosting solution.
