@@ -1,5 +1,16 @@
 const DEFAULT_DEPLOY_EVENT = 'sanity-content-update'
 
+function env(name: string): string | undefined {
+  const fromMeta = (import.meta.env as Record<string, string | undefined>)[name]
+  if (typeof fromMeta === 'string' && fromMeta.trim()) return fromMeta.trim()
+  const fromProcess =
+    typeof process !== 'undefined' ? process.env[name] : undefined
+  if (typeof fromProcess === 'string' && fromProcess.trim()) {
+    return fromProcess.trim()
+  }
+  return undefined
+}
+
 interface DeployTriggerResult {
   ok: boolean
   skipped: boolean
@@ -8,9 +19,9 @@ interface DeployTriggerResult {
 }
 
 export function getDeployRepositoryConfig() {
-  const token = process.env.GITHUB_DEPLOY_TOKEN ?? process.env.GITHUB_TOKEN
-  const owner = process.env.GITHUB_OWNER
-  const repo = process.env.GITHUB_REPO
+  const token = env('GITHUB_DEPLOY_TOKEN') ?? env('GITHUB_TOKEN')
+  const owner = env('GITHUB_OWNER') ?? 'loke-dev'
+  const repo = env('GITHUB_REPO') ?? 'loke.dev'
 
   if (!token || !owner || !repo) {
     return null
@@ -63,7 +74,8 @@ export async function triggerSiteDeploy(
 }
 
 export function getPurgeOrigins(url: URL): string[] {
-  const configuredHosts = process.env.CLOUDFLARE_PURGE_HOSTS?.split(',')
+  const configuredHosts = env('CLOUDFLARE_PURGE_HOSTS')
+    ?.split(',')
     .map((host) => host.trim())
     .filter(Boolean)
 
@@ -93,8 +105,8 @@ interface CloudflarePurgeResponse {
 }
 
 export async function purgeCloudflareCache(files: string[]) {
-  const zoneId = process.env.CLOUDFLARE_ZONE_ID
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  const zoneId = env('CLOUDFLARE_ZONE_ID')
+  const apiToken = env('CLOUDFLARE_API_TOKEN')
 
   if (!zoneId || !apiToken) {
     return {

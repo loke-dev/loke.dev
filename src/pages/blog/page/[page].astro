@@ -1,24 +1,11 @@
 ---
-export const prerender = true
+export const prerender = false
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogListSection from '@/components/BlogListSection.astro'
-import {
-  getBlogPage,
-  getBlogTotalPages,
-  getPaginatedPosts,
-} from '@/utils/sanity.queries'
+import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
-
-export async function getStaticPaths() {
-  const totalPages = await getBlogTotalPages()
-  if (totalPages < 2) return []
-
-  return Array.from({ length: totalPages - 1 }, (_, index) => ({
-    params: { page: String(index + 2) },
-  }))
-}
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
 

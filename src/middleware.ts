@@ -2,6 +2,7 @@ import { defineMiddleware } from 'astro:middleware'
 import { getSecurityHeaders } from '@/utils/headers.server'
 
 const SESHAT_PREFIX = '/api/seshat'
+const CACHEABLE_PATHS = /^\/blog(?:\/|$)/
 
 const SESHAT_EXACT_ALLOWED_ORIGINS = new Set([
   'https://loke-dev.sanity.studio',
@@ -61,6 +62,10 @@ function mergeSeshatCors(
   )
 }
 
+function isCacheableRequest(request: Request, pathname: string): boolean {
+  return request.method === 'GET' && CACHEABLE_PATHS.test(pathname)
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context
   const pathname = url.pathname
@@ -79,6 +84,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
     })
   }
 
+  const cacheable = isCacheableRequest(request, pathname)
+  const cache =
+    cacheable && typeof caches !== 'undefined'
+      ? (caches as CacheStorage & { default: Cache }).default
+      : undefined
+  const cacheKey = cache
+    ? new Request(url.toString(), { method: 'GET' })
+    : undefined
+  if (cache && cacheKey) {
+    const cached = await cache.match(cacheKey)
+    if (cached) return cached
+  }
+
   const response = await next()
 
   if (pathname.startsWith(SESHAT_PREFIX)) {
@@ -90,6 +108,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const securityHeaders = getSecurityHeaders()
   for (const [key, value] of Object.entries(securityHeaders)) {
     response.headers.set(key, value)
+  }
+
+  if (cache && cacheKey && response.status === 200) {
+    const cacheControl = response.headers.get('Cache-Control') ?? ''
+    if (cacheControl.includes('s-maxage=')) {
+      await cache.put(cacheKey, response.clone())
+    }
   }
 
   return response

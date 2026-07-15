@@ -1,5 +1,5 @@
 ---
-export const prerender = true
+export const prerender = false
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PortableText from '@/components/PortableText.astro'
@@ -8,7 +8,6 @@ import PostResources from '@/components/PostResources.astro'
 import RelatedPosts from '@/components/RelatedPosts.astro'
 import {
   getAdjacentPosts,
-  getAllPostSlugs,
   getPostBySlug,
   getRelatedPosts,
 } from '@/utils/sanity.queries'
@@ -18,13 +17,6 @@ import { createArticleSchema, createBreadcrumbSchema } from '@/lib/sanity/schema
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
-
-export async function getStaticPaths() {
-  const slugs = await getAllPostSlugs()
-  return slugs.map(({ slug }) => ({
-    params: { slug: slug.current },
-  }))
-}
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogPost)
 
