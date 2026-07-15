@@ -10,6 +10,8 @@
   },
   "vars": {
     "TURNSTILE_SITE_KEY": "0x4AAAAAAByUTZq4MKD8TJEL",
+    "GITHUB_OWNER": "loke-dev",
+    "GITHUB_REPO": "loke.dev",
   },
   "observability": {
     "enabled": true,
