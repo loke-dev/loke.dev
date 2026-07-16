@@ -19,6 +19,35 @@ function getStudioProxyRequest(request: Request): Request | null {
 
 type SentryEnv = Env & { SENTRY_DSN?: string }
 
+async function runScheduledContentGeneration() {
+  const startedAt = Date.now()
+
+  try {
+    await runSeshatScheduler()
+    const duration = Date.now() - startedAt
+
+    Sentry.logger.info('Seshat scheduler completed', { duration })
+    Sentry.metrics.count('seshat.scheduler.runs', 1, {
+      attributes: { outcome: 'success' },
+    })
+    Sentry.metrics.distribution('seshat.scheduler.duration', duration, {
+      unit: 'millisecond',
+    })
+  } catch (error) {
+    const duration = Date.now() - startedAt
+
+    Sentry.logger.error('Seshat scheduler failed', { duration })
+    Sentry.metrics.count('seshat.scheduler.runs', 1, {
+      attributes: { outcome: 'failure' },
+    })
+    Sentry.metrics.distribution('seshat.scheduler.duration', duration, {
+      unit: 'millisecond',
+    })
+
+    throw error
+  }
+}
+
 const handler: ExportedHandler<SentryEnv> = {
   fetch(request, env, context) {
     const studioRequest = getStudioProxyRequest(request)
@@ -32,7 +61,7 @@ const handler: ExportedHandler<SentryEnv> = {
     context.waitUntil(
       Sentry.withMonitor(
         'seshat-content-scheduler',
-        () => runSeshatScheduler(),
+        runScheduledContentGeneration,
         {
           schedule: { type: 'crontab', value: '45 23 * * *' },
           checkinMargin: 10,
@@ -51,6 +80,10 @@ export default Sentry.withSentry(
           dsn: env.SENTRY_DSN,
           environment: 'production',
           tracesSampleRate: 0.1,
+          enableLogs: true,
+          integrations: [
+            Sentry.consoleLoggingIntegration({ levels: ['warn', 'error'] }),
+          ],
         }
       : undefined,
   handler
