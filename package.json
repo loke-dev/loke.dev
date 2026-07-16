@@ -11,6 +11,7 @@
     "cf-typegen": "wrangler types",
     "typecheck": "astro check && tsc --noEmit",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "monitoring:status": "node --env-file=.env.monitoring scripts/monitoring-status.mjs",
     "format": "prettier --write \"**/*.{ts,tsx,astro,md,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,astro,md,json}\"",
     "prepare": "husky",
