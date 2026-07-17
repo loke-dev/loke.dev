@@ -3,7 +3,7 @@ import { getSecurityHeaders } from '@/utils/headers.server'
 
 const CACHEABLE_PATHS = /^\/(?:blog(?:\/|$)|sitemap\.xml$|rss\.xml$)/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
-const CONTENT_CACHE_VERSION = '2026-07-17-topic-taxonomy-v2'
+const CONTENT_CACHE_VERSION = '2026-07-17-article-diagrams-v3'
 
 function isCacheableRequest(request: Request, pathname: string): boolean {
   return request.method === 'GET' && CACHEABLE_PATHS.test(pathname)
