@@ -94,7 +94,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     : undefined
   if (cache && cacheKey) {
     const cached = await cache.match(cacheKey)
-    if (cached) return cached
+    if (cached) {
+      // Cache API responses expose immutable headers. Astro finalizes every
+      // response by adding headers, so return a mutable equivalent instead.
+      return new Response(cached.body, {
+        status: cached.status,
+        statusText: cached.statusText,
+        headers: cached.headers,
+      })
+    }
   }
 
   const response = await next()
