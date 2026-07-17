@@ -33,6 +33,12 @@ export default defineType({
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'templatesSectionTitle',
+      title: 'Templates Section Title',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
   ],
   validation: (Rule) => Rule.custom(validatePublicCopy),
   description: voiceDescription,

@@ -23,14 +23,14 @@ export const AUTHOR_BY_SLUG_QUERY = `*[_type == "author" && !(_id in path("draft
 export const POSTS_BY_AUTHOR_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && author->slug.current == $slug] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs }`
 
-export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, year, order }`
-export const FEATURED_PROJECTS_QUERY = `*[_type == "project" && featured == true] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, year, order }`
-export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0] { _id, title, slug, description, technologies, image, url, github, featured, year, order }`
+export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
+export const FEATURED_PROJECTS_QUERY = `*[_type == "project" && featured == true] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
+export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0] { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
 export const PROJECT_SLUGS_QUERY = `*[_type == "project"] { slug }`
 export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0] { heroTitle, heroDescription, technologiesSectionTitle, technologies, blogSectionTitle, blogSectionDescription, ctaTitle, ctaDescription, ctaButtonText }`
 export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage" && _id == "aboutPage"][0] { title, intro, sections[] { _key, title, content } }`
 export const BLOG_PAGE_QUERY = `*[_type == "blogPage" && _id == "blogPage"][0] { title, description, emptyStateTitle, emptyStateDescription }`
-export const PROJECTS_PAGE_QUERY = `*[_type == "projectsPage" && _id == "projectsPage"][0] { title, description, featuredSectionTitle, otherSectionTitle }`
+export const PROJECTS_PAGE_QUERY = `*[_type == "projectsPage" && _id == "projectsPage"][0] { title, description, featuredSectionTitle, otherSectionTitle, templatesSectionTitle }`
 export const CONTACT_PAGE_QUERY = `*[_type == "contactPage" && _id == "contactPage"][0] { title, description, alternativeContactTitle, alternativeContactDescription }`
 export const SEARCH_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && (lower(title) match $pattern || lower(description) match $pattern || lower(coalesce(pt::text(body), "")) match $pattern)] | order(date desc) [0...10] { title, "slug": slug.current, description, date }`
 export const SEARCH_PROJECTS_QUERY = `*[_type == "project" && (lower(title) match $pattern || lower(description) match $pattern || count(coalesce(technologies, [])[lower(@) match $pattern]) > 0)] | order(order asc, year desc) [0...10] { title, description, url, github }`

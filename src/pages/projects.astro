@@ -19,7 +19,8 @@ const [projects, page] = await Promise.all([
 ])
 
 const featuredProjects = projects.filter((p) => p.featured)
-const otherProjects = projects.filter((p) => !p.featured)
+const templates = projects.filter((p) => p.kind === 'template')
+const otherProjects = projects.filter((p) => !p.featured && p.kind !== 'template')
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -42,20 +43,20 @@ const projectSchemas = projects.map((project) => ({
 
 <BaseLayout
   title="Projects"
-  description="Portfolio of web development projects including GitDash, blog templates for Remix, Next.js, and SvelteKit, VSCode themes, and open-source tools. Built with React, TypeScript, and modern frameworks."
+  description="A selection of apps, websites, tools, and open-source templates made by Loke."
   url={`${SITE_DOMAIN}/projects`}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(projectSchemas)} />
 
-  <div class="container mx-auto max-w-5xl px-4 py-16 md:py-20">
+  <div class="container mx-auto max-w-6xl px-4 py-16 md:py-20">
     <PageIntro eyebrow="Selected work" title={page.title} description={page.description} />
 
     {featuredProjects.length > 0 && (
-      <section class="mb-16 mt-12">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">01 / Featured</p>
-        <h2 class="mt-3 text-2xl font-bold mb-6">{page.featuredSectionTitle}</h2>
-        <div class="flex flex-col gap-10">
+      <section class="mb-20 mt-12">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">01 / Projects</p>
+        <h2 class="mb-7 mt-3 text-2xl font-bold md:text-3xl">{page.featuredSectionTitle}</h2>
+        <div class="flex flex-col gap-6 md:gap-8">
           {featuredProjects.map((project) => (
             <ProjectCard project={project} featured={true} />
           ))}
@@ -64,12 +65,27 @@ const projectSchemas = projects.map((project) => ({
     )}
 
     {otherProjects.length > 0 && (
-      <section>
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">02 / Library</p>
-        <h2 class="mt-3 text-2xl font-bold mb-6">{page.otherSectionTitle}</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <section class="mb-20 border-t border-border/70 pt-12 md:pt-16">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">02 / More projects</p>
+        <h2 class="mb-7 mt-3 text-2xl font-bold md:text-3xl">{page.otherSectionTitle}</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           {otherProjects.map((project) => (
             <ProjectCard project={project} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {templates.length > 0 && (
+      <section class="relative overflow-hidden rounded-3xl border border-accent/20 bg-[radial-gradient(circle_at_8%_0%,oklch(72%_0.16_70/0.16),transparent_30%),radial-gradient(circle_at_94%_20%,oklch(62%_0.12_250/0.16),transparent_34%),oklch(18%_0.012_285)] px-5 py-10 sm:px-8 md:px-10 md:py-14">
+        <div class="relative max-w-3xl">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">03 / Template shelf</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-4xl">{page.templatesSectionTitle || 'Pick a starting point'}</h2>
+          <p class="mt-4 max-w-2xl leading-relaxed text-muted-foreground">A small collection of starters you can copy, pull apart, and make your own. Each has a live preview and the source code.</p>
+        </div>
+        <div class="relative mt-9 grid gap-6 md:grid-cols-2">
+          {templates.map((project) => (
+            <ProjectCard project={project} template={true} />
           ))}
         </div>
       </section>

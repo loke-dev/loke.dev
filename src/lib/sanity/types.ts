@@ -82,6 +82,7 @@ export interface Project {
   url?: string
   github?: string
   featured: boolean
+  kind?: 'project' | 'template'
   year: number
   order?: number
 }
@@ -125,6 +126,7 @@ export interface ProjectsPage {
   description: string
   featuredSectionTitle: string
   otherSectionTitle: string
+  templatesSectionTitle?: string
 }
 
 export interface ContactPage {

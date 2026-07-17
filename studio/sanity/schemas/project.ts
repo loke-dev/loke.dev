@@ -63,6 +63,20 @@ export default defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'kind',
+      title: 'Kind',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Project', value: 'project' },
+          { title: 'Template', value: 'template' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'project',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'year',
       title: 'Year',
       type: 'number',

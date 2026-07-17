@@ -5,12 +5,13 @@ import { getSanityImageUrl, getSanityImageSrcSet } from '@/lib/sanity/helpers'
 interface Props {
   project: Project
   featured?: boolean
+  template?: boolean
 }
 
-const { project, featured = false } = Astro.props
+const { project, featured = false, template = false } = Astro.props
 
-const width = featured ? 800 : 500
-const height = featured ? 450 : 375
+const width = featured ? 1000 : 760
+const height = featured ? 620 : 500
 const listQuality = 72
 const srcWidths = [Math.round(width / 2), width, Math.round(width * 1.5)]
 const imageUrl = getSanityImageUrl(project.image, width, height, listQuality)
@@ -23,42 +24,44 @@ const srcSet = getSanityImageSrcSet(
 )
 ---
 
-<article class={`surface-interactive overflow-hidden rounded-xl border border-border/80 bg-card transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)] ${featured ? 'flex flex-col md:flex-row w-full' : 'flex flex-col h-full'}`}>
+<article class={`surface-interactive group relative overflow-hidden rounded-2xl border border-border/80 bg-card transition-[transform,border-color,box-shadow] hover:-translate-y-1 hover:border-accent/45 hover:shadow-[0_24px_60px_-32px_oklch(72%_0.16_70/0.36)] ${featured ? 'flex flex-col lg:flex-row w-full' : 'flex flex-col h-full'} ${template ? 'bg-gradient-to-b from-card via-card to-accent/5' : ''}`}>
   {imageUrl && (
-    <div class={`relative w-full overflow-hidden ${featured ? 'md:w-1/3 md:h-auto aspect-[16/9] md:aspect-auto' : 'aspect-[4/3]'}`}>
+    <div class={`relative w-full overflow-hidden bg-secondary ${featured ? 'lg:w-[52%] lg:h-auto aspect-[16/10] lg:aspect-auto' : 'aspect-[16/10]'}`}>
+      {template && <div class="absolute inset-x-0 top-0 z-10 h-1 bg-gradient-to-r from-accent via-orange-300 to-accent" />}
       <img
         src={imageUrl}
         srcset={srcSet || undefined}
-        sizes={featured ? '(min-width: 1024px) 33vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'}
+        sizes={featured ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1280px) 45vw, (min-width: 768px) 48vw, 100vw'}
         alt={project.image?.alt || project.title}
         loading="lazy"
         decoding="async"
         width={width}
         height={height}
-        class="h-full w-full object-cover object-center"
+        class="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.025]"
       />
     </div>
   )}
   {!imageUrl && (
-    <div class={`relative overflow-hidden bg-gradient-to-br from-accent/20 via-secondary to-background ${featured ? 'min-h-48 md:w-1/3 md:min-h-0' : 'aspect-[4/3]'}`}>
+    <div class={`relative overflow-hidden bg-gradient-to-br from-accent/20 via-secondary to-background ${featured ? 'min-h-56 lg:w-[52%] lg:min-h-0' : 'aspect-[16/10]'}`}>
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,oklch(72%_0.18_70/0.28),transparent_34%),radial-gradient(circle_at_78%_75%,oklch(60%_0.12_250/0.22),transparent_38%)]"></div>
       <div class="relative flex h-full items-end p-6">
         <span class="rounded-full border border-accent/35 bg-background/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-foreground backdrop-blur">
-          Project note
+          {template ? 'Template' : 'Project note'}
         </span>
       </div>
     </div>
   )}
 
-  <div class={`flex flex-col ${featured ? 'md:w-2/3' : 'w-full'}`}>
-    <div class="p-6 pb-2">
-      <h3 class={`font-semibold ${featured ? 'text-xl md:text-2xl' : 'text-lg'}`}>
+  <div class={`flex flex-col ${featured ? 'lg:w-[48%]' : 'w-full'}`}>
+    <div class="p-6 pb-2 md:p-7 md:pb-2">
+      {template && <p class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-accent">Template</p>}
+      <h3 class={`font-semibold tracking-tight ${featured ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
         {project.title}
       </h3>
     </div>
 
-    <div class="px-6 pb-4 flex-1">
-      <p class={`mb-4 text-muted-foreground ${featured ? 'text-base' : 'text-sm'}`}>
+    <div class="flex-1 px-6 pb-5 md:px-7">
+      <p class={`mb-5 leading-relaxed text-muted-foreground ${featured ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>
         {project.description}
       </p>
 
@@ -73,7 +76,7 @@ const srcSet = getSanityImageSrcSet(
       )}
     </div>
 
-    <div class="flex gap-3 px-6 pb-6 mt-auto">
+    <div class="mt-auto flex flex-wrap gap-3 px-6 pb-6 md:px-7 md:pb-7">
       {project.url && (
         <a
           href={project.url}
@@ -82,7 +85,7 @@ const srcSet = getSanityImageSrcSet(
           aria-label={`Visit ${project.title} (opens in new tab)`}
           class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          Visit Project
+          {template ? 'Live preview' : 'Visit project'}
         </a>
       )}
       {project.github && (
@@ -93,7 +96,7 @@ const srcSet = getSanityImageSrcSet(
           aria-label={`View ${project.title} on GitHub (opens in new tab)`}
           class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary"
         >
-          GitHub
+          {template ? 'View source' : 'GitHub'}
         </a>
       )}
     </div>
