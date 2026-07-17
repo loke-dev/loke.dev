@@ -4,6 +4,7 @@ import { getSecurityHeaders } from '@/utils/headers.server'
 const SESHAT_PREFIX = '/api/seshat'
 const CACHEABLE_PATHS = /^\/(?:blog(?:\/|$)|sitemap\.xml$|rss\.xml$)/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
+const CONTENT_CACHE_VERSION = '2026-07-17-curated'
 
 const SESHAT_EXACT_ALLOWED_ORIGINS = new Set([
   'https://loke-dev.sanity.studio',
@@ -109,7 +110,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
       ? (caches as CacheStorage & { default: Cache }).default
       : undefined
   const cacheKey = cache
-    ? new Request(url.toString(), { method: 'GET' })
+    ? (() => {
+        const cacheUrl = new URL(url)
+        cacheUrl.searchParams.set('__content_cache', CONTENT_CACHE_VERSION)
+        return new Request(cacheUrl.toString(), { method: 'GET' })
+      })()
     : undefined
   if (cache && cacheKey) {
     const cached = await cache.match(cacheKey)
