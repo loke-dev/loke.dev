@@ -8,19 +8,31 @@ interface Props {
 }
 
 const { sources = [], reproduction, versionScope } = Astro.props
+
+const versions = (versionScope?.versions ?? []).filter(
+  (item) =>
+    Boolean(item.technology?.trim()) &&
+    Boolean(item.version?.trim()) &&
+    !['current', 'tool-agnostic workflow'].includes(item.version.trim())
+)
+const hasTestScope = versions.length > 0
+const hasEvidence = sources.length > 0 || reproduction || hasTestScope
 ---
 
-{(sources.length > 0 || reproduction || versionScope) && (
+{hasEvidence && (
   <section class="not-prose mt-14 space-y-6" aria-label="Article evidence and sources">
-    {versionScope && (
-      <div class="rounded-xl border border-border bg-card p-5">
-        <h2 class="text-lg font-semibold">Version and test scope</h2>
-        <p class="mt-2 text-sm text-muted-foreground">
-          {versionScope.testedAt ? `Verified ${versionScope.testedAt}` : 'Version details supplied by the author.'}
-          {versionScope.environment ? ` · ${versionScope.environment}` : ''}
-        </p>
-        {versionScope.versions?.length ? <ul class="mt-3 flex flex-wrap gap-2">{versionScope.versions.map((item) => <li class="rounded bg-secondary px-2 py-1 text-sm">{item.technology} {item.version}</li>)}</ul> : null}
-      </div>
+    {hasTestScope && (
+      <aside class="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-border bg-card px-4 py-3 text-sm" aria-label="Tested with">
+        <span class="font-medium text-foreground">Tested with</span>
+        <ul class="flex flex-wrap gap-2">
+          {versions.map((item) => (
+            <li class="rounded-md bg-secondary px-2 py-1 text-secondary-foreground">
+              <span>{item.technology}</span><span aria-hidden="true"> · </span><span>{item.version}</span>
+            </li>
+          ))}
+        </ul>
+        {versionScope?.testedAt && <span class="text-muted-foreground">Verified {versionScope.testedAt}</span>}
+      </aside>
     )}
     {reproduction?.repository && (
       <div class="rounded-xl border border-accent/35 bg-accent/8 p-5">
