@@ -1,7 +1,6 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
-import { GenerateContentAction } from './sanity/actions/generateContentAction'
 import { useUnpublishAction } from './sanity/actions/unpublishAction'
 import { singletonTypes, structure } from './sanity/deskStructure'
 import { schemaTypes } from './sanity/schemas'
@@ -32,9 +31,6 @@ export default defineConfig({
   },
   document: {
     actions: (prev, context) => {
-      if (context.schemaType === 'contentTopic') {
-        return [...prev, GenerateContentAction]
-      }
       if (['post', 'project'].includes(context.schemaType)) {
         return [...prev, useUnpublishAction]
       }

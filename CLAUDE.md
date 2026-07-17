@@ -16,8 +16,6 @@ pnpm run typecheck        # Run TypeScript type checking (astro check + tsc)
 pnpm run format           # Format code with Prettier
 pnpm run format:check     # Check formatting without changes
 
-# Content Generation
-pnpm exec seshat write    # Generate blog post using Seshat Scribe
 ```
 
 ## Package Manager
@@ -36,7 +34,7 @@ Always use `pnpm` as the package manager. Never use npm or yarn.
 - **Email**: Resend API
 - **CAPTCHA**: Cloudflare Turnstile (vanilla CDN widget)
 - **Analytics**: Cloudflare dashboard observability via Workers
-- **Automated Content**: Seshat Scribe (Gemini AI + Sanity write)
+- **Editorial workflow**: Sanity documents record authors, topics, sources, version scope, and review status. Use the loke-content-strategy Codex skill to research and prepare posts; publishing remains an editorial decision.
 
 ### Project Structure
 
@@ -68,13 +66,12 @@ src/
 │   │   └── [slug].astro     # Blog post with Shiki + RelatedPosts.astro
 │   ├── contact.astro
 │   ├── projects.astro
+│   ├── topics/[slug].astro
+│   ├── authors/[slug].astro
 │   ├── rss.xml.ts
 │   ├── sitemap.xml.ts
 │   └── api/
-│       ├── contact.ts
-│       └── seshat/
-│           ├── write.ts
-│           └── trigger.ts
+│       └── contact.ts
 ├── styles/
 │   └── global.css           # Tailwind v4 + CSS custom properties
 └── utils/
@@ -131,11 +128,11 @@ Everything else renders as static HTML unless it imports a client script.
 
 `src/components/PortableText.astro` renders Sanity rich text server-side via `@portabletext/to-html`. Custom serializers for: code blocks (Shiki), images (Sanity CDN srcset), callouts, links.
 
-### Automated Blog Generation (Seshat Scribe)
+### Editorial content
 
-- Content generation code: `src/lib/content-generation/`
-- API endpoints: `src/pages/api/seshat/`
-- Output: Directly creates posts in Sanity CMS via write token
+- Posts require an author, one or two topics, sources, and editorial review metadata.
+- Retired URLs return `410 Gone` unless an explicit `redirect` document defines a replacement.
+- Topic and author pages are generated from the same Sanity references used by each post.
 
 ### Environment Variables
 

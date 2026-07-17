@@ -1,0 +1,41 @@
+---
+import type { PostReproduction, PostSource, VersionScope } from '@/lib/sanity/types'
+
+interface Props {
+  sources?: PostSource[]
+  reproduction?: PostReproduction
+  versionScope?: VersionScope
+}
+
+const { sources = [], reproduction, versionScope } = Astro.props
+---
+
+{(sources.length > 0 || reproduction || versionScope) && (
+  <section class="not-prose mt-14 space-y-6" aria-label="Article evidence and sources">
+    {versionScope && (
+      <div class="rounded-xl border border-border bg-card p-5">
+        <h2 class="text-lg font-semibold">Version and test scope</h2>
+        <p class="mt-2 text-sm text-muted-foreground">
+          {versionScope.testedAt ? `Verified ${versionScope.testedAt}` : 'Version details supplied by the author.'}
+          {versionScope.environment ? ` · ${versionScope.environment}` : ''}
+        </p>
+        {versionScope.versions?.length ? <ul class="mt-3 flex flex-wrap gap-2">{versionScope.versions.map((item) => <li class="rounded bg-secondary px-2 py-1 text-sm">{item.technology} {item.version}</li>)}</ul> : null}
+      </div>
+    )}
+    {reproduction?.repository && (
+      <div class="rounded-xl border border-accent/35 bg-accent/8 p-5">
+        <h2 class="text-lg font-semibold">Reproduce the example</h2>
+        <a class="mt-2 inline-block font-medium text-accent underline underline-offset-4" href={reproduction.repository} target="_blank" rel="noopener noreferrer">Open the repository</a>
+        {reproduction.ref ? <p class="mt-2 text-sm text-muted-foreground">Reference: <code>{reproduction.ref}</code></p> : null}
+        {reproduction.setupCommand ? <pre class="mt-3 overflow-x-auto rounded bg-background p-3 text-sm"><code>{reproduction.setupCommand}</code></pre> : null}
+        {reproduction.verificationCommand ? <pre class="mt-3 overflow-x-auto rounded bg-background p-3 text-sm"><code>{reproduction.verificationCommand}</code></pre> : null}
+      </div>
+    )}
+    {sources.length > 0 && (
+      <div class="rounded-xl border border-border bg-card p-5">
+        <h2 class="text-lg font-semibold">Sources and further reading</h2>
+        <ol class="mt-4 space-y-3">{sources.map((source) => <li><a href={source.url} target="_blank" rel="noopener noreferrer" class="font-medium underline decoration-accent/50 underline-offset-4 hover:text-accent">{source.title}</a>{source.publisher ? <span class="text-muted-foreground"> · {source.publisher}</span> : null}</li>)}</ol>
+      </div>
+    )}
+  </section>
+)}

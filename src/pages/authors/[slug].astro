@@ -1,0 +1,34 @@
+---
+export const prerender = false
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import BlogPostCard from '@/components/BlogPostCard.astro'
+import { getAuthorBySlug, getPostsByAuthorSlug } from '@/utils/sanity.queries'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { getSanityImageUrl } from '@/lib/sanity/helpers'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
+const { slug } = Astro.params
+const authorSlug = slug ?? ''
+const author = authorSlug ? await getAuthorBySlug(authorSlug) : null
+if (!author) return Astro.redirect('/about', 302)
+const posts = await getPostsByAuthorSlug(authorSlug)
+const url = `${SITE_DOMAIN}/authors/${authorSlug}`
+const image = getSanityImageUrl(author.image, 400, 400)
+---
+
+<BaseLayout title={author.name} description={author.bio ?? `${author.name}'s practical development writing.`} url={url} image={image ?? undefined}>
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <div class="max-w-2xl">
+      {image ? <img src={image} width="160" height="160" alt={`Portrait of ${author.name}`} class="mb-6 h-24 w-24 rounded-full object-cover" /> : null}
+      <p class="text-sm font-semibold uppercase tracking-wider text-accent">Author</p>
+      <h1 class="mt-2 text-4xl font-bold tracking-tight">{author.name}</h1>
+      {author.role ? <p class="mt-2 font-medium text-muted-foreground">{author.role}</p> : null}
+      {author.bio ? <p class="mt-4 text-lg text-muted-foreground">{author.bio}</p> : null}
+      {author.sameAs?.length ? <ul class="mt-5 flex flex-wrap gap-3">{author.sameAs.map((profile) => <li><a class="text-accent underline underline-offset-4" href={profile} target="_blank" rel="me noopener noreferrer">Profile</a></li>)}</ul> : null}
+    </div>
+    <h2 class="mt-14 text-2xl font-bold">Maintained articles</h2>
+    {posts.length ? <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{posts.map((post) => <BlogPostCard post={post} />)}</div> : <p class="mt-6 text-muted-foreground">No published articles yet.</p>}
+  </section>
+</BaseLayout>

@@ -1,6 +1,5 @@
 import { handle } from '@astrojs/cloudflare/handler'
 import * as Sentry from '@sentry/cloudflare'
-import { runSeshatScheduler } from '@/lib/content-generation/scheduler'
 
 const STUDIO_HOST = 'loke-dev.sanity.studio'
 
@@ -19,35 +18,6 @@ function getStudioProxyRequest(request: Request): Request | null {
 
 type SentryEnv = Env & { SENTRY_DSN?: string }
 
-async function runScheduledContentGeneration() {
-  const startedAt = Date.now()
-
-  try {
-    await runSeshatScheduler()
-    const duration = Date.now() - startedAt
-
-    Sentry.logger.info('Seshat scheduler completed', { duration })
-    Sentry.metrics.count('seshat.scheduler.runs', 1, {
-      attributes: { outcome: 'success' },
-    })
-    Sentry.metrics.distribution('seshat.scheduler.duration', duration, {
-      unit: 'millisecond',
-    })
-  } catch (error) {
-    const duration = Date.now() - startedAt
-
-    Sentry.logger.error('Seshat scheduler failed', { duration })
-    Sentry.metrics.count('seshat.scheduler.runs', 1, {
-      attributes: { outcome: 'failure' },
-    })
-    Sentry.metrics.distribution('seshat.scheduler.duration', duration, {
-      unit: 'millisecond',
-    })
-
-    throw error
-  }
-}
-
 const handler: ExportedHandler<SentryEnv> = {
   fetch(request, env, context) {
     const studioRequest = getStudioProxyRequest(request)
@@ -56,20 +26,6 @@ const handler: ExportedHandler<SentryEnv> = {
     }
 
     return handle(request, env, context)
-  },
-  async scheduled(_event, _env, context) {
-    context.waitUntil(
-      Sentry.withMonitor(
-        'seshat-content-scheduler',
-        runScheduledContentGeneration,
-        {
-          schedule: { type: 'crontab', value: '45 23 * * *' },
-          checkinMargin: 10,
-          maxRuntime: 30,
-          timezone: 'Europe/Stockholm',
-        }
-      )
-    )
   },
 }
 

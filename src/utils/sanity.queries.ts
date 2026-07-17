@@ -1,6 +1,9 @@
 import { client } from '@/lib/sanity/client'
 import {
   ABOUT_PAGE_QUERY,
+  ALL_AUTHORS_QUERY,
+  ALL_TOPICS_QUERY,
+  AUTHOR_BY_SLUG_QUERY,
   BLOG_PAGE_QUERY,
   CONTACT_PAGE_QUERY,
   HOME_PAGE_QUERY,
@@ -11,8 +14,12 @@ import {
   POST_PAGINATED_QUERY,
   POST_PREV_QUERY,
   POST_SLUGS_QUERY,
+  POSTS_BY_AUTHOR_SLUG_QUERY,
+  POSTS_BY_TOPIC_SLUG_QUERY,
   PROJECTS_PAGE_QUERY,
+  REDIRECT_BY_FROM_QUERY,
   RELATED_POSTS_QUERY,
+  TOPIC_BY_SLUG_QUERY,
 } from '@/lib/sanity/queries'
 import {
   calculateReadingTime,
@@ -20,6 +27,7 @@ import {
 } from '@/lib/sanity/reading-time'
 import type {
   AboutPage,
+  Author,
   BlogPage,
   ContactPage,
   HomePage,
@@ -27,6 +35,7 @@ import type {
   PostListItem,
   PostSlug,
   ProjectsPage,
+  Topic,
 } from '@/lib/sanity/types'
 
 export type {
@@ -36,7 +45,9 @@ export type {
   HomePage,
   Post,
   PostListItem,
+  Author,
   ProjectsPage,
+  Topic,
 }
 
 export const POSTS_PER_PAGE = 10
@@ -110,16 +121,58 @@ export async function getBlogTotalPages(): Promise<number> {
 
 export async function getRelatedPosts(
   excludeId: string,
-  tags: string[],
+  topicIds: string[],
   limit: number = 3
 ): Promise<PostListItem[]> {
-  if (tags.length === 0) return []
+  if (topicIds.length === 0) return []
   const rows = await client.fetch<PostListFetchRow[]>(RELATED_POSTS_QUERY, {
     excludeId,
-    tags,
+    topicIds,
     limit,
   })
   return rows.map(mapPostListRow)
+}
+
+export async function getRedirectByFrom(
+  from: string
+): Promise<{ to: string; permanent?: boolean } | null> {
+  return client.fetch(REDIRECT_BY_FROM_QUERY, { from })
+}
+
+export async function getTopicBySlug(slug: string): Promise<Topic | null> {
+  return client.fetch<Topic | null>(TOPIC_BY_SLUG_QUERY, { slug })
+}
+
+export async function getPostsByTopicSlug(
+  slug: string
+): Promise<PostListItem[]> {
+  const rows = await client.fetch<PostListFetchRow[]>(
+    POSTS_BY_TOPIC_SLUG_QUERY,
+    { slug }
+  )
+  return rows.map(mapPostListRow)
+}
+
+export async function getAllTopics(): Promise<Topic[]> {
+  return client.fetch<Topic[]>(ALL_TOPICS_QUERY)
+}
+
+export async function getAuthorBySlug(slug: string): Promise<Author | null> {
+  return client.fetch<Author | null>(AUTHOR_BY_SLUG_QUERY, { slug })
+}
+
+export async function getPostsByAuthorSlug(
+  slug: string
+): Promise<PostListItem[]> {
+  const rows = await client.fetch<PostListFetchRow[]>(
+    POSTS_BY_AUTHOR_SLUG_QUERY,
+    { slug }
+  )
+  return rows.map(mapPostListRow)
+}
+
+export async function getAllAuthors(): Promise<Author[]> {
+  return client.fetch<Author[]>(ALL_AUTHORS_QUERY)
 }
 
 export async function getAdjacentPosts(

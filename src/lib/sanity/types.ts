@@ -1,9 +1,40 @@
 import type { PortableTextBlock } from '@portabletext/types'
 
-export interface PostResource {
+export interface PostSource {
   _key?: string
   title: string
   url: string
+  publisher?: string
+}
+
+export interface Topic {
+  _id: string
+  title: string
+  slug: { current: string }
+  description: string
+}
+
+export interface Author {
+  _id: string
+  name: string
+  slug: { current: string }
+  role?: string
+  bio?: string
+  image?: SanityImage
+  sameAs?: string[]
+}
+
+export interface PostReproduction {
+  repository?: string
+  ref?: string
+  setupCommand?: string
+  verificationCommand?: string
+}
+
+export interface VersionScope {
+  testedAt?: string
+  environment?: string
+  versions?: Array<{ _key?: string; technology: string; version: string }>
 }
 
 export interface SanityImage {
@@ -23,7 +54,8 @@ export interface PostListItem {
   date: string
   lastModified?: string
   _updatedAt?: string
-  tags: string[]
+  author?: Author
+  topics: Topic[]
   image?: SanityImage
   imageAlt?: string
   readingTime?: number
@@ -33,7 +65,9 @@ export interface Post extends PostListItem {
   body: PortableTextBlock[]
   readingTime?: number
   wordCount?: number
-  resources?: PostResource[]
+  sources?: PostSource[]
+  reproduction?: PostReproduction
+  versionScope?: VersionScope
 }
 
 export type PostSlug = { slug: { current: string } }

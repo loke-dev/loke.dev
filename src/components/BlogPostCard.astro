@@ -73,12 +73,12 @@ const updatedDisplay = getPostUpdatedDisplay(post)
       <p class="flex-1 text-muted-foreground line-clamp-3">
         {post.description}
       </p>
-      {post.tags && post.tags.length > 0 && (
+      {post.topics.length > 0 && (
         <div class="mt-3 flex flex-wrap gap-1">
-          {post.tags.map((tag) => (
-            <span class="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
-              {tag}
-            </span>
+          {post.topics.map((topic) => (
+            <a href={`/topics/${topic.slug.current}`} class="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground hover:underline">
+              {topic.title}
+            </a>
           ))}
         </div>
       )}

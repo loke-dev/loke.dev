@@ -50,4 +50,4 @@ incident status; it does not print credentials or event payloads.
   pnpm wrangler secret put SENTRY_DSN
   ```
 
-  Server exceptions, logs, request traces (10% sample), custom scheduler metrics, and the `seshat-content-scheduler` cron monitor are enabled automatically once the secret is set.
+  Server exceptions, logs, and request traces (10% sample) are enabled automatically once the secret is set.

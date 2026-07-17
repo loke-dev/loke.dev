@@ -19,11 +19,17 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
     image: imageUrl,
     datePublished: new Date(post.date).toISOString(),
     dateModified: resolveDateModifiedIso(post),
-    author: {
-      '@type': 'Person',
-      name: AUTHOR_NAME,
-      url: `${SITE_DOMAIN}/about`,
-    },
+    author: post.author
+      ? {
+          '@type': 'Person',
+          name: post.author.name,
+          url: `${SITE_DOMAIN}/authors/${post.author.slug.current}`,
+        }
+      : {
+          '@type': 'Person',
+          name: AUTHOR_NAME,
+          url: `${SITE_DOMAIN}/about`,
+        },
     publisher: {
       '@type': 'Person',
       name: AUTHOR_NAME,
@@ -33,7 +39,7 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
       '@type': 'WebPage',
       '@id': `${SITE_DOMAIN}/blog/${post.slug.current}`,
     },
-    keywords: post.tags.join(', '),
+    keywords: post.topics.map((topic) => topic.title).join(', '),
     wordCount: post.wordCount || 0,
     timeRequired: `PT${post.readingTime || 0}M`,
   }

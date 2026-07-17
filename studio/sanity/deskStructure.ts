@@ -1,5 +1,4 @@
 import type { StructureBuilder } from 'sanity/structure'
-import { Dashboard } from './components/Dashboard'
 
 // Singleton document IDs
 const SINGLETON_TYPES = [
@@ -27,15 +26,6 @@ export const structure = (S: StructureBuilder) =>
   S.list()
     .title('Content')
     .items([
-      // Dashboard as the first item
-      S.listItem()
-        .title('Dashboard')
-        .id('dashboard')
-        .icon(() => '📊')
-        .child(S.component(Dashboard).id('dashboard').title('Dashboard')),
-
-      S.divider(),
-
       // Pages section
       S.listItem()
         .title('Pages')
@@ -55,19 +45,21 @@ export const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
-      // Content Topics for Seshat
       S.listItem()
-        .title('Content Topics')
-        .id('content-topics')
+        .title('Topics')
+        .id('topics')
         .icon(() => '✦')
         .child(
-          S.documentTypeList('contentTopic')
-            .title('Content Topics')
-            .defaultOrdering([
-              { field: 'active', direction: 'desc' },
-              { field: 'name', direction: 'asc' },
-            ])
+          S.documentTypeList('topic')
+            .title('Topics')
+            .defaultOrdering([{ field: 'title', direction: 'asc' }])
         ),
+
+      S.listItem()
+        .title('Authors')
+        .id('authors')
+        .icon(() => '✍️')
+        .child(S.documentTypeList('author').title('Authors')),
 
       S.divider(),
 
@@ -81,6 +73,12 @@ export const structure = (S: StructureBuilder) =>
             .title('Posts')
             .defaultOrdering([{ field: 'date', direction: 'desc' }])
         ),
+
+      S.listItem()
+        .title('Redirects')
+        .id('redirects')
+        .icon(() => '↪️')
+        .child(S.documentTypeList('redirect').title('Redirects')),
 
       // Projects
       S.listItem()
