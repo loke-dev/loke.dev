@@ -10,7 +10,9 @@ interface Props {
   type?: 'website' | 'article'
   author?: string
   publishedTime?: string
+  modifiedTime?: string
   keywords?: string | string[]
+  noindex?: boolean
 }
 
 const defaultImageUrl = getDefaultProfileOgUrl()
@@ -23,7 +25,9 @@ const {
   type = 'website',
   author = AUTHOR_NAME,
   publishedTime,
+  modifiedTime,
   keywords,
+  noindex = false,
 } = Astro.props
 
 const image = imageProp ?? defaultImageUrl
@@ -35,6 +39,7 @@ const keywordsArr = Array.isArray(keywords) ? keywords : keywords ? [keywords] :
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={author} />
+{noindex && <meta name="robots" content="noindex,follow" />}
 <link rel="canonical" href={url} />
 
 <meta property="og:title" content={title} />
@@ -55,6 +60,7 @@ const keywordsArr = Array.isArray(keywords) ? keywords : keywords ? [keywords] :
 {type === 'article' && publishedTime && (
   <>
     <meta property="article:published_time" content={publishedTime} />
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     <meta property="article:author" content={author} />
     {keywordsArr.map((tag) => (
       <meta property="article:tag" content={tag} />

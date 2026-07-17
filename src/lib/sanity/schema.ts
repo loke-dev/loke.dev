@@ -22,7 +22,7 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
     author: {
       '@type': 'Person',
       name: AUTHOR_NAME,
-      url: SITE_DOMAIN,
+      url: `${SITE_DOMAIN}/about`,
     },
     publisher: {
       '@type': 'Person',

@@ -10,7 +10,7 @@ import {
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
 import { getSanityImageUrl } from '@/lib/sanity/helpers'
 
-export const prerender = true
+export const prerender = false
 
 function escapeXml(s: string): string {
   return s
@@ -24,6 +24,12 @@ function escapeXml(s: string): string {
 export const GET: APIRoute = async () => {
   const allPosts = await getAllPublishedPosts()
   const posts = allPosts.slice(0, 20)
+  const lastBuildDate = posts.reduce((latest, post) => {
+    const candidate = new Date(
+      post.lastModified ?? post._updatedAt ?? post.date
+    )
+    return candidate > latest ? candidate : latest
+  }, new Date(0))
 
   const items = posts
     .map((post) => {
@@ -54,7 +60,7 @@ export const GET: APIRoute = async () => {
     <language>en-us</language>
     <ttl>60</ttl>
     <atom:link href="${escapeXml(`${SITE_DOMAIN}/rss.xml`)}" rel="self" type="application/rss+xml" />
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}
+    <lastBuildDate>${lastBuildDate.toUTCString()}</lastBuildDate>${items}
   </channel>
 </rss>`
 

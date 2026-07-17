@@ -27,14 +27,27 @@ const breadcrumbSchema = {
     { '@type': 'ListItem', position: 2, name: 'About', item: `${SITE_DOMAIN}/about` },
   ],
 }
+
+const profileSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    '@id': `${SITE_DOMAIN}/#person`,
+    name: 'Loke',
+    url: `${SITE_DOMAIN}/about`,
+    sameAs: ['https://github.com/loke-dev', 'https://twitter.com/loke_dev'],
+  },
+}
 ---
 
 <BaseLayout
   title="About"
-  description="Learn about my journey as a full-stack web developer, my skills in React, Remix, TypeScript, and modern web technologies, and how I build accessible, performant applications."
+  description="Learn about Loke, a full-stack web developer building accessible, performant web experiences with Astro, TypeScript, Cloudflare, Sanity, and modern web technologies."
   url={`${SITE_DOMAIN}/about`}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
 
   <div class="container mx-auto max-w-4xl px-4 py-12">
     <header class="mb-10">

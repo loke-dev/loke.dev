@@ -2,7 +2,7 @@ import { defineMiddleware } from 'astro:middleware'
 import { getSecurityHeaders } from '@/utils/headers.server'
 
 const SESHAT_PREFIX = '/api/seshat'
-const CACHEABLE_PATHS = /^\/blog(?:\/|$)/
+const CACHEABLE_PATHS = /^\/(?:blog(?:\/|$)|sitemap\.xml$|rss\.xml$)/
 
 const SESHAT_EXACT_ALLOWED_ORIGINS = new Set([
   'https://loke-dev.sanity.studio',

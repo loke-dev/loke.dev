@@ -3,7 +3,7 @@ import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllPublishedPosts, getBlogTotalPages } from '@/utils/sanity.queries'
 
-export const prerender = true
+export const prerender = false
 
 export const GET: APIRoute = async () => {
   const posts = await getAllPublishedPosts()
@@ -15,7 +15,6 @@ export const GET: APIRoute = async () => {
     '/changelog',
     '/about',
     '/projects',
-    '/search',
     '/contact',
   ]
   const blogPageUrls =
@@ -25,13 +24,15 @@ export const GET: APIRoute = async () => {
           (_, index) => `/blog/page/${index + 2}`
         )
       : []
-  const postUrls = posts.map((p) => `/blog/${p.slug.current}`)
+  const staticUrlEntries = [...staticUrls, ...blogPageUrls].map(
+    (url) => `  <url><loc>${SITE_DOMAIN}${url}</loc></url>`
+  )
+  const postUrlEntries = posts.map((post) => {
+    const lastModified = post.lastModified ?? post._updatedAt ?? post.date
+    return `  <url><loc>${SITE_DOMAIN}/blog/${post.slug.current}</loc><lastmod>${lastModified}</lastmod></url>`
+  })
 
-  const allUrls = [...staticUrls, ...blogPageUrls, ...postUrls]
-
-  const urlset = allUrls
-    .map((url) => `  <url><loc>${SITE_DOMAIN}${url}</loc></url>`)
-    .join('\n')
+  const urlset = [...staticUrlEntries, ...postUrlEntries].join('\n')
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

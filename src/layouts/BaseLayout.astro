@@ -13,10 +13,25 @@ interface Props {
   type?: 'website' | 'article'
   author?: string
   publishedTime?: string
+  modifiedTime?: string
   keywords?: string | string[]
+  noindex?: boolean
+  loadTurnstile?: boolean
 }
 
-const { title, description, url, image, type, author, publishedTime, keywords } = Astro.props
+const {
+  title,
+  description,
+  url,
+  image,
+  type,
+  author,
+  publishedTime,
+  modifiedTime,
+  keywords,
+  noindex,
+  loadTurnstile = false,
+} = Astro.props
 const canonicalUrl = url ?? Astro.url.href
 const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
 ---
@@ -34,7 +49,9 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
       type={type}
       author={author}
       publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
       keywords={keywords}
+      noindex={noindex}
     />
     <slot name="head" />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
@@ -44,12 +61,14 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <script
-      is:inline
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-      async
-      defer
-    ></script>
+    {loadTurnstile && (
+      <script
+        is:inline
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      ></script>
+    )}
     <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@graph': [
@@ -57,7 +76,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
           '@type': 'Person',
           '@id': 'https://loke.dev/#person',
           name: 'Loke',
-          url: 'https://loke.dev',
+          url: 'https://loke.dev/about',
           sameAs: ['https://github.com/loke-dev', 'https://twitter.com/loke_dev'],
         },
         {
@@ -77,6 +96,6 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
       <slot />
     </main>
     <Footer />
-    <div id="env-data" data-turnstile-key={turnstileSiteKey} hidden />
+    {loadTurnstile && <div id="env-data" data-turnstile-key={turnstileSiteKey} hidden />}
   </body>
 </html>

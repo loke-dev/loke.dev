@@ -41,6 +41,7 @@ const updatedMeta = getPostUpdatedDisplay(post)
 const imageUrl = getSanityImageUrl(post.image, 1200, 630)
 const heroSrcSet = getSanityImageSrcSet(post.image, [640, 768, 1024, 1280, 1600])
 const canonicalUrl = `${SITE_DOMAIN}/blog/${slug}`
+const modifiedTime = post.lastModified ?? post._updatedAt ?? post.date
 
 const defaultImageUrl = getDefaultProfileOgUrl()
 
@@ -59,6 +60,7 @@ const breadcrumbSchema = createBreadcrumbSchema([
   image={imageUrl ?? undefined}
   type="article"
   publishedTime={post.date}
+  modifiedTime={modifiedTime}
   keywords={tags}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />

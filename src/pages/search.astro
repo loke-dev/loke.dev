@@ -38,6 +38,7 @@ const totalHits =
   title="Search"
   description="Search blog posts and projects on loke.dev."
   url={`${SITE_DOMAIN}/search`}
+  noindex={true}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
