@@ -29,7 +29,10 @@ if (!slug) {
 const post = await getPostBySlug(slug)
 
 if (!post) {
-  return Astro.redirect('/blog', 302)
+  // Published posts that are intentionally retired are consolidated into the
+  // blog archive. This preserves existing external links and gives crawlers a
+  // permanent destination while the editorial catalog is curated.
+  return Astro.redirect('/blog', 301)
 }
 
 const tags = post.tags ?? []
