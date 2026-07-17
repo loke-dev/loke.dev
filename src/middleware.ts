@@ -3,6 +3,7 @@ import { getSecurityHeaders } from '@/utils/headers.server'
 
 const SESHAT_PREFIX = '/api/seshat'
 const CACHEABLE_PATHS = /^\/(?:blog(?:\/|$)|sitemap\.xml$|rss\.xml$)/
+const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
 
 const SESHAT_EXACT_ALLOWED_ORIGINS = new Set([
   'https://loke-dev.sanity.studio',
@@ -66,6 +67,24 @@ function isCacheableRequest(request: Request, pathname: string): boolean {
   return request.method === 'GET' && CACHEABLE_PATHS.test(pathname)
 }
 
+function getSharedCacheTtlMilliseconds(cacheControl: string): number | null {
+  const match = /(?:^|,)\s*s-maxage=(\d+)/i.exec(cacheControl)
+  if (!match) return null
+
+  return Number(match[1]) * 1000
+}
+
+function toMutableResponse(response: Response): Response {
+  const headers = new Headers(response.headers)
+  headers.delete(CACHE_EXPIRY_HEADER)
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context
   const pathname = url.pathname
@@ -95,13 +114,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (cache && cacheKey) {
     const cached = await cache.match(cacheKey)
     if (cached) {
-      // Cache API responses expose immutable headers. Astro finalizes every
-      // response by adding headers, so return a mutable equivalent instead.
-      return new Response(cached.body, {
-        status: cached.status,
-        statusText: cached.statusText,
-        headers: cached.headers,
-      })
+      const expiresAt = Number(cached.headers.get(CACHE_EXPIRY_HEADER))
+      if (Number.isFinite(expiresAt) && expiresAt > Date.now()) {
+        // Cache API responses expose immutable headers. Astro finalizes every
+        // response by adding headers, so return a mutable equivalent instead.
+        return toMutableResponse(cached)
+      }
+
+      // Entries from before explicit expiry tracking are also treated as stale.
+      await cache.delete(cacheKey)
     }
   }
 
@@ -119,9 +140,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   if (cache && cacheKey && response.status === 200) {
-    const cacheControl = response.headers.get('Cache-Control') ?? ''
-    if (cacheControl.includes('s-maxage=')) {
-      await cache.put(cacheKey, response.clone())
+    const ttl = getSharedCacheTtlMilliseconds(
+      response.headers.get('Cache-Control') ?? ''
+    )
+    if (ttl) {
+      const responseForCache = response.clone()
+      responseForCache.headers.set(
+        CACHE_EXPIRY_HEADER,
+        String(Date.now() + ttl)
+      )
+      await cache.put(cacheKey, responseForCache)
     }
   }
 
