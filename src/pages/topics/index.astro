@@ -1,0 +1,54 @@
+---
+export const prerender = false
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getAllTopics } from '@/utils/sanity.queries'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
+const topics = await getAllTopics()
+const url = `${SITE_DOMAIN}/topics`
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Developer topics',
+  description:
+    'Maintained technical guides grouped by the developer problems they solve.',
+  url,
+}
+---
+
+<BaseLayout
+  title="Developer topics"
+  description="Maintained technical guides grouped by practical developer problems, from package management and CI to performance and TypeScript."
+  url={url}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <p class="text-sm font-semibold uppercase tracking-wider text-accent">Browse by problem</p>
+    <h1 class="mt-2 text-4xl font-bold tracking-tight">Developer topics</h1>
+    <p class="mt-4 max-w-2xl text-lg text-muted-foreground">
+      Maintained guides grouped by the problems they help you solve.
+    </p>
+    {topics.length ? (
+      <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {topics.map((topic) => (
+          <li>
+            <a
+              href={`/topics/${topic.slug.current}`}
+              class="surface-interactive block h-full rounded-xl border p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]"
+            >
+              <h2 class="text-xl font-bold tracking-tight">{topic.title}</h2>
+              <p class="mt-3 text-muted-foreground">{topic.description}</p>
+              <span class="mt-5 inline-block text-sm font-medium text-accent">Browse guides →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="mt-10 text-muted-foreground">Topics are being prepared.</p>
+    )}
+  </section>
+</BaseLayout>
