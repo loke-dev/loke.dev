@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { validatePublicCopy, voiceDescription } from '../lib/content-voice'
 
 export default defineType({
   name: 'author',
@@ -42,5 +43,7 @@ export default defineType({
         'GitHub, LinkedIn, or other profiles that establish authorship.',
     }),
   ],
+  validation: (Rule) => Rule.custom(validatePublicCopy),
+  description: voiceDescription,
   preview: { select: { title: 'name', subtitle: 'role', media: 'image' } },
 })

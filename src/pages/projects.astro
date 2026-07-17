@@ -53,7 +53,7 @@ const projectSchemas = projects.map((project) => ({
 
     {featuredProjects.length > 0 && (
       <section class="mb-16 mt-12">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">01 — Featured</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">01 / Featured</p>
         <h2 class="mt-3 text-2xl font-bold mb-6">{page.featuredSectionTitle}</h2>
         <div class="flex flex-col gap-10">
           {featuredProjects.map((project) => (
@@ -65,7 +65,7 @@ const projectSchemas = projects.map((project) => ({
 
     {otherProjects.length > 0 && (
       <section>
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">02 — Library</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">02 / Library</p>
         <h2 class="mt-3 text-2xl font-bold mb-6">{page.otherSectionTitle}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {otherProjects.map((project) => (

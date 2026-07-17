@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { validatePublicCopy, voiceDescription } from '../lib/content-voice'
 
 export default defineType({
   name: 'aboutPage',
@@ -80,6 +81,8 @@ export default defineType({
       ],
     }),
   ],
+  validation: (Rule) => Rule.custom(validatePublicCopy),
+  description: voiceDescription,
   preview: {
     prepare() {
       return {

@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { validatePublicCopy, voiceDescription } from '../lib/content-voice'
 
 export default defineType({
   name: 'homePage',
@@ -67,6 +68,8 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
   ],
+  validation: (Rule) => Rule.custom(validatePublicCopy),
+  description: voiceDescription,
   preview: {
     prepare() {
       return {

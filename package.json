@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --port 3000",
-    "build": "astro build",
+    "build": "pnpm run content:check && astro build",
+    "content:check": "node scripts/check-public-copy.mjs",
     "deploy": "pnpm run build && wrangler deploy",
     "start": "astro preview",
     "cf-typegen": "wrangler types",

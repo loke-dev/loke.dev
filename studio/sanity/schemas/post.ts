@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { validatePublicCopy, voiceDescription } from '../lib/content-voice'
 
 const sourceFields = [
   defineField({
@@ -21,6 +22,7 @@ export default defineType({
   title: 'Post',
   type: 'document',
   icon: () => '📝',
+  description: voiceDescription,
   fields: [
     defineField({
       name: 'title',
@@ -259,6 +261,8 @@ export default defineType({
   validation: (Rule) =>
     Rule.custom((document) => {
       if (!document) return true
+      const voiceValidation = validatePublicCopy(document)
+      if (voiceValidation !== true) return voiceValidation
       if (!document.author || !document.topics?.length)
         return 'Add an author and at least one topic before publishing.'
       if (!document.sources || document.sources.length < 2)

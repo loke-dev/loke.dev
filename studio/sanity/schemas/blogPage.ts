@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { validatePublicCopy, voiceDescription } from '../lib/content-voice'
 
 export default defineType({
   name: 'blogPage',
@@ -34,6 +35,8 @@ export default defineType({
       description: 'Shown when there are no posts',
     }),
   ],
+  validation: (Rule) => Rule.custom(validatePublicCopy),
+  description: voiceDescription,
   preview: {
     prepare() {
       return {
