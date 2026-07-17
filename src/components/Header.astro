@@ -102,4 +102,5 @@ const navLinks = [
 <script>
   import { setupMobileMenu } from '@/scripts/mobile-menu'
   setupMobileMenu()
+  document.addEventListener('astro:after-swap', setupMobileMenu)
 </script>

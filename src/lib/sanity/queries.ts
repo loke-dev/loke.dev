@@ -5,8 +5,8 @@ const PLAIN_BODY = `"plainBody": pt::text(body)`
 const POST_LIST_BODY = `_id, title, slug, description, date, lastModified, _updatedAt,
   ${AUTHOR_PROJECTION}, ${TOPICS_PROJECTION}, image, imageAlt`
 
-export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
-export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc) [$start...$end] { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
+export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc, _createdAt desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
+export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc, _createdAt desc) [$start...$end] { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 export const POST_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**"))])`
 export const POST_BY_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0] { ${POST_LIST_BODY}, body, sources, reproduction, versionScope }`
 export const POST_SLUGS_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] { slug }`

@@ -1,5 +1,3 @@
-const MQ = '(max-width: 767px)'
-
 function initOnce(root: HTMLElement): void {
   if (root.dataset.menuBound === '1') return
   root.dataset.menuBound = '1'
@@ -45,11 +43,5 @@ export function setupMobileMenu(): void {
   const root = document.getElementById('mobile-nav-root')
   if (!root) return
 
-  const run = () => {
-    if (!window.matchMedia(MQ).matches) return
-    initOnce(root)
-  }
-
-  run()
-  window.matchMedia(MQ).addEventListener('change', run)
+  initOnce(root)
 }
