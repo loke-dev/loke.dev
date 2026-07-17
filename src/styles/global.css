@@ -231,6 +231,146 @@
   position: relative;
 }
 
+.article-diagram {
+  color: var(--foreground);
+}
+
+.article-diagram__surface {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--card) 92%, var(--accent));
+  padding: 1.25rem;
+}
+
+.article-diagram figcaption {
+  margin-top: 0.625rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.article-diagram__flow,
+.article-diagram__decision-branches {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.article-diagram__flow {
+  flex-wrap: wrap;
+}
+
+.article-diagram__flow--secondary {
+  margin-top: 1rem;
+}
+
+.article-diagram__node,
+.article-diagram__panel,
+.article-diagram__decision-start {
+  display: grid;
+  place-items: center;
+  min-height: 3.25rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 1px);
+  background: var(--background);
+  padding: 0.625rem 0.875rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.article-diagram__node--accent,
+.article-diagram__panel--accent {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: color-mix(in oklab, var(--accent) 13%, var(--card));
+}
+
+.article-diagram__node--warning,
+.article-diagram__panel--warning {
+  border-color: oklch(75% 0.16 75 / 0.65);
+  background: oklch(75% 0.16 75 / 0.12);
+}
+
+.article-diagram__arrow {
+  align-self: center;
+  color: var(--accent);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.article-diagram__compare {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.article-diagram__panel {
+  align-content: start;
+  gap: 0.625rem;
+  justify-items: start;
+  min-height: 0;
+  text-align: left;
+}
+
+.article-diagram__panel code {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: calc(var(--radius) - 3px);
+  background: color-mix(in oklab, var(--background) 75%, black);
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.article-diagram__panel strong {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.article-diagram__eyebrow {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.article-diagram__decision-start {
+  width: fit-content;
+  margin: 0 auto 1rem;
+}
+
+.article-diagram__decision-branches > div {
+  flex: 1;
+  min-width: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  text-align: center;
+}
+
+.article-diagram__decision-branches p {
+  margin: 0.625rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .article-diagram__compare {
+    grid-template-columns: 1fr;
+  }
+
+  .article-diagram__decision-branches {
+    flex-direction: column;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .nav-link-animate::after {
     content: '';

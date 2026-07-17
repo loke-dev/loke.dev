@@ -181,6 +181,7 @@ export default defineType({
           ],
         },
         { type: 'callout', title: 'Callout' },
+        { type: 'diagram', title: 'Article diagram' },
       ],
     }),
     defineField({

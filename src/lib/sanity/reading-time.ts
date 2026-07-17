@@ -2,6 +2,7 @@ type PortableTextBlock = {
   _type?: string
   children?: Array<{ text?: string }>
   content?: unknown[]
+  text?: string
 }
 
 export function calculateReadingTime(body: unknown[]): {
@@ -20,8 +21,12 @@ export function calculateReadingTime(body: unknown[]): {
             wordCount += child.text.split(/\s+/).length
           }
         })
-      } else if (typedBlock._type === 'callout' && typedBlock.content) {
-        countWordsInBlocks(typedBlock.content)
+      } else if (typedBlock._type === 'callout') {
+        if (typedBlock.text) {
+          wordCount += typedBlock.text.split(/\s+/).filter(Boolean).length
+        } else if (typedBlock.content) {
+          countWordsInBlocks(typedBlock.content)
+        }
       }
     })
   }

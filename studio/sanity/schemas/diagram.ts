@@ -1,0 +1,39 @@
+import { defineField, defineType } from 'sanity'
+
+export default defineType({
+  name: 'diagram',
+  title: 'Article diagram',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'kind',
+      title: 'Diagram',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Sanity revalidation flow', value: 'revalidation-flow' },
+          { title: 'Immutable headers flow', value: 'immutable-headers-flow' },
+          {
+            title: 'Content cache architecture',
+            value: 'content-cache-architecture',
+          },
+          {
+            title: 'Next.js params comparison',
+            value: 'next-params-comparison',
+          },
+          { title: 'Next.js CSS diagnostic', value: 'next-css-diagnostic' },
+        ],
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'caption',
+      title: 'Caption',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
+  preview: {
+    select: { title: 'kind', subtitle: 'caption' },
+  },
+})
