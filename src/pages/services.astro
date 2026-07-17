@@ -11,31 +11,38 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 const services = [
   {
     number: '01',
-    title: 'Websites people can use',
+    title: 'Websites that have a job',
     description:
-      'Marketing sites, product pages, and tools with a clear point and an easy next step.',
-    outcomes: ['Clear information architecture', 'Responsive, accessible UI', 'Fast production delivery'],
+      'Landing pages, company sites, online stores, and CMS-driven sites that explain the thing and make it easy to act.',
+    outcomes: ['Content and page structure', 'Responsive, accessible UI', 'Good speed and search basics'],
   },
   {
     number: '02',
-    title: 'CMS setups that stay quick',
+    title: 'Web apps and full-stack products',
     description:
-      'Astro, Sanity, and Cloudflare setups that make publishing simple without calling the CMS on every visit.',
-    outcomes: ['Editorial workflows that stay tidy', 'Event-driven freshness', 'Search-ready technical foundations'],
+      'Dashboards, member areas, booking flows, SaaS products, and the backend bits that make them work.',
+    outcomes: ['Frontend and backend work', 'APIs, databases, and integrations', 'A sensible first version to build on'],
   },
   {
     number: '03',
-    title: 'AI stuff that solves a real problem',
+    title: 'AI that helps with actual work',
     description:
-      'AI features and workflows with human review and clear limits. Built for a real job, not just a model demo.',
-    outcomes: ['Workflow discovery and prototypes', 'Safe integration patterns', 'Reviewable production systems'],
+      'AI features, internal tools, and automations for a real task. Not an AI button added just because it is trendy.',
+    outcomes: ['Quick prototypes to test an idea', 'Useful workflows and automations', 'Human checks where they matter'],
+  },
+  {
+    number: '04',
+    title: 'Smaller apps and odd ideas',
+    description:
+      'Mobile apps, desktop apps, Chrome extensions, internal tools, and the random useful thing that does not fit in a normal website.',
+    outcomes: ['Browser extensions and integrations', 'Mobile or desktop app work', 'Small tools that save people time'],
   },
 ]
 
 const process = [
-  ['Understand', 'We figure out the problem, who it is for, and what should be easier when we are done.'],
-  ['Shape', 'We make a simple plan: scope, screens, content, technical choices, and what comes first.'],
-  ['Build', 'We ship small pieces and check them as we go. Performance, accessibility, and future fixes are part of the work.'],
+  ['Talk first', 'We look at the problem, who it is for, and what would make it worth doing.'],
+  ['Make a plan', 'We pick the smallest useful version, then sort out screens, content, and the technical bits.'],
+  ['Build it', 'I ship in small pieces so you can see it, test it, and change direction before it gets expensive.'],
 ]
 
 const serviceSchema = {
@@ -43,15 +50,15 @@ const serviceSchema = {
   '@type': 'ProfessionalService',
   name: 'Loke.dev',
   url: `${SITE_DOMAIN}/services`,
-  description: 'Web development, CMS architecture, and practical AI implementation.',
+  description: 'Web development, web apps, ecommerce, software products, and practical AI work.',
   provider: { '@type': 'Person', name: 'Loke', url: `${SITE_DOMAIN}/about` },
-  serviceType: ['Web development', 'Content management systems', 'AI implementation'],
+  serviceType: ['Web development', 'Ecommerce development', 'Web application development', 'Mobile app development', 'Desktop app development', 'AI implementation', 'Chrome extension development'],
 }
 ---
 
 <BaseLayout
   title="Services"
-  description="Web development, fast content platforms, and practical AI implementation from Loke.dev."
+  description="Web development, web apps, ecommerce, mobile and desktop apps, Chrome extensions, and practical AI work from Loke.dev."
   url={`${SITE_DOMAIN}/services`}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
@@ -59,11 +66,11 @@ const serviceSchema = {
   <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
     <PageIntro
       eyebrow="Services"
-      title="I build websites and tools that are easy to use and easy to run."
-      description="Got a rough idea, an old site, or a CMS that is getting messy? I can help sort it out."
+      title="I build software for the web, and the stuff around it."
+      description="Need a new site, an app, an online store, an AI feature, or a small tool that saves time? I can help get it made."
     />
 
-    <section class="mt-12 grid gap-5 lg:grid-cols-3" aria-label="Services">
+    <section class="mt-12 grid gap-5 md:grid-cols-2" aria-label="Services">
       {services.map((service) => (
         <article class="surface-interactive rounded-xl border border-border/80 bg-card p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
           <p class="text-xs font-semibold tracking-[0.2em] text-accent">{service.number}</p>
@@ -94,8 +101,8 @@ const serviceSchema = {
     <section class="mt-20 rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-card to-card px-6 py-10 md:flex md:items-end md:justify-between md:px-10">
       <div class="max-w-2xl">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">A good first conversation</p>
-        <h2 class="mt-3 text-3xl font-bold tracking-tight">Tell me what is hard, slow, or just annoying right now.</h2>
-        <p class="mt-4 leading-relaxed text-muted-foreground">A short note about the problem and what you have today is enough.</p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight">Got something you want to make?</h2>
+        <p class="mt-4 leading-relaxed text-muted-foreground">Send a short note about the idea, what you have today, and where you are stuck. That is enough to start.</p>
       </div>
       <a href="/contact" class="interactive-button mt-7 inline-flex items-center justify-center rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:mt-0">
         Start a conversation →
