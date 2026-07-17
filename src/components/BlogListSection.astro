@@ -1,6 +1,7 @@
 ---
 import BlogPostCard from '@/components/BlogPostCard.astro'
 import Pagination from '@/components/Pagination.astro'
+import PageIntro from '@/components/PageIntro.astro'
 import type { BlogPage, PostListItem } from '@/utils/sanity.queries'
 
 interface Props {
@@ -13,13 +14,8 @@ interface Props {
 const { page, posts, currentPage, totalPages } = Astro.props
 ---
 
-<div class="container mx-auto max-w-5xl px-4 py-12">
-  <header class="mb-10">
-    <h1 class="text-4xl font-bold tracking-tight">{page.title}</h1>
-    {page.description && (
-      <p class="mt-3 text-lg text-muted-foreground">{page.description}</p>
-    )}
-  </header>
+<div class="container mx-auto max-w-5xl px-4 py-16 md:py-20">
+  <PageIntro eyebrow="Field notes" title={page.title} description={page.description} />
 
   {posts.length === 0 ? (
     <div class="rounded-lg border p-8 text-center">
@@ -32,7 +28,7 @@ const { page, posts, currentPage, totalPages } = Astro.props
     </div>
   ) : (
     <>
-      <div class="grid gap-6 sm:grid-cols-2">
+      <div class="mt-10 grid gap-6 sm:grid-cols-2">
         {posts.map((post) => (
           <BlogPostCard post={post} />
         ))}

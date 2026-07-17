@@ -7,6 +7,7 @@ import profilePng512 from '@/assets/loke-clay-512.png'
 import profileWebp256 from '@/assets/loke-clay-256.webp'
 import profileWebp512 from '@/assets/loke-clay-512.webp'
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
 import PortableText from '@/components/PortableText.astro'
 import { getAboutPage } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
@@ -49,12 +50,10 @@ const profileSchema = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
 
-  <div class="container mx-auto max-w-4xl px-4 py-12">
-    <header class="mb-10">
-      <h1 class="text-4xl font-bold tracking-tight">{page.title}</h1>
-    </header>
+  <div class="container mx-auto max-w-4xl px-4 py-16 md:py-20">
+    <PageIntro eyebrow="About" title={page.title} compact />
 
-    <div class="prose prose-invert max-w-none">
+    <div class="prose prose-invert mt-10 max-w-none">
       <div class="flex justify-center mb-6">
         <picture>
           <source type="image/avif" srcset={profileAvifSrcset} sizes={profileSizes} />

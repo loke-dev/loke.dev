@@ -1,0 +1,105 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const services = [
+  {
+    number: '01',
+    title: 'Web experiences that earn their keep',
+    description:
+      'Marketing sites, product surfaces, and tools with a clear message, an intentional interface, and a fast path from first visit to action.',
+    outcomes: ['Clear information architecture', 'Responsive, accessible UI', 'Fast production delivery'],
+  },
+  {
+    number: '02',
+    title: 'Content platforms without the slow path',
+    description:
+      'Astro, Sanity, and Cloudflare setups that keep publishing simple while serving readers cached, resilient pages instead of a CMS request on every visit.',
+    outcomes: ['Editorial workflows that stay tidy', 'Event-driven freshness', 'Search-ready technical foundations'],
+  },
+  {
+    number: '03',
+    title: 'Practical AI for product teams',
+    description:
+      'Useful AI-assisted features and workflows with human review, observability, and the right boundaries—built to improve a real process, not just demo a model.',
+    outcomes: ['Workflow discovery and prototypes', 'Safe integration patterns', 'Reviewable production systems'],
+  },
+]
+
+const process = [
+  ['Understand', 'Clarify the problem, audience, constraints, and what a successful outcome should make easier.'],
+  ['Shape', 'Turn the work into an opinionated plan: scope, interfaces, content, technical choices, and milestones.'],
+  ['Build', 'Ship in small, reviewable increments with performance, accessibility, and future maintenance considered from the start.'],
+]
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Loke.dev',
+  url: `${SITE_DOMAIN}/services`,
+  description: 'Web development, CMS architecture, and practical AI implementation.',
+  provider: { '@type': 'Person', name: 'Loke', url: `${SITE_DOMAIN}/about` },
+  serviceType: ['Web development', 'Content management systems', 'AI implementation'],
+}
+---
+
+<BaseLayout
+  title="Services"
+  description="Web development, fast content platforms, and practical AI implementation from Loke.dev."
+  url={`${SITE_DOMAIN}/services`}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Services"
+      title="A calm, technical partner for the work that matters."
+      description="I help teams turn a rough idea, aging site, or fragile publishing setup into a focused, fast, maintainable product surface."
+    />
+
+    <section class="mt-12 grid gap-5 lg:grid-cols-3" aria-label="Services">
+      {services.map((service) => (
+        <article class="surface-interactive rounded-xl border border-border/80 bg-card p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
+          <p class="text-xs font-semibold tracking-[0.2em] text-accent">{service.number}</p>
+          <h2 class="mt-5 text-2xl font-bold tracking-tight">{service.title}</h2>
+          <p class="mt-4 leading-relaxed text-muted-foreground">{service.description}</p>
+          <ul class="mt-6 space-y-3 border-t border-border/70 pt-5 text-sm text-muted-foreground">
+            {service.outcomes.map((outcome) => (
+              <li class="flex gap-3"><span class="text-accent" aria-hidden="true">→</span>{outcome}</li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </section>
+
+    <section class="mt-20 border-t border-border/70 pt-10 md:pt-12">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">How I work</p>
+      <div class="mt-5 grid gap-8 md:grid-cols-3">
+        {process.map(([title, description], index) => (
+          <article>
+            <p class="text-sm font-medium text-accent">0{index + 1}</p>
+            <h2 class="mt-3 text-xl font-bold">{title}</h2>
+            <p class="mt-3 leading-relaxed text-muted-foreground">{description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-20 rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-card to-card px-6 py-10 md:flex md:items-end md:justify-between md:px-10">
+      <div class="max-w-2xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">A good first conversation</p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight">Tell me what needs to become clearer, faster, or easier to run.</h2>
+        <p class="mt-4 leading-relaxed text-muted-foreground">A short note about the problem and the current setup is enough to start.</p>
+      </div>
+      <a href="/contact" class="interactive-button mt-7 inline-flex items-center justify-center rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:mt-0">
+        Start a conversation →
+      </a>
+    </section>
+  </div>
+</BaseLayout>

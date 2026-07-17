@@ -361,6 +361,15 @@
   line-height: 1.4;
 }
 
+.hero-note {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-frame:hover .hero-note {
+  transform: rotate(-1deg) translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 70%, var(--border));
+}
+
 @media (max-width: 640px) {
   .article-diagram__compare {
     grid-template-columns: 1fr;

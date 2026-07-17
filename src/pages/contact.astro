@@ -3,6 +3,7 @@ export const prerender = true
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ContactForm from '@/components/ContactForm'
+import PageIntro from '@/components/PageIntro.astro'
 import { getContactPage } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
@@ -18,11 +19,17 @@ const page = await getContactPage()
   url={`${SITE_DOMAIN}/contact`}
   loadTurnstile={true}
 >
-  <div class="max-w-2xl mx-auto px-4 py-20">
-    <h1 class="text-4xl font-bold mb-4">{page?.title ?? 'Contact'}</h1>
-    {page?.description && <p class="text-muted-foreground mb-12">{page.description}</p>}
+  <div class="max-w-2xl mx-auto px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Start a conversation"
+      title={page?.title ?? 'Contact'}
+      description={page?.description}
+      compact
+    />
 
-    <ContactForm client:load />
+    <div class="mt-10">
+      <ContactForm client:load />
+    </div>
 
     {page?.alternativeContactTitle && (
       <div class="mt-12 border-t pt-8">

@@ -24,6 +24,7 @@ export const GET: APIRoute = async () => {
     '/topics',
     '/changelog',
     '/about',
+    '/services',
     '/projects',
     '/contact',
   ]

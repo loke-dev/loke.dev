@@ -23,7 +23,7 @@ const srcSet = getSanityImageSrcSet(
 )
 ---
 
-<div class={`overflow-hidden rounded-lg border transition-all hover:shadow-md ${featured ? 'flex flex-col md:flex-row w-full' : 'flex flex-col'}`}>
+<article class={`surface-interactive overflow-hidden rounded-xl border border-border/80 bg-card transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)] ${featured ? 'flex flex-col md:flex-row w-full' : 'flex flex-col h-full'}`}>
   {imageUrl && (
     <div class={`relative w-full overflow-hidden ${featured ? 'md:w-1/3 md:h-auto aspect-[16/9] md:aspect-auto' : 'aspect-[4/3]'}`}>
       <img
@@ -37,6 +37,16 @@ const srcSet = getSanityImageSrcSet(
         height={height}
         class="h-full w-full object-cover object-center"
       />
+    </div>
+  )}
+  {!imageUrl && (
+    <div class={`relative overflow-hidden bg-gradient-to-br from-accent/20 via-secondary to-background ${featured ? 'min-h-48 md:w-1/3 md:min-h-0' : 'aspect-[4/3]'}`}>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,oklch(72%_0.18_70/0.28),transparent_34%),radial-gradient(circle_at_78%_75%,oklch(60%_0.12_250/0.22),transparent_38%)]"></div>
+      <div class="relative flex h-full items-end p-6">
+        <span class="rounded-full border border-accent/35 bg-background/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-foreground backdrop-blur">
+          Project note
+        </span>
+      </div>
     </div>
   )}
 
@@ -88,4 +98,4 @@ const srcSet = getSanityImageSrcSet(
       )}
     </div>
   </div>
-</div>
+</article>
