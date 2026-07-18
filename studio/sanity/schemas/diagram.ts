@@ -23,6 +23,22 @@ export default defineType({
             value: 'next-params-comparison',
           },
           { title: 'Next.js CSS diagnostic', value: 'next-css-diagnostic' },
+          {
+            title: 'Pages Router migration map',
+            value: 'next-router-migration-map',
+          },
+          {
+            title: 'Server and Client boundary',
+            value: 'next-rendering-boundary',
+          },
+          {
+            title: 'Next.js cache decision',
+            value: 'next-cache-decision',
+          },
+          {
+            title: 'App Router rollout',
+            value: 'next-migration-rollout',
+          },
         ],
       },
       validation: (Rule) => Rule.required(),

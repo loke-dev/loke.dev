@@ -1,5 +1,6 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
+import { defineDocuments, presentationTool } from 'sanity/presentation'
 import { structureTool } from 'sanity/structure'
 import { useUnpublishAction } from './sanity/actions/unpublishAction'
 import { singletonTypes, structure } from './sanity/deskStructure'
@@ -11,6 +12,7 @@ const projectId =
   'l25uat4p'
 const dataset =
   process.env.SANITY_DATASET ?? process.env.VITE_SANITY_DATASET ?? 'production'
+const previewUrl = process.env.SANITY_STUDIO_PREVIEW_URL ?? 'https://loke.dev'
 
 export default defineConfig({
   name: 'default',
@@ -21,6 +23,24 @@ export default defineConfig({
   plugins: [
     structureTool({
       structure,
+    }),
+    presentationTool({
+      previewUrl: {
+        initial: previewUrl,
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+          disable: '/api/draft-mode/disable',
+        },
+      },
+      allowOrigins: ['https://loke.dev', 'http://localhost:*'],
+      resolve: {
+        mainDocuments: defineDocuments([
+          {
+            route: '/blog/:slug',
+            filter: '_type == "post" && slug.current == $slug',
+          },
+        ]),
+      },
     }),
     visionTool(),
   ],

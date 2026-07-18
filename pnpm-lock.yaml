@@ -29,11 +29,14 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2
       '@sanity/client':
-        specifier: ^7.14.0
-        version: 7.14.0
+        specifier: ^7.23.2
+        version: 7.23.2
       '@sanity/image-url':
         specifier: ^2.0.3
         version: 2.0.3
+      '@sanity/preview-url-secret':
+        specifier: ^4.0.8
+        version: 4.0.8(@sanity/client@7.23.2)
       '@sanity/webhook':
         specifier: ^4.0.4
         version: 4.0.4
@@ -1301,19 +1304,28 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
-  '@sanity/client@7.14.0':
-    resolution: {integrity: sha512-eXue3rc4MqJh89mvuTC0h0pdoY8lwXjlV8odFB3EF7aSFKF7F5BL0NU2mlTrCZYbPAlV3JTvMPPLGJCORqOKDw==}
+  '@sanity/client@7.23.2':
+    resolution: {integrity: sha512-WC0vsGGpe4IGVFBvYMFFPa3KLH0vzgZwzvHIN20IDmPjuifDHSCbpq299Yj7jJQb2xBMJ7zQj45RyOzOIC7PUA==}
     engines: {node: '>=20'}
 
-  '@sanity/eventsource@5.0.2':
-    resolution: {integrity: sha512-/B9PMkUvAlUrpRq0y+NzXgRv5lYCLxZNsBJD2WXVnqZYOfByL9oQBV7KiTaARuObp5hcQYuPfOAVjgXe3hrixA==}
+  '@sanity/eventsource@5.0.4':
+    resolution: {integrity: sha512-NT6XrTJePJd7q1ZdTqB3NsTyNNOe9R2zMkg4Hlkqwb0LL6UmekVamAD46yjSJ+HbRyXAKLl1Rb65xZBdzC1f8Q==}
 
   '@sanity/image-url@2.0.3':
     resolution: {integrity: sha512-A/vOugFw/ROGgSeSGB6nimO0c35x9KztatOPIIVlhkL+zsOfP7khigCbdJup2FSv6C03FX2XaUAhXojCxANl2Q==}
     engines: {node: '>=20.19.0'}
 
+  '@sanity/preview-url-secret@4.0.8':
+    resolution: {integrity: sha512-n2ulvDpA8z9UOhnyMPB4WC2w3e/noqL2+gE1f+WQyAE2v0OJsYOkTQzNCe9FU0UaVtbuBTNZI5xj+ei6Qxql/Q==}
+    engines: {node: '>=20.19 <22 || >=22.12'}
+    peerDependencies:
+      '@sanity/client': ^7.23.0
+
   '@sanity/signed-urls@2.0.2':
     resolution: {integrity: sha512-w/Aq0JDYI44WC5w8mzJBAjCem8qlGrxGTzvNbUWwBfys6kSL+TZBSypV5waCc35XRgt0X5zdYZMJOrshcjJLFw==}
+
+  '@sanity/uuid@3.0.2':
+    resolution: {integrity: sha512-vzdhqOrX7JGbMyK40KuIwwyXHm7GMLOGuYgn3xlC09e4ZVNofUO5mgezQqnRv0JAMthIRhofqs9f6ufUjMKOvw==}
 
   '@sanity/webhook@4.0.4':
     resolution: {integrity: sha512-c8LmzR5Wx93zJ10ohhp0XlmPrTNSFyvPcLbNY/sN45Wj5VOngz4FbBMbX9j64sSQLt+676U6OhiVfjs1yw3YCw==}
@@ -1551,9 +1563,6 @@ packages:
   '@types/eventsource@1.1.15':
     resolution: {integrity: sha512-XQmGcbnxUNa06HR3VBVkc9+A2Vpi9ZyLJcdS5dwaQQ/4ZMWFO+5c90FnMUpbtMZwB/FChoYHwuVg8TvkECacTA==}
 
-  '@types/follow-redirects@1.14.4':
-    resolution: {integrity: sha512-GWXfsD0Jc1RWiFmMuMFCpXMzi9L7oPDVwxUnZdg89kDNnqsRfUKXEtUYtA98A6lig1WXH/CYY/fvPW9HuN5fTA==}
-
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
@@ -1583,6 +1592,9 @@ packages:
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
+
+  '@types/uuid@8.3.4':
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
 
   '@typescript-eslint/eslint-plugin@8.42.0':
     resolution: {integrity: sha512-Aq2dPqsQkxHOLfb2OPv43RnIvfj05nw8v/6n3B2NABIPpHnjQnaLo9QGMTvml+tv4korl/Cjfrb/BYhoL8UUTQ==}
@@ -2469,15 +2481,6 @@ packages:
     resolution: {integrity: sha512-9UbaD6XdAL97+k/n+N7JwX46K/M6Zc6KcFYskrYL8wbBV/Uyk0CTAMY0VT+qiK5PM7AIc9aTWYtq65U7T+aCNQ==}
     engines: {node: '>=8'}
 
-  follow-redirects@1.15.11:
-    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-
   fontace@0.4.1:
     resolution: {integrity: sha512-lDMvbAzSnHmbYMTEld5qdtvNH2/pWpICOqpean9IgC7vUbUJc3k+k5Dokp85CegamqQpFbXf0rAVkbzpyTA8aw==}
 
@@ -2520,8 +2523,8 @@ packages:
     resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
     engines: {node: '>= 0.4'}
 
-  get-it@8.7.0:
-    resolution: {integrity: sha512-uong/+jOz0GiuIWIUJXp2tnQKgQKukC99LEqOxLckPUoHYoerQbV6vC0Tu+/pSgk0tgHh1xX2aJtCk4y35LLLg==}
+  get-it@8.8.0:
+    resolution: {integrity: sha512-vRyooMBzoIdEbARGT3JcvWqMD67YzC5SKlMqofyfck1ebLh2zzlpD4hVQ3xiuuiADk4jNs0rTezVlxCMqOlZfA==}
     engines: {node: '>=14.0.0'}
 
   get-proto@1.0.1:
@@ -4068,6 +4071,11 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
+  uuid@8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+    hasBin: true
+
   vfile-location@5.0.3:
     resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
 
@@ -5358,16 +5366,14 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@sanity/client@7.14.0':
+  '@sanity/client@7.23.2':
     dependencies:
-      '@sanity/eventsource': 5.0.2
-      get-it: 8.7.0
+      '@sanity/eventsource': 5.0.4
+      get-it: 8.8.0
       nanoid: 3.3.11
       rxjs: 7.8.2
-    transitivePeerDependencies:
-      - debug
 
-  '@sanity/eventsource@5.0.2':
+  '@sanity/eventsource@5.0.4':
     dependencies:
       '@types/event-source-polyfill': 1.0.5
       '@types/eventsource': 1.1.15
@@ -5378,10 +5384,20 @@ snapshots:
     dependencies:
       '@sanity/signed-urls': 2.0.2
 
+  '@sanity/preview-url-secret@4.0.8(@sanity/client@7.23.2)':
+    dependencies:
+      '@sanity/client': 7.23.2
+      '@sanity/uuid': 3.0.2
+
   '@sanity/signed-urls@2.0.2':
     dependencies:
       '@noble/ed25519': 3.0.0
       '@noble/hashes': 2.0.1
+
+  '@sanity/uuid@3.0.2':
+    dependencies:
+      '@types/uuid': 8.3.4
+      uuid: 8.3.2
 
   '@sanity/webhook@4.0.4': {}
 
@@ -5636,10 +5652,6 @@ snapshots:
 
   '@types/eventsource@1.1.15': {}
 
-  '@types/follow-redirects@1.14.4':
-    dependencies:
-      '@types/node': 25.9.1
-
   '@types/hast@3.0.4':
     dependencies:
       '@types/unist': 3.0.3
@@ -5671,6 +5683,8 @@ snapshots:
       '@types/node': 25.9.1
 
   '@types/unist@3.0.3': {}
+
+  '@types/uuid@8.3.4': {}
 
   '@typescript-eslint/eslint-plugin@8.42.0(@typescript-eslint/parser@8.42.0(eslint@9.34.0(jiti@2.6.1))(typescript@5.9.2))(eslint@9.34.0(jiti@2.6.1))(typescript@5.9.2)':
     dependencies:
@@ -6800,8 +6814,6 @@ snapshots:
 
   flattie@1.1.1: {}
 
-  follow-redirects@1.15.11: {}
-
   fontace@0.4.1:
     dependencies:
       fontkitten: 1.0.3
@@ -6849,16 +6861,12 @@ snapshots:
       hasown: 2.0.2
       math-intrinsics: 1.1.0
 
-  get-it@8.7.0:
+  get-it@8.8.0:
     dependencies:
-      '@types/follow-redirects': 1.14.4
       decompress-response: 7.0.0
-      follow-redirects: 1.15.11
       is-retry-allowed: 2.2.0
       through2: 4.0.2
       tunnel-agent: 0.6.0
-    transitivePeerDependencies:
-      - debug
 
   get-proto@1.0.1:
     dependencies:
@@ -8672,6 +8680,8 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
+
+  uuid@8.3.2: {}
 
   vfile-location@5.0.3:
     dependencies:

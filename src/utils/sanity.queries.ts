@@ -1,3 +1,4 @@
+import type { SanityClient } from '@sanity/client'
 import { client } from '@/lib/sanity/client'
 import {
   ABOUT_PAGE_QUERY,
@@ -102,8 +103,13 @@ export async function getAllPublishedPosts(): Promise<PostListItem[]> {
   return rows.map(mapPostListRow)
 }
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const post = await client.fetch<Post | null>(POST_BY_SLUG_QUERY, { slug })
+export async function getPostBySlug(
+  slug: string,
+  contentClient: SanityClient = client
+): Promise<Post | null> {
+  const post = await contentClient.fetch<Post | null>(POST_BY_SLUG_QUERY, {
+    slug,
+  })
 
   if (!post) return null
 

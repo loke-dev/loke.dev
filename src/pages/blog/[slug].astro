@@ -13,12 +13,17 @@ import { createArticleSchema, createBreadcrumbSchema } from '@/lib/sanity/schema
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import { getRequestSanityClient } from '@/lib/sanity/preview-client'
 
-Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogPost)
+const { client: contentClient, isPreview } = getRequestSanityClient(Astro.request)
+Astro.response.headers.set(
+  'Cache-Control',
+  isPreview ? 'private, no-store' : CACHE_CONTROL.blogPost
+)
 const { slug } = Astro.params
 if (!slug) return Astro.redirect('/blog', 302)
 
-const post = await getPostBySlug(slug)
+const post = await getPostBySlug(slug, contentClient)
 if (!post) {
   const redirect = await getRedirectByFrom(`/blog/${slug}`)
   if (redirect) return Astro.redirect(redirect.to, redirect.permanent === false ? 302 : 301)
