@@ -1,6 +1,10 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
-import { defineDocuments, presentationTool } from 'sanity/presentation'
+import {
+  defineDocuments,
+  defineLocations,
+  presentationTool,
+} from 'sanity/presentation'
 import { structureTool } from 'sanity/structure'
 import { useUnpublishAction } from './sanity/actions/unpublishAction'
 import { singletonTypes, structure } from './sanity/deskStructure'
@@ -40,6 +44,21 @@ export default defineConfig({
             filter: '_type == "post" && slug.current == $slug',
           },
         ]),
+        locations: {
+          post: defineLocations({
+            select: { title: 'title', slug: 'slug.current' },
+            resolve: (document) => ({
+              locations: document?.slug
+                ? [
+                    {
+                      title: document.title ?? 'Untitled post',
+                      href: `/blog/${document.slug}`,
+                    },
+                  ]
+                : [],
+            }),
+          }),
+        },
       },
     }),
     visionTool(),
