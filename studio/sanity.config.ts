@@ -21,7 +21,7 @@ const previewUrl = process.env.SANITY_STUDIO_PREVIEW_URL ?? 'https://loke.dev'
 export default defineConfig({
   name: 'default',
   title: 'loke.dev',
-  basePath: '/studio',
+  basePath: '/',
   projectId,
   dataset,
   plugins: [

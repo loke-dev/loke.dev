@@ -3,26 +3,26 @@ import * as Sentry from '@sentry/cloudflare'
 
 const STUDIO_HOST = 'loke-dev.sanity.studio'
 
-function getStudioProxyRequest(request: Request): Request | null {
+function getStudioRedirect(request: Request): Response | null {
   const url = new URL(request.url)
   if (url.pathname !== '/studio' && !url.pathname.startsWith('/studio/')) {
     return null
   }
 
-  url.protocol = 'https:'
-  url.hostname = STUDIO_HOST
-  url.port = ''
+  const studioPath = url.pathname.slice('/studio'.length) || '/'
+  const studioUrl = new URL(`https://${STUDIO_HOST}${studioPath}`)
+  studioUrl.search = url.search
 
-  return new Request(url, request)
+  return Response.redirect(studioUrl, 302)
 }
 
 type SentryEnv = Env & { SENTRY_DSN?: string }
 
 const handler: ExportedHandler<SentryEnv> = {
   fetch(request, env, context) {
-    const studioRequest = getStudioProxyRequest(request)
-    if (studioRequest) {
-      return fetch(studioRequest)
+    const studioRedirect = getStudioRedirect(request)
+    if (studioRedirect) {
+      return studioRedirect
     }
 
     return handle(request, env, context)
