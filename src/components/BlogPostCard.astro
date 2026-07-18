@@ -64,5 +64,5 @@ const updatedDisplay = getPostUpdatedDisplay(post)
       </div>
     </div>
   </a>
-  {post.topics.length > 0 && <div class="flex flex-wrap gap-1 px-6 pb-6">{post.topics.map((topic) => <a href={`/topics/${topic.slug.current}`} class="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground hover:underline">{topic.title}</a>)}</div>}
+  {post.topics?.length > 0 && <div class="flex flex-wrap gap-1 px-6 pb-6">{post.topics.map((topic) => <a href={`/topics/${topic.slug.current}`} class="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground hover:underline">{topic.title}</a>)}</div>}
 </article>

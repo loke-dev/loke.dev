@@ -58,6 +58,7 @@ function mapPostListRow(row: PostListFetchRow): PostListItem {
   const { plainBody, ...rest } = row
   return {
     ...rest,
+    topics: row.topics ?? [],
     readingTime: readingTimeFromPlainText(plainBody ?? ''),
   }
 }
@@ -107,7 +108,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   if (!post) return null
 
   const { readingTime, wordCount } = calculateReadingTime(post.body || [])
-  return { ...post, readingTime, wordCount }
+  return { ...post, topics: post.topics ?? [], readingTime, wordCount }
 }
 
 export async function getAllPostSlugs(): Promise<PostSlug[]> {
