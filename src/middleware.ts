@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware'
 import { getSecurityHeaders } from '@/utils/headers.server'
+import { perspectiveCookieName } from '@/lib/sanity/draft-mode'
 
 const CACHEABLE_PATHS = /^\/(?:blog(?:\/|$)|sitemap\.xml$|rss\.xml$)/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
@@ -7,6 +8,12 @@ const CONTENT_CACHE_VERSION = '2026-07-17-projects-template-shelf-v5'
 
 function isCacheableRequest(request: Request, pathname: string): boolean {
   return request.method === 'GET' && CACHEABLE_PATHS.test(pathname)
+}
+
+function isStudioPreviewRequest(request: Request): boolean {
+  return (request.headers.get('Cookie') ?? '').includes(
+    `${perspectiveCookieName}=`
+  )
 }
 
 function getSharedCacheTtlMilliseconds(cacheControl: string): number | null {
@@ -60,7 +67,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const response = await next()
 
-  const securityHeaders = getSecurityHeaders()
+  const securityHeaders = getSecurityHeaders({
+    allowStudioFrame: !context.isPrerendered && isStudioPreviewRequest(request),
+  })
   for (const [key, value] of Object.entries(securityHeaders)) {
     response.headers.set(key, value)
   }
