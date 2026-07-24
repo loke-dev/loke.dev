@@ -28,6 +28,7 @@ export const GET: APIRoute = async () => {
     '/tools',
     '/tools/n8n-hosting-calculator',
     '/tools/ai-app-production-readiness-checklist',
+    '/tools/digitalocean-droplet-vs-app-platform-calculator',
     '/affiliate-disclosure',
     '/projects',
     '/contact',

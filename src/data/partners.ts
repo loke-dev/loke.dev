@@ -29,6 +29,18 @@ export const partners = [
     affiliate: false,
   },
   {
+    slug: 'digitalocean',
+    name: 'DigitalOcean',
+    category: 'Cloud and hosting',
+    destination: 'https://www.digitalocean.com/',
+    summary:
+      'Developer-focused cloud platform with virtual machines, managed application hosting, databases, storage, Kubernetes, and AI infrastructure.',
+    fit: 'A candidate for developers who want a smaller cloud platform with a choice between managed deployment and direct server control.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+    affiliateProgram: 'https://www.digitalocean.com/affiliates',
+  },
+  {
     slug: 'sanity',
     name: 'Sanity',
     category: 'Content and email',

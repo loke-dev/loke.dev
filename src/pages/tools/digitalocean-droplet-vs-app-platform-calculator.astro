@@ -1,0 +1,452 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/digitalocean-droplet-vs-app-platform-calculator`
+const description =
+  'Compare DigitalOcean Droplet and App Platform monthly cost with compute, backups, storage, bandwidth, shared services, and maintenance time.'
+const calculatorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'DigitalOcean Droplet vs App Platform cost calculator',
+  description,
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+}
+---
+
+<BaseLayout
+  title="DigitalOcean Droplet vs App Platform cost calculator"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(calculatorSchema)}
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Free calculator"
+      title="Compare the hosting bill and the work around it."
+      description="Price a DigitalOcean Droplet against App Platform using current compute references, then add backups, storage, bandwidth, and the monthly value of operating each option."
+    />
+
+    <aside class="mt-8 max-w-4xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">Pricing reference:</strong>
+      DigitalOcean listed Basic Droplets from $4/month and App Platform
+      containers from $5/month on 24 July 2026. Weekly basic Droplet backups
+      added 20%, daily backups 30%, volume storage cost $0.10/GiB, and excess
+      transfer cost $0.01/GiB for Droplets or $0.02/GiB for App Platform.
+      Verify <a class="font-medium text-foreground underline hover:text-accent" href="https://www.digitalocean.com/pricing" target="_blank" rel="noopener">current pricing</a>
+      before buying. Inputs stay in this browser.
+    </aside>
+
+    <form
+      id="digitalocean-calculator"
+      class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]"
+    >
+      <div class="space-y-8">
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Droplet</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            You control the server. Include the time required for patches,
+            deployment, monitoring, incidents, and restore tests.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Basic Droplet size
+              <select
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                name="dropletPlan"
+              >
+                <option value="4|500">512 MiB, 1 vCPU, $4</option>
+                <option value="6|1000" selected>1 GiB, 1 vCPU, $6</option>
+                <option value="12|2000">2 GiB, 1 vCPU, $12</option>
+                <option value="18|3000">2 GiB, 2 vCPU, $18</option>
+                <option value="24|4000">4 GiB, 2 vCPU, $24</option>
+                <option value="48|5000">8 GiB, 4 vCPU, $48</option>
+              </select>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Droplet count
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="dropletCount"
+                min="1"
+                max="100"
+                step="1"
+                value="1"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Basic backup plan
+              <select
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                name="backupRate"
+              >
+                <option value="0">No basic backup</option>
+                <option value="0.2" selected>Weekly, 20% of compute</option>
+                <option value="0.3">Daily, 30% of compute</option>
+              </select>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Block storage, GiB
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="volumeGiB"
+                min="0"
+                step="1"
+                value="0"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Outbound transfer, GiB/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="dropletTransfer"
+                min="0"
+                step="10"
+                value="100"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Operations time, hours/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="dropletHours"
+                min="0"
+                step="0.25"
+                value="2"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">App Platform</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            DigitalOcean manages the application runtime and deployment layer.
+            Each service, worker, and instance is a separately billed component.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Container size
+              <select
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                name="appPlan"
+              >
+                <option value="5|50">512 MiB fixed, $5</option>
+                <option value="10|100" selected>1 GiB fixed, $10</option>
+                <option value="12|150">1 GiB scalable, $12</option>
+                <option value="25|200">2 GiB scalable, $25</option>
+                <option value="50|250">4 GiB scalable, $50</option>
+              </select>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Container count
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="appCount"
+                min="1"
+                max="100"
+                step="1"
+                value="1"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Outbound transfer, GiB/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="appTransfer"
+                min="0"
+                step="10"
+                value="100"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Platform work, hours/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="appHours"
+                min="0"
+                step="0.25"
+                value="0.5"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Shared costs</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            Add services both designs need, such as a managed database, object
+            storage, email, or monitoring. They affect the full budget but not
+            the difference between the two hosting options.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Shared services, $/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="shared"
+                min="0"
+                step="1"
+                value="15"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Value of engineering time, $/hour
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="hourly"
+                min="0"
+                step="5"
+                value="50"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <section
+        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        aria-live="polite"
+        aria-labelledby="digitalocean-result-title"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Monthly estimate
+        </p>
+        <h2 id="digitalocean-result-title" class="mt-2 text-2xl font-bold">
+          Hosting and operating cost
+        </h2>
+
+        <dl class="mt-7 space-y-5">
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Droplet total</dt>
+            <dd id="droplet-total" class="mt-1 text-3xl font-bold tabular-nums">
+              $122/month
+            </dd>
+            <dd id="droplet-detail" class="mt-1 text-sm text-muted-foreground">
+              $7 infrastructure + $15 shared services + $100 of time.
+            </dd>
+          </div>
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">App Platform total</dt>
+            <dd id="app-total" class="mt-1 text-3xl font-bold tabular-nums">
+              $50/month
+            </dd>
+            <dd id="app-detail" class="mt-1 text-sm text-muted-foreground">
+              $10 platform + $15 shared services + $25 of time.
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-muted-foreground">Difference</dt>
+            <dd id="difference" class="mt-1 text-xl font-bold">
+              App Platform is $72 lower
+            </dd>
+            <dd id="difference-detail" class="mt-1 text-sm text-muted-foreground">
+              The lower compute invoice does not offset the entered operations
+              time.
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+          <p class="text-sm leading-relaxed">
+            This is a cost comparison, not a performance benchmark. Similar RAM
+            labels do not make a Droplet and an App Platform container
+            equivalent. Load-test the sizes your application may use.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3">
+          <a
+            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            href="/go/digitalocean?from=droplet-app-platform-calculator"
+          >
+            Explore DigitalOcean →
+          </a>
+        </div>
+        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+          The DigitalOcean link is currently a direct tracked link and earns no
+          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+        </p>
+      </section>
+    </form>
+
+    <section class="mt-16 max-w-3xl space-y-5">
+      <h2 class="text-2xl font-bold">What the numbers include</h2>
+      <p class="leading-relaxed text-muted-foreground">
+        Droplet transfer allowance is multiplied by the selected Droplet count.
+        App Platform allowance is multiplied by the selected container count.
+        Excess transfer is then charged at the current reference rate. Basic
+        Droplet backup percentages apply to compute cost, and block storage is
+        priced separately.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        The calculator uses USD because DigitalOcean publishes these references
+        in USD. A Swedish card or business invoice can produce a different SEK
+        total after exchange rates, VAT treatment, bank fees, credits, and
+        rounding. Use the actual invoice for accounting.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        Managed service does not mean zero work, and a Droplet does not always
+        need two hours each month. Replace both time estimates with your own
+        measured average. Keep incident response and restore testing in scope,
+        not only routine deployment.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupDigitalOceanCalculator() {
+    const form = document.querySelector<HTMLFormElement>(
+      '#digitalocean-calculator'
+    )
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+
+    const currency = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2,
+    })
+    const getNumber = (name: string) => {
+      const input = form.elements.namedItem(name)
+      if (
+        !(input instanceof HTMLInputElement) &&
+        !(input instanceof HTMLSelectElement)
+      ) {
+        return 0
+      }
+      return Math.max(0, Number(input.value) || 0)
+    }
+    const getPlan = (name: string) => {
+      const input = form.elements.namedItem(name)
+      if (!(input instanceof HTMLSelectElement)) {
+        return { price: 0, transfer: 0 }
+      }
+      const [price, transfer] = input.value.split('|').map(Number)
+      return { price: price || 0, transfer: transfer || 0 }
+    }
+    const setText = (id: string, value: string) => {
+      const element = form.querySelector<HTMLElement>(`#${id}`)
+      if (element) element.textContent = value
+    }
+
+    const calculate = () => {
+      const dropletPlan = getPlan('dropletPlan')
+      const dropletCount = Math.max(1, getNumber('dropletCount'))
+      const dropletCompute = dropletPlan.price * dropletCount
+      const dropletBackup = dropletCompute * getNumber('backupRate')
+      const dropletStorage = getNumber('volumeGiB') * 0.1
+      const dropletExcessTransfer = Math.max(
+        0,
+        getNumber('dropletTransfer') -
+          dropletPlan.transfer * dropletCount
+      )
+      const dropletBandwidth = dropletExcessTransfer * 0.01
+
+      const appPlan = getPlan('appPlan')
+      const appCount = Math.max(1, getNumber('appCount'))
+      const appCompute = appPlan.price * appCount
+      const appExcessTransfer = Math.max(
+        0,
+        getNumber('appTransfer') - appPlan.transfer * appCount
+      )
+      const appBandwidth = appExcessTransfer * 0.02
+
+      const shared = getNumber('shared')
+      const hourly = getNumber('hourly')
+      const dropletTime = getNumber('dropletHours') * hourly
+      const appTime = getNumber('appHours') * hourly
+      const dropletInfrastructure =
+        dropletCompute + dropletBackup + dropletStorage + dropletBandwidth
+      const appInfrastructure = appCompute + appBandwidth
+      const dropletTotal = dropletInfrastructure + shared + dropletTime
+      const appTotal = appInfrastructure + shared + appTime
+
+      setText('droplet-total', `${currency.format(dropletTotal)}/month`)
+      setText(
+        'droplet-detail',
+        `${currency.format(dropletInfrastructure)} infrastructure + ${currency.format(shared)} shared services + ${currency.format(dropletTime)} of time.`
+      )
+      setText('app-total', `${currency.format(appTotal)}/month`)
+      setText(
+        'app-detail',
+        `${currency.format(appInfrastructure)} platform + ${currency.format(shared)} shared services + ${currency.format(appTime)} of time.`
+      )
+
+      const difference = Math.abs(dropletTotal - appTotal)
+      if (difference < 0.01) {
+        setText('difference', 'The estimates are equal')
+        setText(
+          'difference-detail',
+          'Choose from control, deployment workflow, scaling needs, and operational responsibility.'
+        )
+      } else if (dropletTotal < appTotal) {
+        setText(
+          'difference',
+          `Droplet is ${currency.format(difference)} lower`
+        )
+        setText(
+          'difference-detail',
+          'Confirm that the entered operations time includes patches, monitoring, incidents, backups, and restore tests.'
+        )
+      } else {
+        setText(
+          'difference',
+          `App Platform is ${currency.format(difference)} lower`
+        )
+        setText(
+          'difference-detail',
+          dropletInfrastructure < appInfrastructure &&
+            dropletTime > appTime
+            ? 'The lower Droplet infrastructure invoice does not offset the entered operations time.'
+            : 'At these inputs, App Platform infrastructure and platform work produce the lower total.'
+        )
+      }
+    }
+
+    form.addEventListener('input', calculate)
+    form.addEventListener('change', calculate)
+    calculate()
+  }
+
+  setupDigitalOceanCalculator()
+  document.addEventListener('astro:after-swap', setupDigitalOceanCalculator)
+</script>
