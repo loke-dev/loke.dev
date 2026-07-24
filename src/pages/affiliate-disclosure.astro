@@ -48,10 +48,12 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
       <h2>Outbound click measurement</h2>
       <p>
-        Links on the tools page pass through a short loke.dev redirect so aggregate
-        outbound clicks can be counted. The event records the destination, page placement,
-        and whether the link was direct or affiliated. It does not set an analytics cookie
-        or create a personal browsing profile.
+        Some partner links on loke.dev and related projects pass through a short loke.dev
+        redirect so aggregate outbound clicks can be counted. The application event
+        records the destination, site, page placement, and whether the link was direct or
+        affiliated. It does not set an analytics cookie or create a personal browsing
+        profile. Cloudflare still processes the network request as described in the
+        <a href="/privacy">privacy notice</a>.
       </p>
 
       <h2>Changes and corrections</h2>

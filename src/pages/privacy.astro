@@ -1,0 +1,101 @@
+---
+export const prerender = true
+
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+---
+
+<BaseLayout
+  title="Privacy"
+  description="How loke.dev and related sites handle infrastructure logs, aggregate analytics events, contact messages, and affiliate click measurement."
+  url={`${SITE_DOMAIN}/privacy`}
+>
+  <div class="mx-auto max-w-3xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Privacy"
+      title="Measure useful actions, not personal browsing profiles."
+      description="This notice covers loke.dev and related projects that send aggregate events to loke.dev, including Shuffleworks and FlareCheck."
+    />
+
+    <div class="prose prose-invert mt-12 max-w-none">
+      <p><strong>Last updated:</strong> 24 July 2026.</p>
+
+      <h2>Who operates these sites</h2>
+      <p>
+        Loke operates these personal projects from Sweden. Questions, objections, and
+        privacy requests can be sent through the <a href="/contact">contact page</a> or to
+        <a href="mailto:hi@loke.dev">hi@loke.dev</a>.
+      </p>
+
+      <h2>Infrastructure and security logs</h2>
+      <p>
+        The sites use Cloudflare for hosting, delivery, security, and Worker execution.
+        Like other web infrastructure, Cloudflare receives network information needed to
+        deliver a request, such as an IP address, user agent, requested URL, and security
+        metadata. Some of that information may appear temporarily in infrastructure logs
+        according to the Cloudflare account settings and retention terms.
+      </p>
+
+      <h2>Aggregate site and event analytics</h2>
+      <p>
+        The sites may use Cloudflare Web Analytics for aggregate traffic and performance
+        reporting. The custom event collector records only an approved event name, site,
+        page path, placement, target, campaign label, and count. Examples include a
+        successful command copy, a tool action, a completed shuffle, or an outbound
+        partner click.
+      </p>
+      <p>
+        The application event payload does not include an email address, account ID, raw
+        IP address, raw user agent, advertising identifier, or browser fingerprint. The
+        collector does not set a cookie or use local storage. Infrastructure providers
+        still process the network request as described above.
+      </p>
+
+      <h2>Affiliate and outbound links</h2>
+      <p>
+        Some product links pass through a short loke.dev redirect. The redirect records
+        the product and link placement before sending the browser to the provider. A
+        commission-capable link is disclosed separately under the
+        <a href="/affiliate-disclosure">affiliate and editorial policy</a>.
+      </p>
+
+      <h2>Contact messages and error reports</h2>
+      <p>
+        A contact message contains the name, email address, and message supplied by the
+        sender. Resend processes the email delivery so the message can be answered. When
+        error monitoring is configured, Sentry may process technical diagnostics needed
+        to investigate failures. Do not put secrets or sensitive personal information in
+        a contact message.
+      </p>
+
+      <h2>Service providers and external sites</h2>
+      <p>
+        Current infrastructure and operational providers may include Cloudflare for
+        delivery and analytics, Sanity for published content, Resend for contact email,
+        and Sentry for error diagnostics. Following an external or affiliate link makes
+        the destination provider responsible for its own processing under its privacy
+        notice.
+      </p>
+
+      <h2>Retention and choices</h2>
+      <p>
+        Aggregate application events are kept only as long as they are useful for product
+        and affiliate measurement. Analytics Engine currently has a three-month data
+        window when enabled. Infrastructure logs follow provider and account retention
+        settings. Contact messages are retained only as needed to respond, maintain
+        reasonable records, or meet a legal obligation.
+      </p>
+      <p>
+        You can block browser analytics requests using browser privacy controls. You may
+        also ask about access, correction, deletion, restriction, or objection through
+        the contact details above. A request may require enough information to locate the
+        relevant record; anonymous aggregate events cannot normally be connected back to
+        a particular visitor.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

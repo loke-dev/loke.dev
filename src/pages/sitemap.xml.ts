@@ -36,6 +36,7 @@ export const GET: APIRoute = async () => {
     '/tools/cloudflare-workers-cost-calculator',
     '/tools/kilo-pass-vs-byok-calculator',
     '/affiliate-disclosure',
+    '/privacy',
     '/projects',
     '/contact',
   ]
