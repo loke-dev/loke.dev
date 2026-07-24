@@ -72,6 +72,18 @@ export const partners = [
     affiliate: false,
     affiliateProgram: 'https://n8n.io/affiliates/',
   },
+  {
+    slug: 'lovable',
+    name: 'Lovable',
+    category: 'AI and automation',
+    destination: 'https://lovable.dev/',
+    summary:
+      'AI-assisted web application builder with managed publishing, GitHub sync, and full-stack development features.',
+    fit: 'A candidate for developers and technical founders who want a fast first build while keeping a path to code review, external hosting, and independent operation.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+    affiliateProgram: 'https://lovable.dev/partners/affiliates',
+  },
 ] satisfies Partner[]
 
 export function getPartner(slug: string): Partner | undefined {
