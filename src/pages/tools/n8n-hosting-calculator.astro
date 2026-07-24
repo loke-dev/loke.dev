@@ -1,0 +1,360 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/n8n-hosting-calculator`
+const description =
+  'Estimate monthly n8n workflow executions and compare current Cloud plan reference prices with the real monthly cost of self-hosting.'
+const calculatorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'n8n execution and hosting cost calculator',
+  description,
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'EUR',
+  },
+}
+---
+
+<BaseLayout
+  title="n8n execution and hosting cost calculator"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(calculatorSchema)}
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Free calculator"
+      title="Price the n8n decision you actually have."
+      description="Estimate complete workflow executions, find the closest current Cloud plan reference, and include your time in the cost of self-hosting."
+    />
+
+    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">Pricing reference:</strong>
+      n8n listed Starter at €20 per month for 2,500 executions and Pro at €50 per
+      month for 10,000 executions when billed annually on 24 July 2026. Verify
+      <a class="font-medium text-foreground underline hover:text-accent" href="https://n8n.io/pricing/" target="_blank" rel="noopener">current pricing</a>
+      before buying. This calculator is independent and stores no input.
+    </aside>
+
+    <form
+      id="n8n-calculator"
+      class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]"
+    >
+      <div class="space-y-8">
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Monthly executions</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            n8n counts one complete workflow run as one execution, regardless of
+            how many steps are inside it.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Scheduled runs per day
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="scheduled"
+                min="0"
+                step="1"
+                value="10"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Webhook runs per day
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="webhooks"
+                min="0"
+                step="1"
+                value="25"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Chat messages per day
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="chat"
+                min="0"
+                step="1"
+                value="0"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Other runs per month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="other"
+                min="0"
+                step="1"
+                value="100"
+                inputmode="numeric"
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Self-hosting cost</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            Include the resources around the container. A server invoice alone
+            is not a production cost.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Server and database, €/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="infrastructure"
+                min="0"
+                step="1"
+                value="8"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Backups and monitoring, €/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="operations"
+                min="0"
+                step="1"
+                value="5"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Maintenance hours per month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="hours"
+                min="0"
+                step="0.25"
+                value="1"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Value of your time, €/hour
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="hourly"
+                min="0"
+                step="5"
+                value="50"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <section
+        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        aria-live="polite"
+        aria-labelledby="result-title"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Estimate
+        </p>
+        <h2 id="result-title" class="mt-2 text-2xl font-bold">
+          Your monthly comparison
+        </h2>
+
+        <dl class="mt-7 space-y-5">
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Estimated executions</dt>
+            <dd id="execution-result" class="mt-1 text-3xl font-bold tabular-nums">
+              1,164
+            </dd>
+          </div>
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Closest Cloud reference</dt>
+            <dd id="cloud-result" class="mt-1 text-xl font-bold">
+              Starter, €20/month
+            </dd>
+            <dd id="cloud-detail" class="mt-1 text-sm text-muted-foreground">
+              1,336 executions remain in the reference allowance.
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-muted-foreground">
+              Estimated self-hosted total
+            </dt>
+            <dd id="self-hosted-result" class="mt-1 text-3xl font-bold tabular-nums">
+              €63/month
+            </dd>
+            <dd id="self-hosted-detail" class="mt-1 text-sm text-muted-foreground">
+              €13 infrastructure and operations + €50 of time.
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+          <p id="comparison-result" class="text-sm leading-relaxed">
+            Cloud is €43 lower than the self-hosted estimate at this usage. A
+            self-hosted requirement can still outweigh the price difference.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3">
+          <a
+            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            href="/go/n8n-cloud?from=n8n-calculator"
+          >
+            Try n8n Cloud →
+          </a>
+          <a
+            class="inline-flex justify-center rounded-md border border-border px-4 py-3 text-sm font-medium hover:border-accent/50 hover:text-accent"
+            href="/blog/n8n-cloud-vs-self-hosted-developer-checklist"
+          >
+            Read the full decision checklist
+          </a>
+        </div>
+        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+          The n8n link is currently a direct tracked link and earns no
+          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+        </p>
+      </section>
+    </form>
+
+    <section class="mt-16 max-w-3xl space-y-5">
+      <h2 class="text-2xl font-bold">What this estimate leaves out</h2>
+      <p class="leading-relaxed text-muted-foreground">
+        Plan features can matter more than the arithmetic. Check concurrency,
+        shared projects, execution retention, source control, custom nodes,
+        local network access, and support before choosing. Self-hosting also
+        needs a tested restore procedure, security updates, and someone who
+        responds when workflows stop.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        Use 30.4 days for an average month. Chat messages are counted as one
+        execution each because that is the estimation method in n8n’s current
+        pricing guidance. Change the inputs if your workflow design behaves
+        differently.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupN8nCalculator() {
+    const form = document.querySelector<HTMLFormElement>('#n8n-calculator')
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+
+    const number = new Intl.NumberFormat('en-SE', {
+      maximumFractionDigits: 0,
+    })
+    const currency = new Intl.NumberFormat('en-SE', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0,
+    })
+    const getValue = (name: string) => {
+      const input = form.elements.namedItem(name)
+      if (!(input instanceof HTMLInputElement)) return 0
+      return Math.max(0, Number(input.value) || 0)
+    }
+    const setText = (id: string, value: string) => {
+      const element = document.querySelector<HTMLElement>(`#${id}`)
+      if (element) element.textContent = value
+    }
+
+    const calculate = () => {
+      const daily =
+        getValue('scheduled') + getValue('webhooks') + getValue('chat')
+      const executions = Math.round(daily * 30.4 + getValue('other'))
+      const infrastructure = getValue('infrastructure')
+      const operations = getValue('operations')
+      const timeCost = getValue('hours') * getValue('hourly')
+      const selfHosted = infrastructure + operations + timeCost
+
+      let cloudName = 'Above Pro reference'
+      let cloudCost: number | null = null
+      let cloudDetail = 'Check current n8n pricing for a larger execution tier.'
+      if (executions <= 2500) {
+        cloudName = 'Starter'
+        cloudCost = 20
+        cloudDetail = `${number.format(2500 - executions)} executions remain in the reference allowance.`
+      } else if (executions <= 10000) {
+        cloudName = 'Pro'
+        cloudCost = 50
+        cloudDetail = `${number.format(10000 - executions)} executions remain in the reference allowance.`
+      }
+
+      setText('execution-result', number.format(executions))
+      setText(
+        'cloud-result',
+        cloudCost === null
+          ? cloudName
+          : `${cloudName}, ${currency.format(cloudCost)}/month`
+      )
+      setText('cloud-detail', cloudDetail)
+      setText('self-hosted-result', `${currency.format(selfHosted)}/month`)
+      setText(
+        'self-hosted-detail',
+        `${currency.format(infrastructure + operations)} infrastructure and operations + ${currency.format(timeCost)} of time.`
+      )
+
+      if (cloudCost === null) {
+        setText(
+          'comparison-result',
+          'This execution estimate is above the published Pro reference. Compare the live higher-tier price with your self-hosted total before choosing.'
+        )
+        return
+      }
+
+      const difference = Math.abs(selfHosted - cloudCost)
+      if (difference < 1) {
+        setText(
+          'comparison-result',
+          'The two monthly estimates are roughly equal. Choose from operational control, plan features, and risk instead of price.'
+        )
+      } else if (cloudCost < selfHosted) {
+        setText(
+          'comparison-result',
+          `Cloud is ${currency.format(difference)} lower than the self-hosted estimate at this usage. A self-hosted requirement can still outweigh the price difference.`
+        )
+      } else {
+        setText(
+          'comparison-result',
+          `Self-hosting is ${currency.format(difference)} lower in this estimate. Confirm that the saving still holds after upgrades, incident response, and restore testing.`
+        )
+      }
+    }
+
+    form.addEventListener('input', calculate)
+    calculate()
+  }
+
+  setupN8nCalculator()
+  document.addEventListener('astro:after-swap', setupN8nCalculator)
+</script>
