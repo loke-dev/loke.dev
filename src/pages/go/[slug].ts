@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro'
-import { env } from 'cloudflare:workers'
 import { getPartner } from '@/data/partners'
 
 export const prerender = false
@@ -47,16 +46,15 @@ export const GET: APIRoute = ({ params, request }) => {
   const url = new URL(request.url)
   const source = cleanDimension(url.searchParams.get('from'), 'unknown')
 
-  env.AFFILIATE_ANALYTICS.writeDataPoint({
-    indexes: [partner.slug],
-    blobs: [
-      partner.slug,
+  console.info(
+    JSON.stringify({
+      event: 'outbound_partner_click',
+      partner: partner.slug,
       source,
-      getReferrerPath(request),
-      partner.affiliate ? 'affiliate' : 'direct',
-    ],
-    doubles: [1],
-  })
+      referrerPath: getReferrerPath(request),
+      relationship: partner.affiliate ? 'affiliate' : 'direct',
+    })
+  )
 
   return new Response(null, {
     status: 302,

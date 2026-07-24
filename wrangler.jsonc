@@ -8,12 +8,6 @@
     "binding": "ASSETS",
     "directory": "./dist",
   },
-  "analytics_engine_datasets": [
-    {
-      "binding": "AFFILIATE_ANALYTICS",
-      "dataset": "loke_dev_affiliate_clicks",
-    },
-  ],
   "vars": {
     "TURNSTILE_SITE_KEY": "0x4AAAAAAByUTZq4MKD8TJEL",
   },
