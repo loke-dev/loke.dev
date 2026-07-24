@@ -1,9 +1,11 @@
 import { timingSafeEqual } from 'node:crypto'
+import { env as workerEnv } from 'cloudflare:workers'
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook'
 import type { APIRoute } from 'astro'
 import {
   buildPurgeUrls,
   purgeCloudflareCache,
+  type RuntimeEnvironment,
   SSR_WARM_PATHS,
   triggerSiteDeploy,
   warmCachePaths,
@@ -17,6 +19,14 @@ interface RevalidatePayload {
   path?: string
   route?: string
   paths?: string[]
+}
+
+function getRuntimeString(
+  runtimeEnv: RuntimeEnvironment | undefined,
+  name: string
+): string | undefined {
+  const value = runtimeEnv?.[name]
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined
 }
 
 const TYPE_PATHS: Record<string, string[]> = {
@@ -131,8 +141,9 @@ function getIncomingSecret(request: Request): string | null {
 }
 
 export const POST: APIRoute = async ({ request, url }) => {
-  const sharedSecret = process.env.REVALIDATE_WEBHOOK_SECRET
-  const sanityWebhookSecret = process.env.SANITY_WEBHOOK_SECRET
+  const runtimeEnv = workerEnv as unknown as RuntimeEnvironment
+  const sharedSecret = getRuntimeString(runtimeEnv, 'REVALIDATE_WEBHOOK_SECRET')
+  const sanityWebhookSecret = getRuntimeString(runtimeEnv, 'SANITY_WEBHOOK_SECRET')
 
   const rawBody = await request.text()
   const signature = request.headers.get(SIGNATURE_HEADER_NAME)
@@ -193,7 +204,8 @@ export const POST: APIRoute = async ({ request, url }) => {
   }
 
   const delayMs = Number(
-    process.env.SANITY_WEBHOOK_REVALIDATE_DELAY_MS ?? '1200'
+    getRuntimeString(runtimeEnv, 'SANITY_WEBHOOK_REVALIDATE_DELAY_MS') ??
+      '1200'
   )
   if (
     authMethod === 'sanity-signature' &&
@@ -204,7 +216,7 @@ export const POST: APIRoute = async ({ request, url }) => {
   }
 
   const paths = collectPaths(payload)
-  const deploy = await triggerSiteDeploy(paths)
+  const deploy = await triggerSiteDeploy(paths, runtimeEnv)
 
   if (deploy.ok) {
     return Response.json({
@@ -218,9 +230,27 @@ export const POST: APIRoute = async ({ request, url }) => {
     })
   }
 
-  const purgeUrls = buildPurgeUrls([...paths, ...SSR_WARM_PATHS], url)
-  const purge = await purgeCloudflareCache(purgeUrls)
-  const warmed = await warmCachePaths([...paths, ...SSR_WARM_PATHS], url)
+  console.error('Content revalidation deploy trigger failed', {
+    skipped: deploy.skipped,
+    status: deploy.status,
+    detail: deploy.detail,
+  })
+
+  const purgeUrls = buildPurgeUrls(
+    [...paths, ...SSR_WARM_PATHS],
+    url,
+    runtimeEnv
+  )
+  const purge = await purgeCloudflareCache(purgeUrls, runtimeEnv)
+  const warmed = await warmCachePaths(
+    [...paths, ...SSR_WARM_PATHS],
+    url,
+    runtimeEnv
+  )
+
+  if (!purge.ok) {
+    console.error('Content revalidation cache purge failed', purge.result)
+  }
 
   return Response.json(
     {

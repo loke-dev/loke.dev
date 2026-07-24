@@ -1,6 +1,13 @@
 const DEFAULT_DEPLOY_EVENT = 'sanity-content-update'
 
-function env(name: string): string | undefined {
+export type RuntimeEnvironment = Record<string, unknown>
+
+function env(name: string, runtimeEnv?: RuntimeEnvironment): string | undefined {
+  const fromRuntime = runtimeEnv?.[name]
+  if (typeof fromRuntime === 'string' && fromRuntime.trim()) {
+    return fromRuntime.trim()
+  }
+
   const fromMeta = (import.meta.env as Record<string, string | undefined>)[name]
   if (typeof fromMeta === 'string' && fromMeta.trim()) return fromMeta.trim()
   const fromProcess =
@@ -18,10 +25,11 @@ interface DeployTriggerResult {
   detail?: string
 }
 
-export function getDeployRepositoryConfig() {
-  const token = env('GITHUB_DEPLOY_TOKEN') ?? env('GITHUB_TOKEN')
-  const owner = env('GITHUB_OWNER') ?? 'loke-dev'
-  const repo = env('GITHUB_REPO') ?? 'loke.dev'
+export function getDeployRepositoryConfig(runtimeEnv?: RuntimeEnvironment) {
+  const token =
+    env('GITHUB_DEPLOY_TOKEN', runtimeEnv) ?? env('GITHUB_TOKEN', runtimeEnv)
+  const owner = env('GITHUB_OWNER', runtimeEnv) ?? 'loke-dev'
+  const repo = env('GITHUB_REPO', runtimeEnv) ?? 'loke.dev'
 
   if (!token || !owner || !repo) {
     return null
@@ -31,9 +39,10 @@ export function getDeployRepositoryConfig() {
 }
 
 export async function triggerSiteDeploy(
-  paths: string[]
+  paths: string[],
+  runtimeEnv?: RuntimeEnvironment
 ): Promise<DeployTriggerResult> {
-  const config = getDeployRepositoryConfig()
+  const config = getDeployRepositoryConfig(runtimeEnv)
   if (!config) {
     return {
       ok: false,
@@ -51,6 +60,7 @@ export async function triggerSiteDeploy(
         Authorization: `Bearer ${config.token}`,
         Accept: 'application/vnd.github+json',
         'Content-Type': 'application/json',
+        'User-Agent': 'loke.dev-revalidation/1.0',
         'X-GitHub-Api-Version': '2022-11-28',
       },
       body: JSON.stringify({
@@ -73,8 +83,11 @@ export async function triggerSiteDeploy(
   }
 }
 
-export function getPurgeOrigins(url: URL): string[] {
-  const configuredHosts = env('CLOUDFLARE_PURGE_HOSTS')
+export function getPurgeOrigins(
+  url: URL,
+  runtimeEnv?: RuntimeEnvironment
+): string[] {
+  const configuredHosts = env('CLOUDFLARE_PURGE_HOSTS', runtimeEnv)
     ?.split(',')
     .map((host) => host.trim())
     .filter(Boolean)
@@ -91,8 +104,12 @@ export function getPurgeOrigins(url: URL): string[] {
   return [`${url.protocol}//${url.host}`]
 }
 
-export function buildPurgeUrls(paths: string[], url: URL): string[] {
-  return getPurgeOrigins(url).flatMap((origin) =>
+export function buildPurgeUrls(
+  paths: string[],
+  url: URL,
+  runtimeEnv?: RuntimeEnvironment
+): string[] {
+  return getPurgeOrigins(url, runtimeEnv).flatMap((origin) =>
     paths.map((path) => new URL(path, origin).href)
   )
 }
@@ -104,9 +121,12 @@ interface CloudflarePurgeResponse {
   result?: { id?: string }
 }
 
-export async function purgeCloudflareCache(files: string[]) {
-  const zoneId = env('CLOUDFLARE_ZONE_ID')
-  const apiToken = env('CLOUDFLARE_API_TOKEN')
+export async function purgeCloudflareCache(
+  files: string[],
+  runtimeEnv?: RuntimeEnvironment
+) {
+  const zoneId = env('CLOUDFLARE_ZONE_ID', runtimeEnv)
+  const apiToken = env('CLOUDFLARE_API_TOKEN', runtimeEnv)
 
   if (!zoneId || !apiToken) {
     return {
@@ -150,9 +170,10 @@ export async function purgeCloudflareCache(files: string[]) {
 
 export async function warmCachePaths(
   paths: string[],
-  url: URL
+  url: URL,
+  runtimeEnv?: RuntimeEnvironment
 ): Promise<string[]> {
-  const urls = buildPurgeUrls(paths, url)
+  const urls = buildPurgeUrls(paths, url, runtimeEnv)
   await Promise.allSettled(
     urls.map((target) =>
       fetch(target, {
