@@ -33,6 +33,7 @@ export const GET: APIRoute = async () => {
     '/tools/1password-teams-vs-business-calculator',
     '/tools/kinsta-wordpress-total-cost-calculator',
     '/tools/cloudflare-workers-cost-calculator',
+    '/tools/kilo-pass-vs-byok-calculator',
     '/affiliate-disclosure',
     '/projects',
     '/contact',

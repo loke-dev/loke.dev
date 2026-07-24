@@ -132,6 +132,18 @@ export const partners = [
     affiliate: false,
     affiliateProgram: 'https://lovable.dev/partners/affiliates',
   },
+  {
+    slug: 'kilo',
+    name: 'Kilo',
+    category: 'AI and automation',
+    destination: 'https://kilo.ai/',
+    summary:
+      'AI coding tools across IDEs, CLI, cloud agents, code review, app building, and a multi-provider model gateway.',
+    fit: 'A candidate for developers who want one coding workflow across many models, with a choice between Kilo credits, a bonus-credit subscription, free models, or their own provider keys.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+    affiliateProgram: 'https://kilo.ai/partners',
+  },
 ] satisfies Partner[]
 
 export function getPartner(slug: string): Partner | undefined {

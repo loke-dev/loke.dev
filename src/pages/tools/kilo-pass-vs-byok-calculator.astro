@@ -1,0 +1,409 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/kilo-pass-vs-byok-calculator`
+const description =
+  'Compare Kilo Pass with pay-as-you-go credits and BYOK using editable model usage, plan price, bonus credits, top-ups, and provider costs.'
+const calculatorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Kilo Pass vs pay-as-you-go and BYOK calculator',
+  description,
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+}
+---
+
+<BaseLayout
+  title="Kilo Pass vs pay-as-you-go and BYOK calculator"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(calculatorSchema)}
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Free calculator"
+      title="Use the bonus credits before they expire."
+      description="Compare one month of Kilo Pass with direct Kilo credits and an editable BYOK provider bill. See cash paid, bonus actually used, top-ups, and unused plan value separately."
+    />
+
+    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">Pricing reference:</strong>
+      on 24 July 2026, Kilo Pass listed Starter at $19, Pro at $49, and
+      Expert at $199 per month. Monthly subscriptions described a 50% first
+      month bonus followed by a streak that can reach 40%; annual billing
+      described a 50% monthly bonus. Paid credits convert one-to-one from the
+      subscription, while free bonus credits expire at the end of the monthly
+      cycle. Verify the
+      <a
+        class="font-medium text-foreground underline hover:text-accent"
+        href="https://kilo.ai/pricing/kilo-pass"
+        target="_blank"
+        rel="noopener"
+      >current Kilo Pass terms</a>.
+      Every field is editable. This independent calculator stores no input.
+    </aside>
+
+    <form
+      id="kilo-value-calculator"
+      class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]"
+    >
+      <div class="space-y-8">
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Monthly usage and plan</legend>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Expected model usage, USD/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="usage"
+                min="0"
+                step="1"
+                value="70"
+                inputmode="decimal"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Use provider-equivalent model charges, not developer time.
+              </span>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Kilo Pass price, USD/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="planPrice"
+                min="0"
+                step="1"
+                value="49"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Bonus credit rate, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="bonusRate"
+                min="0"
+                step="1"
+                value="40"
+                inputmode="decimal"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Enter the rate for the billing cycle being compared.
+              </span>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Kilo top-up markup, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="topupMarkup"
+                min="0"
+                step="0.1"
+                value="0"
+                inputmode="decimal"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Current documentation says Kilo credits use provider rates without a general markup.
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">BYOK alternative</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            Kilo documents no Kilo-side charge for supported BYOK requests. The
+            provider can still charge usage or a subscription.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Provider usage discount, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="byokDiscount"
+                min="0"
+                max="100"
+                step="1"
+                value="0"
+                inputmode="decimal"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Use only a real contracted or plan discount.
+              </span>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              BYOK subscription or fixed fee/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="byokFixed"
+                min="0"
+                step="1"
+                value="0"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Extra BYOK administration/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="byokAdmin"
+                min="0"
+                step="0.25"
+                value="0.5"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Value of time, USD/hour
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="hourly"
+                min="0"
+                step="5"
+                value="75"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <section
+        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        aria-live="polite"
+        aria-labelledby="result-title"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          One-month estimate
+        </p>
+        <h2 id="result-title" class="mt-2 text-2xl font-bold">
+          Cash and credit value
+        </h2>
+
+        <dl class="mt-7 space-y-5">
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Kilo Pass cash paid</dt>
+            <dd id="pass-result" class="mt-1 text-2xl font-bold tabular-nums">
+              $50.40
+            </dd>
+            <dd id="pass-detail" class="mt-1 text-sm text-muted-foreground">
+              $49.00 plan + $1.40 top-up.
+            </dd>
+          </div>
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Direct Kilo credits</dt>
+            <dd id="direct-result" class="mt-1 text-2xl font-bold tabular-nums">
+              $70.00
+            </dd>
+            <dd class="mt-1 text-sm text-muted-foreground">
+              Pay-as-you-go reference at the entered model usage.
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-muted-foreground">BYOK including admin time</dt>
+            <dd id="byok-result" class="mt-1 text-2xl font-bold tabular-nums">
+              $107.50
+            </dd>
+            <dd id="byok-detail" class="mt-1 text-sm text-muted-foreground">
+              $70.00 provider cost + $37.50 administration.
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+          <p id="recommendation-result" class="text-sm font-medium leading-relaxed">
+            Kilo Pass uses the full $19.60 bonus and is $19.60 below direct credits.
+          </p>
+          <p id="credit-result" class="mt-3 text-xs leading-relaxed text-muted-foreground">
+            $49.00 paid credit and $19.60 bonus are used; no bonus expires.
+          </p>
+          <p id="byok-comparison" class="mt-3 text-xs leading-relaxed text-muted-foreground">
+            BYOK is $57.10 higher after the entered administration time.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3">
+          <a
+            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            href="/go/kilo?from=pass-byok-calculator"
+          >
+            Check Kilo Pass and BYOK →
+          </a>
+        </div>
+        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+          The Kilo link is currently a direct tracked link and earns no
+          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+        </p>
+      </section>
+    </form>
+
+    <section class="mt-16 max-w-3xl space-y-5">
+      <h2 class="text-2xl font-bold">What the monthly model leaves out</h2>
+      <p class="leading-relaxed text-muted-foreground">
+        Paid credits and free bonus credits have different treatment. Current
+        Kilo Pass copy says free bonus credits expire each monthly cycle. Check
+        the current account terms for paid-credit balance behavior before
+        projecting several months or an annual prepayment.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        Model mix matters. Cached input, output tokens, tools, retries, context
+        size, and provider choice can change the same task’s charge. Estimate
+        usage from a measured trial rather than message count.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        BYOK changes key custody, provider billing, limits, regional terms, and
+        incident ownership. A lower provider bill is not automatically a lower
+        operating cost for a team.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupKiloValueCalculator() {
+    const form = document.querySelector<HTMLFormElement>(
+      '#kilo-value-calculator'
+    )
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+
+    const currency = new Intl.NumberFormat('en-SE', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+    const getValue = (name: string) => {
+      const input = form.elements.namedItem(name)
+      if (!(input instanceof HTMLInputElement)) return 0
+      return Math.max(0, Number(input.value) || 0)
+    }
+    const setText = (id: string, value: string) => {
+      const element = document.querySelector<HTMLElement>(`#${id}`)
+      if (element) element.textContent = value
+    }
+
+    const calculate = () => {
+      const usage = getValue('usage')
+      const planPrice = getValue('planPrice')
+      const bonusCredit = planPrice * (getValue('bonusRate') / 100)
+      const paidCreditUsed = Math.min(usage, planPrice)
+      const usageAfterPaid = Math.max(0, usage - paidCreditUsed)
+      const bonusUsed = Math.min(usageAfterPaid, bonusCredit)
+      const usageAfterPlan = Math.max(
+        0,
+        usage - paidCreditUsed - bonusUsed
+      )
+      const topupCost =
+        usageAfterPlan * (1 + getValue('topupMarkup') / 100)
+      const passCash = planPrice + topupCost
+      const unusedPaidCredit = Math.max(0, planPrice - paidCreditUsed)
+      const expiredBonus = Math.max(0, bonusCredit - bonusUsed)
+
+      const directCash = usage
+      const byokProvider =
+        usage *
+          (1 - Math.min(100, getValue('byokDiscount')) / 100) +
+        getValue('byokFixed')
+      const byokAdmin = getValue('byokAdmin') * getValue('hourly')
+      const byokTotal = byokProvider + byokAdmin
+
+      setText('pass-result', currency.format(passCash))
+      setText(
+        'pass-detail',
+        `${currency.format(planPrice)} plan + ${currency.format(topupCost)} top-up.`
+      )
+      setText('direct-result', currency.format(directCash))
+      setText('byok-result', currency.format(byokTotal))
+      setText(
+        'byok-detail',
+        `${currency.format(byokProvider)} provider cost + ${currency.format(byokAdmin)} administration.`
+      )
+
+      const directDifference = Math.abs(passCash - directCash)
+      if (directDifference < 0.01) {
+        setText(
+          'recommendation-result',
+          'Kilo Pass and direct credits require the same cash for this month. Compare flexibility and future usage.'
+        )
+      } else if (passCash < directCash) {
+        setText(
+          'recommendation-result',
+          `Kilo Pass uses ${currency.format(bonusUsed)} of bonus credit and is ${currency.format(directDifference)} below direct credits.`
+        )
+      } else {
+        setText(
+          'recommendation-result',
+          `Direct credits require ${currency.format(directDifference)} less cash this month. The Pass still adds paid balance that may remain available.`
+        )
+      }
+
+      const creditParts = [
+        `${currency.format(paidCreditUsed)} paid credit used`,
+        `${currency.format(bonusUsed)} bonus used`,
+      ]
+      if (unusedPaidCredit >= 0.005) {
+        creditParts.push(
+          `${currency.format(unusedPaidCredit)} paid credit not used this month`
+        )
+      }
+      if (expiredBonus >= 0.005) {
+        creditParts.push(
+          `${currency.format(expiredBonus)} bonus expires if unused`
+        )
+      }
+      setText('credit-result', `${creditParts.join('; ')}.`)
+
+      const byokDifference = Math.abs(byokTotal - passCash)
+      if (byokDifference < 0.01) {
+        setText(
+          'byok-comparison',
+          'BYOK and Kilo Pass are equal after the entered provider and administration costs.'
+        )
+      } else if (byokTotal < passCash) {
+        setText(
+          'byok-comparison',
+          `BYOK is ${currency.format(byokDifference)} lower after the entered provider and administration costs.`
+        )
+      } else {
+        setText(
+          'byok-comparison',
+          `BYOK is ${currency.format(byokDifference)} higher after the entered administration time.`
+        )
+      }
+    }
+
+    form.addEventListener('input', calculate)
+    form.addEventListener('change', calculate)
+    calculate()
+  }
+
+  setupKiloValueCalculator()
+  document.addEventListener('astro:after-swap', setupKiloValueCalculator)
+</script>
