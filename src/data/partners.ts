@@ -63,6 +63,18 @@ export const partners = [
     affiliate: false,
   },
   {
+    slug: 'gitkraken',
+    name: 'GitKraken',
+    category: 'Developer tooling',
+    destination: 'https://www.gitkraken.com/',
+    summary:
+      'Git desktop, CLI, IDE, worktree, merge, code review, and agent workflow tools for individual developers and teams.',
+    fit: 'A candidate when visual history, private repository access, conflict handling, worktrees, or multi-repository work saves enough measured time to justify the subscription.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+    affiliateProgram: 'https://www.gitkraken.com/referral-program',
+  },
+  {
     slug: 'resend',
     name: 'Resend',
     category: 'Content and email',

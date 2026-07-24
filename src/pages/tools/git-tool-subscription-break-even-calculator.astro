@@ -1,0 +1,342 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/git-tool-subscription-break-even-calculator`
+const description =
+  'Estimate whether a paid Git tool can earn back its subscription cost using your team size, conflict work, other Git time, and hourly value.'
+const calculatorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Git tool subscription break-even calculator',
+  description,
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+}
+---
+
+<BaseLayout
+  title="Git tool subscription break-even calculator"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(calculatorSchema)}
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Free calculator"
+      title="Measure whether a paid Git tool earns its seat."
+      description="Turn conflict work and routine Git tasks into a transparent monthly estimate. Use your own observed time, not a vendor productivity claim."
+    />
+
+    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">How to use this:</strong>
+      enter the current price shown in your quote or checkout. The starting
+      values are only an example and are not GitKraken performance claims. This
+      independent calculator stores no input.
+    </aside>
+
+    <form
+      id="git-tool-calculator"
+      class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]"
+    >
+      <div class="space-y-8">
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Subscription</legend>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Paid seats
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="seats"
+                min="1"
+                step="1"
+                value="1"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Monthly price per seat, USD
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="seatPrice"
+                min="0"
+                step="0.01"
+                value="10"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Measured monthly work</legend>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            Start with a month of observations. Lower the saving percentages if
+            your evidence is uncertain.
+          </p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Conflicts handled by each seat
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="conflicts"
+                min="0"
+                step="1"
+                value="3"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Minutes per conflict today
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="conflictMinutes"
+                min="0"
+                step="1"
+                value="30"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Estimated conflict time saved, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="conflictSaving"
+                min="0"
+                max="100"
+                step="5"
+                value="30"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Other Git hours per seat
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="otherHours"
+                min="0"
+                step="0.25"
+                value="8"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Estimated other Git time saved, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="otherSaving"
+                min="0"
+                max="100"
+                step="5"
+                value="10"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Value of developer time, USD/hour
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="hourly"
+                min="0"
+                step="5"
+                value="50"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <section
+        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        aria-live="polite"
+        aria-labelledby="result-title"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Estimate
+        </p>
+        <h2 id="result-title" class="mt-2 text-2xl font-bold">
+          Monthly break-even
+        </h2>
+
+        <dl class="mt-7 space-y-5">
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Subscription cost</dt>
+            <dd id="subscription-result" class="mt-1 text-3xl font-bold tabular-nums">
+              $10.00
+            </dd>
+          </div>
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Estimated time returned</dt>
+            <dd id="hours-result" class="mt-1 text-3xl font-bold tabular-nums">
+              1.25 hours
+            </dd>
+            <dd id="value-result" class="mt-1 text-sm text-muted-foreground">
+              Worth $62.50 at the entered hourly value.
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-muted-foreground">Net monthly value</dt>
+            <dd id="net-result" class="mt-1 text-3xl font-bold tabular-nums">
+              $52.50
+            </dd>
+            <dd id="break-even-result" class="mt-1 text-sm text-muted-foreground">
+              Each seat needs to save 12 minutes per month to cover its price.
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+          <p id="comparison-result" class="text-sm leading-relaxed">
+            The entered time saving is worth more than the subscription. Test
+            the assumption during a trial before paying for a full team.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3">
+          <a
+            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            href="/go/gitkraken?from=git-tool-break-even-calculator"
+          >
+            Evaluate GitKraken →
+          </a>
+        </div>
+        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+          The GitKraken link is currently a direct tracked link and earns no
+          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+        </p>
+      </section>
+    </form>
+
+    <section class="mt-16 max-w-3xl space-y-5">
+      <h2 class="text-2xl font-bold">Run a small trial before trusting the result</h2>
+      <p class="leading-relaxed text-muted-foreground">
+        Record conflict time, context switching, branch cleanup, repository
+        navigation, review preparation, and worktree setup for two weeks. Try
+        the paid tool with one or two developers, then enter the measured
+        difference here. Do not multiply a hopeful percentage across a whole
+        team.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        A tool can still be the wrong choice when it saves time. Check private
+        repository access, supported Git providers, seat limits, team controls,
+        SSO, AI data handling, offline needs, and procurement rules. For a
+        Swedish business, compare the real SEK invoice after exchange rates,
+        VAT treatment, and card fees.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupGitToolCalculator() {
+    const form = document.querySelector<HTMLFormElement>('#git-tool-calculator')
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+
+    const currency = new Intl.NumberFormat('en-SE', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+    const number = new Intl.NumberFormat('en-SE', {
+      maximumFractionDigits: 2,
+    })
+    const getValue = (name: string, minimum = 0) => {
+      const input = form.elements.namedItem(name)
+      if (!(input instanceof HTMLInputElement)) return minimum
+      return Math.max(minimum, Number(input.value) || 0)
+    }
+    const getPercentage = (name: string) =>
+      Math.min(100, getValue(name)) / 100
+    const setText = (id: string, value: string) => {
+      const element = document.querySelector<HTMLElement>(`#${id}`)
+      if (element) element.textContent = value
+    }
+
+    const calculate = () => {
+      const seats = getValue('seats', 1)
+      const seatPrice = getValue('seatPrice')
+      const subscription = seats * seatPrice
+      const conflictHoursPerSeat =
+        (getValue('conflicts') * getValue('conflictMinutes')) / 60
+      const conflictHoursSaved =
+        seats * conflictHoursPerSeat * getPercentage('conflictSaving')
+      const otherHoursSaved =
+        seats * getValue('otherHours') * getPercentage('otherSaving')
+      const hoursSaved = conflictHoursSaved + otherHoursSaved
+      const hourly = getValue('hourly')
+      const savedValue = hoursSaved * hourly
+      const netValue = savedValue - subscription
+      const breakEvenMinutes =
+        hourly > 0 && seats > 0 ? (subscription / hourly / seats) * 60 : null
+
+      setText('subscription-result', currency.format(subscription))
+      setText(
+        'hours-result',
+        `${number.format(hoursSaved)} ${Math.abs(hoursSaved - 1) < 0.005 ? 'hour' : 'hours'}`
+      )
+      setText(
+        'value-result',
+        `Worth ${currency.format(savedValue)} at the entered hourly value.`
+      )
+      setText('net-result', currency.format(netValue))
+      setText(
+        'break-even-result',
+        breakEvenMinutes === null
+          ? 'Enter a time value above zero to calculate break-even.'
+          : `Each seat needs to save ${number.format(breakEvenMinutes)} minutes per month to cover its price.`
+      )
+
+      if (Math.abs(netValue) < 0.01) {
+        setText(
+          'comparison-result',
+          'The entered time value exactly covers the subscription. Decide from workflow quality, risk, and feature fit.'
+        )
+      } else if (netValue > 0) {
+        setText(
+          'comparison-result',
+          `The entered time saving exceeds the subscription by ${currency.format(netValue)} per month. Test the assumption during a trial before paying for a full team.`
+        )
+      } else {
+        setText(
+          'comparison-result',
+          `The subscription exceeds the entered time value by ${currency.format(Math.abs(netValue))} per month. Keep the free workflow or test whether an unmeasured benefit changes the result.`
+        )
+      }
+    }
+
+    form.addEventListener('input', calculate)
+    calculate()
+  }
+
+  setupGitToolCalculator()
+  document.addEventListener('astro:after-swap', setupGitToolCalculator)
+</script>
