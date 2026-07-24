@@ -10,7 +10,7 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 const pageUrl = `${SITE_DOMAIN}/tools/n8n-hosting-calculator`
 const description =
-  'Estimate monthly n8n workflow executions and compare current Cloud plan reference prices with the real monthly cost of self-hosting.'
+  'Estimate monthly n8n workflow executions, add planning headroom, and compare current Cloud plan references with the real cost of self-hosting.'
 const calculatorSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -43,7 +43,7 @@ const calculatorSchema = {
     <PageIntro
       eyebrow="Free calculator"
       title="Price the n8n decision you actually have."
-      description="Estimate complete workflow executions, find the closest current Cloud plan reference, and include your time in the cost of self-hosting."
+      description="Estimate complete workflow executions, add capacity headroom, find the closest current Cloud plan reference, and include your time in the cost of self-hosting."
     />
 
     <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
@@ -112,6 +112,19 @@ const calculatorSchema = {
                 step="1"
                 value="100"
                 inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Planning headroom, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="headroom"
+                min="0"
+                max="200"
+                step="5"
+                value="25"
+                inputmode="decimal"
               />
             </label>
           </div>
@@ -190,9 +203,12 @@ const calculatorSchema = {
 
         <dl class="mt-7 space-y-5">
           <div class="border-b border-border/70 pb-5">
-            <dt class="text-sm text-muted-foreground">Estimated executions</dt>
+            <dt class="text-sm text-muted-foreground">Expected executions</dt>
             <dd id="execution-result" class="mt-1 text-3xl font-bold tabular-nums">
               1,164
+            </dd>
+            <dd id="planned-result" class="mt-1 text-sm text-muted-foreground">
+              1,455 with 25% planning headroom.
             </dd>
           </div>
           <div class="border-b border-border/70 pb-5">
@@ -201,7 +217,7 @@ const calculatorSchema = {
               Starter, €20/month
             </dd>
             <dd id="cloud-detail" class="mt-1 text-sm text-muted-foreground">
-              1,336 executions remain in the reference allowance.
+              1,045 planned executions remain in the reference allowance.
             </dd>
           </div>
           <div>
@@ -258,7 +274,7 @@ const calculatorSchema = {
         Use 30.4 days for an average month. Chat messages are counted as one
         execution each because that is the estimation method in n8n’s current
         pricing guidance. Change the inputs if your workflow design behaves
-        differently.
+        differently. Headroom is applied before matching a Cloud plan reference.
       </p>
     </section>
   </div>
@@ -292,6 +308,10 @@ const calculatorSchema = {
       const daily =
         getValue('scheduled') + getValue('webhooks') + getValue('chat')
       const executions = Math.round(daily * 30.4 + getValue('other'))
+      const headroom = getValue('headroom')
+      const plannedExecutions = Math.round(
+        executions * (1 + headroom / 100)
+      )
       const infrastructure = getValue('infrastructure')
       const operations = getValue('operations')
       const timeCost = getValue('hours') * getValue('hourly')
@@ -300,17 +320,21 @@ const calculatorSchema = {
       let cloudName = 'Above Pro reference'
       let cloudCost: number | null = null
       let cloudDetail = 'Check current n8n pricing for a larger execution tier.'
-      if (executions <= 2500) {
+      if (plannedExecutions <= 2500) {
         cloudName = 'Starter'
         cloudCost = 20
-        cloudDetail = `${number.format(2500 - executions)} executions remain in the reference allowance.`
-      } else if (executions <= 10000) {
+        cloudDetail = `${number.format(2500 - plannedExecutions)} planned executions remain in the reference allowance.`
+      } else if (plannedExecutions <= 10000) {
         cloudName = 'Pro'
         cloudCost = 50
-        cloudDetail = `${number.format(10000 - executions)} executions remain in the reference allowance.`
+        cloudDetail = `${number.format(10000 - plannedExecutions)} planned executions remain in the reference allowance.`
       }
 
       setText('execution-result', number.format(executions))
+      setText(
+        'planned-result',
+        `${number.format(plannedExecutions)} with ${number.format(headroom)}% planning headroom.`
+      )
       setText(
         'cloud-result',
         cloudCost === null
