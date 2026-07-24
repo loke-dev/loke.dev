@@ -1,0 +1,102 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import {
+  getPartnerHref,
+  partners,
+  type PartnerCategory,
+} from '@/data/partners'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const categories: PartnerCategory[] = [
+  'AI and automation',
+  'Cloud and hosting',
+  'Content and email',
+  'Developer tooling',
+]
+---
+
+<BaseLayout
+  title="Developer tools"
+  description="Developer, AI, hosting, content, and automation tools used on loke.dev or being evaluated for specific jobs."
+  url={`${SITE_DOMAIN}/tools`}
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Tools"
+      title="Tools with a clear job."
+      description="This is a maintained shortlist, not a giant software directory. Products are included when I use them on loke.dev or when there is a specific developer workflow worth evaluating."
+    />
+
+    <aside class="mt-10 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">How links work:</strong>
+      outbound clicks are counted without storing a personal profile or placing an analytics cookie.
+      A paid affiliate link will be labelled beside the link. There are no paid placements on this page.
+      Read the <a class="font-medium text-foreground underline hover:text-accent" href="/affiliate-disclosure">affiliate and editorial disclosure</a>.
+    </aside>
+
+    <div class="mt-14 space-y-16">
+      {categories.map((category) => {
+        const categoryPartners = partners.filter(
+          (partner) => partner.category === category
+        )
+        if (categoryPartners.length === 0) return null
+
+        return (
+          <section aria-labelledby={`category-${category.toLowerCase().replaceAll(' ', '-')}`}>
+            <div class="flex items-end justify-between gap-6 border-b border-border/70 pb-4">
+              <h2
+                id={`category-${category.toLowerCase().replaceAll(' ', '-')}`}
+                class="text-2xl font-bold tracking-tight"
+              >
+                {category}
+              </h2>
+              <p class="text-sm text-muted-foreground">
+                {categoryPartners.length} {categoryPartners.length === 1 ? 'tool' : 'tools'}
+              </p>
+            </div>
+            <div class="mt-5 grid gap-5 md:grid-cols-2">
+              {categoryPartners.map((partner) => (
+                <article class="surface-interactive flex h-full flex-col rounded-xl border border-border/80 bg-card p-6 transition-[transform,border-color,box-shadow] hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
+                  <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-xl font-bold">{partner.name}</h3>
+                    <span class="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
+                      {partner.relationship === 'used-on-loke-dev'
+                        ? 'Used here'
+                        : 'Evaluating'}
+                    </span>
+                  </div>
+                  <p class="mt-4 leading-relaxed text-muted-foreground">
+                    {partner.summary}
+                  </p>
+                  <p class="mt-4 text-sm leading-relaxed text-muted-foreground">
+                    <strong class="text-foreground">Good fit:</strong> {partner.fit}
+                  </p>
+                  <div class="mt-auto flex flex-wrap items-center gap-3 pt-6">
+                    <a
+                      href={getPartnerHref(partner, 'tools')}
+                      rel={partner.affiliate ? 'sponsored noopener' : 'noopener'}
+                      class="interactive-button inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      Visit {partner.name} →
+                    </a>
+                    {partner.affiliate && (
+                      <span class="text-xs font-medium text-accent">
+                        Affiliate link
+                      </span>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )
+      })}
+    </div>
+  </div>
+</BaseLayout>

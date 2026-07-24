@@ -1,0 +1,66 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+---
+
+<BaseLayout
+  title="Affiliate and editorial disclosure"
+  description="How loke.dev selects products, labels affiliate links, tracks outbound clicks, and keeps commercial relationships separate from editorial decisions."
+  url={`${SITE_DOMAIN}/affiliate-disclosure`}
+>
+  <div class="mx-auto max-w-3xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Disclosure"
+      title="Commercial links do not buy a recommendation."
+      description="Some pages may contain affiliate links. If you buy through one, loke.dev may receive a commission without changing the price you pay."
+    />
+
+    <div class="prose prose-invert mt-12 max-w-none">
+      <h2>How affiliate links are marked</h2>
+      <p>
+        A link that can earn a commission is labelled <strong>Affiliate link</strong>
+        near the recommendation or covered by a clear disclosure at the start of the article.
+        Affiliate links also use the sponsored link relationship where applicable.
+      </p>
+
+      <h2>How products are selected</h2>
+      <p>
+        A commission does not decide whether a product is included or where it is ranked.
+        The starting point is the reader's job, followed by technical fit, limitations,
+        cost, operating effort, and credible alternatives. A product may be discussed
+        without an affiliate relationship, and a poor fit is still a poor fit when a
+        program pays well.
+      </p>
+
+      <h2>Testing and evidence</h2>
+      <p>
+        Pages distinguish between tools used on loke.dev, products tested for a specific
+        article, and candidates evaluated from current documentation. The site does not
+        claim first-hand use where there was none. Material pricing or feature claims
+        should link to the provider's current documentation and carry a verification date.
+      </p>
+
+      <h2>Outbound click measurement</h2>
+      <p>
+        Links on the tools page pass through a short loke.dev redirect so aggregate
+        outbound clicks can be counted. The event records the destination, page placement,
+        and whether the link was direct or affiliated. It does not set an analytics cookie
+        or create a personal browsing profile.
+      </p>
+
+      <h2>Changes and corrections</h2>
+      <p>
+        Affiliate programs, prices, and product terms change. Old links may be replaced,
+        removed, or changed back to direct links. If a commercial relationship or factual
+        error was not disclosed correctly, contact
+        <a href="/contact">loke.dev</a> so it can be reviewed.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
