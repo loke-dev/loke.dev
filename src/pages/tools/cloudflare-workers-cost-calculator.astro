@@ -1,0 +1,531 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/cloudflare-workers-cost-calculator`
+const description =
+  'Estimate Cloudflare Workers Free and Paid usage from dynamic invocations, static asset routing, peak daily traffic, and average CPU time.'
+const calculatorSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Cloudflare Workers Free vs Paid cost calculator',
+  description,
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+}
+---
+
+<BaseLayout
+  title="Cloudflare Workers Free vs Paid cost calculator"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(calculatorSchema)}
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Free calculator"
+      title="Count Worker invocations, not page views."
+      description="Separate free static asset requests from executed Worker code, test the Free plan against a peak day, and estimate the Paid plan’s request and CPU charges."
+    />
+
+    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">Pricing reference:</strong>
+      on 24 July 2026, Workers Paid had a $5 USD monthly minimum including 10
+      million requests and 30 million CPU milliseconds. Additional usage was
+      $0.30 per million requests and $0.02 per million CPU milliseconds.
+      Workers Free allowed 100,000 requests per day and 10ms CPU per invocation.
+      Static asset requests were free when they did not invoke Worker code.
+      Verify the
+      <a
+        class="font-medium text-foreground underline hover:text-accent"
+        href="https://developers.cloudflare.com/workers/platform/pricing/"
+        target="_blank"
+        rel="noopener"
+      >current Workers pricing</a>
+      and <a
+        class="font-medium text-foreground underline hover:text-accent"
+        href="https://developers.cloudflare.com/workers/platform/limits/"
+        target="_blank"
+        rel="noopener"
+      >limits</a>.
+      Every price and allowance below is editable. This calculator stores no input.
+    </aside>
+
+    <form
+      id="workers-cost-calculator"
+      class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]"
+    >
+      <div class="space-y-8">
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Monthly traffic</legend>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Dynamic Worker invocations
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="dynamicRequests"
+                min="0"
+                step="1000"
+                value="1000000"
+                inputmode="numeric"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                API, SSR, middleware, scheduled, and other executed requests.
+              </span>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Static asset requests
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="staticRequests"
+                min="0"
+                step="1000"
+                value="9000000"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Static traffic invoking the Worker, %
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="routedStaticPercent"
+                min="0"
+                max="100"
+                step="1"
+                value="0"
+                inputmode="decimal"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Use 100 for a global run_worker_first path.
+              </span>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Other monthly invocations
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="otherRequests"
+                min="0"
+                step="1000"
+                value="0"
+                inputmode="numeric"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Include WebSocket upgrades and work not counted above.
+              </span>
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Peak-day multiplier
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="peakMultiplier"
+                min="1"
+                step="0.1"
+                value="2"
+                inputmode="decimal"
+              />
+              <span class="text-xs font-normal leading-relaxed text-muted-foreground">
+                Peak day divided by the average day.
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">CPU model</legend>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Dynamic CPU time, ms/invocation
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="dynamicCpu"
+                min="0"
+                step="0.1"
+                value="5"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Routed static CPU time, ms/invocation
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="staticCpu"
+                min="0"
+                step="0.1"
+                value="1"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Other CPU time, ms/invocation
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="otherCpu"
+                min="0"
+                step="0.1"
+                value="5"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+          <legend class="px-2 text-xl font-bold">Editable plan references</legend>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium">
+              Paid minimum, USD/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="paidMinimum"
+                min="0"
+                step="0.01"
+                value="5"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Included requests/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="includedRequests"
+                min="0"
+                step="1000000"
+                value="10000000"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Extra request price/million, USD
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="requestRate"
+                min="0"
+                step="0.01"
+                value="0.30"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Included CPU milliseconds/month
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="includedCpu"
+                min="0"
+                step="1000000"
+                value="30000000"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Extra CPU price/million ms, USD
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="cpuRate"
+                min="0"
+                step="0.01"
+                value="0.02"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Free requests/day
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="freeDailyRequests"
+                min="0"
+                step="10000"
+                value="100000"
+                inputmode="numeric"
+              />
+            </label>
+            <label class="grid gap-2 text-sm font-medium">
+              Free CPU limit/invocation, ms
+              <input
+                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                type="number"
+                name="freeCpuLimit"
+                min="0"
+                step="1"
+                value="10"
+                inputmode="decimal"
+              />
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <section
+        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        aria-live="polite"
+        aria-labelledby="result-title"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Estimate
+        </p>
+        <h2 id="result-title" class="mt-2 text-2xl font-bold">
+          Workers usage
+        </h2>
+
+        <dl class="mt-7 space-y-5">
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">Billed invocations</dt>
+            <dd id="request-result" class="mt-1 text-2xl font-bold tabular-nums">
+              1,000,000/month
+            </dd>
+            <dd id="static-detail" class="mt-1 text-sm text-muted-foreground">
+              9,000,000 static asset requests bypass Worker billing.
+            </dd>
+          </div>
+          <div class="border-b border-border/70 pb-5">
+            <dt class="text-sm text-muted-foreground">CPU time</dt>
+            <dd id="cpu-result" class="mt-1 text-2xl font-bold tabular-nums">
+              5,000,000 ms/month
+            </dd>
+            <dd id="cpu-detail" class="mt-1 text-sm text-muted-foreground">
+              5 ms average across billed invocations.
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-muted-foreground">Estimated Paid cost</dt>
+            <dd id="paid-result" class="mt-1 text-2xl font-bold tabular-nums">
+              $5.00/month
+            </dd>
+            <dd id="paid-detail" class="mt-1 text-sm text-muted-foreground">
+              $5.00 minimum + $0.00 request overage + $0.00 CPU overage.
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+          <p id="free-result" class="text-sm font-medium leading-relaxed">
+            Free fits this traffic and CPU model.
+          </p>
+          <p id="peak-result" class="mt-3 text-xs leading-relaxed text-muted-foreground">
+            Estimated peak: 66,667 Worker invocations/day.
+          </p>
+        </div>
+
+        <div
+          id="routing-warning"
+          class="mt-4 hidden rounded-xl border border-amber-400/35 bg-amber-400/10 p-4"
+        >
+          <p id="routing-result" class="text-sm leading-relaxed">
+            Some static traffic invokes the Worker and is no longer free.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3">
+          <a
+            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            href="/go/cloudflare?from=workers-cost-calculator"
+          >
+            Check Cloudflare Workers →
+          </a>
+          <a
+            class="interactive-button inline-flex justify-center rounded-md border border-border px-4 py-3 text-sm font-medium hover:border-accent/50"
+            href="/tools/digitalocean-droplet-vs-app-platform-calculator"
+          >
+            Compare server and app hosting →
+          </a>
+        </div>
+        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+          Both links are direct and earn no commission. See the
+          <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+        </p>
+      </section>
+    </form>
+
+    <section class="mt-16 max-w-3xl space-y-5">
+      <h2 class="text-2xl font-bold">What this estimate excludes</h2>
+      <p class="leading-relaxed text-muted-foreground">
+        KV, D1, R2, Durable Objects, Queues, Workflows, AI, Browser Rendering,
+        Images, and Containers have separate usage models. Add those from their
+        current product pages instead of treating the $5 Workers minimum as the
+        whole application bill.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        Free-plan fit also depends on memory, subrequests, script size, asset
+        count, environment variables, and other platform limits. Paid raises
+        several limits but does not make every server workload an edge Worker.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        Use Workers Analytics to get real invocation and CPU distributions.
+        An average can hide a slow route, a traffic spike, or one scheduled job
+        that exceeds its per-invocation CPU limit.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupWorkersCostCalculator() {
+    const form = document.querySelector<HTMLFormElement>(
+      '#workers-cost-calculator'
+    )
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+
+    const currency = new Intl.NumberFormat('en-SE', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+    const integer = new Intl.NumberFormat('en-SE', {
+      maximumFractionDigits: 0,
+    })
+    const decimal = new Intl.NumberFormat('en-SE', {
+      maximumFractionDigits: 2,
+    })
+    const getValue = (name: string) => {
+      const input = form.elements.namedItem(name)
+      if (!(input instanceof HTMLInputElement)) return 0
+      return Math.max(0, Number(input.value) || 0)
+    }
+    const setText = (id: string, value: string) => {
+      const element = document.querySelector<HTMLElement>(`#${id}`)
+      if (element) element.textContent = value
+    }
+
+    const calculate = () => {
+      const dynamicRequests = getValue('dynamicRequests')
+      const staticRequests = getValue('staticRequests')
+      const routedPercent = Math.min(
+        100,
+        getValue('routedStaticPercent')
+      )
+      const routedStatic = staticRequests * (routedPercent / 100)
+      const freeStatic = staticRequests - routedStatic
+      const otherRequests = getValue('otherRequests')
+      const billedRequests =
+        dynamicRequests + routedStatic + otherRequests
+
+      const totalCpu =
+        dynamicRequests * getValue('dynamicCpu') +
+        routedStatic * getValue('staticCpu') +
+        otherRequests * getValue('otherCpu')
+      const averageCpu =
+        billedRequests > 0 ? totalCpu / billedRequests : 0
+
+      const requestOverage = Math.max(
+        0,
+        billedRequests - getValue('includedRequests')
+      )
+      const cpuOverage = Math.max(
+        0,
+        totalCpu - getValue('includedCpu')
+      )
+      const requestCost =
+        (requestOverage / 1_000_000) * getValue('requestRate')
+      const cpuCost =
+        (cpuOverage / 1_000_000) * getValue('cpuRate')
+      const paidCost = getValue('paidMinimum') + requestCost + cpuCost
+
+      const peakDaily =
+        (billedRequests / 30) * Math.max(1, getValue('peakMultiplier'))
+      const freeTrafficFits =
+        peakDaily <= getValue('freeDailyRequests')
+      const maxCpuInput = Math.max(
+        dynamicRequests > 0 ? getValue('dynamicCpu') : 0,
+        routedStatic > 0 ? getValue('staticCpu') : 0,
+        otherRequests > 0 ? getValue('otherCpu') : 0
+      )
+      const freeCpuFits = maxCpuInput <= getValue('freeCpuLimit')
+
+      setText(
+        'request-result',
+        `${integer.format(billedRequests)}/month`
+      )
+      setText(
+        'static-detail',
+        `${integer.format(freeStatic)} static asset ${freeStatic === 1 ? 'request bypasses' : 'requests bypass'} Worker billing.`
+      )
+      setText('cpu-result', `${integer.format(totalCpu)} ms/month`)
+      setText(
+        'cpu-detail',
+        `${decimal.format(averageCpu)} ms average across billed invocations.`
+      )
+      setText('paid-result', `${currency.format(paidCost)}/month`)
+      setText(
+        'paid-detail',
+        `${currency.format(getValue('paidMinimum'))} minimum + ${currency.format(requestCost)} request overage + ${currency.format(cpuCost)} CPU overage.`
+      )
+      setText(
+        'peak-result',
+        `Estimated peak: ${integer.format(peakDaily)} Worker invocations/day from a 30-day month.`
+      )
+
+      if (freeTrafficFits && freeCpuFits) {
+        setText(
+          'free-result',
+          'Free fits the entered traffic and per-invocation CPU references. Check the remaining platform limits before relying on it.'
+        )
+      } else if (!freeTrafficFits && !freeCpuFits) {
+        setText(
+          'free-result',
+          'Free exceeds both the estimated peak-day request allowance and the entered per-invocation CPU limit.'
+        )
+      } else if (!freeTrafficFits) {
+        setText(
+          'free-result',
+          'Free exceeds the estimated peak-day request allowance for these inputs.'
+        )
+      } else {
+        setText(
+          'free-result',
+          'Free exceeds the entered per-invocation CPU limit on at least one request class.'
+        )
+      }
+
+      const warning = document.querySelector<HTMLElement>(
+        '#routing-warning'
+      )
+      warning?.classList.toggle('hidden', routedStatic === 0)
+      if (routedStatic > 0) {
+        setText(
+          'routing-result',
+          `${integer.format(routedStatic)} static requests invoke Worker code and therefore join the request and CPU calculation. Narrow run_worker_first patterns when those assets do not need code.`
+        )
+      }
+    }
+
+    form.addEventListener('input', calculate)
+    form.addEventListener('change', calculate)
+    calculate()
+  }
+
+  setupWorkersCostCalculator()
+  document.addEventListener('astro:after-swap', setupWorkersCostCalculator)
+</script>
