@@ -41,6 +41,18 @@ export const partners = [
     affiliateProgram: 'https://www.digitalocean.com/affiliates',
   },
   {
+    slug: 'kinsta',
+    name: 'Kinsta',
+    category: 'Cloud and hosting',
+    destination: 'https://kinsta.com/wordpress-hosting/',
+    summary:
+      'Managed WordPress hosting with staging, backups, migrations, CDN, security controls, and developer access.',
+    fit: 'A candidate for business or client WordPress sites where managed operations, support, staging, and predictable recovery work can justify a premium over a basic server.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+    affiliateProgram: 'https://kinsta.com/affiliates/',
+  },
+  {
     slug: 'sanity',
     name: 'Sanity',
     category: 'Content and email',

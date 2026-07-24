@@ -31,6 +31,7 @@ export const GET: APIRoute = async () => {
     '/tools/digitalocean-droplet-vs-app-platform-calculator',
     '/tools/git-tool-subscription-break-even-calculator',
     '/tools/1password-teams-vs-business-calculator',
+    '/tools/kinsta-wordpress-total-cost-calculator',
     '/affiliate-disclosure',
     '/projects',
     '/contact',
