@@ -134,9 +134,9 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const contentType = request.headers.get('content-type') ?? ''
-  if (!contentType.toLowerCase().startsWith('text/plain')) {
+  if (!contentType.toLowerCase().startsWith('application/json')) {
     return Response.json(
-      { error: 'Content-Type must be text/plain' },
+      { error: 'Content-Type must be application/json' },
       { status: 415, headers: responseHeaders(origin) }
     )
   }
