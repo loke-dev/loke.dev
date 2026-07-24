@@ -99,6 +99,17 @@ export const partners = [
     affiliateProgram: 'https://1password.com/affiliate',
   },
   {
+    slug: 'bitwarden',
+    name: 'Bitwarden',
+    category: 'Developer tooling',
+    destination: 'https://bitwarden.com/pricing/',
+    summary:
+      'Password and passkey management, SSH agent, command-line tools, developer secrets, EU cloud, and supported self-hosting options.',
+    fit: 'A candidate for developers who prioritize a permanent free tier, published source, modular password and secrets tooling, or operating an official self-hosted deployment.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+  },
+  {
     slug: 'resend',
     name: 'Resend',
     category: 'Content and email',
