@@ -11,12 +11,6 @@
   "vars": {
     "TURNSTILE_SITE_KEY": "0x4AAAAAAByUTZq4MKD8TJEL",
   },
-  "analytics_engine_datasets": [
-    {
-      "binding": "AFFILIATE_ANALYTICS",
-      "dataset": "affiliate_clicks",
-    },
-  ],
   "observability": {
     "enabled": true,
   },

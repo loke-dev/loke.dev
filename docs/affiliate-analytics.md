@@ -1,8 +1,9 @@
 # Affiliate click analytics
 
-Outbound links use `/go/:partner?from=:placement`. Each valid redirect writes
-one aggregate event to the Cloudflare Analytics Engine dataset
-`affiliate_clicks` and also emits a structured Worker log.
+Outbound links use `/go/:partner?from=:placement`. Each valid redirect emits a
+structured Worker log. When the `AFFILIATE_ANALYTICS` binding is enabled, it
+also writes one aggregate event to the Cloudflare Analytics Engine dataset
+`affiliate_clicks`.
 
 No cookie, IP address, user identifier, or browser fingerprint is written.
 
@@ -21,7 +22,22 @@ Keep the ordered Analytics Engine columns stable:
 | `blob6`   | Experience label from the partner registry                |
 | `double1` | Event count, currently `1`                                |
 
-The binding creates the dataset when the first event is written.
+Enable Analytics Engine on the Cloudflare account before adding this binding
+to `wrangler.jsonc`:
+
+```json
+{
+  "analytics_engine_datasets": [
+    {
+      "binding": "AFFILIATE_ANALYTICS",
+      "dataset": "affiliate_clicks"
+    }
+  ]
+}
+```
+
+The binding creates the dataset when the first event is written. Until it is
+enabled, structured Worker logs remain the aggregate attribution source.
 
 ## Useful SQL
 
