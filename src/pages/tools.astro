@@ -229,7 +229,9 @@ const categories: PartnerCategory[] = [
                     <span class="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
                       {partner.relationship === 'used-on-loke-dev'
                         ? 'Used here'
-                        : 'Evaluating'}
+                        : partner.relationship === 'used-personally'
+                          ? 'Personally used'
+                          : 'Evaluating'}
                     </span>
                   </div>
                   <p class="mt-4 leading-relaxed text-muted-foreground">

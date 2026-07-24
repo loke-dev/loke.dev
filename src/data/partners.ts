@@ -11,7 +11,7 @@ export interface Partner {
   destination: string
   summary: string
   fit: string
-  relationship: 'used-on-loke-dev' | 'editorial-candidate'
+  relationship: 'used-on-loke-dev' | 'used-personally' | 'editorial-candidate'
   affiliate: boolean
   affiliateProgram?: string
 }
@@ -94,7 +94,7 @@ export const partners = [
     summary:
       'Password, passkey, SSH key, API credential, shared vault, and developer secrets tooling for individuals and organizations.',
     fit: 'A candidate for developer teams that need shared credential ownership, controlled vault access, account recovery, and a path from human secrets to CLI or service-account workflows.',
-    relationship: 'editorial-candidate',
+    relationship: 'used-personally',
     affiliate: false,
     affiliateProgram: 'https://1password.com/affiliate',
   },
