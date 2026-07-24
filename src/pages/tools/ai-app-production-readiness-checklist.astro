@@ -1,0 +1,368 @@
+---
+export const prerender = true
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/ai-app-production-readiness-checklist`
+const description =
+  'Check code ownership, authorization, secrets, tests, monitoring, backups, and rollback before launching an AI-built web application.'
+const checklistSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'AI app production readiness checklist',
+  description,
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'EUR',
+  },
+}
+
+const groups = [
+  {
+    title: 'Ownership and delivery',
+    description: 'Prove that the app can move through a normal engineering workflow.',
+    items: [
+      {
+        id: 'source',
+        label: 'The current source is in a repository I control.',
+        detail: 'I can clone it outside the builder and reproduce a clean install and build.',
+        critical: true,
+      },
+      {
+        id: 'ci',
+        label: 'The production build runs in CI.',
+        detail: 'Type checks, tests, and the same build used for release run without the visual editor.',
+      },
+      {
+        id: 'inventory',
+        label: 'The full system boundary is documented.',
+        detail: 'Authentication, databases, storage, functions, jobs, webhooks, APIs, email, payments, and AI providers have owners.',
+      },
+      {
+        id: 'access',
+        label: 'Project and production access are intentional.',
+        detail: 'Editor, repository, deployment, DNS, and live-site permissions follow least privilege and use multi-factor authentication.',
+      },
+    ],
+  },
+  {
+    title: 'Data and security',
+    description: 'Test the controls that matter after a user gets past the interface.',
+    items: [
+      {
+        id: 'authorization',
+        label: 'Object-level authorization has been tested with separate users.',
+        detail: 'User A cannot read or change User B’s records by altering an ID, URL, request, or API call.',
+        critical: true,
+      },
+      {
+        id: 'rls',
+        label: 'Database and storage policies deny access by default.',
+        detail: 'Every exposed table and bucket has reviewed policies for anonymous, signed-in, and administrative roles.',
+        critical: true,
+      },
+      {
+        id: 'secrets',
+        label: 'Private credentials stay on the server.',
+        detail: 'Repository history and browser bundles are clear of service-role keys, payment secrets, webhook secrets, and private API keys.',
+        critical: true,
+      },
+      {
+        id: 'privacy',
+        label: 'Data collection and retention match the product need.',
+        detail: 'Personal data, logs, analytics, subprocessors, deletion, and retention are understood for the users and markets served.',
+      },
+    ],
+  },
+  {
+    title: 'Release and recovery',
+    description: 'Prepare for failures that a successful demo does not exercise.',
+    items: [
+      {
+        id: 'paths',
+        label: 'Critical user paths and failure states are repeatably tested.',
+        detail: 'Authentication, payments, invitations, retries, duplicate webhooks, expired sessions, loading, and error states are covered where relevant.',
+      },
+      {
+        id: 'monitoring',
+        label: 'Production failures reach a named owner.',
+        detail: 'Application errors and important integration failures create useful alerts without leaking secrets or unnecessary personal data.',
+      },
+      {
+        id: 'backup',
+        label: 'Backups include the right data and a restore has been tested.',
+        detail: 'The team knows what is excluded from a backup and has rehearsed recovery with non-production data.',
+        critical: true,
+      },
+      {
+        id: 'rollback',
+        label: 'The release and database rollback plan is written down.',
+        detail: 'A known commit or snapshot can be restored, and database migrations have a safe forward or backward recovery path.',
+        critical: true,
+      },
+    ],
+  },
+]
+---
+
+<BaseLayout
+  title="AI app production readiness checklist"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(checklistSchema)}
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Free scorecard"
+      title="A working AI-built app is not the end of the release."
+      description="Check the engineering controls around the generated code before real users, customer data, or important business processes depend on it."
+    />
+
+    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+      <strong class="text-foreground">How to use it:</strong>
+      mark a control complete only when you have evidence. The result is a
+      preparation score, not a security certification or a promise that the app
+      is safe. Your answers stay in this browser and are not submitted.
+    </aside>
+
+    <form
+      id="production-readiness"
+      class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]"
+    >
+      <div class="space-y-8">
+        {
+          groups.map((group) => (
+            <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+              <legend class="px-2 text-xl font-bold">{group.title}</legend>
+              <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {group.description}
+              </p>
+              <div class="mt-6 space-y-4">
+                {group.items.map((item) => (
+                  <label class="surface-interactive flex cursor-pointer gap-4 rounded-xl border border-border/80 bg-background/45 p-4 transition-colors hover:border-accent/40">
+                    <input
+                      class="mt-1 size-5 shrink-0 accent-[var(--accent)]"
+                      type="checkbox"
+                      name="control"
+                      value={item.id}
+                      data-label={item.label}
+                      data-critical={item.critical ? 'true' : 'false'}
+                    />
+                    <span>
+                      <span class="font-semibold text-foreground">
+                        {item.label}
+                        {item.critical && (
+                          <span class="ml-2 text-xs font-medium uppercase tracking-wide text-accent">
+                            Critical
+                          </span>
+                        )}
+                      </span>
+                      <span class="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                        {item.detail}
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ))
+        }
+      </div>
+
+      <section
+        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        aria-live="polite"
+        aria-labelledby="readiness-result-title"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Preparation score
+        </p>
+        <h2 id="readiness-result-title" class="mt-2 text-2xl font-bold">
+          Production review
+        </h2>
+
+        <div class="mt-7 flex items-end gap-3">
+          <strong id="score" class="text-5xl font-bold tabular-nums">0%</strong>
+          <span id="count" class="pb-1 text-sm text-muted-foreground">
+            0 of 12 controls
+          </span>
+        </div>
+        <div
+          class="mt-4 h-2 overflow-hidden rounded-full bg-secondary"
+          role="progressbar"
+          aria-label="Checklist completion"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div
+            id="progress"
+            class="h-full w-0 rounded-full bg-accent transition-[width]"
+          >
+          </div>
+        </div>
+
+        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+          <p id="verdict" class="font-semibold">Prototype stage</p>
+          <p id="guidance" class="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Start with code ownership and the critical controls before planning
+            a production launch.
+          </p>
+        </div>
+
+        <div class="mt-7">
+          <h3 class="text-sm font-semibold">Missing critical controls</h3>
+          <ul
+            id="missing-critical"
+            class="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground"
+          >
+            <li>6 critical controls still need evidence.</li>
+          </ul>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3">
+          <button
+            id="reset-checklist"
+            class="inline-flex justify-center rounded-md border border-border px-4 py-3 text-sm font-medium hover:border-accent/50 hover:text-accent"
+            type="reset"
+          >
+            Reset checklist
+          </button>
+          <a
+            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            href="/go/lovable?from=production-readiness-scorecard"
+          >
+            Try Lovable →
+          </a>
+          <a
+            class="inline-flex justify-center rounded-md border border-border px-4 py-3 text-sm font-medium hover:border-accent/50 hover:text-accent"
+            href="/blog/lovable-production-app-developer-checklist"
+          >
+            Read the Lovable release guide
+          </a>
+        </div>
+        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+          The Lovable link is currently a direct tracked link and earns no
+          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+        </p>
+      </section>
+    </form>
+
+    <section class="mt-16 max-w-3xl space-y-5">
+      <h2 class="text-2xl font-bold">What a high score does not prove</h2>
+      <p class="leading-relaxed text-muted-foreground">
+        This score counts completed preparation work. It does not measure code
+        quality, find vulnerabilities, verify legal compliance, or decide
+        whether a particular residual risk is acceptable. An app handling
+        health records or moving money needs deeper assurance than a public tool
+        that stores no user data.
+      </p>
+      <p class="leading-relaxed text-muted-foreground">
+        Treat every unchecked critical control as a release blocker until
+        someone with the right context reviews it. Re-run the checklist after
+        changes to authentication, data models, integrations, secrets, hosting,
+        or deployment.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupProductionReadiness() {
+    const form = document.querySelector<HTMLFormElement>('#production-readiness')
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+
+    const checkboxes = Array.from(
+      form.querySelectorAll<HTMLInputElement>('input[name="control"]')
+    )
+    const score = form.querySelector<HTMLElement>('#score')
+    const count = form.querySelector<HTMLElement>('#count')
+    const progress = form.querySelector<HTMLElement>('#progress')
+    const progressbar = form.querySelector<HTMLElement>('[role="progressbar"]')
+    const verdict = form.querySelector<HTMLElement>('#verdict')
+    const guidance = form.querySelector<HTMLElement>('#guidance')
+    const missingList = form.querySelector<HTMLUListElement>('#missing-critical')
+
+    const update = () => {
+      const completed = checkboxes.filter((checkbox) => checkbox.checked)
+      const percentage = Math.round(
+        (completed.length / checkboxes.length) * 100
+      )
+      const missingCritical = checkboxes.filter(
+        (checkbox) =>
+          checkbox.dataset.critical === 'true' && !checkbox.checked
+      )
+
+      if (score) score.textContent = `${percentage}%`
+      if (count) {
+        count.textContent = `${completed.length} of ${checkboxes.length} controls`
+      }
+      if (progress) progress.style.width = `${percentage}%`
+      progressbar?.setAttribute('aria-valuenow', String(percentage))
+
+      if (completed.length <= 3) {
+        if (verdict) verdict.textContent = 'Prototype stage'
+        if (guidance) {
+          guidance.textContent =
+            'Start with code ownership and the critical controls before planning a production launch.'
+        }
+      } else if (completed.length <= 7) {
+        if (verdict) verdict.textContent = 'Hardening in progress'
+        if (guidance) {
+          guidance.textContent =
+            'The app has some production foundations, but important operational and security evidence is still missing.'
+        }
+      } else if (missingCritical.length > 0) {
+        if (verdict) verdict.textContent = 'Close, with critical gaps'
+        if (guidance) {
+          guidance.textContent =
+            'Several controls are complete, but a missing critical control should block release until it is reviewed.'
+        }
+      } else {
+        if (verdict) verdict.textContent = 'Ready for a risk-based launch review'
+        if (guidance) {
+          guidance.textContent =
+            'The preparation checklist is strong. Review residual risk for the app’s actual data and business impact before releasing.'
+        }
+      }
+
+      if (!missingList) return
+      missingList.replaceChildren()
+      if (missingCritical.length === 0) {
+        const item = document.createElement('li')
+        item.textContent = 'No critical checklist items are missing.'
+        missingList.appendChild(item)
+        return
+      }
+
+      for (const checkbox of missingCritical) {
+        const item = document.createElement('li')
+        item.textContent = checkbox.dataset.label ?? checkbox.value
+        missingList.appendChild(item)
+      }
+    }
+
+    form.addEventListener('change', update)
+    form.addEventListener('reset', () => window.setTimeout(update))
+    update()
+  }
+
+  setupProductionReadiness()
+  document.addEventListener('astro:after-swap', setupProductionReadiness)
+</script>

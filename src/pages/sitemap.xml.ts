@@ -27,6 +27,7 @@ export const GET: APIRoute = async () => {
     '/services',
     '/tools',
     '/tools/n8n-hosting-calculator',
+    '/tools/ai-app-production-readiness-checklist',
     '/affiliate-disclosure',
     '/projects',
     '/contact',
