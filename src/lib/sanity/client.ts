@@ -8,6 +8,8 @@ export const client = createClient({
   useCdn,
 })
 
+export const freshClient = client.withConfig({ useCdn: false })
+
 export const sanityWriteClient = createClient({
   projectId,
   dataset,

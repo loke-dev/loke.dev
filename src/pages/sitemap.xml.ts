@@ -7,15 +7,16 @@ import {
   getAllTopics,
   getBlogTotalPages,
 } from '@/utils/sanity.queries'
+import { freshClient } from '@/lib/sanity/client'
 
 export const prerender = false
 
 export const GET: APIRoute = async () => {
   const [posts, totalPages, topics, authors] = await Promise.all([
-    getAllPublishedPosts(),
-    getBlogTotalPages(),
-    getAllTopics(),
-    getAllAuthors(),
+    getAllPublishedPosts(freshClient),
+    getBlogTotalPages(freshClient),
+    getAllTopics(freshClient),
+    getAllAuthors(freshClient),
   ])
 
   const staticUrls = [

@@ -8,6 +8,7 @@ import {
   SITE_RSS_DESCRIPTION,
 } from '@/utils/meta'
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { freshClient } from '@/lib/sanity/client'
 import { getSanityImageUrl } from '@/lib/sanity/helpers'
 
 export const prerender = false
@@ -22,7 +23,7 @@ function escapeXml(s: string): string {
 }
 
 export const GET: APIRoute = async () => {
-  const allPosts = await getAllPublishedPosts()
+  const allPosts = await getAllPublishedPosts(freshClient)
   const posts = allPosts.slice(0, 20)
   const lastBuildDate = posts.reduce((latest, post) => {
     const candidate = new Date(

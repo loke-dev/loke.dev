@@ -98,8 +98,10 @@ export async function getPaginatedPosts(
   }
 }
 
-export async function getAllPublishedPosts(): Promise<PostListItem[]> {
-  const rows = await client.fetch<PostListFetchRow[]>(POST_LIST_QUERY)
+export async function getAllPublishedPosts(
+  contentClient: SanityClient = client
+): Promise<PostListItem[]> {
+  const rows = await contentClient.fetch<PostListFetchRow[]>(POST_LIST_QUERY)
   return rows.map(mapPostListRow)
 }
 
@@ -121,8 +123,10 @@ export async function getAllPostSlugs(): Promise<PostSlug[]> {
   return client.fetch<PostSlug[]>(POST_SLUGS_QUERY)
 }
 
-export async function getBlogTotalPages(): Promise<number> {
-  const totalCount = await client.fetch<number>(POST_COUNT_QUERY)
+export async function getBlogTotalPages(
+  contentClient: SanityClient = client
+): Promise<number> {
+  const totalCount = await contentClient.fetch<number>(POST_COUNT_QUERY)
   return Math.max(1, Math.ceil(totalCount / POSTS_PER_PAGE))
 }
 
@@ -160,8 +164,10 @@ export async function getPostsByTopicSlug(
   return rows.map(mapPostListRow)
 }
 
-export async function getAllTopics(): Promise<Topic[]> {
-  return client.fetch<Topic[]>(ALL_TOPICS_QUERY)
+export async function getAllTopics(
+  contentClient: SanityClient = client
+): Promise<Topic[]> {
+  return contentClient.fetch<Topic[]>(ALL_TOPICS_QUERY)
 }
 
 export async function getAuthorBySlug(slug: string): Promise<Author | null> {
@@ -178,8 +184,10 @@ export async function getPostsByAuthorSlug(
   return rows.map(mapPostListRow)
 }
 
-export async function getAllAuthors(): Promise<Author[]> {
-  return client.fetch<Author[]>(ALL_AUTHORS_QUERY)
+export async function getAllAuthors(
+  contentClient: SanityClient = client
+): Promise<Author[]> {
+  return contentClient.fetch<Author[]>(ALL_AUTHORS_QUERY)
 }
 
 export async function getAdjacentPosts(
