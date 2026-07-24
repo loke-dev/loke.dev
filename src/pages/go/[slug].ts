@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
-import { env as workerEnv } from 'cloudflare:workers'
 import { getPartner } from '@/data/partners'
+import { recordAnalyticsEvent } from '@/lib/analytics.server'
 
 export const prerender = false
 
@@ -49,32 +49,14 @@ export const GET: APIRoute = ({ params, request }) => {
   const referrerPath = getReferrerPath(request)
   const linkType = partner.affiliate ? 'affiliate' : 'direct'
 
-  const runtimeEnv = workerEnv as unknown as {
-    AFFILIATE_ANALYTICS?: AnalyticsEngineDataset
-  }
-  runtimeEnv.AFFILIATE_ANALYTICS?.writeDataPoint({
-    indexes: [partner.slug],
-    blobs: [
-      'v1',
-      partner.slug,
-      source,
-      referrerPath,
-      linkType,
-      partner.relationship,
-    ],
-    doubles: [1],
+  recordAnalyticsEvent({
+    event: 'outbound_partner_click',
+    site: 'loke.dev',
+    path: referrerPath,
+    placement: source,
+    target: partner.slug,
+    campaign: `${linkType}_${partner.relationship}`,
   })
-
-  console.info(
-    JSON.stringify({
-      event: 'outbound_partner_click',
-      partner: partner.slug,
-      source,
-      referrerPath,
-      linkType,
-      experience: partner.relationship,
-    })
-  )
 
   return new Response(null, {
     status: 302,
