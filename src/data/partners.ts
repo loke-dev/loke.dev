@@ -75,6 +75,18 @@ export const partners = [
     affiliateProgram: 'https://www.gitkraken.com/referral-program',
   },
   {
+    slug: '1password',
+    name: '1Password',
+    category: 'Developer tooling',
+    destination: 'https://1password.com/',
+    summary:
+      'Password, passkey, SSH key, API credential, shared vault, and developer secrets tooling for individuals and organizations.',
+    fit: 'A candidate for developer teams that need shared credential ownership, controlled vault access, account recovery, and a path from human secrets to CLI or service-account workflows.',
+    relationship: 'editorial-candidate',
+    affiliate: false,
+    affiliateProgram: 'https://1password.com/affiliate',
+  },
+  {
     slug: 'resend',
     name: 'Resend',
     category: 'Content and email',

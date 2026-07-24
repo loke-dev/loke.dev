@@ -30,6 +30,7 @@ export const GET: APIRoute = async () => {
     '/tools/ai-app-production-readiness-checklist',
     '/tools/digitalocean-droplet-vs-app-platform-calculator',
     '/tools/git-tool-subscription-break-even-calculator',
+    '/tools/1password-teams-vs-business-calculator',
     '/affiliate-disclosure',
     '/projects',
     '/contact',
