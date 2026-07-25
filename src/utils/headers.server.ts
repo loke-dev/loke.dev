@@ -18,7 +18,7 @@ export function getSecurityHeaders(options?: {
       "form-action 'self'",
       "img-src 'self' data: https://cdn.sanity.io",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
       "connect-src 'self'",
       'frame-src https://challenges.cloudflare.com',
     ].join('; '),
