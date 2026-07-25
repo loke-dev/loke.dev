@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllTopics } from '@/utils/sanity.queries'
 import PageIntro from '@/components/PageIntro.astro'
@@ -29,7 +30,7 @@ const collectionSchema = {
   <script
     is:inline
     type="application/ld+json"
-    set:html={JSON.stringify(collectionSchema)}
+    set:html={serializeJsonLd(collectionSchema)}
   />
   <section class="mx-auto max-w-6xl px-4 py-16 md:py-20">
     <PageIntro

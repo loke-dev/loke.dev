@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import PageIntro from '@/components/PageIntro.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
@@ -139,7 +140,7 @@ const groups = [
     is:inline
     slot="head"
     type="application/ld+json"
-    set:html={JSON.stringify(checklistSchema)}
+    set:html={serializeJsonLd(checklistSchema)}
   />
 
   <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">

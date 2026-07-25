@@ -1,6 +1,7 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import {
   getAdjacentPosts,
@@ -86,12 +87,12 @@ const breadcrumbSchema = post
       <script
         is:inline
         type="application/ld+json"
-        set:html={JSON.stringify(articleSchema)}
+        set:html={serializeJsonLd(articleSchema)}
       />
       <script
         is:inline
         type="application/ld+json"
-        set:html={JSON.stringify(breadcrumbSchema)}
+        set:html={serializeJsonLd(breadcrumbSchema)}
       />
       <article class="mx-auto max-w-3xl px-4 py-12">
         {imageUrl && (

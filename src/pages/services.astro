@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import PageIntro from '@/components/PageIntro.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
@@ -98,7 +99,7 @@ const serviceSchema = {
   <script
     is:inline
     type="application/ld+json"
-    set:html={JSON.stringify(serviceSchema)}
+    set:html={serializeJsonLd(serviceSchema)}
   />
 
   <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">

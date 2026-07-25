@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions'
+import { serializeJsonLd } from '@/utils/json-ld'
 import Footer from '@/components/Footer.astro'
 import Header from '@/components/Header.astro'
 import Seo from '@/components/Seo.astro'
@@ -91,7 +92,7 @@ const turnstileSiteKey =
     <script
       is:inline
       type="application/ld+json"
-      set:html={JSON.stringify({
+      set:html={serializeJsonLd({
         '@context': 'https://schema.org',
         '@graph': [
           {
