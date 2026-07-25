@@ -23,7 +23,11 @@ function isCurrentPath(href: string): boolean {
   <div
     class="container mx-auto flex h-16 items-center justify-between px-4 md:px-8"
   >
-    <a href="/" class="flex items-center">
+    <a
+      href="/"
+      aria-current={pathname === '/' ? 'page' : undefined}
+      class="flex items-center"
+    >
       <span class="text-xl font-bold tracking-tight">loke.dev</span>
     </a>
 
@@ -43,7 +47,6 @@ function isCurrentPath(href: string): boolean {
         <a
           href="/blog"
           class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 text-sm font-medium transition-colors"
-          aria-haspopup="true"
           aria-current={isCurrentPath('/blog') ? 'page' : undefined}
         >
           Blog

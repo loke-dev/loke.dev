@@ -94,6 +94,7 @@ export default function HeaderSearch() {
   const [error, setError] = createSignal<string | null>(null)
 
   let rootEl: HTMLDivElement | undefined
+  let triggerEl: HTMLButtonElement | undefined
   let inputEl: HTMLInputElement | undefined
   let abortController: AbortController | undefined
 
@@ -153,11 +154,14 @@ export default function HeaderSearch() {
     }
   }
 
-  function close() {
+  function close(returnFocus = false) {
     if (!open()) return
     setOpen(false)
     clearInFlight()
     setLoading(false)
+    if (returnFocus) {
+      requestAnimationFrame(() => triggerEl?.focus())
+    }
   }
 
   onMount(() => {
@@ -170,7 +174,7 @@ export default function HeaderSearch() {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open()) {
         e.preventDefault()
-        close()
+        close(true)
       }
     }
     document.addEventListener('pointerdown', onDocPointerDown, true)
@@ -189,7 +193,8 @@ export default function HeaderSearch() {
         class="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
         aria-expanded={open()}
         aria-controls="header-search-popover"
-        aria-label="Open search"
+        aria-label={open() ? 'Close search' : 'Open search'}
+        ref={(el) => (triggerEl = el)}
         onClick={() => toggle()}
       >
         <svg
@@ -249,7 +254,11 @@ export default function HeaderSearch() {
             </div>
           </form>
 
-          <div class="max-h-[min(60vh,20rem)] overflow-y-auto p-2">
+          <div
+            class="max-h-[min(60vh,20rem)] overflow-y-auto p-2"
+            aria-live="polite"
+            aria-busy={loading()}
+          >
             <Show when={loading()}>
               <p class="px-2 py-6 text-center text-sm text-muted-foreground">
                 Searching…
