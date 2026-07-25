@@ -10,7 +10,7 @@
     "html_handling": "drop-trailing-slash",
   },
   "vars": {
-    "TURNSTILE_SITE_KEY": "0x4AAAAAAByUTZq4MKD8TJEL",
+    "TURNSTILE_SITE_ID": "0x4AAAAAAByUTZq4MKD8TJEL",
   },
   "observability": {
     "enabled": true,

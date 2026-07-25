@@ -138,7 +138,7 @@ Everything else renders as static HTML unless it imports a client script.
 Required (see `env.example`):
 
 - `RESEND_API_KEY` — email sending via Resend
-- `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile CAPTCHA
+- `TURNSTILE_SITE_ID` / `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile CAPTCHA
 - `GEMINI_API_KEY` — Seshat content generation
 - `VITE_SANITY_PROJECT_ID` / `VITE_SANITY_DATASET` — Sanity CMS (public, client-accessible)
 - `SANITY_WRITE_TOKEN` — Sanity write access for Seshat

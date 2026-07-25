@@ -39,7 +39,7 @@ const {
 } = Astro.props
 const canonicalUrl = url ?? Astro.url.href
 const turnstileSiteKey =
-  import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
+  import.meta.env.TURNSTILE_SITE_ID ?? '1x00000000000000000000AA'
 ---
 
 <!doctype html>
