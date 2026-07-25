@@ -31,6 +31,8 @@ function getRuntimeString(
 
 const TYPE_PATHS: Record<string, string[]> = {
   post: ['/', '/blog', '/rss.xml', '/sitemap.xml'],
+  topic: ['/topics', '/sitemap.xml'],
+  author: ['/sitemap.xml'],
   homePage: ['/'],
   blogPage: ['/blog'],
   aboutPage: ['/about'],
@@ -101,9 +103,16 @@ function collectPaths(payload: RevalidatePayload): string[] {
   }
 
   const slug = extractSlug(payload.slug)
-  if (slug && payload._type === 'post') {
-    paths.add(`/blog/${slug}`)
-    paths.add('/blog')
+  if (slug) {
+    const slugPathByType: Record<string, string[]> = {
+      post: [`/blog/${slug}`, '/blog'],
+      topic: [`/topics/${slug}`, '/topics'],
+      author: [`/authors/${slug}`],
+    }
+
+    for (const path of slugPathByType[payload._type ?? ''] ?? []) {
+      paths.add(path)
+    }
   }
 
   const singularCandidates = [payload.path, payload.route]
