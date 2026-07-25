@@ -12,9 +12,6 @@
   "vars": {
     "TURNSTILE_SITE_KEY": "0x4AAAAAAByUTZq4MKD8TJEL",
   },
-  "secrets": {
-    "required": ["TURNSTILE_SECRET_KEY"],
-  },
   "observability": {
     "enabled": true,
   },
