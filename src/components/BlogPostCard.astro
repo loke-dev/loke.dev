@@ -44,7 +44,6 @@ const updatedDisplay = getPostUpdatedDisplay(post)
     href={`/blog/${post.slug.current}`}
     data-astro-prefetch="hover"
     class="flex flex-1 flex-col"
-    aria-labelledby={`post-title-${post.slug.current}`}
   >
     {
       imageUrl && (
@@ -90,10 +89,7 @@ const updatedDisplay = getPostUpdatedDisplay(post)
           ) : null
         }
       </div>
-      <h2
-        id={`post-title-${post.slug.current}`}
-        class="mb-2 text-xl font-bold tracking-tight group-hover:underline"
-      >
+      <h2 class="mb-2 text-xl font-bold tracking-tight group-hover:underline">
         {post.title}
       </h2>
       <p class="text-muted-foreground line-clamp-3 flex-1">
@@ -123,11 +119,11 @@ const updatedDisplay = getPostUpdatedDisplay(post)
   </a>
   {
     post.topics?.length > 0 && (
-      <div class="flex flex-wrap gap-1 px-6 pb-6">
+      <div class="flex flex-wrap gap-1 px-6 pt-1 pb-6">
         {post.topics.map((topic) => (
           <a
             href={`/topics/${topic.slug.current}`}
-            class="bg-secondary text-secondary-foreground rounded-full px-2 py-0.5 text-xs hover:underline"
+            class="bg-secondary text-secondary-foreground inline-flex min-h-6 items-center rounded-full px-2 py-1 text-xs hover:underline"
           >
             {topic.title}
           </a>
