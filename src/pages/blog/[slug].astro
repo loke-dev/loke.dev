@@ -42,7 +42,7 @@ const breadcrumbSchema = post ? createBreadcrumbSchema([{ name: 'Home', url: SIT
 ---
 
 {post ? (
-  <BaseLayout title={post.title} description={post.description} url={canonicalUrl} image={imageUrl ?? undefined} type="article" publishedTime={post.date} modifiedTime={post.lastModified ?? post._updatedAt ?? post.date} keywords={post.topics.map((topic) => topic.title)}>
+  <BaseLayout title={post.title} description={post.description} url={canonicalUrl} image={imageUrl ?? undefined} imageAlt={post.imageAlt ?? `Cover image for ${post.title}`} type="article" publishedTime={post.date} modifiedTime={post.lastModified ?? post._updatedAt ?? post.date} keywords={post.topics.map((topic) => topic.title)}>
     <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     <article class="mx-auto max-w-3xl px-4 py-12">

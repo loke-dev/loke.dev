@@ -7,6 +7,7 @@ interface Props {
   description: string
   url?: string
   image?: string
+  imageAlt?: string
   type?: 'website' | 'article'
   author?: string
   publishedTime?: string
@@ -22,6 +23,7 @@ const {
   description,
   url = 'https://loke.dev',
   image: imageProp,
+  imageAlt = 'Loke.dev, independent web developer',
   type = 'website',
   author = AUTHOR_NAME,
   publishedTime,
@@ -39,7 +41,7 @@ const keywordsArr = Array.isArray(keywords) ? keywords : keywords ? [keywords] :
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={author} />
-{noindex && <meta name="robots" content="noindex,follow" />}
+<meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large'} />
 <link rel="canonical" href={url} />
 
 <meta property="og:title" content={title} />
@@ -47,12 +49,15 @@ const keywordsArr = Array.isArray(keywords) ? keywords : keywords ? [keywords] :
 <meta property="og:type" content={type} />
 <meta property="og:url" content={url} />
 <meta property="og:image" content={image} />
+<meta property="og:image:alt" content={imageAlt} />
 <meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content="en_US" />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={image} />
+<meta name="twitter:image:alt" content={imageAlt} />
 <meta name="twitter:creator" content={TWITTER_HANDLE} />
 
 {keywordsArr.length > 0 && <meta name="keywords" content={keywordsArr.join(', ')} />}
