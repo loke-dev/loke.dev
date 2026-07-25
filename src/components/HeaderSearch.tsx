@@ -190,7 +190,7 @@ export default function HeaderSearch() {
     <div class="relative" ref={(el) => (rootEl = el)}>
       <button
         type="button"
-        class="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
+        class="inline-grid h-11 w-11 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
         aria-expanded={open()}
         aria-controls="header-search-popover"
         aria-label={open() ? 'Close search' : 'Open search'}
