@@ -10,6 +10,11 @@ const navLinks = [
   { href: '/contact', label: 'Contact' },
 ]
 const topics = await getAllTopics()
+const pathname = Astro.url.pathname
+
+function isCurrentPath(href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
 ---
 
 <header
@@ -27,6 +32,7 @@ const topics = await getAllTopics()
         navLinks.slice(0, 3).map(({ href, label }) => (
           <a
             href={href}
+            aria-current={isCurrentPath(href) ? 'page' : undefined}
             class="nav-link-animate text-muted-foreground hover:text-accent text-sm font-medium transition-colors"
           >
             {label}
@@ -38,6 +44,7 @@ const topics = await getAllTopics()
           href="/blog"
           class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 text-sm font-medium transition-colors"
           aria-haspopup="true"
+          aria-current={isCurrentPath('/blog') ? 'page' : undefined}
         >
           Blog
           <svg
@@ -61,6 +68,7 @@ const topics = await getAllTopics()
           >
             <a
               href="/blog"
+              aria-current={isCurrentPath('/blog') ? 'page' : undefined}
               class="text-foreground hover:bg-secondary block rounded-md px-3 py-2 text-sm font-medium transition-colors"
               >All posts</a
             >
@@ -69,6 +77,11 @@ const topics = await getAllTopics()
               topics.map((topic) => (
                 <a
                   href={`/topics/${topic.slug.current}`}
+                  aria-current={
+                    isCurrentPath(`/topics/${topic.slug.current}`)
+                      ? 'page'
+                      : undefined
+                  }
                   class="text-muted-foreground hover:bg-secondary hover:text-foreground block rounded-md px-3 py-2 text-sm transition-colors"
                 >
                   {topic.title}
@@ -82,6 +95,7 @@ const topics = await getAllTopics()
         navLinks.slice(3).map(({ href, label }) => (
           <a
             href={href}
+            aria-current={isCurrentPath(href) ? 'page' : undefined}
             class="nav-link-animate text-muted-foreground hover:text-accent text-sm font-medium transition-colors"
           >
             {label}
@@ -151,6 +165,7 @@ const topics = await getAllTopics()
               navLinks.slice(0, 3).map(({ href, label }) => (
                 <a
                   href={href}
+                  aria-current={isCurrentPath(href) ? 'page' : undefined}
                   class="nav-link-animate text-muted-foreground hover:text-accent text-base font-medium transition-colors"
                 >
                   {label}
@@ -160,6 +175,7 @@ const topics = await getAllTopics()
             <div class="-mt-2">
               <a
                 href="/blog"
+                aria-current={isCurrentPath('/blog') ? 'page' : undefined}
                 class="nav-link-animate text-muted-foreground hover:text-accent text-base font-medium transition-colors"
                 >Blog</a
               >
@@ -172,6 +188,9 @@ const topics = await getAllTopics()
                     <div class="border-border mt-3 flex flex-col gap-3 border-l pl-4">
                       <a
                         href="/blog"
+                        aria-current={
+                          isCurrentPath('/blog') ? 'page' : undefined
+                        }
                         class="text-foreground hover:text-accent text-sm font-medium"
                       >
                         All posts
@@ -179,6 +198,11 @@ const topics = await getAllTopics()
                       {topics.map((topic) => (
                         <a
                           href={`/topics/${topic.slug.current}`}
+                          aria-current={
+                            isCurrentPath(`/topics/${topic.slug.current}`)
+                              ? 'page'
+                              : undefined
+                          }
                           class="text-muted-foreground hover:text-accent text-sm"
                         >
                           {topic.title}
@@ -193,6 +217,7 @@ const topics = await getAllTopics()
               navLinks.slice(3).map(({ href, label }) => (
                 <a
                   href={href}
+                  aria-current={isCurrentPath(href) ? 'page' : undefined}
                   class="nav-link-animate text-muted-foreground hover:text-accent text-base font-medium transition-colors"
                 >
                   {label}
