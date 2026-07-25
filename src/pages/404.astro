@@ -1,0 +1,65 @@
+---
+import { SITE_DOMAIN } from '@/utils/meta'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const suggestions = [
+  {
+    href: '/',
+    label: 'Go home',
+    description: 'Start again from the front page.',
+  },
+  {
+    href: '/blog',
+    label: 'Read the blog',
+    description: 'Find guides, notes, and developer stuff.',
+  },
+  {
+    href: '/contact',
+    label: 'Get in touch',
+    description: 'Tell me what you were looking for.',
+  },
+]
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The page you tried to open does not exist."
+  url={`${SITE_DOMAIN}/404`}
+  noindex={true}
+>
+  <div class="container mx-auto max-w-4xl px-4 py-16 md:py-24">
+    <div class="border-border/80 bg-card/50 overflow-hidden rounded-2xl border">
+      <div class="border-border/80 border-b px-6 py-10 md:px-10 md:py-14">
+        <p class="text-accent text-sm font-semibold tracking-[0.18em] uppercase">
+          Error 404
+        </p>
+        <h1 class="mt-3 text-4xl font-bold tracking-tight md:text-6xl">
+          This page went missing.
+        </h1>
+        <p class="text-muted-foreground mt-5 max-w-xl text-lg leading-relaxed">
+          The link might be old, or the page may have been moved. Here are a few
+          good places to go next.
+        </p>
+      </div>
+
+      <nav class="grid divide-y md:grid-cols-3 md:divide-x md:divide-y-0" aria-label="Suggested pages">
+        {
+          suggestions.map(({ href, label, description }) => (
+            <a
+              href={href}
+              class="group hover:bg-secondary/60 block p-6 transition-colors md:p-8"
+            >
+              <span class="text-foreground group-hover:text-accent inline-flex items-center gap-2 font-semibold">
+                {label}
+                <span aria-hidden="true">→</span>
+              </span>
+              <span class="text-muted-foreground mt-3 block text-sm leading-relaxed">
+                {description}
+              </span>
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+</BaseLayout>
