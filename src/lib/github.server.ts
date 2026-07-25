@@ -7,6 +7,11 @@ export interface GitHubCommitItem {
   url: string
 }
 
+const DEFAULT_REPOSITORY = {
+  owner: 'loke-dev',
+  repo: 'loke.dev',
+} as const
+
 interface GitHubCommitApi {
   sha: string
   html_url: string
@@ -79,9 +84,9 @@ export async function fetchRecentRepoCommits(
     .map((c) => mapCommit(c))
 }
 
-export function getGithubRepoConfig(): { owner: string; repo: string } | null {
-  const owner = env('GITHUB_OWNER')
-  const repo = env('GITHUB_REPO')
-  if (!owner || !repo) return null
-  return { owner, repo }
+export function getGithubRepoConfig(): { owner: string; repo: string } {
+  return {
+    owner: env('GITHUB_OWNER') ?? DEFAULT_REPOSITORY.owner,
+    repo: env('GITHUB_REPO') ?? DEFAULT_REPOSITORY.repo,
+  }
 }

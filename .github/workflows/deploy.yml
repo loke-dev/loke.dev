@@ -1,5 +1,8 @@
 name: Deploy loke.dev
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main, master]
@@ -39,7 +42,7 @@ jobs:
           VITE_SANITY_DATASET: ${{ secrets.VITE_SANITY_DATASET }}
           GITHUB_OWNER: ${{ secrets.GITHUB_OWNER }}
           GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: pnpm run build
 
       - name: Deploy to Cloudflare Workers
