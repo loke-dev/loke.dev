@@ -1,6 +1,6 @@
 ---
-import type { PostListItem } from '@/lib/sanity/types'
 import { formatDate } from '@/lib/sanity/helpers'
+import type { PostListItem } from '@/lib/sanity/types'
 
 interface Props {
   posts: PostListItem[]
@@ -12,17 +12,17 @@ const { posts } = Astro.props
 {
   posts.length > 0 && (
     <aside class="not-prose mt-16" aria-label="Related posts">
-      <div class="relative overflow-hidden rounded-2xl border-2 border-accent/40 bg-linear-to-b from-accent/10 via-card to-card p-1 shadow-[0_24px_60px_-28px_oklch(72%_0.2_70/0.35)]">
-        <div class="rounded-[0.9rem] bg-card/95 px-5 py-7 md:px-8 md:py-9">
+      <div class="border-accent/40 from-accent/10 via-card to-card relative overflow-hidden rounded-2xl border-2 bg-linear-to-b p-1 shadow-[0_24px_60px_-28px_oklch(72%_0.2_70/0.35)]">
+        <div class="bg-card/95 rounded-[0.9rem] px-5 py-7 md:px-8 md:py-9">
           <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
                 Keep reading
               </p>
-              <h2 class="mt-2 text-2xl font-bold tracking-tight text-foreground">
+              <h2 class="text-foreground mt-2 text-2xl font-bold tracking-tight">
                 Related posts
               </h2>
-              <p class="mt-1 max-w-xl text-sm text-muted-foreground">
+              <p class="text-muted-foreground mt-1 max-w-xl text-sm">
                 More practical posts on the same topic.
               </p>
             </div>
@@ -33,9 +33,9 @@ const { posts } = Astro.props
                 <a
                   href={`/blog/${post.slug.current}`}
                   data-astro-prefetch="hover"
-                  class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background/80 p-4 transition-[transform,border-color,box-shadow] duration-200 after:pointer-events-none after:absolute after:inset-x-4 after:top-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-accent/60 after:to-transparent hover:-translate-y-1 hover:border-accent/50 hover:shadow-[0_16px_40px_-20px_oklch(72%_0.18_70/0.45)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  class="group border-border bg-background/80 after:via-accent/60 hover:border-accent/50 focus-visible:outline-accent relative flex h-full flex-col overflow-hidden rounded-xl border p-4 transition-[transform,border-color,box-shadow] duration-200 after:pointer-events-none after:absolute after:inset-x-4 after:top-0 after:h-px after:bg-gradient-to-r after:from-transparent after:to-transparent hover:-translate-y-1 hover:shadow-[0_16px_40px_-20px_oklch(72%_0.18_70/0.45)] focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
-                  <span class="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+                  <span class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase">
                     <time datetime={post.date}>{formatDate(post.date)}</time>
                     {post.readingTime ? (
                       <>
@@ -44,13 +44,13 @@ const { posts } = Astro.props
                       </>
                     ) : null}
                   </span>
-                  <span class="mt-2 text-base font-semibold text-foreground transition-colors group-hover:text-accent">
+                  <span class="text-foreground group-hover:text-accent mt-2 text-base font-semibold transition-colors">
                     {post.title}
                   </span>
-                  <span class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                  <span class="text-muted-foreground mt-2 line-clamp-2 text-sm">
                     {post.description}
                   </span>
-                  <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
+                  <span class="text-accent mt-4 inline-flex items-center gap-1 text-sm font-medium">
                     Read
                     <svg
                       width="14"

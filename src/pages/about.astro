@@ -1,17 +1,17 @@
 ---
-export const prerender = true
-
-import profileAvif256 from '@/assets/loke-clay-256.avif'
-import profileAvif512 from '@/assets/loke-clay-512.avif'
-import profilePng512 from '@/assets/loke-clay-512.png'
-import profileWebp256 from '@/assets/loke-clay-256.webp'
-import profileWebp512 from '@/assets/loke-clay-512.webp'
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/PageIntro.astro'
-import PortableText from '@/components/PortableText.astro'
-import { getAboutPage } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import { getAboutPage } from '@/utils/sanity.queries'
+import PageIntro from '@/components/PageIntro.astro'
+import PortableText from '@/components/PortableText.astro'
+import profileAvif256 from '@/assets/loke-clay-256.avif'
+import profileWebp256 from '@/assets/loke-clay-256.webp'
+import profileAvif512 from '@/assets/loke-clay-512.avif'
+import profilePng512 from '@/assets/loke-clay-512.png'
+import profileWebp512 from '@/assets/loke-clay-512.webp'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
@@ -25,7 +25,12 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
-    { '@type': 'ListItem', position: 2, name: 'About', item: `${SITE_DOMAIN}/about` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'About',
+      item: `${SITE_DOMAIN}/about`,
+    },
   ],
 }
 
@@ -47,17 +52,33 @@ const profileSchema = {
   description="About Loke, a developer building websites, apps, useful tools, and practical AI features."
   url={`${SITE_DOMAIN}/about`}
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(breadcrumbSchema)}
+  />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(profileSchema)}
+  />
 
   <div class="container mx-auto max-w-4xl px-4 py-16 md:py-20">
     <PageIntro eyebrow="About" title={page.title} compact />
 
     <div class="prose prose-invert mt-10 max-w-none">
-      <div class="flex justify-center mb-6">
+      <div class="mb-6 flex justify-center">
         <picture>
-          <source type="image/avif" srcset={profileAvifSrcset} sizes={profileSizes} />
-          <source type="image/webp" srcset={profileWebpSrcset} sizes={profileSizes} />
+          <source
+            type="image/avif"
+            srcset={profileAvifSrcset}
+            sizes={profileSizes}
+          />
+          <source
+            type="image/webp"
+            srcset={profileWebpSrcset}
+            sizes={profileSizes}
+          />
           <img
             src={profilePng512.src}
             alt="3D clay avatar"
@@ -71,14 +92,16 @@ const profileSchema = {
         </picture>
       </div>
 
-      <p class="lead text-lg text-muted-foreground">{page.intro}</p>
+      <p class="lead text-muted-foreground text-lg">{page.intro}</p>
 
-      {page.sections?.map((section) => (
-        <section class="mt-10">
-          <h2 class="text-2xl font-bold mb-4">{section.title}</h2>
-          <PortableText value={section.content} />
-        </section>
-      ))}
+      {
+        page.sections?.map((section) => (
+          <section class="mt-10">
+            <h2 class="mb-4 text-2xl font-bold">{section.title}</h2>
+            <PortableText value={section.content} />
+          </section>
+        ))
+      }
     </div>
   </div>
 </BaseLayout>

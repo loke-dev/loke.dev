@@ -1,14 +1,14 @@
 import { timingSafeEqual } from 'node:crypto'
-import { env as workerEnv } from 'cloudflare:workers'
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook'
 import type { APIRoute } from 'astro'
+import { env as workerEnv } from 'cloudflare:workers'
 import {
   buildPurgeUrls,
   purgeCloudflareCache,
-  type RuntimeEnvironment,
   SSR_WARM_PATHS,
   triggerSiteDeploy,
   warmCachePaths,
+  type RuntimeEnvironment,
 } from '@/lib/revalidate.server'
 
 export const prerender = false
@@ -143,7 +143,10 @@ function getIncomingSecret(request: Request): string | null {
 export const POST: APIRoute = async ({ request, url }) => {
   const runtimeEnv = workerEnv as unknown as RuntimeEnvironment
   const sharedSecret = getRuntimeString(runtimeEnv, 'REVALIDATE_WEBHOOK_SECRET')
-  const sanityWebhookSecret = getRuntimeString(runtimeEnv, 'SANITY_WEBHOOK_SECRET')
+  const sanityWebhookSecret = getRuntimeString(
+    runtimeEnv,
+    'SANITY_WEBHOOK_SECRET'
+  )
 
   const rawBody = await request.text()
   const signature = request.headers.get(SIGNATURE_HEADER_NAME)
@@ -204,8 +207,7 @@ export const POST: APIRoute = async ({ request, url }) => {
   }
 
   const delayMs = Number(
-    getRuntimeString(runtimeEnv, 'SANITY_WEBHOOK_REVALIDATE_DELAY_MS') ??
-      '1200'
+    getRuntimeString(runtimeEnv, 'SANITY_WEBHOOK_REVALIDATE_DELAY_MS') ?? '1200'
   )
   if (
     authMethod === 'sanity-signature' &&

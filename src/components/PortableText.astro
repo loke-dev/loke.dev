@@ -1,9 +1,9 @@
 ---
 import { toHTML } from '@portabletext/to-html'
 import { createImageUrlBuilder } from '@sanity/image-url'
+import { renderArticleDiagram } from '@/lib/article-diagrams'
 import { client } from '@/lib/sanity/client'
 import { processBodyWithHighlighting } from '@/lib/sanity/process-body.server'
-import { renderArticleDiagram } from '@/lib/article-diagrams'
 import type { Post } from '@/lib/sanity/types'
 
 interface Props {
@@ -37,14 +37,16 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
       callout: ({ value }) => {
         const v = value as { text?: string; tone?: string }
         const tone = (v.tone ?? 'info').replace(/[^a-z0-9-]/g, '')
-        const toneClasses = {
-          info: 'border-accent/70 bg-accent/10 text-foreground',
-          warning: 'border-amber-400/80 bg-amber-400/10 text-foreground',
-          success: 'border-emerald-400/80 bg-emerald-400/10 text-foreground',
-        }[tone] ?? 'border-border bg-card text-foreground'
+        const toneClasses =
+          {
+            info: 'border-accent/70 bg-accent/10 text-foreground',
+            warning: 'border-amber-400/80 bg-amber-400/10 text-foreground',
+            success: 'border-emerald-400/80 bg-emerald-400/10 text-foreground',
+          }[tone] ?? 'border-border bg-card text-foreground'
         return `<aside class="callout callout-${escapeHtml(tone)} not-prose my-6 rounded-lg border-l-4 p-4 ${toneClasses}" role="note"><p class="m-0 leading-relaxed">${escapeHtml(v.text ?? '')}</p></aside>`
       },
-      diagram: ({ value }) => renderArticleDiagram(value as { kind?: unknown; caption?: unknown }),
+      diagram: ({ value }) =>
+        renderArticleDiagram(value as { kind?: unknown; caption?: unknown }),
       image: ({ value }) => {
         const v = value as Record<string, unknown>
         if (!v.asset) return ''

@@ -1,11 +1,11 @@
 ---
-export const prerender = false
-
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import BlogListSection from '@/components/BlogListSection.astro'
-import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
+import BlogListSection from '@/components/BlogListSection.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = false
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
 
@@ -28,7 +28,12 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_DOMAIN}/blog` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Blog',
+      item: `${SITE_DOMAIN}/blog`,
+    },
   ],
 }
 ---
@@ -38,7 +43,11 @@ const breadcrumbSchema = {
   description="In-depth articles, practical guides, and insights on modern web development. Topics include React, TypeScript, database optimization, AI integration, and building resilient web applications."
   url={`${SITE_DOMAIN}/blog/page/${currentPage}`}
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(breadcrumbSchema)}
+  />
 
   <BlogListSection
     page={page}

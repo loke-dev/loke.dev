@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions'
-import Header from '@/components/Header.astro'
 import Footer from '@/components/Footer.astro'
+import Header from '@/components/Header.astro'
 import Seo from '@/components/Seo.astro'
 import '@/styles/global.css'
 
@@ -35,7 +35,8 @@ const {
   loadTurnstile = false,
 } = Astro.props
 const canonicalUrl = url ?? Astro.url.href
-const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
+const turnstileSiteKey =
+  import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'
 ---
 
 <!doctype html>
@@ -59,46 +60,64 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY ?? '1x00000000000000
     <slot name="head" />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
-    <link rel="alternate" type="application/rss+xml" title="Loke.dev" href="/rss.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Loke.dev"
+      href="/rss.xml"
+    />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    {loadTurnstile && (
-      <script
-        is:inline
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        async
-        defer
-      ></script>
-    )}
-    <script is:inline type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'Person',
-          '@id': 'https://loke.dev/#person',
-          name: 'Loke',
-          url: 'https://loke.dev/about',
-          sameAs: ['https://github.com/loke-dev', 'https://twitter.com/loke_dev'],
-        },
-        {
-          '@type': 'WebSite',
-          '@id': 'https://loke.dev/#website',
-          url: 'https://loke.dev',
-          name: 'Loke.dev',
-          publisher: { '@id': 'https://loke.dev/#person' },
-        },
-      ],
-    })} />
+    {
+      loadTurnstile && (
+        <script
+          is:inline
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          async
+          defer
+        />
+      )
+    }
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'Person',
+            '@id': 'https://loke.dev/#person',
+            name: 'Loke',
+            url: 'https://loke.dev/about',
+            sameAs: [
+              'https://github.com/loke-dev',
+              'https://twitter.com/loke_dev',
+            ],
+          },
+          {
+            '@type': 'WebSite',
+            '@id': 'https://loke.dev/#website',
+            url: 'https://loke.dev',
+            name: 'Loke.dev',
+            publisher: { '@id': 'https://loke.dev/#person' },
+          },
+        ],
+      })}
+    />
     <ClientRouter />
   </head>
-  <body class="min-h-screen bg-background text-foreground">
+  <body class="bg-background text-foreground min-h-screen">
     <Header />
     <main>
       <slot />
     </main>
     <Footer />
-    {loadTurnstile && <div id="env-data" data-turnstile-key={turnstileSiteKey} hidden />}
+    {
+      loadTurnstile && (
+        <div id="env-data" data-turnstile-key={turnstileSiteKey} hidden />
+      )
+    }
   </body>
 </html>

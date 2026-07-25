@@ -1,8 +1,8 @@
 ---
-import BlogPostCard from '@/components/BlogPostCard.astro'
-import Pagination from '@/components/Pagination.astro'
-import PageIntro from '@/components/PageIntro.astro'
 import type { BlogPage, PostListItem } from '@/utils/sanity.queries'
+import BlogPostCard from '@/components/BlogPostCard.astro'
+import PageIntro from '@/components/PageIntro.astro'
+import Pagination from '@/components/Pagination.astro'
 
 interface Props {
   page: BlogPage
@@ -15,26 +15,32 @@ const { page, posts, currentPage, totalPages } = Astro.props
 ---
 
 <div class="container mx-auto max-w-5xl px-4 py-16 md:py-20">
-  <PageIntro eyebrow="Field notes" title={page.title} description={page.description} />
+  <PageIntro
+    eyebrow="Field notes"
+    title={page.title}
+    description={page.description}
+  />
 
-  {posts.length === 0 ? (
-    <div class="rounded-lg border p-8 text-center">
-      <h2 class="mb-2 text-xl font-semibold">
-        {page.emptyStateTitle ?? 'No posts yet'}
-      </h2>
-      <p class="text-muted-foreground">
-        {page.emptyStateDescription ?? 'Check back soon for new articles!'}
-      </p>
-    </div>
-  ) : (
-    <>
-      <div class="mt-10 grid gap-6 sm:grid-cols-2">
-        {posts.map((post) => (
-          <BlogPostCard post={post} />
-        ))}
+  {
+    posts.length === 0 ? (
+      <div class="rounded-lg border p-8 text-center">
+        <h2 class="mb-2 text-xl font-semibold">
+          {page.emptyStateTitle ?? 'No posts yet'}
+        </h2>
+        <p class="text-muted-foreground">
+          {page.emptyStateDescription ?? 'Check back soon for new articles!'}
+        </p>
       </div>
+    ) : (
+      <>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          {posts.map((post) => (
+            <BlogPostCard post={post} />
+          ))}
+        </div>
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
-    </>
-  )}
+        <Pagination currentPage={currentPage} totalPages={totalPages} />
+      </>
+    )
+  }
 </div>

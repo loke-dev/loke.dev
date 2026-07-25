@@ -1,5 +1,9 @@
 ---
-import type { PostReproduction, PostSource, VersionScope } from '@/lib/sanity/types'
+import type {
+  PostReproduction,
+  PostSource,
+  VersionScope,
+} from '@/lib/sanity/types'
 
 interface Props {
   sources?: PostSource[]
@@ -20,35 +24,87 @@ const hasTestScope = versions.length > 0
 const hasEvidence = sources.length > 0 || reproduction || hasTestScope
 ---
 
-{hasEvidence && (
-  <section class="not-prose mt-14 space-y-6" aria-label="Article evidence and sources">
-    {hasTestScope && (
-      <aside class="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-border bg-card px-4 py-3 text-sm" aria-label="Tested with">
-        <span class="font-medium text-foreground">Tested with</span>
-        <ul class="flex flex-wrap gap-2">
-          {versions.map((item) => (
-            <li class="rounded-md bg-secondary px-2 py-1 text-secondary-foreground">
-              <span>{item.technology}</span><span aria-hidden="true"> · </span><span>{item.version}</span>
-            </li>
-          ))}
-        </ul>
-        {versionScope?.testedAt && <span class="text-muted-foreground">Verified {versionScope.testedAt}</span>}
-      </aside>
-    )}
-    {reproduction?.repository && (
-      <div class="rounded-xl border border-accent/35 bg-accent/8 p-5">
-        <h2 class="text-lg font-semibold">Reproduce the example</h2>
-        <a class="mt-2 inline-block font-medium text-accent underline underline-offset-4" href={reproduction.repository} target="_blank" rel="noopener noreferrer">Open the repository</a>
-        {reproduction.ref ? <p class="mt-2 text-sm text-muted-foreground">Reference: <code>{reproduction.ref}</code></p> : null}
-        {reproduction.setupCommand ? <pre class="mt-3 overflow-x-auto rounded bg-background p-3 text-sm"><code>{reproduction.setupCommand}</code></pre> : null}
-        {reproduction.verificationCommand ? <pre class="mt-3 overflow-x-auto rounded bg-background p-3 text-sm"><code>{reproduction.verificationCommand}</code></pre> : null}
-      </div>
-    )}
-    {sources.length > 0 && (
-      <div class="rounded-xl border border-border bg-card p-5">
-        <h2 class="text-lg font-semibold">Sources and further reading</h2>
-        <ol class="mt-4 space-y-3">{sources.map((source) => <li><a href={source.url} target="_blank" rel="noopener noreferrer" class="font-medium underline decoration-accent/50 underline-offset-4 hover:text-accent">{source.title}</a>{source.publisher ? <span class="text-muted-foreground"> · {source.publisher}</span> : null}</li>)}</ol>
-      </div>
-    )}
-  </section>
-)}
+{
+  hasEvidence && (
+    <section
+      class="not-prose mt-14 space-y-6"
+      aria-label="Article evidence and sources"
+    >
+      {hasTestScope && (
+        <aside
+          class="border-border bg-card flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border px-4 py-3 text-sm"
+          aria-label="Tested with"
+        >
+          <span class="text-foreground font-medium">Tested with</span>
+          <ul class="flex flex-wrap gap-2">
+            {versions.map((item) => (
+              <li class="bg-secondary text-secondary-foreground rounded-md px-2 py-1">
+                <span>{item.technology}</span>
+                <span aria-hidden="true"> · </span>
+                <span>{item.version}</span>
+              </li>
+            ))}
+          </ul>
+          {versionScope?.testedAt && (
+            <span class="text-muted-foreground">
+              Verified {versionScope.testedAt}
+            </span>
+          )}
+        </aside>
+      )}
+      {reproduction?.repository && (
+        <div class="border-accent/35 bg-accent/8 rounded-xl border p-5">
+          <h2 class="text-lg font-semibold">Reproduce the example</h2>
+          <a
+            class="text-accent mt-2 inline-block font-medium underline underline-offset-4"
+            href={reproduction.repository}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open the repository
+          </a>
+          {reproduction.ref ? (
+            <p class="text-muted-foreground mt-2 text-sm">
+              Reference: <code>{reproduction.ref}</code>
+            </p>
+          ) : null}
+          {reproduction.setupCommand ? (
+            <pre class="bg-background mt-3 overflow-x-auto rounded p-3 text-sm">
+              <code>{reproduction.setupCommand}</code>
+            </pre>
+          ) : null}
+          {reproduction.verificationCommand ? (
+            <pre class="bg-background mt-3 overflow-x-auto rounded p-3 text-sm">
+              <code>{reproduction.verificationCommand}</code>
+            </pre>
+          ) : null}
+        </div>
+      )}
+      {sources.length > 0 && (
+        <div class="border-border bg-card rounded-xl border p-5">
+          <h2 class="text-lg font-semibold">Sources and further reading</h2>
+          <ol class="mt-4 space-y-3">
+            {sources.map((source) => (
+              <li>
+                <a
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="decoration-accent/50 hover:text-accent font-medium underline underline-offset-4"
+                >
+                  {source.title}
+                </a>
+                {source.publisher ? (
+                  <span class="text-muted-foreground">
+                    {' '}
+                    · {source.publisher}
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </section>
+  )
+}

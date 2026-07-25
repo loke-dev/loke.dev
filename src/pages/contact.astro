@@ -1,12 +1,12 @@
 ---
-export const prerender = true
-
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import ContactForm from '@/components/ContactForm'
-import PageIntro from '@/components/PageIntro.astro'
-import { getContactPage } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import { getContactPage } from '@/utils/sanity.queries'
+import ContactForm from '@/components/ContactForm'
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.contact)
 
@@ -19,7 +19,7 @@ const page = await getContactPage()
   url={`${SITE_DOMAIN}/contact`}
   loadTurnstile={true}
 >
-  <div class="max-w-2xl mx-auto px-4 py-16 md:py-20">
+  <div class="mx-auto max-w-2xl px-4 py-16 md:py-20">
     <PageIntro
       eyebrow="Start a conversation"
       title={page?.title ?? 'Contact'}
@@ -31,13 +31,19 @@ const page = await getContactPage()
       <ContactForm client:load />
     </div>
 
-    {page?.alternativeContactTitle && (
-      <div class="mt-12 border-t pt-8">
-        <h2 class="text-2xl font-bold mb-4">{page.alternativeContactTitle}</h2>
-        {page.alternativeContactDescription && (
-          <p class="text-muted-foreground">{page.alternativeContactDescription}</p>
-        )}
-      </div>
-    )}
+    {
+      page?.alternativeContactTitle && (
+        <div class="mt-12 border-t pt-8">
+          <h2 class="mb-4 text-2xl font-bold">
+            {page.alternativeContactTitle}
+          </h2>
+          {page.alternativeContactDescription && (
+            <p class="text-muted-foreground">
+              {page.alternativeContactDescription}
+            </p>
+          )}
+        </div>
+      )
+    }
   </div>
 </BaseLayout>

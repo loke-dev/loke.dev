@@ -1,20 +1,23 @@
 ---
-export const prerender = true
-
-import profileAvif256 from '@/assets/loke-clay-256.avif'
-import profileAvif512 from '@/assets/loke-clay-512.avif'
-import profilePng512 from '@/assets/loke-clay-512.png'
-import profileWebp256 from '@/assets/loke-clay-256.webp'
-import profileWebp512 from '@/assets/loke-clay-512.webp'
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import BlogPostCard from '@/components/BlogPostCard.astro'
-import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
+import BlogPostCard from '@/components/BlogPostCard.astro'
+import profileAvif256 from '@/assets/loke-clay-256.avif'
+import profileWebp256 from '@/assets/loke-clay-256.webp'
+import profileAvif512 from '@/assets/loke-clay-512.avif'
+import profilePng512 from '@/assets/loke-clay-512.png'
+import profileWebp512 from '@/assets/loke-clay-512.webp'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.home)
 
-const [allPosts, page] = await Promise.all([getAllPublishedPosts(), getHomePage()])
+const [allPosts, page] = await Promise.all([
+  getAllPublishedPosts(),
+  getHomePage(),
+])
 const latestPosts = allPosts.slice(0, 3)
 
 const heroTitleParts = page.heroTitle.split('.')
@@ -28,17 +31,20 @@ const focusAreas = [
   {
     number: '01',
     title: 'Make the first impression useful',
-    description: 'Clear positioning, strong content hierarchy, and interfaces that make the next step obvious.',
+    description:
+      'Clear positioning, strong content hierarchy, and interfaces that make the next step obvious.',
   },
   {
     number: '02',
     title: 'Build for the long middle',
-    description: 'A maintainable system for the months after launch: content, performance, and the team using it.',
+    description:
+      'A maintainable system for the months after launch: content, performance, and the team using it.',
   },
   {
     number: '03',
     title: 'Use AI where it removes real friction',
-    description: 'Practical workflows and product features with review, guardrails, and a reason to exist.',
+    description:
+      'Practical workflows and product features with review, guardrails, and a reason to exist.',
   },
 ]
 ---
@@ -59,64 +65,115 @@ const focusAreas = [
     fetchpriority="high"
   />
   <div class="flex flex-col items-center">
-    <section class="w-full max-w-6xl px-4 pb-20 pt-16 md:pb-28 md:pt-28">
-      <div class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1.1fr_0.9fr] md:gap-14">
+    <section class="w-full max-w-6xl px-4 pt-16 pb-20 md:pt-28 md:pb-28">
+      <div
+        class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1.1fr_0.9fr] md:gap-14"
+      >
         <div>
-          <p class="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-accent">Independent developer / websites, CMS and AI</p>
-          <h1 class="text-6xl md:text-8xl font-bold tracking-tight">
-            {hasAccentDot ? (
-              <>
-                {heroTitleParts[0]}<span class="text-accent">.</span>{heroTitleParts[1]}
-              </>
-            ) : (
-              page.heroTitle
-            )}
+          <p
+            class="text-accent mb-6 text-xs font-semibold tracking-[0.2em] uppercase"
+          >
+            Independent developer / websites, CMS and AI
+          </p>
+          <h1 class="text-6xl font-bold tracking-tight md:text-8xl">
+            {
+              hasAccentDot ? (
+                <>
+                  {heroTitleParts[0]}
+                  <span class="text-accent">.</span>
+                  {heroTitleParts[1]}
+                </>
+              ) : (
+                page.heroTitle
+              )
+            }
           </h1>
-          <p class="mt-6 max-w-xl text-xl leading-relaxed text-muted-foreground">
+          <p
+            class="text-muted-foreground mt-6 max-w-xl text-xl leading-relaxed"
+          >
             {page.heroDescription}
           </p>
-          <p class="mt-5 max-w-lg text-sm leading-relaxed text-muted-foreground">
-            I build the public bits people see, plus the boring systems that keep them working after launch.
+          <p
+            class="text-muted-foreground mt-5 max-w-lg text-sm leading-relaxed"
+          >
+            I build the public bits people see, plus the boring systems that
+            keep them working after launch.
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <a
               href="/services"
-              class="interactive-button inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-primary-foreground shadow-[0_12px_32px_-16px_oklch(72%_0.2_70/0.4)] transition-[transform,background-color,box-shadow] duration-200 hover:bg-primary/90"
+              class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium shadow-[0_12px_32px_-16px_oklch(72%_0.2_70/0.4)] transition-[transform,background-color,box-shadow] duration-200"
             >
               Explore services
             </a>
             <a
               href="/projects"
-              class="interactive-button inline-flex items-center justify-center rounded-md border border-accent/30 bg-background px-6 py-3 text-base font-medium transition-[transform,background-color,border-color,box-shadow] duration-200 hover:border-accent/55 hover:bg-secondary hover:shadow-[0_14px_36px_-20px_oklch(72%_0.16_70/0.35)]"
+              class="interactive-button border-accent/30 bg-background hover:border-accent/55 hover:bg-secondary inline-flex items-center justify-center rounded-md border px-6 py-3 text-base font-medium transition-[transform,background-color,border-color,box-shadow] duration-200 hover:shadow-[0_14px_36px_-20px_oklch(72%_0.16_70/0.35)]"
             >
               See selected work
             </a>
           </div>
         </div>
         <div class="relative">
-          <div class="hero-frame relative min-h-[26rem] overflow-hidden rounded-2xl border border-accent/25 bg-gradient-to-br from-card via-card to-accent/10 p-5 shadow-[0_28px_80px_-40px_oklch(72%_0.18_70/0.45)]">
-            <div class="absolute right-5 top-5 text-right text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <div
+            class="hero-frame border-accent/25 from-card via-card to-accent/10 relative min-h-[26rem] overflow-hidden rounded-2xl border bg-gradient-to-br p-5 shadow-[0_28px_80px_-40px_oklch(72%_0.18_70/0.45)]"
+          >
+            <div
+              class="text-muted-foreground absolute top-5 right-5 text-right text-[0.68rem] font-semibold tracking-[0.18em] uppercase"
+            >
               <p>Field note</p>
-              <p class="mt-1 text-accent">No. 001</p>
+              <p class="text-accent mt-1">No. 001</p>
             </div>
-            <aside class="hero-note absolute left-5 top-5 max-w-40 rotate-[-3deg] rounded-lg border border-accent/35 bg-background/90 p-3 shadow-lg">
-              <p class="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-accent">Working note</p>
-              <p class="mt-2 text-xs leading-relaxed text-foreground">Keep it clear. Keep it quick. Make it a bit more fun than expected.</p>
+            <aside
+              class="hero-note border-accent/35 bg-background/90 absolute top-5 left-5 max-w-40 rotate-[-3deg] rounded-lg border p-3 shadow-lg"
+            >
+              <p
+                class="text-accent text-[0.65rem] font-semibold tracking-[0.16em] uppercase"
+              >
+                Working note
+              </p>
+              <p class="text-foreground mt-2 text-xs leading-relaxed">
+                Keep it clear. Keep it quick. Make it a bit more fun than
+                expected.
+              </p>
             </aside>
-            <div class="absolute bottom-5 left-5 right-5 rounded-xl border border-border/80 bg-background/75 p-4 backdrop-blur">
+            <div
+              class="border-border/80 bg-background/75 absolute right-5 bottom-5 left-5 rounded-xl border p-4 backdrop-blur"
+            >
               <div class="flex items-center justify-between gap-4">
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Current focus</p>
-                  <p class="mt-2 text-sm font-medium">Fast sites, simple CMS setups, AI that helps.</p>
+                  <p
+                    class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+                  >
+                    Current focus
+                  </p>
+                  <p class="mt-2 text-sm font-medium">
+                    Fast sites, simple CMS setups, AI that helps.
+                  </p>
                 </div>
-                <span class="grid h-9 w-9 place-items-center rounded-full border border-accent/40 text-accent" aria-hidden="true">↗</span>
+                <span
+                  class="border-accent/40 text-accent grid h-9 w-9 place-items-center rounded-full border"
+                  aria-hidden="true">↗</span
+                >
               </div>
             </div>
-            <div class="absolute left-1/2 top-[45%] -translate-x-1/2 -translate-y-1/2">
-              <div class="relative h-48 w-48 overflow-hidden rounded-full border-4 border-accent/35 bg-muted shadow-[0_0_0_10px_oklch(72%_0.18_70/0.06)] sm:h-56 sm:w-56">
+            <div
+              class="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2"
+            >
+              <div
+                class="border-accent/35 bg-muted relative h-48 w-48 overflow-hidden rounded-full border-4 shadow-[0_0_0_10px_oklch(72%_0.18_70/0.06)] sm:h-56 sm:w-56"
+              >
                 <picture>
-                  <source type="image/avif" srcset={profileAvifSrcset} sizes={heroLcpSizes} />
-                  <source type="image/webp" srcset={profileWebpSrcset} sizes={heroLcpSizes} />
+                  <source
+                    type="image/avif"
+                    srcset={profileAvifSrcset}
+                    sizes={heroLcpSizes}
+                  />
+                  <source
+                    type="image/webp"
+                    srcset={profileWebpSrcset}
+                    sizes={heroLcpSizes}
+                  />
                   <img
                     src={profilePng512.src}
                     alt="Profile avatar"
@@ -130,27 +187,40 @@ const focusAreas = [
                 </picture>
               </div>
             </div>
-            <div class="absolute bottom-0 left-0 h-1 w-2/3 bg-accent"></div>
+            <div class="bg-accent absolute bottom-0 left-0 h-1 w-2/3"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="w-full border-y border-border/70 bg-muted/35 py-16 md:py-20">
+    <section
+      class="border-border/70 bg-muted/35 w-full border-y py-16 md:py-20"
+    >
       <div class="container mx-auto max-w-6xl px-4">
         <div class="grid gap-8 md:grid-cols-[0.75fr_1.25fr] md:items-end">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">A practical stack</p>
-            <h2 class="mt-3 text-3xl font-bold tracking-tight">Tools are only useful if they make the work easier.</h2>
+            <p
+              class="text-accent text-xs font-semibold tracking-[0.2em] uppercase"
+            >
+              A practical stack
+            </p>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight">
+              Tools are only useful if they make the work easier.
+            </h2>
           </div>
-          <p class="max-w-xl text-muted-foreground">The stuff I use for websites, content, and the parts behind the scenes.</p>
+          <p class="text-muted-foreground max-w-xl">
+            The stuff I use for websites, content, and the parts behind the
+            scenes.
+          </p>
         </div>
         <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
-          {page.technologies.map((tech) => (
-            <div class="surface-interactive flex h-20 items-center justify-center rounded-lg border border-border/70 bg-background/70 p-4 text-center shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:border-accent/35">
-              <span class="font-medium">{tech}</span>
-            </div>
-          ))}
+          {
+            page.technologies.map((tech) => (
+              <div class="surface-interactive border-border/70 bg-background/70 hover:border-accent/35 flex h-20 items-center justify-center rounded-lg border p-4 text-center shadow-sm transition-[transform,box-shadow,border-color] duration-200">
+                <span class="font-medium">{tech}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </section>
@@ -158,45 +228,70 @@ const focusAreas = [
     <section class="w-full max-w-6xl px-4 py-20 md:py-28">
       <div class="grid gap-10 md:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">What I can help with</p>
-          <h2 class="mt-3 text-3xl font-bold tracking-tight">Websites and tools that do not turn into a mess later.</h2>
-          <p class="mt-4 max-w-md leading-relaxed text-muted-foreground">A new website, a CMS that is getting messy, or an AI feature that needs to be useful. The point is fewer weird problems later.</p>
-          <a href="/services" class="mt-6 inline-flex text-sm font-semibold text-accent underline-offset-4 hover:underline">How I work →</a>
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.2em] uppercase"
+          >
+            What I can help with
+          </p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight">
+            Websites and tools that do not turn into a mess later.
+          </h2>
+          <p class="text-muted-foreground mt-4 max-w-md leading-relaxed">
+            A new website, a CMS that is getting messy, or an AI feature that
+            needs to be useful. The point is fewer weird problems later.
+          </p>
+          <a
+            href="/services"
+            class="text-accent mt-6 inline-flex text-sm font-semibold underline-offset-4 hover:underline"
+            >How I work →</a
+          >
         </div>
         <div class="grid gap-3 sm:grid-cols-3 md:pt-10">
-          {focusAreas.map((area) => (
-            <article class="rounded-xl border border-border/80 bg-card p-5 sm:even:translate-y-8">
-              <p class="text-xs font-semibold tracking-[0.2em] text-accent">{area.number}</p>
-              <h3 class="mt-10 text-lg font-bold leading-snug">{area.title}</h3>
-              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{area.description}</p>
-            </article>
-          ))}
+          {
+            focusAreas.map((area) => (
+              <article class="border-border/80 bg-card rounded-xl border p-5 sm:even:translate-y-8">
+                <p class="text-accent text-xs font-semibold tracking-[0.2em]">
+                  {area.number}
+                </p>
+                <h3 class="mt-10 text-lg leading-snug font-bold">
+                  {area.title}
+                </h3>
+                <p class="text-muted-foreground mt-3 text-sm leading-relaxed">
+                  {area.description}
+                </p>
+              </article>
+            ))
+          }
         </div>
       </div>
     </section>
 
     <section class="w-full max-w-6xl px-4 py-20" id="blog">
-      <div class="mb-12 border-b border-border/70 pb-8">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Field notes</p>
+      <div class="border-border/70 mb-12 border-b pb-8">
+        <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
+          Field notes
+        </p>
         <h2 class="mt-3 text-3xl font-bold tracking-tight">
           {page.blogSectionTitle}
         </h2>
-        <p class="mt-3 max-w-2xl text-muted-foreground">
+        <p class="text-muted-foreground mt-3 max-w-2xl">
           {page.blogSectionDescription}
         </p>
       </div>
 
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {latestPosts.map((post) => (
-          <BlogPostCard post={post} imageWidth={500} imageHeight={281} />
-        ))}
+        {
+          latestPosts.map((post) => (
+            <BlogPostCard post={post} imageWidth={500} imageHeight={281} />
+          ))
+        }
       </div>
 
       <div class="mt-12">
         <a
           href="/blog"
           aria-label="View All Articles"
-          class="interactive-button inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-primary-foreground shadow-[0_12px_32px_-16px_oklch(72%_0.2_70/0.4)] transition-[transform,background-color,box-shadow] duration-200 hover:bg-primary/90"
+          class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium shadow-[0_12px_32px_-16px_oklch(72%_0.2_70/0.4)] transition-[transform,background-color,box-shadow] duration-200"
         >
           View All Articles
           <svg
@@ -211,22 +306,32 @@ const focusAreas = [
             aria-hidden="true"
             class="ml-2"
           >
-            <path d="M5 12h14M12 5l7 7-7 7"/>
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
           </svg>
         </a>
       </div>
     </section>
 
     <section class="w-full px-4 pb-20 md:pb-28">
-      <div class="mx-auto max-w-6xl rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-card to-card px-6 py-10 md:flex md:items-end md:justify-between md:px-10">
+      <div
+        class="border-accent/25 from-accent/15 via-card to-card mx-auto max-w-6xl rounded-2xl border bg-gradient-to-br px-6 py-10 md:flex md:items-end md:justify-between md:px-10"
+      >
         <div class="max-w-2xl">
-          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">A useful next step</p>
-          <h2 class="mt-3 text-3xl font-bold tracking-tight">{page.ctaTitle}</h2>
-          <p class="mt-4 leading-relaxed text-muted-foreground">{page.ctaDescription}</p>
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.2em] uppercase"
+          >
+            A useful next step
+          </p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight">
+            {page.ctaTitle}
+          </h2>
+          <p class="text-muted-foreground mt-4 leading-relaxed">
+            {page.ctaDescription}
+          </p>
         </div>
         <a
           href="/contact"
-          class="interactive-button mt-7 inline-flex items-center justify-center rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-[transform,background-color,box-shadow] duration-200 hover:bg-primary/90 md:mt-0"
+          class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-7 inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-medium transition-[transform,background-color,box-shadow] duration-200 md:mt-0"
         >
           {page.ctaButtonText}
         </a>

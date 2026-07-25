@@ -1,15 +1,11 @@
 ---
-export const prerender = true
-
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/PageIntro.astro'
-import {
-  getPartnerHref,
-  partners,
-  type PartnerCategory,
-} from '@/data/partners'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import PageIntro from '@/components/PageIntro.astro'
+import { getPartnerHref, partners, type PartnerCategory } from '@/data/partners'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
@@ -33,167 +29,206 @@ const categories: PartnerCategory[] = [
       description="This is a maintained shortlist, not a giant software directory. Products are included when I use them on loke.dev or when there is a specific developer workflow worth evaluating."
     />
 
-    <aside class="mt-10 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+    <aside
+      class="border-accent/25 bg-accent/10 text-muted-foreground mt-10 max-w-3xl rounded-xl border p-5 text-sm leading-relaxed"
+    >
       <strong class="text-foreground">How links work:</strong>
-      outbound clicks are counted without storing a personal profile or placing an analytics cookie.
-      A paid affiliate link will be labelled beside the link. There are no paid placements on this page.
-      Read the <a class="font-medium text-foreground underline hover:text-accent" href="/affiliate-disclosure">affiliate and editorial disclosure</a>.
+      outbound clicks are counted without storing a personal profile or placing an
+      analytics cookie. A paid affiliate link will be labelled beside the link. There
+      are no paid placements on this page. Read the <a
+        class="text-foreground hover:text-accent font-medium underline"
+        href="/affiliate-disclosure">affiliate and editorial disclosure</a
+      >.
     </aside>
 
     <section class="mt-14" aria-labelledby="free-calculators">
-      <div class="flex items-end justify-between gap-6 border-b border-border/70 pb-4">
+      <div
+        class="border-border/70 flex items-end justify-between gap-6 border-b pb-4"
+      >
         <h2 id="free-calculators" class="text-2xl font-bold tracking-tight">
           Free calculators
         </h2>
-        <p class="text-sm text-muted-foreground">Independent tools</p>
+        <p class="text-muted-foreground text-sm">Independent tools</p>
       </div>
       <div class="mt-5 grid gap-5 md:grid-cols-2">
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             Automation
           </p>
           <h3 class="mt-2 text-xl font-bold">
             n8n execution and hosting cost calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-3 leading-relaxed">
             Estimate monthly workflow executions, match them to current Cloud
             plan references with capacity headroom, and compare that price with
             a self-hosted total that includes maintenance time.
           </p>
           <a
             href="/tools/n8n-hosting-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             AI app builders
           </p>
           <h3 class="mt-2 text-xl font-bold">
             AI app production readiness checklist
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-3 leading-relaxed">
             Check code ownership, authorization, secrets, tests, monitoring,
             backups, and rollback before an AI-built app carries real users or
             customer data.
           </p>
           <a
             href="/tools/ai-app-production-readiness-checklist"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open scorecard →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             Cloud hosting
           </p>
           <h3 class="mt-2 text-xl font-bold">
             DigitalOcean Droplet vs App Platform cost calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-3 leading-relaxed">
             Compare compute, backups, storage, bandwidth, shared services, and
             engineering time instead of choosing from the server price alone.
           </p>
           <a
             href="/tools/digitalocean-droplet-vs-app-platform-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             Developer tooling
           </p>
           <h3 class="mt-2 text-xl font-bold">
             Git tool subscription break-even calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-3 leading-relaxed">
             Test whether a paid Git tool can recover its seat cost using your
             observed conflict work, other Git time, team size, and hourly value.
           </p>
           <a
             href="/tools/git-tool-subscription-break-even-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             Credential security
           </p>
           <h3 class="mt-2 text-xl font-bold">
             1Password Teams vs Business calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
-            Compare editable plan prices, member and guest limits,
-            Business-only requirements, and the first-year time needed to roll
-            out a shared password manager.
+          <p class="text-muted-foreground mt-3 leading-relaxed">
+            Compare editable plan prices, member and guest limits, Business-only
+            requirements, and the first-year time needed to roll out a shared
+            password manager.
           </p>
           <a
             href="/tools/1password-teams-vs-business-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             Managed WordPress
           </p>
           <h3 class="mt-2 text-xl font-bold">
             Kinsta WordPress total cost calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-3 leading-relaxed">
             Compare monthly and annual plan references, common add-ons, VAT,
             migration work, and ongoing administration with an editable
             self-managed alternative.
           </p>
           <a
             href="/tools/kinsta-wordpress-total-cost-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             Edge compute
           </p>
           <h3 class="mt-2 text-xl font-bold">
             Cloudflare Workers Free vs Paid calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
-            Separate free static asset traffic from Worker invocations, test
-            the Free plan’s daily and CPU limits, and estimate Standard request
-            and CPU charges.
+          <p class="text-muted-foreground mt-3 leading-relaxed">
+            Separate free static asset traffic from Worker invocations, test the
+            Free plan’s daily and CPU limits, and estimate Standard request and
+            CPU charges.
           </p>
           <a
             href="/tools/cloudflare-workers-cost-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
         </article>
-        <article class="surface-interactive rounded-xl border border-accent/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <article
+          class="surface-interactive border-accent/30 rounded-xl border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 md:p-8"
+        >
+          <p
+            class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+          >
             AI coding
           </p>
           <h3 class="mt-2 text-xl font-bold">
             Kilo Pass vs pay-as-you-go and BYOK calculator
           </h3>
-          <p class="mt-3 leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-3 leading-relaxed">
             Compare monthly AI model usage with Kilo Pass base and bonus
             credits, top-ups, expiring bonus value, direct credits, and an
             editable BYOK alternative.
           </p>
           <a
             href="/tools/kilo-pass-vs-byok-calculator"
-            class="interactive-button mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Open calculator →
           </a>
@@ -202,64 +237,72 @@ const categories: PartnerCategory[] = [
     </section>
 
     <div class="mt-14 space-y-16">
-      {categories.map((category) => {
-        const categoryPartners = partners.filter(
-          (partner) => partner.category === category
-        )
-        if (categoryPartners.length === 0) return null
+      {
+        categories.map((category) => {
+          const categoryPartners = partners.filter(
+            (partner) => partner.category === category
+          )
+          if (categoryPartners.length === 0) return null
 
-        return (
-          <section aria-labelledby={`category-${category.toLowerCase().replaceAll(' ', '-')}`}>
-            <div class="flex items-end justify-between gap-6 border-b border-border/70 pb-4">
-              <h2
-                id={`category-${category.toLowerCase().replaceAll(' ', '-')}`}
-                class="text-2xl font-bold tracking-tight"
-              >
-                {category}
-              </h2>
-              <p class="text-sm text-muted-foreground">
-                {categoryPartners.length} {categoryPartners.length === 1 ? 'tool' : 'tools'}
-              </p>
-            </div>
-            <div class="mt-5 grid gap-5 md:grid-cols-2">
-              {categoryPartners.map((partner) => (
-                <article class="surface-interactive flex h-full flex-col rounded-xl border border-border/80 bg-card p-6 transition-[transform,border-color,box-shadow] hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
-                  <div class="flex items-start justify-between gap-4">
-                    <h3 class="text-xl font-bold">{partner.name}</h3>
-                    <span class="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
-                      {partner.relationship === 'used-on-loke-dev'
-                        ? 'Used here'
-                        : partner.relationship === 'used-personally'
-                          ? 'Personally used'
-                          : 'Evaluating'}
-                    </span>
-                  </div>
-                  <p class="mt-4 leading-relaxed text-muted-foreground">
-                    {partner.summary}
-                  </p>
-                  <p class="mt-4 text-sm leading-relaxed text-muted-foreground">
-                    <strong class="text-foreground">Good fit:</strong> {partner.fit}
-                  </p>
-                  <div class="mt-auto flex flex-wrap items-center gap-3 pt-6">
-                    <a
-                      href={getPartnerHref(partner, 'tools')}
-                      rel={partner.affiliate ? 'sponsored noopener' : 'noopener'}
-                      class="interactive-button inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                    >
-                      Visit {partner.name} →
-                    </a>
-                    {partner.affiliate && (
-                      <span class="text-xs font-medium text-accent">
-                        Affiliate link
+          return (
+            <section
+              aria-labelledby={`category-${category.toLowerCase().replaceAll(' ', '-')}`}
+            >
+              <div class="border-border/70 flex items-end justify-between gap-6 border-b pb-4">
+                <h2
+                  id={`category-${category.toLowerCase().replaceAll(' ', '-')}`}
+                  class="text-2xl font-bold tracking-tight"
+                >
+                  {category}
+                </h2>
+                <p class="text-muted-foreground text-sm">
+                  {categoryPartners.length}{' '}
+                  {categoryPartners.length === 1 ? 'tool' : 'tools'}
+                </p>
+              </div>
+              <div class="mt-5 grid gap-5 md:grid-cols-2">
+                {categoryPartners.map((partner) => (
+                  <article class="surface-interactive border-border/80 bg-card hover:border-accent/40 flex h-full flex-col rounded-xl border p-6 transition-[transform,border-color,box-shadow] hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
+                    <div class="flex items-start justify-between gap-4">
+                      <h3 class="text-xl font-bold">{partner.name}</h3>
+                      <span class="bg-secondary text-secondary-foreground rounded-full px-2.5 py-1 text-xs">
+                        {partner.relationship === 'used-on-loke-dev'
+                          ? 'Used here'
+                          : partner.relationship === 'used-personally'
+                            ? 'Personally used'
+                            : 'Evaluating'}
                       </span>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        )
-      })}
+                    </div>
+                    <p class="text-muted-foreground mt-4 leading-relaxed">
+                      {partner.summary}
+                    </p>
+                    <p class="text-muted-foreground mt-4 text-sm leading-relaxed">
+                      <strong class="text-foreground">Good fit:</strong>{' '}
+                      {partner.fit}
+                    </p>
+                    <div class="mt-auto flex flex-wrap items-center gap-3 pt-6">
+                      <a
+                        href={getPartnerHref(partner, 'tools')}
+                        rel={
+                          partner.affiliate ? 'sponsored noopener' : 'noopener'
+                        }
+                        class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
+                      >
+                        Visit {partner.name} →
+                      </a>
+                      {partner.affiliate && (
+                        <span class="text-accent text-xs font-medium">
+                          Affiliate link
+                        </span>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )
+        })
+      }
     </div>
   </div>
 </BaseLayout>

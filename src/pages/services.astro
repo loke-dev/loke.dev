@@ -1,10 +1,10 @@
 ---
-export const prerender = true
-
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/PageIntro.astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
@@ -14,35 +14,60 @@ const services = [
     title: 'Websites that have a job',
     description:
       'Landing pages, company sites, online stores, and CMS-driven sites that explain the thing and make it easy to act.',
-    outcomes: ['Content and page structure', 'Responsive, accessible UI', 'Good speed and search basics'],
+    outcomes: [
+      'Content and page structure',
+      'Responsive, accessible UI',
+      'Good speed and search basics',
+    ],
   },
   {
     number: '02',
     title: 'Web apps and full-stack products',
     description:
       'Dashboards, member areas, booking flows, SaaS products, and the backend bits that make them work.',
-    outcomes: ['Frontend and backend work', 'APIs, databases, and integrations', 'A sensible first version to build on'],
+    outcomes: [
+      'Frontend and backend work',
+      'APIs, databases, and integrations',
+      'A sensible first version to build on',
+    ],
   },
   {
     number: '03',
     title: 'AI that helps with actual work',
     description:
       'AI features, internal tools, and automations for a real task. Not an AI button added just because it is trendy.',
-    outcomes: ['Quick prototypes to test an idea', 'Useful workflows and automations', 'Human checks where they matter'],
+    outcomes: [
+      'Quick prototypes to test an idea',
+      'Useful workflows and automations',
+      'Human checks where they matter',
+    ],
   },
   {
     number: '04',
     title: 'Smaller apps and odd ideas',
     description:
       'Mobile apps, desktop apps, Chrome extensions, internal tools, and the random useful thing that does not fit in a normal website.',
-    outcomes: ['Browser extensions and integrations', 'Mobile or desktop app work', 'Small tools that save people time'],
+    outcomes: [
+      'Browser extensions and integrations',
+      'Mobile or desktop app work',
+      'Small tools that save people time',
+    ],
   },
 ]
 
 const process = [
-  ['Talk first', 'We look at the problem, who it is for, and what would make it worth doing.'],
-  ['Make a plan', 'We pick the smallest useful version, then sort out screens, content, and the technical bits.'],
-  ['Build it', 'I ship in small pieces so you can see it, test it, and change direction before it gets expensive.'],
+  [
+    'Talk first',
+    'We look at the problem, who it is for, and what would make it worth doing.',
+  ],
+  [
+    'Make a plan',
+    'We pick the smallest useful version, then sort out screens, content, and the technical bits.',
+  ],
+  [
+    'Build it',
+    'I ship in small pieces so you can see it, test it, and change direction before it gets expensive.',
+  ],
 ]
 
 const serviceSchema = {
@@ -50,9 +75,18 @@ const serviceSchema = {
   '@type': 'ProfessionalService',
   name: 'Loke.dev',
   url: `${SITE_DOMAIN}/services`,
-  description: 'Web development, web apps, ecommerce, software products, and practical AI work.',
+  description:
+    'Web development, web apps, ecommerce, software products, and practical AI work.',
   provider: { '@type': 'Person', name: 'Loke', url: `${SITE_DOMAIN}/about` },
-  serviceType: ['Web development', 'Ecommerce development', 'Web application development', 'Mobile app development', 'Desktop app development', 'AI implementation', 'Chrome extension development'],
+  serviceType: [
+    'Web development',
+    'Ecommerce development',
+    'Web application development',
+    'Mobile app development',
+    'Desktop app development',
+    'AI implementation',
+    'Chrome extension development',
+  ],
 }
 ---
 
@@ -61,7 +95,11 @@ const serviceSchema = {
   description="Web development, web apps, ecommerce, mobile and desktop apps, Chrome extensions, and practical AI work from Loke.dev."
   url={`${SITE_DOMAIN}/services`}
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(serviceSchema)}
+  />
 
   <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
     <PageIntro
@@ -71,40 +109,71 @@ const serviceSchema = {
     />
 
     <section class="mt-12 grid gap-5 md:grid-cols-2" aria-label="Services">
-      {services.map((service) => (
-        <article class="surface-interactive rounded-xl border border-border/80 bg-card p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
-          <p class="text-xs font-semibold tracking-[0.2em] text-accent">{service.number}</p>
-          <h2 class="mt-5 text-2xl font-bold tracking-tight">{service.title}</h2>
-          <p class="mt-4 leading-relaxed text-muted-foreground">{service.description}</p>
-          <ul class="mt-6 space-y-3 border-t border-border/70 pt-5 text-sm text-muted-foreground">
-            {service.outcomes.map((outcome) => (
-              <li class="flex gap-3"><span class="text-accent" aria-hidden="true">→</span>{outcome}</li>
-            ))}
-          </ul>
-        </article>
-      ))}
-    </section>
-
-    <section class="mt-20 border-t border-border/70 pt-10 md:pt-12">
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">How I work</p>
-      <div class="mt-5 grid gap-8 md:grid-cols-3">
-        {process.map(([title, description], index) => (
-          <article>
-            <p class="text-sm font-medium text-accent">0{index + 1}</p>
-            <h2 class="mt-3 text-xl font-bold">{title}</h2>
-            <p class="mt-3 leading-relaxed text-muted-foreground">{description}</p>
+      {
+        services.map((service) => (
+          <article class="surface-interactive border-border/80 bg-card hover:border-accent/40 rounded-xl border p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
+            <p class="text-accent text-xs font-semibold tracking-[0.2em]">
+              {service.number}
+            </p>
+            <h2 class="mt-5 text-2xl font-bold tracking-tight">
+              {service.title}
+            </h2>
+            <p class="text-muted-foreground mt-4 leading-relaxed">
+              {service.description}
+            </p>
+            <ul class="border-border/70 text-muted-foreground mt-6 space-y-3 border-t pt-5 text-sm">
+              {service.outcomes.map((outcome) => (
+                <li class="flex gap-3">
+                  <span class="text-accent" aria-hidden="true">
+                    →
+                  </span>
+                  {outcome}
+                </li>
+              ))}
+            </ul>
           </article>
-        ))}
+        ))
+      }
+    </section>
+
+    <section class="border-border/70 mt-20 border-t pt-10 md:pt-12">
+      <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
+        How I work
+      </p>
+      <div class="mt-5 grid gap-8 md:grid-cols-3">
+        {
+          process.map(([title, description], index) => (
+            <article>
+              <p class="text-accent text-sm font-medium">0{index + 1}</p>
+              <h2 class="mt-3 text-xl font-bold">{title}</h2>
+              <p class="text-muted-foreground mt-3 leading-relaxed">
+                {description}
+              </p>
+            </article>
+          ))
+        }
       </div>
     </section>
 
-    <section class="mt-20 rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-card to-card px-6 py-10 md:flex md:items-end md:justify-between md:px-10">
+    <section
+      class="border-accent/25 from-accent/15 via-card to-card mt-20 rounded-2xl border bg-gradient-to-br px-6 py-10 md:flex md:items-end md:justify-between md:px-10"
+    >
       <div class="max-w-2xl">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">A good first conversation</p>
-        <h2 class="mt-3 text-3xl font-bold tracking-tight">Got something you want to make?</h2>
-        <p class="mt-4 leading-relaxed text-muted-foreground">Send a short note about the idea, what you have today, and where you are stuck. That is enough to start.</p>
+        <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
+          A good first conversation
+        </p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight">
+          Got something you want to make?
+        </h2>
+        <p class="text-muted-foreground mt-4 leading-relaxed">
+          Send a short note about the idea, what you have today, and where you
+          are stuck. That is enough to start.
+        </p>
       </div>
-      <a href="/contact" class="interactive-button mt-7 inline-flex items-center justify-center rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:mt-0">
+      <a
+        href="/contact"
+        class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-7 inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-medium transition-colors md:mt-0"
+      >
         Start a conversation →
       </a>
     </section>

@@ -2,7 +2,10 @@ const DEFAULT_DEPLOY_EVENT = 'sanity-content-update'
 
 export type RuntimeEnvironment = Record<string, unknown>
 
-function env(name: string, runtimeEnv?: RuntimeEnvironment): string | undefined {
+function env(
+  name: string,
+  runtimeEnv?: RuntimeEnvironment
+): string | undefined {
   const fromRuntime = runtimeEnv?.[name]
   if (typeof fromRuntime === 'string' && fromRuntime.trim()) {
     return fromRuntime.trim()

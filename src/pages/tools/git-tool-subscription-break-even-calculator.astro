@@ -1,10 +1,10 @@
 ---
-export const prerender = true
-
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/PageIntro.astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
@@ -46,11 +46,13 @@ const calculatorSchema = {
       description="Turn conflict work and routine Git tasks into a transparent monthly estimate. Use your own observed time, not a vendor productivity claim."
     />
 
-    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+    <aside
+      class="border-accent/25 bg-accent/10 text-muted-foreground mt-8 max-w-3xl rounded-xl border p-5 text-sm leading-relaxed"
+    >
       <strong class="text-foreground">How to use this:</strong>
-      enter the current price shown in your quote or checkout. The starting
-      values are only an example and are not GitKraken performance claims. This
-      independent calculator stores no input.
+      enter the current price shown in your quote or checkout. The starting values
+      are only an example and are not GitKraken performance claims. This independent
+      calculator stores no input.
     </aside>
 
     <form
@@ -58,13 +60,15 @@ const calculatorSchema = {
       class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]"
     >
       <div class="space-y-8">
-        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+        <fieldset
+          class="border-border/80 bg-card rounded-2xl border p-6 md:p-8"
+        >
           <legend class="px-2 text-xl font-bold">Subscription</legend>
           <div class="mt-4 grid gap-5 sm:grid-cols-2">
             <label class="grid gap-2 text-sm font-medium">
               Paid seats
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="seats"
                 min="1"
@@ -76,7 +80,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Monthly price per seat, USD
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="seatPrice"
                 min="0"
@@ -88,9 +92,11 @@ const calculatorSchema = {
           </div>
         </fieldset>
 
-        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+        <fieldset
+          class="border-border/80 bg-card rounded-2xl border p-6 md:p-8"
+        >
           <legend class="px-2 text-xl font-bold">Measured monthly work</legend>
-          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-1 text-sm leading-relaxed">
             Start with a month of observations. Lower the saving percentages if
             your evidence is uncertain.
           </p>
@@ -98,7 +104,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Conflicts handled by each seat
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="conflicts"
                 min="0"
@@ -110,7 +116,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Minutes per conflict today
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="conflictMinutes"
                 min="0"
@@ -122,7 +128,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Estimated conflict time saved, %
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="conflictSaving"
                 min="0"
@@ -135,7 +141,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Other Git hours per seat
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="otherHours"
                 min="0"
@@ -147,7 +153,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Estimated other Git time saved, %
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="otherSaving"
                 min="0"
@@ -160,7 +166,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Value of developer time, USD/hour
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="hourly"
                 min="0"
@@ -174,11 +180,13 @@ const calculatorSchema = {
       </div>
 
       <section
-        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        class="border-accent/30 rounded-2xl border bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
         aria-live="polite"
         aria-labelledby="result-title"
       >
-        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <p
+          class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+        >
           Estimate
         </p>
         <h2 id="result-title" class="mt-2 text-2xl font-bold">
@@ -186,33 +194,43 @@ const calculatorSchema = {
         </h2>
 
         <dl class="mt-7 space-y-5">
-          <div class="border-b border-border/70 pb-5">
-            <dt class="text-sm text-muted-foreground">Subscription cost</dt>
-            <dd id="subscription-result" class="mt-1 text-3xl font-bold tabular-nums">
+          <div class="border-border/70 border-b pb-5">
+            <dt class="text-muted-foreground text-sm">Subscription cost</dt>
+            <dd
+              id="subscription-result"
+              class="mt-1 text-3xl font-bold tabular-nums"
+            >
               $10.00
             </dd>
           </div>
-          <div class="border-b border-border/70 pb-5">
-            <dt class="text-sm text-muted-foreground">Estimated time returned</dt>
+          <div class="border-border/70 border-b pb-5">
+            <dt class="text-muted-foreground text-sm">
+              Estimated time returned
+            </dt>
             <dd id="hours-result" class="mt-1 text-3xl font-bold tabular-nums">
               1.25 hours
             </dd>
-            <dd id="value-result" class="mt-1 text-sm text-muted-foreground">
+            <dd id="value-result" class="text-muted-foreground mt-1 text-sm">
               Worth $62.50 at the entered hourly value.
             </dd>
           </div>
           <div>
-            <dt class="text-sm text-muted-foreground">Net monthly value</dt>
+            <dt class="text-muted-foreground text-sm">Net monthly value</dt>
             <dd id="net-result" class="mt-1 text-3xl font-bold tabular-nums">
               $52.50
             </dd>
-            <dd id="break-even-result" class="mt-1 text-sm text-muted-foreground">
+            <dd
+              id="break-even-result"
+              class="text-muted-foreground mt-1 text-sm"
+            >
               Each seat needs to save 12 minutes per month to cover its price.
             </dd>
           </div>
         </dl>
 
-        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+        <div
+          class="border-border/80 bg-background/50 mt-7 rounded-xl border p-4"
+        >
           <p id="comparison-result" class="text-sm leading-relaxed">
             The entered time saving is worth more than the subscription. Test
             the assumption during a trial before paying for a full team.
@@ -221,34 +239,39 @@ const calculatorSchema = {
 
         <div class="mt-7 flex flex-col gap-3">
           <a
-            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex justify-center rounded-md px-4 py-3 text-sm font-medium"
             href="/go/gitkraken?from=git-tool-break-even-calculator"
           >
             Evaluate GitKraken →
           </a>
         </div>
-        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+        <p class="text-muted-foreground mt-4 text-xs leading-relaxed">
           The GitKraken link is currently a direct tracked link and earns no
-          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+          commission. See the <a
+            class="hover:text-foreground underline"
+            href="/affiliate-disclosure">disclosure</a
+          >.
         </p>
       </section>
     </form>
 
     <section class="mt-16 max-w-3xl space-y-5">
-      <h2 class="text-2xl font-bold">Run a small trial before trusting the result</h2>
-      <p class="leading-relaxed text-muted-foreground">
+      <h2 class="text-2xl font-bold">
+        Run a small trial before trusting the result
+      </h2>
+      <p class="text-muted-foreground leading-relaxed">
         Record conflict time, context switching, branch cleanup, repository
         navigation, review preparation, and worktree setup for two weeks. Try
         the paid tool with one or two developers, then enter the measured
         difference here. Do not multiply a hopeful percentage across a whole
         team.
       </p>
-      <p class="leading-relaxed text-muted-foreground">
+      <p class="text-muted-foreground leading-relaxed">
         A tool can still be the wrong choice when it saves time. Check private
         repository access, supported Git providers, seat limits, team controls,
         SSO, AI data handling, offline needs, and procurement rules. For a
-        Swedish business, compare the real SEK invoice after exchange rates,
-        VAT treatment, and card fees.
+        Swedish business, compare the real SEK invoice after exchange rates, VAT
+        treatment, and card fees.
       </p>
     </section>
   </div>
@@ -274,8 +297,7 @@ const calculatorSchema = {
       if (!(input instanceof HTMLInputElement)) return minimum
       return Math.max(minimum, Number(input.value) || 0)
     }
-    const getPercentage = (name: string) =>
-      Math.min(100, getValue(name)) / 100
+    const getPercentage = (name: string) => Math.min(100, getValue(name)) / 100
     const setText = (id: string, value: string) => {
       const element = document.querySelector<HTMLElement>(`#${id}`)
       if (element) element.textContent = value

@@ -1,10 +1,10 @@
 ---
-export const prerender = true
-
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/PageIntro.astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
@@ -46,11 +46,18 @@ const calculatorSchema = {
       description="Estimate complete workflow executions, add capacity headroom, find the closest current Cloud plan reference, and include your time in the cost of self-hosting."
     />
 
-    <aside class="mt-8 max-w-3xl rounded-xl border border-accent/25 bg-accent/10 p-5 text-sm leading-relaxed text-muted-foreground">
+    <aside
+      class="border-accent/25 bg-accent/10 text-muted-foreground mt-8 max-w-3xl rounded-xl border p-5 text-sm leading-relaxed"
+    >
       <strong class="text-foreground">Pricing reference:</strong>
       n8n listed Starter at €20 per month for 2,500 executions and Pro at €50 per
       month for 10,000 executions when billed annually on 24 July 2026. Verify
-      <a class="font-medium text-foreground underline hover:text-accent" href="https://n8n.io/pricing/" target="_blank" rel="noopener">current pricing</a>
+      <a
+        class="text-foreground hover:text-accent font-medium underline"
+        href="https://n8n.io/pricing/"
+        target="_blank"
+        rel="noopener">current pricing</a
+      >
       before buying. This calculator is independent and stores no input.
     </aside>
 
@@ -59,9 +66,11 @@ const calculatorSchema = {
       class="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]"
     >
       <div class="space-y-8">
-        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+        <fieldset
+          class="border-border/80 bg-card rounded-2xl border p-6 md:p-8"
+        >
           <legend class="px-2 text-xl font-bold">Monthly executions</legend>
-          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-1 text-sm leading-relaxed">
             n8n counts one complete workflow run as one execution, regardless of
             how many steps are inside it.
           </p>
@@ -69,7 +78,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Scheduled runs per day
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="scheduled"
                 min="0"
@@ -81,7 +90,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Webhook runs per day
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="webhooks"
                 min="0"
@@ -93,7 +102,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Chat messages per day
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="chat"
                 min="0"
@@ -105,7 +114,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Other runs per month
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="other"
                 min="0"
@@ -117,7 +126,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Planning headroom, %
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="headroom"
                 min="0"
@@ -130,9 +139,11 @@ const calculatorSchema = {
           </div>
         </fieldset>
 
-        <fieldset class="rounded-2xl border border-border/80 bg-card p-6 md:p-8">
+        <fieldset
+          class="border-border/80 bg-card rounded-2xl border p-6 md:p-8"
+        >
           <legend class="px-2 text-xl font-bold">Self-hosting cost</legend>
-          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          <p class="text-muted-foreground mt-1 text-sm leading-relaxed">
             Include the resources around the container. A server invoice alone
             is not a production cost.
           </p>
@@ -140,7 +151,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Server and database, €/month
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="infrastructure"
                 min="0"
@@ -152,7 +163,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Backups and monitoring, €/month
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="operations"
                 min="0"
@@ -164,7 +175,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Maintenance hours per month
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="hours"
                 min="0"
@@ -176,7 +187,7 @@ const calculatorSchema = {
             <label class="grid gap-2 text-sm font-medium">
               Value of your time, €/hour
               <input
-                class="rounded-lg border border-input bg-background px-3 py-2.5 text-base"
+                class="border-input bg-background rounded-lg border px-3 py-2.5 text-base"
                 type="number"
                 name="hourly"
                 min="0"
@@ -190,11 +201,13 @@ const calculatorSchema = {
       </div>
 
       <section
-        class="rounded-2xl border border-accent/30 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
+        class="border-accent/30 rounded-2xl border bg-[linear-gradient(145deg,color-mix(in_oklab,var(--card)_92%,var(--accent)),var(--card))] p-6 lg:sticky lg:top-6 lg:p-8"
         aria-live="polite"
         aria-labelledby="result-title"
       >
-        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <p
+          class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+        >
           Estimate
         </p>
         <h2 id="result-title" class="mt-2 text-2xl font-bold">
@@ -202,38 +215,51 @@ const calculatorSchema = {
         </h2>
 
         <dl class="mt-7 space-y-5">
-          <div class="border-b border-border/70 pb-5">
-            <dt class="text-sm text-muted-foreground">Expected executions</dt>
-            <dd id="execution-result" class="mt-1 text-3xl font-bold tabular-nums">
+          <div class="border-border/70 border-b pb-5">
+            <dt class="text-muted-foreground text-sm">Expected executions</dt>
+            <dd
+              id="execution-result"
+              class="mt-1 text-3xl font-bold tabular-nums"
+            >
               1,164
             </dd>
-            <dd id="planned-result" class="mt-1 text-sm text-muted-foreground">
+            <dd id="planned-result" class="text-muted-foreground mt-1 text-sm">
               1,455 with 25% planning headroom.
             </dd>
           </div>
-          <div class="border-b border-border/70 pb-5">
-            <dt class="text-sm text-muted-foreground">Closest Cloud reference</dt>
+          <div class="border-border/70 border-b pb-5">
+            <dt class="text-muted-foreground text-sm">
+              Closest Cloud reference
+            </dt>
             <dd id="cloud-result" class="mt-1 text-xl font-bold">
               Starter, €20/month
             </dd>
-            <dd id="cloud-detail" class="mt-1 text-sm text-muted-foreground">
+            <dd id="cloud-detail" class="text-muted-foreground mt-1 text-sm">
               1,045 planned executions remain in the reference allowance.
             </dd>
           </div>
           <div>
-            <dt class="text-sm text-muted-foreground">
+            <dt class="text-muted-foreground text-sm">
               Estimated self-hosted total
             </dt>
-            <dd id="self-hosted-result" class="mt-1 text-3xl font-bold tabular-nums">
+            <dd
+              id="self-hosted-result"
+              class="mt-1 text-3xl font-bold tabular-nums"
+            >
               €63/month
             </dd>
-            <dd id="self-hosted-detail" class="mt-1 text-sm text-muted-foreground">
+            <dd
+              id="self-hosted-detail"
+              class="text-muted-foreground mt-1 text-sm"
+            >
               €13 infrastructure and operations + €50 of time.
             </dd>
           </div>
         </dl>
 
-        <div class="mt-7 rounded-xl border border-border/80 bg-background/50 p-4">
+        <div
+          class="border-border/80 bg-background/50 mt-7 rounded-xl border p-4"
+        >
           <p id="comparison-result" class="text-sm leading-relaxed">
             Cloud is €43 lower than the self-hosted estimate at this usage. A
             self-hosted requirement can still outweigh the price difference.
@@ -242,35 +268,38 @@ const calculatorSchema = {
 
         <div class="mt-7 flex flex-col gap-3">
           <a
-            class="interactive-button inline-flex justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex justify-center rounded-md px-4 py-3 text-sm font-medium"
             href="/go/n8n-cloud?from=n8n-calculator"
           >
             Try n8n Cloud →
           </a>
           <a
-            class="inline-flex justify-center rounded-md border border-border px-4 py-3 text-sm font-medium hover:border-accent/50 hover:text-accent"
+            class="border-border hover:border-accent/50 hover:text-accent inline-flex justify-center rounded-md border px-4 py-3 text-sm font-medium"
             href="/blog/n8n-cloud-vs-self-hosted-developer-checklist"
           >
             Read the full decision checklist
           </a>
         </div>
-        <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+        <p class="text-muted-foreground mt-4 text-xs leading-relaxed">
           The n8n link is currently a direct tracked link and earns no
-          commission. See the <a class="underline hover:text-foreground" href="/affiliate-disclosure">disclosure</a>.
+          commission. See the <a
+            class="hover:text-foreground underline"
+            href="/affiliate-disclosure">disclosure</a
+          >.
         </p>
       </section>
     </form>
 
     <section class="mt-16 max-w-3xl space-y-5">
       <h2 class="text-2xl font-bold">What this estimate leaves out</h2>
-      <p class="leading-relaxed text-muted-foreground">
+      <p class="text-muted-foreground leading-relaxed">
         Plan features can matter more than the arithmetic. Check concurrency,
         shared projects, execution retention, source control, custom nodes,
         local network access, and support before choosing. Self-hosting also
         needs a tested restore procedure, security updates, and someone who
         responds when workflows stop.
       </p>
-      <p class="leading-relaxed text-muted-foreground">
+      <p class="text-muted-foreground leading-relaxed">
         Use 30.4 days for an average month. Chat messages are counted as one
         execution each because that is the estimation method in n8n’s current
         pricing guidance. Change the inputs if your workflow design behaves
@@ -309,9 +338,7 @@ const calculatorSchema = {
         getValue('scheduled') + getValue('webhooks') + getValue('chat')
       const executions = Math.round(daily * 30.4 + getValue('other'))
       const headroom = getValue('headroom')
-      const plannedExecutions = Math.round(
-        executions * (1 + headroom / 100)
-      )
+      const plannedExecutions = Math.round(executions * (1 + headroom / 100))
       const infrastructure = getValue('infrastructure')
       const operations = getValue('operations')
       const timeCost = getValue('hours') * getValue('hourly')
