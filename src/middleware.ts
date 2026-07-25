@@ -4,6 +4,7 @@ import { perspectiveCookieName } from '@/lib/sanity/draft-mode'
 
 const CACHEABLE_PATHS =
   /^\/(?:blog(?:\/|$)|topics(?:\/|$)|authors(?:\/|$)|sitemap\.xml$|rss\.xml$)/
+const CANONICAL_NO_SLASH_PATHS = /^\/(?:blog|topics|authors)(?:\/.+)?\/$/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
 const CONTENT_CACHE_VERSION = '2026-07-17-projects-template-shelf-v5'
 
@@ -15,6 +16,14 @@ function isStudioPreviewRequest(request: Request): boolean {
   return (request.headers.get('Cookie') ?? '').includes(
     `${perspectiveCookieName}=`
   )
+}
+
+function getCanonicalPathRedirect(url: URL): URL | null {
+  if (!CANONICAL_NO_SLASH_PATHS.test(url.pathname)) return null
+
+  const canonicalUrl = new URL(url)
+  canonicalUrl.pathname = canonicalUrl.pathname.slice(0, -1)
+  return canonicalUrl
 }
 
 function getSharedCacheTtlMilliseconds(cacheControl: string): number | null {
@@ -38,6 +47,11 @@ function toMutableResponse(response: Response): Response {
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context
   const pathname = url.pathname
+
+  const canonicalRedirect = getCanonicalPathRedirect(url)
+  if (canonicalRedirect) {
+    return Response.redirect(canonicalRedirect, 308)
+  }
 
   const previewRequest =
     !context.isPrerendered && isStudioPreviewRequest(request)
