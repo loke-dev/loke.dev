@@ -1,19 +1,28 @@
+import { env as workerEnv } from 'cloudflare:workers'
+
 interface TurnstileVerifyResponse {
   success?: boolean
 }
 
+function getTurnstileSecret(): string | undefined {
+  const workerSecret = workerEnv.TURNSTILE_SECRET_KEY?.trim()
+  if (workerSecret) return workerSecret
+
+  const processSecret = process.env.TURNSTILE_SECRET_KEY
+  return processSecret?.trim() || undefined
+}
+
 export async function verifyTurnstileToken(token: string): Promise<boolean> {
   // In development, always return true for test tokens
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log('Development mode: Skipping CAPTCHA verification')
     return true
   }
 
-  if (!process.env.TURNSTILE_SECRET_KEY) {
-    console.warn(
-      'TURNSTILE_SECRET_KEY not configured, skipping CAPTCHA verification'
-    )
-    return true
+  const secret = getTurnstileSecret()
+  if (!secret) {
+    console.error('TURNSTILE_SECRET_KEY is not configured')
+    return false
   }
 
   if (!token) {
@@ -29,7 +38,7 @@ export async function verifyTurnstileToken(token: string): Promise<boolean> {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          secret: process.env.TURNSTILE_SECRET_KEY,
+          secret,
           response: token,
         }),
       }
