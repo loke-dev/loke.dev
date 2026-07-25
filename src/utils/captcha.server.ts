@@ -4,8 +4,14 @@ interface TurnstileVerifyResponse {
   success?: boolean
 }
 
+interface TurnstileRuntimeEnv {
+  TURNSTILE_SECRET_KEY?: string
+}
+
 function getTurnstileSecret(): string | undefined {
-  const workerSecret = workerEnv.TURNSTILE_SECRET_KEY?.trim()
+  const workerSecret = (
+    workerEnv as unknown as TurnstileRuntimeEnv
+  ).TURNSTILE_SECRET_KEY?.trim()
   if (workerSecret) return workerSecret
 
   const processSecret = process.env.TURNSTILE_SECRET_KEY
