@@ -31,7 +31,7 @@
     "@shikijs/engine-javascript": "3.21.0",
     "@shikijs/langs": "3.21.0",
     "@shikijs/themes": "3.21.0",
-    "astro": "^6.4.2",
+    "astro": "^6.4.6",
     "clsx": "^2.1.1",
     "resend": "^6.0.2",
     "sharp": "^0.34.5",
