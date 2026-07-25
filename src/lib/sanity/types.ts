@@ -9,6 +9,7 @@ export interface PostSource {
 
 export interface Topic {
   _id: string
+  _updatedAt?: string
   title: string
   slug: { current: string }
   description: string
@@ -16,6 +17,7 @@ export interface Topic {
 
 export interface Author {
   _id: string
+  _updatedAt?: string
   name: string
   slug: { current: string }
   role?: string

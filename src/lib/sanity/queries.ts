@@ -18,10 +18,10 @@ export const POST_NEXT_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))
 
 export const TOPIC_BY_SLUG_QUERY = `*[_type == "topic" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, title, slug, description }`
 export const POSTS_BY_TOPIC_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && references(*[_type == "topic" && slug.current == $slug][0]._id)] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
-export const ALL_TOPICS_QUERY = `*[_type == "topic" && !(_id in path("drafts.**"))] | order(title asc) { _id, title, slug, description }`
+export const ALL_TOPICS_QUERY = `*[_type == "topic" && !(_id in path("drafts.**"))] | order(title asc) { _id, title, slug, description, _updatedAt }`
 export const AUTHOR_BY_SLUG_QUERY = `*[_type == "author" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, name, slug, role, bio, image, sameAs }`
 export const POSTS_BY_AUTHOR_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && author->slug.current == $slug] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
-export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs }`
+export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs, _updatedAt }`
 
 export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
 export const FEATURED_PROJECTS_QUERY = `*[_type == "project" && featured == true] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`

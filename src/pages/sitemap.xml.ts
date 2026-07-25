@@ -56,11 +56,11 @@ export const GET: APIRoute = async () => {
   })
   const topicUrlEntries = topics.map(
     (topic) =>
-      `  <url><loc>${SITE_DOMAIN}/topics/${topic.slug.current}</loc></url>`
+      `  <url><loc>${SITE_DOMAIN}/topics/${topic.slug.current}</loc>${topic._updatedAt ? `<lastmod>${topic._updatedAt}</lastmod>` : ''}</url>`
   )
   const authorUrlEntries = authors.map(
     (author) =>
-      `  <url><loc>${SITE_DOMAIN}/authors/${author.slug.current}</loc></url>`
+      `  <url><loc>${SITE_DOMAIN}/authors/${author.slug.current}</loc>${author._updatedAt ? `<lastmod>${author._updatedAt}</lastmod>` : ''}</url>`
   )
 
   const urlset = [
