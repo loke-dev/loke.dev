@@ -41,6 +41,15 @@ importers:
       '@sentry/cloudflare':
         specifier: ^10.65.0
         version: 10.65.0(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))(supports-color@10.2.2)
+      '@shikijs/engine-javascript':
+        specifier: 3.21.0
+        version: 3.21.0
+      '@shikijs/langs':
+        specifier: 3.21.0
+        version: 3.21.0
+      '@shikijs/themes':
+        specifier: 3.21.0
+        version: 3.21.0
       astro:
         specifier: ^6.4.2
         version: 6.4.2(@types/node@25.9.1)(@vercel/functions@3.4.3)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.50.0)(supports-color@10.2.2)(tsx@4.21.0)(yaml@2.8.3)
