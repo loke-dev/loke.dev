@@ -52,6 +52,22 @@ const profileSchema = author
       },
     }
   : null
+
+function getProfileLabel(profile: string): string {
+  try {
+    const hostname = new URL(profile).hostname.replace(/^www\./, '')
+    const knownNames: Record<string, string> = {
+      'github.com': 'GitHub',
+      'linkedin.com': 'LinkedIn',
+      'x.com': 'X',
+      'twitter.com': 'Twitter',
+    }
+
+    return knownNames[hostname] ?? `Profile on ${hostname}`
+  } catch {
+    return 'Profile'
+  }
+}
 ---
 
 {
@@ -106,7 +122,7 @@ const profileSchema = author
                     target="_blank"
                     rel="me noopener noreferrer"
                   >
-                    Profile
+                    {getProfileLabel(profile)}
                   </a>
                 </li>
               ))}
