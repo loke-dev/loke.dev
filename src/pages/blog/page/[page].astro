@@ -10,7 +10,15 @@ export const prerender = false
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
 
 const pageParam = Astro.params.page
-const currentPage = Math.max(2, parseInt(pageParam ?? '2', 10))
+const currentPage = Number.parseInt(pageParam ?? '', 10)
+
+if (
+  !Number.isSafeInteger(currentPage) ||
+  currentPage < 2 ||
+  String(currentPage) !== pageParam
+) {
+  return Astro.redirect('/blog', 302)
+}
 
 const [paginatedResult, page] = await Promise.all([
   getPaginatedPosts(currentPage),
@@ -34,13 +42,19 @@ const breadcrumbSchema = {
       name: 'Blog',
       item: `${SITE_DOMAIN}/blog`,
     },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: `Page ${currentPage}`,
+      item: `${SITE_DOMAIN}/blog/page/${currentPage}`,
+    },
   ],
 }
 ---
 
 <BaseLayout
-  title="Blog"
-  description="In-depth articles, practical guides, and insights on modern web development. Topics include React, TypeScript, database optimization, AI integration, and building resilient web applications."
+  title={`Blog, page ${currentPage}`}
+  description={`More practical technical guides from loke.dev. This is page ${currentPage} of the blog archive.`}
   url={`${SITE_DOMAIN}/blog/page/${currentPage}`}
 >
   <script
