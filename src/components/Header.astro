@@ -11,6 +11,9 @@ const navLinks = [
 ]
 const topics = await getAllTopics()
 const pathname = Astro.url.pathname
+const hasCurrentTopic = topics.some((topic) =>
+  isCurrentPath(`/topics/${topic.slug.current}`)
+)
 
 function isCurrentPath(href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -184,7 +187,7 @@ function isCurrentPath(href: string): boolean {
               >
               {
                 topics.length > 0 && (
-                  <details class="mt-2">
+                  <details class="mt-2" open={hasCurrentTopic}>
                     <summary class="text-muted-foreground marker:text-accent cursor-pointer text-sm">
                       Topics
                     </summary>
