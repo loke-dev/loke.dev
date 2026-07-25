@@ -119,6 +119,11 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  :where(a, button, input, select, summary, textarea):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
 }
 
 /* Mobile menu dialog animation */
