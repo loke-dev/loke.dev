@@ -81,8 +81,7 @@ src/
     ├── headers.server.ts
     ├── meta.ts
     ├── rate-limit.server.ts
-    ├── sanity.queries.ts
-    └── session.server.ts
+    └── sanity.queries.ts
 
 sanity/                      # Sanity Studio — to be moved to studio.loke.dev
 ```

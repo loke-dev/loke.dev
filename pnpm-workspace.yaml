@@ -1,0 +1,8 @@
+packages:
+  - .
+
+overrides:
+  vite: 7.3.1
+
+patchedDependencies:
+  vite@7.3.1: patches/vite@7.3.1.patch
