@@ -15,16 +15,16 @@ const url = `${SITE_DOMAIN}/topics`
 const collectionSchema = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: 'Developer topics',
+  name: 'Blog topics',
   description:
-    'Maintained technical guides grouped by the developer problems they solve.',
+    'Posts grouped by subject, including AI, CMS work, web frameworks, cloud, and performance.',
   url,
 }
 ---
 
 <BaseLayout
-  title="Developer topics"
-  description="Maintained technical guides grouped by practical developer problems, from package management and CI to performance and TypeScript."
+  title="Blog topics"
+  description="Browse posts by subject, from AI and CMS work to frameworks, cloud, performance, and the usual web dev rabbit holes."
   url={url}
 >
   <script
@@ -35,8 +35,8 @@ const collectionSchema = {
   <section class="mx-auto max-w-6xl px-4 py-16 md:py-20">
     <PageIntro
       eyebrow="Explore the archive"
-      title="Developer topics"
-      description="A way to explore the technical writing by subject."
+      title="Blog topics"
+      description="A simple way to explore the writing by subject."
     />
     {
       topics.length ? (
@@ -50,7 +50,7 @@ const collectionSchema = {
                 <h2 class="text-xl font-bold tracking-tight">{topic.title}</h2>
                 <p class="text-muted-foreground mt-3">{topic.description}</p>
                 <span class="text-accent mt-5 inline-block text-sm font-medium">
-                  Browse guides →
+                  Browse posts →
                 </span>
               </a>
             </li>
