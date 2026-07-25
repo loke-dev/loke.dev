@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAuthorBySlug, getPostsByAuthorSlug } from '@/utils/sanity.queries'
 import BlogPostCard from '@/components/BlogPostCard.astro'
@@ -19,6 +20,38 @@ if (!author) {
 const posts = author ? await getPostsByAuthorSlug(authorSlug) : []
 const url = `${SITE_DOMAIN}/authors/${authorSlug}`
 const image = author ? getSanityImageUrl(author.image, 400, 400) : null
+const breadcrumbSchema = author
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Blog',
+          item: `${SITE_DOMAIN}/blog`,
+        },
+        { '@type': 'ListItem', position: 3, name: author.name, item: url },
+      ],
+    }
+  : null
+const profileSchema = author
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'ProfilePage',
+      mainEntity: {
+        '@type': 'Person',
+        '@id': url,
+        name: author.name,
+        url,
+        ...(author.bio ? { description: author.bio } : {}),
+        ...(author.role ? { jobTitle: author.role } : {}),
+        ...(image ? { image } : {}),
+        ...(author.sameAs?.length ? { sameAs: author.sameAs } : {}),
+      },
+    }
+  : null
 ---
 
 {
@@ -32,6 +65,16 @@ const image = author ? getSanityImageUrl(author.image, 400, 400) : null
       image={image ?? undefined}
       preconnectSanity={true}
     >
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={serializeJsonLd(breadcrumbSchema)}
+      />
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={serializeJsonLd(profileSchema)}
+      />
       <section class="mx-auto max-w-6xl px-4 py-16">
         <div class="max-w-2xl">
           {image ? (

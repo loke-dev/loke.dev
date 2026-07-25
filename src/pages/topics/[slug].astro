@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getPostsByTopicSlug, getTopicBySlug } from '@/utils/sanity.queries'
 import BlogPostCard from '@/components/BlogPostCard.astro'
@@ -17,6 +18,40 @@ if (!topic) {
 }
 const posts = topic ? await getPostsByTopicSlug(topicSlug) : []
 const url = `${SITE_DOMAIN}/topics/${topicSlug}`
+const breadcrumbSchema = topic
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Topics',
+          item: `${SITE_DOMAIN}/topics`,
+        },
+        { '@type': 'ListItem', position: 3, name: topic.title, item: url },
+      ],
+    }
+  : null
+const collectionSchema = topic
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: `${topic.title} guides`,
+      description: topic.description,
+      url,
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: posts.slice(0, 10).map((post, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: post.title,
+          url: `${SITE_DOMAIN}/blog/${post.slug.current}`,
+        })),
+      },
+    }
+  : null
 ---
 
 {
@@ -27,6 +62,16 @@ const url = `${SITE_DOMAIN}/topics/${topicSlug}`
       url={url}
       preconnectSanity={true}
     >
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={serializeJsonLd(breadcrumbSchema)}
+      />
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={serializeJsonLd(collectionSchema)}
+      />
       <section class="mx-auto max-w-6xl px-4 py-16">
         <p class="text-accent text-sm font-semibold tracking-wider uppercase">
           Topic
