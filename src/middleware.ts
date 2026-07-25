@@ -2,7 +2,8 @@ import { defineMiddleware } from 'astro:middleware'
 import { getSecurityHeaders } from '@/utils/headers.server'
 import { perspectiveCookieName } from '@/lib/sanity/draft-mode'
 
-const CACHEABLE_PATHS = /^\/(?:blog(?:\/|$)|sitemap\.xml$|rss\.xml$)/
+const CACHEABLE_PATHS =
+  /^\/(?:blog(?:\/|$)|topics(?:\/|$)|authors(?:\/|$)|sitemap\.xml$|rss\.xml$)/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
 const CONTENT_CACHE_VERSION = '2026-07-17-projects-template-shelf-v5'
 
@@ -38,7 +39,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context
   const pathname = url.pathname
 
-  const cacheable = isCacheableRequest(request, pathname)
+  const previewRequest =
+    !context.isPrerendered && isStudioPreviewRequest(request)
+  const cacheable = !previewRequest && isCacheableRequest(request, pathname)
   const cache =
     cacheable && typeof caches !== 'undefined'
       ? (caches as CacheStorage & { default: Cache }).default
@@ -46,6 +49,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const cacheKey = cache
     ? (() => {
         const cacheUrl = new URL(url)
+        cacheUrl.search = ''
         cacheUrl.searchParams.set('__content_cache', CONTENT_CACHE_VERSION)
         return new Request(cacheUrl.toString(), { method: 'GET' })
       })()
@@ -68,7 +72,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next()
 
   const securityHeaders = getSecurityHeaders({
-    allowStudioFrame: !context.isPrerendered && isStudioPreviewRequest(request),
+    allowStudioFrame: !context.isPrerendered && previewRequest,
   })
   for (const [key, value] of Object.entries(securityHeaders)) {
     response.headers.set(key, value)
