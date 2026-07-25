@@ -139,8 +139,11 @@ const focusAreas = [
                 expected.
               </p>
             </aside>
-            <div
-              class="border-border/80 bg-background/75 absolute right-5 bottom-5 left-5 rounded-xl border p-4 backdrop-blur"
+            <a
+              href="/services"
+              data-astro-prefetch="hover"
+              aria-label="Learn about web development, CMS, and AI services"
+              class="hero-focus-panel border-border/80 bg-background/75 hover:border-accent/50 focus-visible:border-accent absolute right-5 bottom-5 left-5 rounded-xl border p-4 backdrop-blur"
             >
               <div class="flex items-center justify-between gap-4">
                 <div>
@@ -154,11 +157,11 @@ const focusAreas = [
                   </p>
                 </div>
                 <span
-                  class="border-accent/40 text-accent grid h-9 w-9 place-items-center rounded-full border"
+                  class="border-accent/40 text-accent hero-focus-panel__arrow grid h-9 w-9 place-items-center rounded-full border"
                   aria-hidden="true">↗</span
                 >
               </div>
-            </div>
+            </a>
             <div
               class="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2"
             >
