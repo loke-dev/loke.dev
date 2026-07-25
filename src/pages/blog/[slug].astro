@@ -81,6 +81,7 @@ const breadcrumbSchema = post
       publishedTime={post.date}
       modifiedTime={post.lastModified ?? post._updatedAt ?? post.date}
       keywords={post.topics.map((topic) => topic.title)}
+      preconnectSanity={true}
     >
       <script
         is:inline

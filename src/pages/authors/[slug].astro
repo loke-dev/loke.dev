@@ -30,6 +30,7 @@ const image = author ? getSanityImageUrl(author.image, 400, 400) : null
       }
       url={url}
       image={image ?? undefined}
+      preconnectSanity={true}
     >
       <section class="mx-auto max-w-6xl px-4 py-16">
         <div class="max-w-2xl">

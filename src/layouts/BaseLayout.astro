@@ -18,6 +18,7 @@ interface Props {
   keywords?: string | string[]
   noindex?: boolean
   loadTurnstile?: boolean
+  preconnectSanity?: boolean
 }
 
 const {
@@ -33,6 +34,7 @@ const {
   keywords,
   noindex,
   loadTurnstile = false,
+  preconnectSanity = false,
 } = Astro.props
 const canonicalUrl = url ?? Astro.url.href
 const turnstileSiteKey =
@@ -58,8 +60,14 @@ const turnstileSiteKey =
       noindex={noindex}
     />
     <slot name="head" />
-    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
-    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    {
+      preconnectSanity && (
+        <>
+          <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+          <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+        </>
+      )
+    }
     <link
       rel="alternate"
       type="application/rss+xml"
