@@ -30,16 +30,15 @@ export default function ContactForm() {
   let widgetId: string | undefined
 
   onMount(() => {
-    const siteKey =
-      (document.getElementById('env-data') as HTMLElement | null)?.dataset
-        .turnstileKey ?? '1x00000000000000000000AA'
+    const siteKey = (document.getElementById('env-data') as HTMLElement | null)
+      ?.dataset.turnstileKey
 
     const el = document.getElementById('turnstile-widget')
     const script = document.getElementById('turnstile-script')
 
     const mountWidget = () => {
       const win = window as TurnstileWindow
-      if (win.turnstile && el && !widgetId) {
+      if (win.turnstile && el && siteKey && !widgetId) {
         widgetId = win.turnstile.render(el, {
           sitekey: siteKey,
           callback: (token: string) => setCaptchaToken(token),

@@ -51,3 +51,14 @@ incident status; it does not print credentials or event payloads.
   ```
 
   Server exceptions, logs, and request traces (10% sample) are enabled automatically once the secret is set.
+
+## Contact form
+
+The public Turnstile site key lives in `src/config/turnstile.ts` so prerendered
+contact pages receive the production key during the build. Local development
+uses Cloudflare's test key explicitly; production never falls back to it. Keep
+the matching production secret server-side in Cloudflare:
+
+```sh
+pnpm wrangler secret put TURNSTILE_SECRET_KEY
+```

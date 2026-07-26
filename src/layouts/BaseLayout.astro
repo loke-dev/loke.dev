@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions'
+import { TURNSTILE_SITE_ID } from '@/config/turnstile'
 import { serializeJsonLd } from '@/utils/json-ld'
 import Footer from '@/components/Footer.astro'
 import Header from '@/components/Header.astro'
@@ -38,8 +39,6 @@ const {
   preconnectSanity = false,
 } = Astro.props
 const canonicalUrl = url ?? Astro.url.href
-const turnstileSiteKey =
-  import.meta.env.TURNSTILE_SITE_ID ?? '1x00000000000000000000AA'
 ---
 
 <!doctype html>
@@ -126,7 +125,7 @@ const turnstileSiteKey =
     <Footer />
     {
       loadTurnstile && (
-        <div id="env-data" data-turnstile-key={turnstileSiteKey} hidden />
+        <div id="env-data" data-turnstile-key={TURNSTILE_SITE_ID} hidden />
       )
     }
   </body>
