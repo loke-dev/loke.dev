@@ -1,4 +1,5 @@
 const DEFAULT_DEPLOY_EVENT = 'sanity-content-update'
+const REVALIDATION_PATH_ORIGIN = 'https://revalidation.invalid'
 
 export type RuntimeEnvironment = Record<string, unknown>
 
@@ -26,6 +27,21 @@ interface DeployTriggerResult {
   skipped: boolean
   status?: number
   detail?: string
+}
+
+export function normalizeRevalidationPath(value: string): string | null {
+  const path = value.trim()
+  if (!path.startsWith('/')) return null
+
+  try {
+    const url = new URL(path, REVALIDATION_PATH_ORIGIN)
+    if (url.origin !== REVALIDATION_PATH_ORIGIN) return null
+    if (url.pathname === '/api' || url.pathname.startsWith('/api/')) return null
+
+    return `${url.pathname}${url.search}`
+  } catch {
+    return null
+  }
 }
 
 export function getDeployRepositoryConfig(runtimeEnv?: RuntimeEnvironment) {

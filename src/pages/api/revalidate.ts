@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro'
 import { env as workerEnv } from 'cloudflare:workers'
 import {
   buildPurgeUrls,
+  normalizeRevalidationPath,
   purgeCloudflareCache,
   SSR_WARM_PATHS,
   triggerSiteDeploy,
@@ -40,17 +41,6 @@ const TYPE_PATHS: Record<string, string[]> = {
   project: ['/', '/projects'],
   contactPage: ['/contact'],
   changelog: ['/changelog'],
-}
-
-function normalizePath(path: string): string | null {
-  if (
-    !path.startsWith('/') ||
-    path.includes('://') ||
-    path.startsWith('/api/')
-  ) {
-    return null
-  }
-  return path
 }
 
 function extractSlug(slug: RevalidatePayload['slug']): string | null {
@@ -118,7 +108,7 @@ function collectPaths(payload: RevalidatePayload): string[] {
   const singularCandidates = [payload.path, payload.route]
   for (const candidate of singularCandidates) {
     if (typeof candidate !== 'string') continue
-    const normalized = normalizePath(candidate.trim())
+    const normalized = normalizeRevalidationPath(candidate)
     if (normalized) {
       paths.add(normalized)
     }
@@ -127,7 +117,7 @@ function collectPaths(payload: RevalidatePayload): string[] {
   if (Array.isArray(payload.paths)) {
     for (const path of payload.paths) {
       if (typeof path !== 'string') continue
-      const normalized = normalizePath(path.trim())
+      const normalized = normalizeRevalidationPath(path)
       if (normalized) {
         paths.add(normalized)
       }
