@@ -2,7 +2,10 @@ import { validateApiPerspective, type ClientPerspective } from '@sanity/client'
 import { perspectiveCookieName } from '@sanity/preview-url-secret/constants'
 
 const previewCookiePattern = new RegExp(
-  `${perspectiveCookieName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}=([^;]+)`
+  `(?:^|;)\\s*${perspectiveCookieName.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    '\\$&'
+  )}=([^;]+)`
 )
 
 export function getPreviewPerspective(
