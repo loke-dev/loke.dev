@@ -32,7 +32,7 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
         if (v.highlightedHtml) {
           return `<div class="not-prose code-block my-6">${v.highlightedHtml}</div>`
         }
-        return `<pre><code>${String(v.code ?? '')}</code></pre>`
+        return `<pre><code>${escapeHtml(String(v.code ?? ''))}</code></pre>`
       },
       callout: ({ value }) => {
         const v = value as { text?: string; tone?: string }

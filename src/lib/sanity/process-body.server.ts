@@ -17,7 +17,8 @@ function isCodeBlock(block: unknown): block is CodeBlock {
     block !== null &&
     '_type' in block &&
     block._type === 'code' &&
-    'code' in block
+    'code' in block &&
+    typeof block.code === 'string'
   )
 }
 
