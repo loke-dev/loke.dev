@@ -11,12 +11,11 @@ export function getPreviewPerspective(
   const value = request.headers.get('Cookie')?.match(previewCookiePattern)?.[1]
   if (!value) return null
 
-  const perspective = decodeURIComponent(value)
-  const candidate = perspective.includes(',')
-    ? perspective.split(',')
-    : perspective
-
   try {
+    const perspective = decodeURIComponent(value)
+    const candidate = perspective.includes(',')
+      ? perspective.split(',')
+      : perspective
     validateApiPerspective(candidate)
     return candidate === 'raw' ? 'drafts' : candidate
   } catch {
