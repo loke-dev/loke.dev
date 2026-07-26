@@ -240,6 +240,8 @@ export default function HeaderSearch() {
                 class="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 autocomplete="off"
                 onInput={(e) => {
+                  clearInFlight()
+                  setLoading(false)
                   setQuery(e.currentTarget.value)
                   setResults(null)
                   setError(null)
