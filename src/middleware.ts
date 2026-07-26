@@ -1,6 +1,6 @@
 import { defineMiddleware } from 'astro:middleware'
 import { getSecurityHeaders } from '@/utils/headers.server'
-import { perspectiveCookieName } from '@/lib/sanity/draft-mode'
+import { getPreviewPerspective } from '@/lib/sanity/draft-mode'
 
 const CACHEABLE_PATHS =
   /^\/(?:blog(?:\/|$)|topics(?:\/|$)|authors(?:\/|$)|sitemap\.xml$|rss\.xml$)/
@@ -13,9 +13,7 @@ function isCacheableRequest(request: Request, pathname: string): boolean {
 }
 
 function isStudioPreviewRequest(request: Request): boolean {
-  return (request.headers.get('Cookie') ?? '').includes(
-    `${perspectiveCookieName}=`
-  )
+  return getPreviewPerspective(request) !== null
 }
 
 function getCanonicalPathRedirect(url: URL): URL | null {
