@@ -19,6 +19,17 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
+function safeLinkHref(value: unknown): string {
+  if (typeof value !== 'string') return '#'
+  const href = value.trim()
+  if (!href) return '#'
+  const compactHref = href.replace(/[\u0000-\u0020]/g, '')
+  const scheme = /^([a-z][a-z\d+.-]*):/i.exec(compactHref)?.[1]?.toLowerCase()
+  return !scheme || ['http', 'https', 'mailto', 'tel'].includes(scheme)
+    ? href
+    : '#'
+}
+
 const { value } = Astro.props
 const builder = createImageUrlBuilder(client)
 
@@ -65,8 +76,8 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
     },
     marks: {
       link: ({ children, value }) => {
-        const v = value as { href: string; blank?: boolean }
-        const href = /^javascript:/i.test(v.href) ? '#' : v.href
+        const v = value as { href?: unknown; blank?: boolean }
+        const href = safeLinkHref(v.href)
         const safeHref = escapeHtml(href)
         const target = v.blank ? ' target="_blank"' : ''
         const rel = v.blank ? ' rel="noopener noreferrer"' : ''
