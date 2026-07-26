@@ -97,6 +97,10 @@ function getOrigin(request: Request): string | null {
   return origin && SITE_BY_ORIGIN.has(origin) ? origin : null
 }
 
+function isJsonContentType(value: string): boolean {
+  return value.split(';', 1)[0]?.trim().toLowerCase() === 'application/json'
+}
+
 function responseHeaders(origin: string | null): HeadersInit {
   const headers: Record<string, string> = {
     'Cache-Control': 'private, no-store',
@@ -134,7 +138,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const contentType = request.headers.get('content-type') ?? ''
-  if (!contentType.toLowerCase().startsWith('application/json')) {
+  if (!isJsonContentType(contentType)) {
     return Response.json(
       { error: 'Content-Type must be application/json' },
       { status: 415, headers: responseHeaders(origin) }
