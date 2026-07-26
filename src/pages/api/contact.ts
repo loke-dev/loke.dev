@@ -1,16 +1,9 @@
 import type { APIRoute } from 'astro'
-import { z } from 'zod'
 import { verifyTurnstileToken } from '@/utils/captcha.server'
 import { sendContactEmail } from '@/utils/email.server'
+import { ContactSubmissionSchema } from '@/lib/contact-schema'
 
 export const prerender = false
-
-const ContactSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  message: z.string().min(10).max(2000),
-  captchaToken: z.string().min(1),
-})
 
 interface RateLimitEntry {
   count: number
@@ -73,7 +66,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return Response.json({ ok: true })
   }
 
-  const parsed = ContactSchema.safeParse(body)
+  const parsed = ContactSubmissionSchema.safeParse(body)
   if (!parsed.success) {
     return Response.json(
       { ok: false, errors: parsed.error.flatten().fieldErrors },

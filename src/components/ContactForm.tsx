@@ -1,14 +1,5 @@
 import { createSignal, onMount, Show } from 'solid-js'
-import { z } from 'zod'
-
-const ContactSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  email: z.string().email('Please enter a valid email address'),
-  message: z
-    .string()
-    .min(10, 'Message must be at least 10 characters')
-    .max(2000),
-})
+import { ContactFieldsSchema } from '@/lib/contact-schema'
 
 type FormState =
   | { status: 'idle' }
@@ -85,7 +76,7 @@ export default function ContactForm() {
       message: formData.get('message') as string,
     }
 
-    const parsed = ContactSchema.safeParse(raw)
+    const parsed = ContactFieldsSchema.safeParse(raw)
     if (!parsed.success) {
       const errors: Record<string, string> = {}
       for (const [field, issues] of Object.entries(
