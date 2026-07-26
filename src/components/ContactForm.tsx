@@ -35,10 +35,11 @@ export default function ContactForm() {
         .turnstileKey ?? '1x00000000000000000000AA'
 
     const el = document.getElementById('turnstile-widget')
+    const script = document.getElementById('turnstile-script')
 
     const mountWidget = () => {
       const win = window as TurnstileWindow
-      if (win.turnstile && el) {
+      if (win.turnstile && el && !widgetId) {
         widgetId = win.turnstile.render(el, {
           sitekey: siteKey,
           callback: (token: string) => setCaptchaToken(token),
@@ -49,15 +50,11 @@ export default function ContactForm() {
       }
     }
 
-    const win = window as TurnstileWindow
-    if (win.turnstile) {
-      mountWidget()
-    } else {
-      window.addEventListener('load', mountWidget, { once: true })
-    }
+    script?.addEventListener('load', mountWidget, { once: true })
+    mountWidget()
 
     return () => {
-      window.removeEventListener('load', mountWidget)
+      script?.removeEventListener('load', mountWidget)
     }
   })
 
