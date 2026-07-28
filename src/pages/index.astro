@@ -58,92 +58,81 @@ const focusAreas = [
     type="image/png"
     fetchpriority="high"
   />
-  <div class="flex flex-col items-center">
-    <section class="w-full max-w-6xl px-4 pt-12 pb-20 md:pt-20 md:pb-28">
-      <div
-        class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_0.88fr] md:gap-16"
-      >
+  <main>
+    <section class="workshop-page pt-12 md:pt-20">
+      <div class="grid items-center gap-12 lg:grid-cols-[1.08fr_0.92fr]">
         <div>
-          <p class="signal-eyebrow mb-6">Independent developer / Sweden</p>
-          <h1
-            class="max-w-3xl font-mono text-5xl leading-[0.96] font-bold tracking-[-0.09em] md:text-7xl lg:text-8xl"
-          >
-            Build useful<br />
-            <span class="text-accent">things</span>, then<br />
-            make them stick.
+          <p class="workshop-label">Workshop signal / Sweden</p>
+          <h1 class="workshop-heading mt-6">
+            Make the <span class="text-accent">useful</span> thing.
           </h1>
           <p
             class="text-muted-foreground mt-7 max-w-xl text-lg leading-relaxed md:text-xl"
           >
             {
               page.heroDescription ??
-                'Websites, software, AI work, and the systems that keep them useful after launch.'
+                'Websites, software and AI work that are clear to use, quick to load, and easier to live with after launch.'
             }
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <a
-              href="/services"
-              class="interactive-button bg-accent text-accent-foreground hover:bg-accent/85 inline-flex items-center justify-center rounded-sm px-6 py-3 font-mono text-sm font-bold tracking-wide uppercase shadow-[0_14px_36px_-20px_rgb(255_90_31/0.65)] transition-[transform,background-color,box-shadow] duration-200"
+              href="/contact"
+              class="interactive-button bg-accent text-accent-foreground hover:bg-accent/85 inline-flex items-center justify-center px-6 py-3 font-mono text-sm font-bold tracking-wide uppercase transition-[transform,background-color]"
             >
-              Work with me →
+              Start a project ↗
             </a>
             <a
               href="/projects"
-              class="interactive-button border-border bg-card hover:border-accent/70 hover:bg-secondary inline-flex items-center justify-center rounded-sm border px-6 py-3 font-mono text-sm font-bold tracking-wide uppercase transition-[transform,background-color,border-color,box-shadow] duration-200"
+              class="interactive-button border-border bg-card hover:border-accent/70 inline-flex items-center justify-center border px-6 py-3 font-mono text-sm font-bold tracking-wide uppercase transition-[transform,border-color]"
             >
-              See the work
+              See what I make
             </a>
           </div>
-        </div>
-        <div class="relative py-5">
           <div
-            class="hero-frame signal-grid border-accent/45 relative min-h-[27rem] overflow-hidden rounded-sm border bg-[#171715] p-5 shadow-[0_32px_90px_-48px_rgb(0_0_0/0.95)]"
+            class="workshop-rule text-muted-foreground mt-12 grid gap-4 pt-6 text-sm sm:grid-cols-3"
           >
-            <div
+            <p>
+              <span class="text-foreground block font-mono">WEB / APPS</span
+              >Built from idea to launch
+            </p>
+            <p>
+              <span class="text-foreground block font-mono">AI / SYSTEMS</span
+              >Useful, checked, and simple
+            </p>
+            <p>
+              <span class="text-foreground block font-mono"
+                >STOCKHOLM / REMOTE</span
+              >Working with good people
+            </p>
+          </div>
+        </div>
+
+        <div class="paper-stack mx-auto w-full max-w-md">
+          <div
+            class="signal-grid border-accent/45 relative min-h-[31rem] overflow-hidden border bg-[#171715] p-5 shadow-[0_34px_100px_-52px_rgb(0_0_0/0.95)]"
+          >
+            <p
               class="absolute top-5 right-5 font-mono text-[0.65rem] font-bold tracking-[0.16em] text-[#f4f0e8]/70 uppercase"
             >
-              <p>Signal / 001</p>
-              <p class="text-accent mt-1">live system</p>
-            </div>
+              Signal / 001<br /><span class="text-accent">open for work</span>
+            </p>
             <aside
-              class="paper-panel absolute top-5 left-5 z-10 max-w-44 rotate-[-2deg] border border-[#121212]/20 p-3 shadow-xl"
+              class="paper-panel absolute top-5 left-5 z-10 max-w-48 rotate-[-2deg] border border-[#121212]/20 p-4 shadow-xl"
             >
               <p
                 class="font-mono text-[0.62rem] font-bold tracking-[0.16em] text-[#ff5a1f] uppercase"
               >
-                Working note / 01
+                Working note
               </p>
-              <p class="mt-2 text-xs leading-relaxed text-[#121212]">
+              <p class="mt-2 text-sm leading-relaxed text-[#121212]">
                 Make the useful bit easy to find. Do the boring bit properly.
               </p>
             </aside>
-            <a
-              href="/services"
-              data-astro-prefetch="hover"
-              class="hero-focus-panel paper-panel hover:border-accent/70 focus-visible:border-accent absolute right-5 bottom-5 left-5 border border-[#121212]/15 p-4"
-            >
-              <div class="flex items-center justify-between gap-4">
-                <div>
-                  <p
-                    class="font-mono text-[0.65rem] font-bold tracking-[0.16em] text-[#ff5a1f] uppercase"
-                  >
-                    Current focus / 2026
-                  </p>
-                  <p class="mt-2 text-sm font-semibold text-[#121212]">
-                    Fast sites, simple systems, AI that helps.
-                  </p>
-                </div>
-                <span
-                  class="border-accent text-accent hero-focus-panel__arrow grid h-9 w-9 place-items-center rounded-full border"
-                  aria-hidden="true">↗</span
-                >
-              </div>
-            </a>
             <div
-              class="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2"
+              class="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2"
             >
               <div
-                class="border-accent/70 relative h-48 w-48 overflow-hidden rounded-full border-2 bg-[#121212] shadow-[0_0_0_12px_rgb(255_90_31/0.1)] sm:h-56 sm:w-56"
+                class="border-accent/70 relative h-52 w-52 overflow-hidden rounded-full border-2 bg-[#121212] shadow-[0_0_0_14px_rgb(255_90_31/0.1)] sm:h-60 sm:w-60"
               >
                 <img
                   src={profilePortrait512.src}
@@ -159,37 +148,80 @@ const focusAreas = [
                 />
               </div>
             </div>
+            <a
+              href="/services"
+              class="paper-panel absolute right-5 bottom-5 left-5 border border-[#121212]/15 p-4 transition-transform hover:-translate-y-1"
+            >
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <p
+                    class="font-mono text-[0.62rem] font-bold tracking-[0.16em] text-[#ff5a1f] uppercase"
+                  >
+                    Current focus / 2026
+                  </p><p class="mt-2 text-sm font-semibold text-[#121212]">
+                    Fast sites. Small systems. AI that helps.
+                  </p>
+                </div><span class="text-accent text-xl" aria-hidden="true"
+                  >↗</span
+                >
+              </div>
+            </a>
             <div class="bg-accent absolute bottom-0 left-0 h-1 w-2/3"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section
-      class="border-border/70 bg-muted/35 w-full border-y py-16 md:py-20"
-    >
-      <div class="container mx-auto max-w-6xl px-4">
-        <div class="grid gap-8 md:grid-cols-[0.75fr_1.25fr] md:items-end">
+    <section class="border-border/70 border-y bg-[#171715]/65">
+      <div class="workshop-page py-16 md:py-20">
+        <div class="grid gap-10 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
-            <p
-              class="text-accent text-xs font-semibold tracking-[0.2em] uppercase"
+            <p class="workshop-label">What I build</p><h2
+              class="mt-5 max-w-md text-4xl font-bold tracking-[-0.06em] md:text-5xl"
             >
-              A practical stack
-            </p>
-            <h2 class="mt-3 text-3xl font-bold tracking-tight">
-              Tools are only useful if they make the work easier.
+              A solid website is rarely just a website.
             </h2>
           </div>
-          <p class="text-muted-foreground max-w-xl">
-            The stuff I use for websites, content, and the parts behind the
-            scenes.
+          <div class="grid gap-3 sm:grid-cols-3">
+            {
+              focusAreas.map((area) => (
+                <article class="workshop-card p-5 sm:even:translate-y-8">
+                  <>
+                    <p class="workshop-number">{area.number}</p>
+                    <h3 class="mt-10 text-xl leading-tight font-bold">
+                      {area.title}
+                    </h3>
+                    <p class="text-muted-foreground mt-4 text-sm leading-relaxed">
+                      {area.description}
+                    </p>
+                  </>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workshop-page">
+      <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+        <div>
+          <p class="workshop-label">Tools I reach for</p><h2
+            class="mt-5 text-4xl font-bold tracking-[-0.06em] md:text-5xl"
+          >
+            Boring tech, used well.
+          </h2><p class="text-muted-foreground mt-5 max-w-xl leading-relaxed">
+            There is no perfect stack. I pick tools that fit the problem, keep
+            the team moving, and do not become a mystery six months later.
           </p>
         </div>
-        <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+        <div
+          class="border-border/70 bg-border/70 grid grid-cols-2 gap-px overflow-hidden border sm:grid-cols-3"
+        >
           {
             page.technologies.map((tech) => (
-              <div class="surface-interactive border-border/70 bg-background/70 hover:border-accent/35 flex h-20 items-center justify-center rounded-lg border p-4 text-center shadow-sm transition-[transform,box-shadow,border-color] duration-200">
-                <span class="font-medium">{tech}</span>
+              <div class="bg-card px-4 py-6 text-center font-mono text-sm font-bold tracking-tight">
+                {tech}
               </div>
             ))
           }
@@ -197,117 +229,54 @@ const focusAreas = [
       </div>
     </section>
 
-    <section class="w-full max-w-6xl px-4 py-20 md:py-28">
-      <div class="grid gap-10 md:grid-cols-[0.8fr_1.2fr]">
+    <section class="workshop-page pt-0" id="blog">
+      <div
+        class="workshop-rule grid gap-8 pt-10 md:grid-cols-[1fr_auto] md:items-end"
+      >
         <div>
-          <p
-            class="text-accent text-xs font-semibold tracking-[0.2em] uppercase"
+          <p class="workshop-label">Field notes</p><h2
+            class="mt-5 text-4xl font-bold tracking-[-0.06em] md:text-5xl"
           >
-            What I can help with
+            {page.blogSectionTitle}
+          </h2><p class="text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+            {page.blogSectionDescription}
           </p>
-          <h2 class="mt-3 text-3xl font-bold tracking-tight">
-            Websites and tools that do not turn into a mess later.
-          </h2>
-          <p class="text-muted-foreground mt-4 max-w-md leading-relaxed">
-            A new website, a CMS that is getting messy, or an AI feature that
-            needs to be useful. The point is fewer weird problems later.
-          </p>
-          <a
-            href="/services"
-            class="text-accent mt-6 inline-flex text-sm font-semibold underline-offset-4 hover:underline"
-            >How I work →</a
-          >
         </div>
-        <div class="grid gap-3 sm:grid-cols-3 md:pt-10">
-          {
-            focusAreas.map((area) => (
-              <article class="border-border/80 bg-card rounded-xl border p-5 sm:even:translate-y-8">
-                <p class="text-accent text-xs font-semibold tracking-[0.2em]">
-                  {area.number}
-                </p>
-                <h3 class="mt-10 text-lg leading-snug font-bold">
-                  {area.title}
-                </h3>
-                <p class="text-muted-foreground mt-3 text-sm leading-relaxed">
-                  {area.description}
-                </p>
-              </article>
-            ))
-          }
-        </div>
+        <a href="/blog" class="workshop-link"
+          >All notes <span aria-hidden="true">→</span></a
+        >
       </div>
-    </section>
-
-    <section class="w-full max-w-6xl px-4 py-20" id="blog">
-      <div class="border-border/70 mb-12 border-b pb-8">
-        <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
-          Field notes
-        </p>
-        <h2 class="mt-3 text-3xl font-bold tracking-tight">
-          {page.blogSectionTitle}
-        </h2>
-        <p class="text-muted-foreground mt-3 max-w-2xl">
-          {page.blogSectionDescription}
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div class="mt-10 grid gap-5 md:grid-cols-3">
         {
           latestPosts.map((post) => (
             <BlogPostCard post={post} imageWidth={500} imageHeight={281} />
           ))
         }
       </div>
-
-      <div class="mt-12">
-        <a
-          href="/blog"
-          aria-label="View All Articles"
-          class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium shadow-[0_12px_32px_-16px_oklch(72%_0.2_70/0.4)] transition-[transform,background-color,box-shadow] duration-200"
-        >
-          View All Articles
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            class="ml-2"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
     </section>
 
-    <section class="w-full px-4 pb-20 md:pb-28">
-      <div
-        class="border-accent/25 from-accent/15 via-card to-card mx-auto max-w-6xl rounded-2xl border bg-gradient-to-br px-6 py-10 md:flex md:items-end md:justify-between md:px-10"
-      >
-        <div class="max-w-2xl">
-          <p
-            class="text-accent text-xs font-semibold tracking-[0.2em] uppercase"
+    <section class="workshop-page pt-0">
+      <div class="paper-panel border border-[#121212]/15 p-7 md:p-10">
+        <div class="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p
+              class="font-mono text-xs font-bold tracking-[0.15em] text-[#ff5a1f] uppercase"
+            >
+              New signal
+            </p><h2
+              class="mt-4 max-w-2xl text-4xl font-bold tracking-[-0.06em] text-[#121212] md:text-5xl"
+            >
+              {page.ctaTitle}
+            </h2><p class="mt-4 max-w-xl leading-relaxed text-[#5d5a54]">
+              {page.ctaDescription}
+            </p>
+          </div><a
+            href="/contact"
+            class="inline-flex w-fit bg-[#121212] px-5 py-3 font-mono text-sm font-bold tracking-wide text-[#f4f0e8] uppercase transition-transform hover:-translate-y-1"
+            >{page.ctaButtonText} ↗</a
           >
-            A useful next step
-          </p>
-          <h2 class="mt-3 text-3xl font-bold tracking-tight">
-            {page.ctaTitle}
-          </h2>
-          <p class="text-muted-foreground mt-4 leading-relaxed">
-            {page.ctaDescription}
-          </p>
         </div>
-        <a
-          href="/contact"
-          class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-7 inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-medium transition-[transform,background-color,box-shadow] duration-200 md:mt-0"
-        >
-          {page.ctaButtonText}
-        </a>
       </div>
     </section>
-  </div>
+  </main>
 </BaseLayout>

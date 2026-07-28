@@ -21,10 +21,10 @@ function isCurrentPath(href: string): boolean {
 ---
 
 <header
-  class="bg-background/92 supports-backdrop-filter:bg-background/72 sticky top-0 z-50 w-full border-b backdrop-blur"
+  class="bg-background/92 supports-backdrop-filter:bg-background/72 border-border/70 sticky top-0 z-50 w-full border-b backdrop-blur"
 >
   <div
-    class="container mx-auto flex h-16 items-center justify-between px-4 md:px-8"
+    class="container mx-auto flex h-[4.5rem] items-center justify-between px-4 md:px-8"
   >
     <a
       href="/"
@@ -46,7 +46,7 @@ function isCurrentPath(href: string): boolean {
           <a
             href={href}
             aria-current={isCurrentPath(href) ? 'page' : undefined}
-            class="nav-link-animate text-muted-foreground hover:text-accent font-mono text-xs font-semibold tracking-wide uppercase transition-colors"
+            class="nav-link-animate text-muted-foreground hover:text-accent font-mono text-[0.68rem] font-semibold tracking-[0.1em] uppercase transition-colors"
           >
             {label}
           </a>
@@ -55,7 +55,7 @@ function isCurrentPath(href: string): boolean {
       <div class="group relative">
         <a
           href="/blog"
-          class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 font-mono text-xs font-semibold tracking-wide uppercase transition-colors"
+          class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 font-mono text-[0.68rem] font-semibold tracking-[0.1em] uppercase transition-colors"
           aria-current={isCurrentPath('/blog') ? 'page' : undefined}
         >
           Blog
@@ -75,7 +75,7 @@ function isCurrentPath(href: string): boolean {
           class="invisible absolute top-full left-1/2 z-50 w-64 -translate-x-1/2 pt-3 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
         >
           <nav
-            class="border-border bg-card rounded-lg border p-2 shadow-2xl"
+            class="border-border bg-card border p-2 shadow-2xl"
             aria-label="Blog topics"
           >
             <a
@@ -108,7 +108,7 @@ function isCurrentPath(href: string): boolean {
           <a
             href={href}
             aria-current={isCurrentPath(href) ? 'page' : undefined}
-            class="nav-link-animate text-muted-foreground hover:text-accent font-mono text-xs font-semibold tracking-wide uppercase transition-colors"
+            class="nav-link-animate text-muted-foreground hover:text-accent font-mono text-[0.68rem] font-semibold tracking-[0.1em] uppercase transition-colors"
           >
             {label}
           </a>

@@ -9,7 +9,7 @@ Photoshop, or any image editor.
 | File | Use |
 | --- | --- |
 | `loke-profile-portrait.png` | GitHub, X, LinkedIn, and other profile avatars. Keep the face centred when a platform crops it to a circle. |
-| `loke-x-header.png` | X header, GitHub profile banner, LinkedIn cover starting point. It keeps the left side quiet for platform overlays. |
+| `loke-x-header.png` | X header, GitHub profile banner, LinkedIn cover starting point. It is graphic-only and keeps the lower-left 32% clear for X's profile avatar. |
 | `loke-social-square-template.png` | Square post base for announcements, project releases, or useful short notes. Put your copy on the large paper panel. |
 
 ## Visual rules

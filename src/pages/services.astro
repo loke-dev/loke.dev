@@ -2,7 +2,6 @@
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
-import PageIntro from '@/components/PageIntro.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
@@ -102,20 +101,26 @@ const serviceSchema = {
     set:html={serializeJsonLd(serviceSchema)}
   />
 
-  <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
-    <PageIntro
-      eyebrow="Services"
-      title="I build software for the web, and the stuff around it."
-      description="Need a new site, an app, an online store, an AI feature, or a small tool that saves time? I can help get it made."
-    />
+  <main class="workshop-page">
+    <section class="grid gap-8 lg:grid-cols-[1fr_0.82fr] lg:items-end">
+      <div>
+        <p class="workshop-label">Services / Build room</p><h1
+          class="workshop-heading mt-5"
+        >
+          I build software for the web, and the stuff around it.
+        </h1>
+      </div>
+      <p class="text-muted-foreground max-w-xl text-lg leading-relaxed">
+        Need a new site, an app, an online store, an AI feature, or a small tool
+        that saves time? I can help get it made.
+      </p>
+    </section>
 
-    <section class="mt-12 grid gap-5 md:grid-cols-2" aria-label="Services">
+    <section class="mt-16 grid gap-4 md:grid-cols-2" aria-label="Services">
       {
         services.map((service) => (
-          <article class="surface-interactive border-border/80 bg-card hover:border-accent/40 rounded-xl border p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_20px_50px_-28px_oklch(72%_0.16_70/0.28)]">
-            <p class="text-accent text-xs font-semibold tracking-[0.2em]">
-              {service.number}
-            </p>
+          <article class="workshop-card surface-interactive hover:border-accent/40 p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-1">
+            <p class="workshop-number">{service.number}</p>
             <h2 class="mt-5 text-2xl font-bold tracking-tight">
               {service.title}
             </h2>
@@ -137,15 +142,13 @@ const serviceSchema = {
       }
     </section>
 
-    <section class="border-border/70 mt-20 border-t pt-10 md:pt-12">
-      <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
-        How I work
-      </p>
+    <section class="workshop-rule mt-24 pt-10 md:pt-12">
+      <p class="workshop-label">How I work</p>
       <div class="mt-5 grid gap-8 md:grid-cols-3">
         {
           process.map(([title, description], index) => (
             <article>
-              <p class="text-accent text-sm font-medium">0{index + 1}</p>
+              <p class="workshop-number">0{index + 1}</p>
               <h2 class="mt-3 text-xl font-bold">{title}</h2>
               <p class="text-muted-foreground mt-3 leading-relaxed">
                 {description}
@@ -157,26 +160,28 @@ const serviceSchema = {
     </section>
 
     <section
-      class="border-accent/25 from-accent/15 via-card to-card mt-20 rounded-2xl border bg-gradient-to-br px-6 py-10 md:flex md:items-end md:justify-between md:px-10"
+      class="paper-panel mt-20 border border-[#121212]/15 px-6 py-10 md:flex md:items-end md:justify-between md:px-10"
     >
       <div class="max-w-2xl">
-        <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
+        <p
+          class="font-mono text-xs font-bold tracking-[0.16em] text-[#ff5a1f] uppercase"
+        >
           A good first conversation
         </p>
-        <h2 class="mt-3 text-3xl font-bold tracking-tight">
+        <h2 class="mt-3 text-3xl font-bold tracking-tight text-[#121212]">
           Got something you want to make?
         </h2>
-        <p class="text-muted-foreground mt-4 leading-relaxed">
+        <p class="mt-4 leading-relaxed text-[#5d5a54]">
           Send a short note about the idea, what you have today, and where you
           are stuck. That is enough to start.
         </p>
       </div>
       <a
         href="/contact"
-        class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 mt-7 inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-medium transition-colors md:mt-0"
+        class="interactive-button mt-7 inline-flex items-center justify-center bg-[#121212] px-5 py-3 font-mono text-sm font-bold tracking-wide text-[#f4f0e8] uppercase transition-transform md:mt-0"
       >
         Start a conversation →
       </a>
     </section>
-  </div>
+  </main>
 </BaseLayout>
