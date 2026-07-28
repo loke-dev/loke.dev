@@ -80,11 +80,31 @@ const description =
     <section id="og-result" class="mt-8 hidden" aria-live="polite">
       <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <article class="paper-panel overflow-hidden border border-[#121212]/15">
-          <img
-            id="preview-image"
-            alt=""
-            class="hidden aspect-[1.91/1] w-full object-cover"
-          />
+          <a
+            id="preview-image-link"
+            class="hidden"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              id="preview-image"
+              alt=""
+              referrerpolicy="no-referrer"
+              class="aspect-[1.91/1] w-full object-cover"
+            />
+          </a>
+          <p
+            id="preview-image-fallback"
+            class="hidden p-6 text-sm leading-relaxed text-[#5d5a54]"
+          >
+            This site did not allow its share image to load here. You can still
+            <a
+              id="preview-image-direct-link"
+              class="font-semibold text-[#121212] underline underline-offset-4"
+              target="_blank"
+              rel="noreferrer">open the image directly</a
+            >.
+          </p>
           <div class="p-6">
             <p
               class="font-mono text-xs font-bold tracking-[0.13em] text-[#ff5a1f] uppercase"
@@ -150,6 +170,15 @@ const description =
     const result = document.querySelector<HTMLElement>('#og-result')
     const status = document.querySelector<HTMLElement>('#inspect-status')
     const image = document.querySelector<HTMLImageElement>('#preview-image')
+    const imageLink = document.querySelector<HTMLAnchorElement>(
+      '#preview-image-link'
+    )
+    const imageFallback = document.querySelector<HTMLElement>(
+      '#preview-image-fallback'
+    )
+    const directImageLink = document.querySelector<HTMLAnchorElement>(
+      '#preview-image-direct-link'
+    )
     const checks = document.querySelector<HTMLElement>('#quick-checks')
     const tags = document.querySelector<HTMLElement>('#tag-output')
 
@@ -188,11 +217,17 @@ const description =
           if (ogImage) {
             image.src = ogImage
             image.alt = ogTitle
-            image.classList.remove('hidden')
+            imageLink?.setAttribute('href', ogImage)
+            directImageLink?.setAttribute('href', ogImage)
+            imageLink?.classList.remove('hidden')
+            imageFallback?.classList.add('hidden')
           } else {
             image.removeAttribute('src')
             image.alt = ''
-            image.classList.add('hidden')
+            imageLink?.removeAttribute('href')
+            directImageLink?.removeAttribute('href')
+            imageLink?.classList.add('hidden')
+            imageFallback?.classList.add('hidden')
           }
         }
         const rows = [
@@ -244,6 +279,11 @@ const description =
         button.disabled = false
         button.textContent = 'Inspect URL'
       }
+    })
+
+    image?.addEventListener('error', () => {
+      imageLink?.classList.add('hidden')
+      imageFallback?.classList.remove('hidden')
     })
   }
 
