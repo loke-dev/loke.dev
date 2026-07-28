@@ -20,7 +20,14 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: studio/pnpm-lock.yaml
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            studio/pnpm-lock.yaml
+
+      # Sanity 6's Vite resolver discovers the repository tsconfig while
+      # building the nested Studio and must be able to resolve its Astro base.
+      - name: Install site tsconfig dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Install Studio dependencies
         run: pnpm --dir studio install --frozen-lockfile
