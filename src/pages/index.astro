@@ -40,6 +40,17 @@ const focusAreas = [
       'Practical workflows and product features with review, guardrails, and a reason to exist.',
   },
 ]
+
+const toolset = [
+  'Web platforms',
+  'Product UI',
+  'CMS and content',
+  'APIs and integrations',
+  'Databases and auth',
+  'Cloud infrastructure',
+  'AI workflows',
+  'Analytics and testing',
+]
 ---
 
 <BaseLayout
@@ -206,20 +217,21 @@ const focusAreas = [
     <section class="workshop-page">
       <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
         <div>
-          <p class="workshop-label">Tools I reach for</p><h2
+          <p class="workshop-label">What I work with</p><h2
             class="mt-5 text-4xl font-bold tracking-[-0.06em] md:text-5xl"
           >
-            Boring tech, used well.
+            Good tools, picked for the job.
           </h2><p class="text-muted-foreground mt-5 max-w-xl leading-relaxed">
-            There is no perfect stack. I pick tools that fit the problem, keep
-            the team moving, and do not become a mystery six months later.
+            The exact stack changes with the project. The important bit is that
+            it fits the problem, keeps the team moving, and does not become a
+            mystery six months later.
           </p>
         </div>
         <div
           class="border-border/70 bg-border/70 grid grid-cols-2 gap-px overflow-hidden border sm:grid-cols-3"
         >
           {
-            page.technologies.map((tech) => (
+            toolset.map((tech) => (
               <div class="bg-card px-4 py-6 text-center font-mono text-sm font-bold tracking-tight">
                 {tech}
               </div>
