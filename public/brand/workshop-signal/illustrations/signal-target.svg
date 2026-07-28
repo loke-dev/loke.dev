@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Signal target</title><desc id="desc">Workshop Signal target illustration.</desc>
+  <rect width="640" height="420" fill="#121212"/>
+  <g stroke="#f4f0e8" stroke-opacity=".14"><path d="M0 70h640M0 140h640M0 210h640M0 280h640M0 350h640M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420"/></g>
+  <g fill="none" stroke="#ff5a1f" stroke-width="5"><circle cx="420" cy="210" r="118"/><circle cx="420" cy="210" r="75"/><circle cx="420" cy="210" r="32"/><path d="M42 210h556M420 32v356"/></g>
+  <circle cx="420" cy="210" r="12" fill="#ff5a1f"/><path d="M60 210h185l20-15 18 30 20-48 18 33h99" fill="none" stroke="#f4f0e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+  <text x="60" y="70" fill="#f4f0e8" font-family="monospace" font-size="18" letter-spacing="3">SIGNAL / TARGET</text>
+</svg>

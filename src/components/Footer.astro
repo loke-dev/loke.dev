@@ -4,6 +4,7 @@ const year = new Date().getFullYear()
 const exploreLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
+  { href: '/now', label: 'Now' },
   { href: '/services', label: 'Services' },
   { href: '/tools', label: 'Tools' },
   { href: '/blog', label: 'Blog' },
@@ -11,6 +12,7 @@ const exploreLinks = [
   { href: '/projects', label: 'Projects' },
   { href: '/contact', label: 'Contact' },
   { href: '/changelog', label: 'Changelog' },
+  { href: '/brand', label: 'Brand guide' },
 ]
 
 const socialLinks = [
@@ -50,10 +52,13 @@ const feedsLinks = [
           href="/"
           class="inline-flex items-center gap-2 font-mono text-xl font-bold tracking-[-0.08em]"
         >
-          <span
-            class="border-accent/60 text-accent grid h-7 w-7 place-items-center rounded-full border text-[0.65rem]"
-            aria-hidden="true">+</span
-          >
+          <img
+            src="/brand/workshop-signal/loke-signal-mark.svg"
+            alt=""
+            width="28"
+            height="28"
+            class="h-7 w-7"
+          />
           loke<span class="text-accent">.</span>dev
         </a>
         <p

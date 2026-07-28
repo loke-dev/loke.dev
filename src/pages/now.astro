@@ -1,0 +1,74 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const now = [
+  [
+    'Building',
+    'loke.dev into a better home for work, notes, experiments, and the things I make for fun.',
+  ],
+  [
+    'Trying',
+    'More useful AI workflows, small developer tools, and ways to make content less annoying to keep up with.',
+  ],
+  [
+    'Open to',
+    'Interesting web work, product ideas, and teams that want to make something good without turning it into a huge process.',
+  ],
+]
+---
+
+<BaseLayout
+  title="Now"
+  description="What Loke is building, trying, and open to right now."
+  url={`${SITE_DOMAIN}/now`}
+>
+  <main class="workshop-page max-w-5xl">
+    <section class="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
+      <div>
+        <p class="workshop-label">Now / July 2026</p><h1
+          class="workshop-heading mt-5"
+        >
+          What I am up to right now.
+        </h1>
+      </div><p class="text-muted-foreground text-lg leading-relaxed">
+        Not a resume. Just a small snapshot of what has my attention at the
+        moment.
+      </p>
+    </section>
+    <section class="mt-16 grid gap-4">
+      {
+        now.map(([label, copy], index) => (
+          <article class="workshop-card grid gap-5 p-6 md:grid-cols-[120px_1fr] md:items-start">
+            <>
+              <p class="workshop-number">
+                0{index + 1} / {label}
+              </p>
+              <p class="text-xl leading-relaxed">{copy}</p>
+            </>
+          </article>
+        ))
+      }
+    </section>
+    <section class="paper-panel mt-16 p-7 md:p-10">
+      <p
+        class="font-mono text-xs font-bold tracking-[0.14em] text-[#ff5a1f] uppercase"
+      >
+        A small note
+      </p><p
+        class="mt-4 max-w-2xl text-2xl leading-snug font-bold tracking-[-0.04em] text-[#121212]"
+      >
+        This page should change when the work changes. If it is old, tell me.
+      </p><a
+        href="/contact"
+        class="mt-6 inline-flex bg-[#121212] px-5 py-3 font-mono text-sm font-bold tracking-wide text-[#f4f0e8] uppercase transition-transform hover:-translate-y-1"
+        >Say hello ↗</a
+      >
+    </section>
+  </main>
+</BaseLayout>

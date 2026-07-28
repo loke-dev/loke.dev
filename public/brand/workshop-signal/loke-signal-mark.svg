@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Loke.dev signal mark</title>
+  <desc id="desc">An orange target crossed by a cream signal line on a dark field.</desc>
+  <rect width="128" height="128" rx="24" fill="#121212"/>
+  <path d="M8 64h28l7-11 8 22 9-31 8 20h52" fill="none" stroke="#f4f0e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+  <circle cx="94" cy="64" r="24" fill="none" stroke="#ff5a1f" stroke-width="6"/>
+  <circle cx="94" cy="64" r="9" fill="#ff5a1f"/>
+</svg>

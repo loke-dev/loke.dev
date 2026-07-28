@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Build loop</title><desc id="desc">Workshop Signal build loop illustration.</desc>
+  <rect width="640" height="420" fill="#f4f0e8"/>
+  <g fill="none" stroke="#121212" stroke-opacity=".15"><path d="M0 70h640M0 140h640M0 210h640M0 280h640M0 350h640M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420"/></g>
+  <g fill="#121212" font-family="monospace" font-size="26" font-weight="700"><text x="76" y="148">IDEA</text><text x="265" y="86">BUILD</text><text x="454" y="148">TEST</text><text x="445" y="310">SHIP</text><text x="99" y="310">LEARN</text></g>
+  <path d="M157 142c58-95 154-106 213-53M487 159c84 49 67 137-1 158M432 333c-79 61-184 42-234-13M130 280c-70-60-49-150 10-184" fill="none" stroke="#ff5a1f" stroke-linecap="round" stroke-width="10"/>
+  <g fill="#ff5a1f"><path d="m357 38 17 44-48-7z"/><path d="m522 269-43 19 5-48z"/><path d="m198 345-15-45 47 9z"/><path d="m85 169 43-19-5 48z"/></g>
+  <text x="76" y="70" fill="#ff5a1f" font-family="monospace" font-size="18" font-weight="700" letter-spacing="3">WORK IN LOOPS</text>
+</svg>

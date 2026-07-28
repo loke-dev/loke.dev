@@ -1,6 +1,5 @@
 import { SITE_DOMAIN } from '@/utils/meta'
-import defaultProfile from '@/assets/loke-clay-512.png'
 
 export function getDefaultProfileOgUrl() {
-  return new URL(defaultProfile.src, SITE_DOMAIN).href
+  return new URL('/brand/workshop-signal/loke-og-default.png', SITE_DOMAIN).href
 }

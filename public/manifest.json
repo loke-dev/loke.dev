@@ -3,15 +3,15 @@
   "short_name": "Loke.dev",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#030711",
-  "theme_color": "#1e293b",
-  "description": "Lokes personal website and blog",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "description": "Loke.dev. Websites, apps, and AI work.",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "48x48",
-      "type": "image/x-icon"
+      "src": "/brand/workshop-signal/loke-signal-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
       "src": "/android-chrome-192x192.png",

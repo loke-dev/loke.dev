@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Loke.dev, build useful things</title><desc id="desc">Workshop Signal share card for Loke.dev.</desc>
+  <rect width="1200" height="630" fill="#121212"/>
+  <g stroke="#f4f0e8" stroke-opacity=".07"><path d="M0 70h1200M0 140h1200M0 210h1200M0 280h1200M0 350h1200M0 420h1200M0 490h1200M0 560h1200M80 0v630M160 0v630M240 0v630M320 0v630M400 0v630M480 0v630M560 0v630M640 0v630M720 0v630M800 0v630M880 0v630M960 0v630M1040 0v630M1120 0v630"/></g>
+  <circle cx="82" cy="85" r="25" fill="none" stroke="#ff5a1f" stroke-width="3"/><path d="M66 85h16l5-8 6 16 7-24 6 16h24" fill="none" stroke="#f4f0e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+  <text x="130" y="94" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="38" font-weight="700">loke<tspan fill="#ff5a1f">.</tspan>dev</text>
+  <text x="82" y="200" fill="#ff5a1f" font-family="monospace" font-size="19" font-weight="700" letter-spacing="4">WORKSHOP SIGNAL / SWEDEN</text>
+  <text x="76" y="320" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="104" font-weight="800" letter-spacing="-6">Make the</text>
+  <text x="76" y="416" fill="#ff5a1f" font-family="Arial, sans-serif" font-size="104" font-weight="800" letter-spacing="-6">useful thing.</text>
+  <text x="82" y="510" fill="#b8b3aa" font-family="Arial, sans-serif" font-size="30">Websites, apps, and AI work that are easier to use.</text>
+  <g transform="translate(900 312)" fill="none" stroke="#ff5a1f"><circle r="120" stroke-width="4"/><circle r="72" stroke-width="4"/><circle r="28" stroke-width="4"/><path d="M-180 0h360M0-180v360" stroke-width="4"/></g><circle cx="900" cy="312" r="12" fill="#ff5a1f"/>
+  <path d="M820 312h-85l-12-22-15 48-15-32-14 6H590" fill="none" stroke="#f4f0e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <rect x="920" y="488" width="218" height="74" fill="#f4f0e8" transform="rotate(-3 1029 525)"/><text x="946" y="530" fill="#121212" font-family="monospace" font-size="15" font-weight="700" transform="rotate(-3 946 530)">FOCUS. BUILD. SHIP.</text>
+</svg>

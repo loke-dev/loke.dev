@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Pulse grid</title><desc id="desc">Workshop Signal pulse illustration.</desc>
+  <rect width="640" height="420" fill="#121212"/>
+  <g stroke="#f4f0e8" stroke-opacity=".13"><path d="M0 60h640M0 120h640M0 180h640M0 240h640M0 300h640M0 360h640M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420"/></g>
+  <path d="M32 250h130l24-38 31 82 40-163 38 135 37-64 27 48h239" fill="none" stroke="#ff5a1f" stroke-linecap="round" stroke-linejoin="round" stroke-width="10"/>
+  <g fill="#f4f0e8" font-family="monospace"><text x="40" y="75" font-size="18" letter-spacing="3">PULSE CHECK</text><text x="40" y="105" font-size="14" opacity=".65">KEEP THE SIGNAL. DROP THE NOISE.</text></g>
+  <circle cx="511" cy="250" r="32" fill="none" stroke="#6f91aa" stroke-width="5"/><circle cx="511" cy="250" r="10" fill="#6f91aa"/>
+</svg>

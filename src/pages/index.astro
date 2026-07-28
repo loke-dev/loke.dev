@@ -40,17 +40,6 @@ const focusAreas = [
       'Practical workflows and product features with review, guardrails, and a reason to exist.',
   },
 ]
-
-const toolset = [
-  'Web platforms',
-  'Product UI',
-  'CMS and content',
-  'APIs and integrations',
-  'Databases and auth',
-  'Cloud infrastructure',
-  'AI workflows',
-  'Analytics and testing',
-]
 ---
 
 <BaseLayout
@@ -231,7 +220,7 @@ const toolset = [
           class="border-border/70 bg-border/70 grid grid-cols-2 gap-px overflow-hidden border sm:grid-cols-3"
         >
           {
-            toolset.map((tech) => (
+            page.technologies.map((tech) => (
               <div class="bg-card px-4 py-6 text-center font-mono text-sm font-bold tracking-tight">
                 {tech}
               </div>

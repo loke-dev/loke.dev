@@ -10,6 +10,9 @@ Photoshop, or any image editor.
 | --- | --- |
 | `loke-profile-portrait.png` | GitHub, X, LinkedIn, and other profile avatars. Keep the face centred when a platform crops it to a circle. |
 | `loke-x-header.png` | X header, GitHub profile banner, LinkedIn cover starting point. It is graphic-only and keeps the lower-left 32% clear for X's profile avatar. |
+| `loke-signal-mark.svg` | The compact logo mark. Use for favicons, app icons, and small signatures. |
+| `loke-og-default.png` | Default 1200 × 630 Open Graph card for loke.dev pages. |
+| `illustrations/` | Reusable SVG illustrations for website sections, social posts, and article callouts. |
 | `loke-social-square-template.png` | Square post base for announcements, project releases, or useful short notes. Put your copy on the large paper panel. |
 
 ## Visual rules

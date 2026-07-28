@@ -1,0 +1,244 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const colours = [
+  { name: 'Ink black', value: '#121212', class: 'bg-[#121212]' },
+  { name: 'Warm bone', value: '#F4F0E8', class: 'bg-[#f4f0e8]' },
+  { name: 'Safety orange', value: '#FF5A1F', class: 'bg-[#ff5a1f]' },
+  { name: 'Muted navy', value: '#6F91AA', class: 'bg-[#6f91aa]' },
+]
+
+const assets = [
+  {
+    title: 'Signal mark',
+    detail:
+      'Favicon, app icon, small avatar, or a little signature in a corner.',
+    preview: '/brand/workshop-signal/loke-signal-mark.svg',
+    href: '/brand/workshop-signal/loke-signal-mark.svg',
+  },
+  {
+    title: 'X header',
+    detail: 'Graphic-only 3:1 header. The wordmark sits above the avatar zone.',
+    preview: '/brand/workshop-signal/loke-x-header.png',
+    href: '/brand/workshop-signal/loke-x-header.png',
+  },
+  {
+    title: 'Profile portrait',
+    detail:
+      'Use for places where a face helps, not as a decoration everywhere.',
+    preview: '/brand/workshop-signal/loke-profile-portrait.png',
+    href: '/brand/workshop-signal/loke-profile-portrait.png',
+  },
+  {
+    title: 'Social square',
+    detail:
+      'A starting point for launch posts, project cards, and short notes.',
+    preview: '/brand/workshop-signal/loke-social-square-template.png',
+    href: '/brand/workshop-signal/loke-social-square-template.png',
+  },
+]
+
+const illustrations = [
+  ['Signal target', 'A useful thing found in the noise.', 'signal-target.svg'],
+  ['Build loop', 'The way work actually gets better.', 'build-loop.svg'],
+  [
+    'Field note',
+    'A human little annotation for articles and posts.',
+    'field-note.svg',
+  ],
+  ['Pulse grid', 'For performance, launches, and momentum.', 'pulse-grid.svg'],
+]
+---
+
+<BaseLayout
+  title="Brand guide"
+  description="The Workshop Signal design system, social templates, logo mark, and reusable illustrations for Loke.dev."
+  url={`${SITE_DOMAIN}/brand`}
+  image={`${SITE_DOMAIN}/brand/workshop-signal/loke-og-default.png`}
+  imageAlt="Workshop Signal share card for Loke.dev"
+>
+  <main class="workshop-page">
+    <section class="grid gap-10 lg:grid-cols-[1fr_0.82fr] lg:items-end">
+      <div>
+        <p class="workshop-label">Workshop Signal / brand guide</p>
+        <h1 class="workshop-heading mt-5">
+          A small system for making things feel related.
+        </h1>
+      </div>
+      <p class="text-muted-foreground max-w-xl text-lg leading-relaxed">
+        This is the visual toolbox for loke.dev. It is meant to be used, not
+        guarded like a museum piece.
+      </p>
+    </section>
+
+    <section class="workshop-rule mt-20 pt-12">
+      <div class="grid gap-8 md:grid-cols-[0.7fr_1.3fr] md:items-start">
+        <div>
+          <p class="workshop-label">The mark</p><h2
+            class="mt-4 text-3xl font-bold tracking-[-0.05em]"
+          >
+            A pulse finding a target.
+          </h2>
+        </div>
+        <div
+          class="workshop-card grid gap-6 p-6 sm:grid-cols-[150px_1fr] sm:items-center"
+        >
+          <img
+            src="/brand/workshop-signal/loke-signal-mark.svg"
+            alt="Loke.dev signal mark"
+            width="128"
+            height="128"
+            class="w-32"
+          /><div>
+            <p class="text-lg font-semibold">Use it when space is tight.</p><p
+              class="text-muted-foreground mt-2 leading-relaxed"
+            >
+              The mark is the short version of the brand. Dark field, orange
+              target, cream signal line. Keep it intact and give it some air.
+            </p><a
+              class="workshop-link mt-5"
+              href="/brand/workshop-signal/loke-signal-mark.svg"
+              download>Download SVG <span aria-hidden="true">↓</span></a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-20">
+      <p class="workshop-label">Colours</p><h2
+        class="mt-4 text-3xl font-bold tracking-[-0.05em]"
+      >
+        Mostly dark, with a reason for the orange.
+      </h2>
+      <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          colours.map((colour) => (
+            <article class="workshop-card p-4">
+              <>
+                <div
+                  class:list={['h-28 border border-white/10', colour.class]}
+                />
+                <p class="mt-4 font-semibold">{colour.name}</p>
+                <p class="text-muted-foreground mt-1 font-mono text-sm">
+                  {colour.value}
+                </p>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="workshop-rule mt-20 pt-12">
+      <p class="workshop-label">Type and voice</p><div
+        class="mt-5 grid gap-8 md:grid-cols-2"
+      >
+        <div>
+          <h2 class="text-3xl font-bold tracking-[-0.05em]">
+            Big, plain, and a little rough around the edges.
+          </h2><p class="text-muted-foreground mt-4 leading-relaxed">
+            Big headings do the heavy lifting. The mono type is for labels,
+            measurements, and small system notes. Do not make everything mono.
+          </p>
+        </div><div class="paper-panel p-6">
+          <p
+            class="font-mono text-xs font-bold tracking-[0.14em] text-[#ff5a1f] uppercase"
+          >
+            Writing rules
+          </p><ul class="mt-4 space-y-3 text-[#121212]">
+            <li>Say what it does. Skip the big claims.</li><li>
+              Write like a person. Short is usually better.
+            </li><li>Use contractions if they sound natural.</li><li>
+              No em dashes. No fake urgency. No AI fluff.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="workshop-rule mt-20 pt-12">
+      <div class="flex flex-wrap items-end justify-between gap-5">
+        <div>
+          <p class="workshop-label">Social assets</p><h2
+            class="mt-4 text-3xl font-bold tracking-[-0.05em]"
+          >
+            Ready to grab and use.
+          </h2>
+        </div><a class="workshop-link" href="/brand/workshop-signal/README.md"
+          >Usage notes <span aria-hidden="true">→</span></a
+        >
+      </div>
+      <div class="mt-8 grid gap-5 md:grid-cols-2">
+        {
+          assets.map((asset) => (
+            <article class="workshop-card overflow-hidden">
+              <>
+                <img
+                  src={asset.preview}
+                  alt=""
+                  loading="lazy"
+                  class="aspect-[16/8] w-full object-cover object-center"
+                />
+                <div class="p-5">
+                  <>
+                    <h3 class="text-xl font-bold">{asset.title}</h3>
+                    <p class="text-muted-foreground mt-2 leading-relaxed">
+                      {asset.detail}
+                    </p>
+                    <a href={asset.href} download class="workshop-link mt-5">
+                      Download <span aria-hidden="true">↓</span>
+                    </a>
+                  </>
+                </div>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="workshop-rule mt-20 pt-12">
+      <p class="workshop-label">Signature illustrations</p><h2
+        class="mt-4 text-3xl font-bold tracking-[-0.05em]"
+      >
+        A few things to reuse instead of reaching for generic blobs.
+      </h2>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2">
+        {
+          illustrations.map(([title, detail, filename]) => (
+            <article class="workshop-card overflow-hidden">
+              <>
+                <img
+                  src={`/brand/workshop-signal/illustrations/${filename}`}
+                  alt=""
+                  loading="lazy"
+                  class="aspect-[16/9] w-full object-cover"
+                />
+                <div class="p-5">
+                  <>
+                    <h3 class="text-xl font-bold">{title}</h3>
+                    <p class="text-muted-foreground mt-2">{detail}</p>
+                    <a
+                      href={`/brand/workshop-signal/illustrations/${filename}`}
+                      download
+                      class="workshop-link mt-5"
+                    >
+                      Download SVG <span aria-hidden="true">↓</span>
+                    </a>
+                  </>
+                </div>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</BaseLayout>

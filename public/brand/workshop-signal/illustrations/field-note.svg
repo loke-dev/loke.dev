@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Field note</title><desc id="desc">Workshop Signal field note illustration.</desc>
+  <rect width="640" height="420" fill="#121212"/>
+  <path d="m92 58 389-16 54 310-392 22z" fill="#f4f0e8" transform="rotate(-3 320 210)"/>
+  <path d="m476 62 72 21-18 65-72-21z" fill="#6f91aa" transform="rotate(8 512 105)"/>
+  <g transform="rotate(-3 320 210)" font-family="monospace"><text x="135" y="115" fill="#ff5a1f" font-size="19" font-weight="700" letter-spacing="3">FIELD NOTE / 001</text><path d="M135 142h300" stroke="#121212" stroke-opacity=".22"/><text x="135" y="190" fill="#121212" font-size="30" font-weight="700">Find the useful bit.</text><text x="135" y="232" fill="#121212" font-size="30" font-weight="700">Make it easy to use.</text><text x="135" y="290" fill="#5d5a54" font-size="19">Then do the boring work properly.</text></g>
+  <circle cx="92" cy="350" r="18" fill="#ff5a1f"/><path d="M105 350h110" stroke="#ff5a1f" stroke-width="5"/>
+</svg>
