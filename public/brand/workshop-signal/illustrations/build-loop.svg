@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
   <title id="title">Build loop</title><desc id="desc">Workshop Signal build loop illustration.</desc>
   <rect width="640" height="420" fill="#f4f0e8"/>
-  <g fill="none" stroke="#121212" stroke-opacity=".15"><path d="M0 70h640M0 140h640M0 210h640M0 280h640M0 350h640M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420"/></g>
-  <g fill="#121212" font-family="monospace" font-size="26" font-weight="700"><text x="76" y="148">IDEA</text><text x="265" y="86">BUILD</text><text x="454" y="148">TEST</text><text x="445" y="310">SHIP</text><text x="99" y="310">LEARN</text></g>
-  <path d="M157 142c58-95 154-106 213-53M487 159c84 49 67 137-1 158M432 333c-79 61-184 42-234-13M130 280c-70-60-49-150 10-184" fill="none" stroke="#ff5a1f" stroke-linecap="round" stroke-width="10"/>
-  <g fill="#ff5a1f"><path d="m357 38 17 44-48-7z"/><path d="m522 269-43 19 5-48z"/><path d="m198 345-15-45 47 9z"/><path d="m85 169 43-19-5 48z"/></g>
-  <text x="76" y="70" fill="#ff5a1f" font-family="monospace" font-size="18" font-weight="700" letter-spacing="3">WORK IN LOOPS</text>
+  <g fill="none" stroke="#121212" stroke-opacity=".12"><path d="M0 70h640M0 140h640M0 210h640M0 280h640M0 350h640M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420"/></g>
+  <text x="54" y="63" fill="#ff5a1f" font-family="monospace" font-size="17" font-weight="700" letter-spacing="3">THE BUILD LOOP / 001</text>
+  <g fill="#f4f0e8"><rect x="57" y="162" width="132" height="40" rx="4"/><rect x="240" y="96" width="150" height="40" rx="4"/><rect x="422" y="162" width="132" height="40" rx="4"/><rect x="406" y="290" width="132" height="40" rx="4"/><rect x="57" y="290" width="150" height="40" rx="4"/></g>
+  <path d="M205 178c27-59 97-91 145-57M407 151c65 17 93 87 55 137M431 322c-65 44-147 31-193-6M151 294c-43-44-31-95-2-127" fill="none" stroke="#ff5a1f" stroke-linecap="round" stroke-width="8"/>
+  <g fill="#ff5a1f"><circle cx="205" cy="178" r="8"/><circle cx="407" cy="151" r="8"/><circle cx="431" cy="322" r="8"/><circle cx="151" cy="294" r="8"/></g>
+  <path d="M302 238h38l12-20 15 40 19-64 15 44h42" fill="none" stroke="#6f91aa" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <g fill="#121212" font-family="monospace" font-size="20" font-weight="700"><text x="76" y="189">01 / IDEA</text><text x="260" y="123">02 / BUILD</text><text x="441" y="189">03 / TEST</text><text x="425" y="317">04 / SHIP</text><text x="76" y="317">05 / LEARN</text></g>
 </svg>

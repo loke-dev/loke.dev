@@ -25,7 +25,7 @@ const srcSet = getSanityImageSrcSet(
 ---
 
 <article
-  class={`surface-interactive group relative overflow-hidden rounded-2xl border border-border/80 bg-card transition-[transform,border-color,box-shadow] hover:-translate-y-1 hover:border-accent/45 hover:shadow-[0_24px_60px_-32px_oklch(72%_0.16_70/0.36)] ${featured ? 'flex flex-col lg:flex-row w-full' : 'flex flex-col h-full'} ${template ? 'bg-gradient-to-b from-card via-card to-accent/5' : ''}`}
+  class={`workshop-card surface-interactive group relative overflow-hidden transition-[transform,border-color,box-shadow] hover:-translate-y-1 hover:border-accent/45 hover:shadow-[0_24px_60px_-32px_oklch(72%_0.16_70/0.36)] ${featured ? 'flex w-full flex-col lg:flex-row' : 'flex h-full flex-col'} ${template ? 'bg-gradient-to-b from-card via-card to-accent/5' : ''}`}
 >
   {
     imageUrl && (
@@ -56,9 +56,18 @@ const srcSet = getSanityImageSrcSet(
   {
     !imageUrl && (
       <div
-        class={`from-accent/20 via-secondary to-background relative overflow-hidden bg-gradient-to-br ${featured ? 'min-h-56 lg:min-h-0 lg:w-[52%]' : 'aspect-[16/10]'}`}
+        class={`signal-grid relative overflow-hidden bg-[#171715] ${featured ? 'min-h-56 lg:min-h-0 lg:w-[52%]' : 'aspect-[16/10]'}`}
       >
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,oklch(72%_0.18_70/0.28),transparent_34%),radial-gradient(circle_at_78%_75%,oklch(60%_0.12_250/0.22),transparent_38%)]" />
+        <img
+          src="/brand/workshop-signal/illustrations/signal-target.svg"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          width="640"
+          height="420"
+          class="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.025]"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#121212]/55 via-transparent to-transparent" />
         <div class="relative flex h-full items-end p-6">
           <span class="border-accent/35 bg-background/70 text-foreground rounded-full border px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase backdrop-blur">
             {template ? 'Template' : 'Project note'}

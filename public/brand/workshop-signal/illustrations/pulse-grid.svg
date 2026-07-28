@@ -2,7 +2,8 @@
   <title id="title">Pulse grid</title><desc id="desc">Workshop Signal pulse illustration.</desc>
   <rect width="640" height="420" fill="#121212"/>
   <g stroke="#f4f0e8" stroke-opacity=".13"><path d="M0 60h640M0 120h640M0 180h640M0 240h640M0 300h640M0 360h640M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420"/></g>
-  <path d="M32 250h130l24-38 31 82 40-163 38 135 37-64 27 48h239" fill="none" stroke="#ff5a1f" stroke-linecap="round" stroke-linejoin="round" stroke-width="10"/>
-  <g fill="#f4f0e8" font-family="monospace"><text x="40" y="75" font-size="18" letter-spacing="3">PULSE CHECK</text><text x="40" y="105" font-size="14" opacity=".65">KEEP THE SIGNAL. DROP THE NOISE.</text></g>
-  <circle cx="511" cy="250" r="32" fill="none" stroke="#6f91aa" stroke-width="5"/><circle cx="511" cy="250" r="10" fill="#6f91aa"/>
+  <path d="M32 250h126l24-38 31 82 40-163 38 135 37-64 27 48h244" fill="none" stroke="#ff5a1f" stroke-linecap="round" stroke-linejoin="round" stroke-width="10"/>
+  <g fill="#f4f0e8" font-family="monospace"><text x="40" y="70" font-size="18" font-weight="700" letter-spacing="3">PULSE CHECK / 001</text><text x="40" y="101" font-size="14" opacity=".65">KEEP THE SIGNAL. DROP THE NOISE.</text></g>
+  <g fill="#ff5a1f"><path d="M500 152h24v5h-24zM509 143h5v24h-5z"/><path d="M93 340h24v5H93zM102 331h5v24h-5z"/></g>
+  <circle cx="510" cy="250" r="34" fill="none" stroke="#6f91aa" stroke-width="5"/><circle cx="510" cy="250" r="10" fill="#6f91aa"/>
 </svg>
