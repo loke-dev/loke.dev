@@ -15,14 +15,16 @@ minimumReleaseAgeExclude:
   - sharp@0.35.0
 
 overrides:
+  "@babel/core@<=7.29.0": ^7.29.1
   # minimatch 3 still requires brace-expansion 1's CommonJS function export;
   # keep each dependency on the newest compatible patched release.
   brace-expansion@>=1.0.0 <1.1.16: 1.1.16
   brace-expansion@>=5.0.0 <5.0.8: 5.0.8
+  esbuild@>=0.27.3 <0.28.1: ^0.28.1
   js-yaml@>=4.0.0 <4.3.0: ^4.3.0
   minimatch@>=3.0.0 <3.1.4: 3.1.4
   picomatch@>=4.0.0 <4.0.4: ^4.0.4
   sharp@<0.35.0: ^0.35.0
   undici@>=7.0.0 <7.28.0: ^7.28.0
-  vite: 7.3.5
+  vite: 8.1.5
   ws@>=8.0.0 <8.21.0: ^8.21.0

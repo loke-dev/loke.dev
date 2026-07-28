@@ -2,6 +2,9 @@
 
 ## Development
 
+Use Node.js 22.12 or newer and the pnpm version declared in `package.json`.
+Install dependencies with `pnpm install --frozen-lockfile`.
+
 Run the dev server:
 
 ```shellscript

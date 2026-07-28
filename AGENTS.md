@@ -3,7 +3,7 @@
 This repository contains the Astro website and Cloudflare Worker at the root,
 plus a Sanity Studio in `studio/`.
 
-- Use Node.js 20+ and the pnpm version declared in `package.json`; do not
+- Use Node.js 22.12+ and the pnpm version declared in `package.json`; do not
   introduce another package manager.
 - Keep the site compatible with Astro's Cloudflare adapter and Workers runtime.
 - Prefer server-rendered Astro and small vanilla scripts. Add a client island
