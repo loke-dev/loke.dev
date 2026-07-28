@@ -16,7 +16,7 @@ export function getSecurityHeaders(options?: {
       "object-src 'none'",
       `frame-ancestors ${frameAncestors}`,
       "form-action 'self'",
-      "img-src 'self' data: https://cdn.sanity.io",
+      "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
       "connect-src 'self'",

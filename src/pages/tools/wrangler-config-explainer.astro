@@ -1,0 +1,365 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
+import { SITE_DOMAIN } from '@/utils/meta'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/wrangler-config-explainer`
+const description =
+  'Paste a wrangler.jsonc file to get a plain-English explanation of Cloudflare Worker bindings, routes, environments, compatibility settings, and common review points.'
+const example = `{
+  "name": "my-worker",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-07-28",
+  "routes": [{ "pattern": "api.example.com/*", "custom_domain": true }],
+  "vars": { "APP_ENV": "production" },
+  "kv_namespaces": [{ "binding": "CACHE", "id": "replace-me" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "app", "database_id": "replace-me" }],
+  "env": { "staging": { "vars": { "APP_ENV": "staging" } } }
+}`
+---
+
+<BaseLayout
+  title="Wrangler config explainer"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Wrangler config explainer',
+      description,
+      url: pageUrl,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    })}
+  />
+  <div class="workshop-page max-w-6xl">
+    <section class="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
+      <div>
+        <p class="workshop-label">Cloudflare Workers / config notes</p><h1
+          class="workshop-heading mt-5"
+        >
+          Read your Wrangler config without translating it in your head.
+        </h1>
+      </div><p class="text-muted-foreground text-lg leading-relaxed">
+        Paste JSON or JSONC. This stays in your browser and turns the important
+        bits into a review list you can use before deployment.
+      </p>
+    </section>
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      <section class="workshop-card p-5 md:p-7">
+        <div id="wrangler-example" data-config={example} hidden></div>
+        <div class="flex items-center justify-between gap-4">
+          <label
+            for="wrangler-config"
+            class="font-mono text-xs font-bold tracking-[0.12em] uppercase"
+            >wrangler.jsonc</label
+          ><button
+            id="load-wrangler-example"
+            type="button"
+            class="workshop-link text-xs">Load example</button
+          >
+        </div><textarea
+          id="wrangler-config"
+          class="border-border bg-background mt-4 min-h-120 w-full resize-y border p-4 font-mono text-sm leading-relaxed outline-none"
+          spellcheck="false"
+          placeholder='{ "name": "my-worker" }'></textarea><div
+          class="mt-4 flex flex-wrap gap-3"
+        >
+          <button
+            id="explain-wrangler"
+            type="button"
+            class="interactive-button bg-accent text-accent-foreground px-5 py-3 font-mono text-sm font-bold tracking-wide uppercase"
+            >Explain config</button
+          ><button
+            id="clear-wrangler"
+            type="button"
+            class="border-border hover:border-accent/60 px-5 py-3 font-mono text-sm font-bold tracking-wide uppercase"
+            >Clear</button
+          >
+        </div><p
+          id="wrangler-status"
+          class="text-muted-foreground mt-4 text-sm"
+          aria-live="polite"
+        >
+          Comments and trailing commas are supported. Secrets are never shown or
+          sent.
+        </p>
+      </section>
+      <section class="workshop-card p-5 md:p-7" aria-live="polite">
+        <p class="workshop-label">What this config says</p><div
+          id="wrangler-summary"
+          class="mt-5"
+        >
+          <p class="text-muted-foreground leading-relaxed">
+            Paste a config to get a plain-English map of its entrypoint,
+            bindings, routes, environments, and review points.
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  type Config = Record<string, unknown>
+
+  function stripJsonComments(value: string): string {
+    let output = ''
+    let quote = ''
+    let escaped = false
+    let lineComment = false
+    let blockComment = false
+    for (let index = 0; index < value.length; index++) {
+      const char = value[index]
+      const next = value[index + 1]
+      if (lineComment) {
+        if (char === '\n') {
+          lineComment = false
+          output += char
+        }
+        continue
+      }
+      if (blockComment) {
+        if (char === '*' && next === '/') {
+          blockComment = false
+          index++
+        }
+        continue
+      }
+      if (quote) {
+        output += char
+        if (!escaped && char === quote) quote = ''
+        escaped = !escaped && char === '\\'
+        if (char !== '\\') escaped = false
+        continue
+      }
+      if (char === '"' || char === "'") {
+        quote = char
+        output += char
+        continue
+      }
+      if (char === '/' && next === '/') {
+        lineComment = true
+        index++
+        continue
+      }
+      if (char === '/' && next === '*') {
+        blockComment = true
+        index++
+        continue
+      }
+      output += char
+    }
+    return output.replace(/,\s*([}\]])/g, '$1')
+  }
+
+  function asArray(value: unknown): unknown[] {
+    return Array.isArray(value) ? value : value ? [value] : []
+  }
+  function bindingNames(items: unknown, key = 'binding'): string[] {
+    return asArray(items).map((item) =>
+      typeof item === 'object' && item
+        ? String((item as Record<string, unknown>)[key] || 'unnamed binding')
+        : 'unnamed binding'
+    )
+  }
+
+  function addSection(
+    container: HTMLElement,
+    title: string,
+    copy: string,
+    tags: string[] = []
+  ) {
+    const section = document.createElement('section')
+    section.className =
+      'border-border/70 border-t py-5 first:border-t-0 first:pt-0'
+    const heading = document.createElement('h2')
+    heading.className = 'text-lg font-bold'
+    heading.textContent = title
+    const paragraph = document.createElement('p')
+    paragraph.className = 'text-muted-foreground mt-2 leading-relaxed'
+    paragraph.textContent = copy
+    section.appendChild(heading)
+    section.appendChild(paragraph)
+    if (tags.length) {
+      const list = document.createElement('div')
+      list.className = 'mt-3 flex flex-wrap gap-2'
+      tags.forEach((tag) => {
+        const chip = document.createElement('span')
+        chip.className = 'bg-secondary px-2.5 py-1 font-mono text-xs font-bold'
+        chip.textContent = tag
+        list.appendChild(chip)
+      })
+      section.appendChild(list)
+    }
+    container.appendChild(section)
+  }
+
+  function explainConfig(config: Config, output: HTMLElement) {
+    output.replaceChildren()
+    const name =
+      typeof config.name === 'string' ? config.name : 'Unnamed Worker'
+    const main =
+      typeof config.main === 'string'
+        ? config.main
+        : typeof config.legacy_env === 'string'
+          ? 'legacy configuration'
+          : null
+    addSection(
+      output,
+      name,
+      main
+        ? `The Worker entrypoint is ${main}. It will run with the compatibility rules selected below.`
+        : 'No main entrypoint is set. Check whether this is a Pages, static asset, or incomplete Worker config.'
+    )
+    const dates = [
+      typeof config.compatibility_date === 'string'
+        ? `date: ${config.compatibility_date}`
+        : '',
+      ...asArray(config.compatibility_flags).map(
+        (flag) => `flag: ${String(flag)}`
+      ),
+    ].filter(Boolean)
+    addSection(
+      output,
+      'Runtime compatibility',
+      dates.length
+        ? 'These settings decide which Workers runtime behaviour your code gets.'
+        : 'No compatibility date is visible. Add one so runtime behaviour is deliberate and reproducible.',
+      dates
+    )
+    const routes = asArray(config.routes)
+    const routeText = routes.length
+      ? `This Worker has ${routes.length} route${routes.length === 1 ? '' : 's'} attached. Check that preview and production do not share a route by accident.`
+      : config.route
+        ? 'A legacy single route is configured. Confirm the hostname and path match the intended environment.'
+        : 'No route is configured here. The Worker may be reached through a custom domain, another binding, or a manual deployment target.'
+    addSection(output, 'Routes', routeText)
+    const durableObjects = config.durable_objects as
+      { bindings?: unknown } | undefined
+    const bindings = [
+      ['KV', bindingNames(config.kv_namespaces)],
+      ['D1', bindingNames(config.d1_databases)],
+      ['R2', bindingNames(config.r2_buckets)],
+      ['Queues', bindingNames(config.queues)],
+      ['Service bindings', bindingNames(config.services)],
+      ['Analytics Engine', bindingNames(config.analytics_engine_datasets)],
+      ['Durable Objects', bindingNames(durableObjects?.bindings)],
+    ].filter(([, values]) => values.length) as Array<[string, string[]]>
+    addSection(
+      output,
+      'Bindings',
+      bindings.length
+        ? 'These names are what application code reads at runtime. Make sure the same binding names exist in every environment that should support the feature.'
+        : 'No platform bindings were found. That is fine for a simple Worker, but check vars, secrets, and service bindings separately.',
+      bindings.flatMap(([type, values]) =>
+        values.map((value) => `${type}: ${value}`)
+      )
+    )
+    const vars =
+      config.vars && typeof config.vars === 'object'
+        ? Object.keys(config.vars as Record<string, unknown>)
+        : []
+    addSection(
+      output,
+      'Variables and secrets',
+      vars.length
+        ? 'Plain variables are visible in this config. Keep credentials out of vars and use Wrangler secrets instead.'
+        : 'No plain vars are listed. That can be intentional. Confirm required non-secret configuration is documented somewhere.',
+      vars
+    )
+    const environments =
+      config.env && typeof config.env === 'object'
+        ? Object.keys(config.env as Record<string, unknown>)
+        : []
+    addSection(
+      output,
+      'Environments',
+      environments.length
+        ? 'Named environments can override bindings, vars, and routes. Review every environment because bindings do not automatically inherit in the way most people expect.'
+        : 'No named environments are declared. If staging and production differ, consider making that difference explicit.',
+      environments
+    )
+    const review = document.createElement('section')
+    review.className = 'paper-panel mt-5 p-5'
+    const heading = document.createElement('h2')
+    heading.className = 'text-lg font-bold text-[#121212]'
+    heading.textContent = 'Before you deploy'
+    const list = document.createElement('ul')
+    list.className = 'mt-3 space-y-2 text-[#5d5a54]'
+    ;[
+      'Check the route belongs to this environment.',
+      'Confirm every binding name exists where this Worker runs.',
+      'Keep IDs and secrets out of source control.',
+      'Run Flarecheck or Wrangler validation in CI.',
+    ].forEach((item) => {
+      const line = document.createElement('li')
+      line.textContent = item
+      list.appendChild(line)
+    })
+    review.appendChild(heading)
+    review.appendChild(list)
+    output.appendChild(review)
+  }
+
+  function setupWranglerExplainer() {
+    const example =
+      document.querySelector<HTMLElement>('#wrangler-example')?.dataset
+        .config || ''
+    const input =
+      document.querySelector<HTMLTextAreaElement>('#wrangler-config')
+    const output = document.querySelector<HTMLElement>('#wrangler-summary')
+    const status = document.querySelector<HTMLElement>('#wrangler-status')
+    const explain =
+      document.querySelector<HTMLButtonElement>('#explain-wrangler')
+    const loadExample = document.querySelector<HTMLButtonElement>(
+      '#load-wrangler-example'
+    )
+    const clear = document.querySelector<HTMLButtonElement>('#clear-wrangler')
+    if (
+      !input ||
+      !output ||
+      !status ||
+      !explain ||
+      explain.dataset.ready === 'true'
+    )
+      return
+    explain.dataset.ready = 'true'
+    const run = () => {
+      try {
+        const parsed = JSON.parse(stripJsonComments(input.value)) as Config
+        explainConfig(parsed, output)
+        status.textContent = 'Config explained locally. Nothing was uploaded.'
+      } catch (error) {
+        status.textContent =
+          error instanceof Error
+            ? `Could not parse this config: ${error.message}`
+            : 'Could not parse this config.'
+      }
+    }
+    explain.addEventListener('click', run)
+    loadExample?.addEventListener('click', () => {
+      input.value = example
+      run()
+    })
+    clear?.addEventListener('click', () => {
+      input.value = ''
+      output.innerHTML =
+        '<p class="text-muted-foreground leading-relaxed">Paste a config to get a plain-English map of its entrypoint, bindings, routes, environments, and review points.</p>'
+      status.textContent = 'Cleared.'
+    })
+  }
+  setupWranglerExplainer()
+  document.addEventListener('astro:after-swap', setupWranglerExplainer)
+</script>

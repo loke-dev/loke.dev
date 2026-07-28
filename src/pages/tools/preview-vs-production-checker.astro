@@ -1,0 +1,256 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
+import { SITE_DOMAIN } from '@/utils/meta'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/preview-vs-production-checker`
+const description =
+  'Compare preview and production URLs for redirects, canonical tags, robots directives, metadata, and security headers before release.'
+---
+
+<BaseLayout
+  title="Preview vs production checker"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Preview vs production checker',
+      description,
+      url: pageUrl,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    })}
+  />
+  <div class="workshop-page max-w-6xl">
+    <section class="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
+      <div>
+        <p class="workshop-label">Release check / URL diff</p><h1
+          class="workshop-heading mt-5"
+        >
+          Compare the page you tested with the page you will ship.
+        </h1>
+      </div><p class="text-muted-foreground text-lg leading-relaxed">
+        Catch redirect, canonical, robots, metadata, and key-header drift before
+        a deployment becomes a search or sharing problem.
+      </p>
+    </section>
+
+    <form
+      id="release-compare"
+      class="workshop-card mt-12 grid gap-4 p-5 md:grid-cols-[1fr_1fr_auto] md:items-end md:p-7"
+    >
+      <label
+        class="block font-mono text-xs font-bold tracking-[0.12em] uppercase"
+        >Preview URL<input
+          name="preview"
+          type="url"
+          required
+          placeholder="https://preview.example.com"
+          class="border-border bg-background mt-3 block w-full border px-4 py-3 font-sans text-base tracking-normal normal-case"
+        /></label
+      >
+      <label
+        class="block font-mono text-xs font-bold tracking-[0.12em] uppercase"
+        >Production URL<input
+          name="production"
+          type="url"
+          required
+          placeholder="https://www.example.com"
+          class="border-border bg-background mt-3 block w-full border px-4 py-3 font-sans text-base tracking-normal normal-case"
+        /></label
+      >
+      <button
+        type="submit"
+        class="interactive-button bg-accent text-accent-foreground px-5 py-3 font-mono text-sm font-bold tracking-wide uppercase"
+        >Compare</button
+      >
+      <p
+        id="compare-status"
+        class="text-muted-foreground text-sm md:col-span-3"
+        aria-live="polite"
+      >
+        Both URLs must be public HTML pages. Redirects are checked one hop at a
+        time.
+      </p>
+    </form>
+
+    <section id="compare-result" class="mt-8 hidden" aria-live="polite">
+      <div class="workshop-rule pt-8">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="workshop-label">Comparison</p><h2
+              id="compare-title"
+              class="mt-3 text-3xl font-bold tracking-[-0.05em]"
+            >
+            </h2>
+          </div><p
+            id="compare-summary"
+            class="text-muted-foreground max-w-xl text-sm leading-relaxed"
+          >
+          </p>
+        </div>
+      </div><div
+        id="compare-table"
+        class="border-border/70 mt-8 overflow-x-auto border"
+      >
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  type Inspection = {
+    finalUrl: string
+    status: number
+    title: string | null
+    canonical: string | null
+    robots: string | null
+    description: string | null
+    openGraph: Record<string, string | null>
+    twitter: Record<string, string | null>
+    headers: Record<string, string | null>
+  }
+  type InspectionResponse = Inspection & { error?: string }
+
+  const comparisonFields: Array<[string, (item: Inspection) => string | null]> =
+    [
+      ['Final URL', (item) => item.finalUrl],
+      ['Status', (item) => String(item.status)],
+      ['Title', (item) => item.openGraph['og:title'] || item.title],
+      [
+        'Description',
+        (item) => item.openGraph['og:description'] || item.description,
+      ],
+      ['Canonical', (item) => item.canonical],
+      ['Robots', (item) => item.robots],
+      ['Open Graph image', (item) => item.openGraph['og:image']],
+      ['X card', (item) => item.twitter['twitter:card']],
+      ['Cache-Control', (item) => item.headers['cache-control']],
+      [
+        'Content-Security-Policy',
+        (item) => item.headers['content-security-policy'],
+      ],
+      ['X-Robots-Tag', (item) => item.headers['x-robots-tag']],
+      [
+        'Strict-Transport-Security',
+        (item) => item.headers['strict-transport-security'],
+      ],
+    ]
+
+  function setupReleaseCompare() {
+    const form = document.querySelector<HTMLFormElement>('#release-compare')
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+    const status = form.querySelector<HTMLElement>('#compare-status')
+    const button = form.querySelector<HTMLButtonElement>(
+      'button[type="submit"]'
+    )
+    const result = document.querySelector<HTMLElement>('#compare-result')
+    const table = document.querySelector<HTMLElement>('#compare-table')
+    const title = document.querySelector<HTMLElement>('#compare-title')
+    const summary = document.querySelector<HTMLElement>('#compare-summary')
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      const preview = new FormData(form).get('preview')?.toString().trim()
+      const production = new FormData(form).get('production')?.toString().trim()
+      if (!preview || !production || !status || !button) return
+      button.disabled = true
+      button.textContent = 'Comparing…'
+      status.textContent = 'Fetching both pages…'
+      try {
+        const [previewResponse, productionResponse] = await Promise.all([
+          fetch(`/api/inspect-url?url=${encodeURIComponent(preview)}`),
+          fetch(`/api/inspect-url?url=${encodeURIComponent(production)}`),
+        ])
+        const [previewData, productionData] = await Promise.all([
+          previewResponse.json() as Promise<InspectionResponse>,
+          productionResponse.json() as Promise<InspectionResponse>,
+        ])
+        if (!previewResponse.ok || previewData.error)
+          throw new Error(
+            `Preview: ${previewData.error || 'inspection failed.'}`
+          )
+        if (!productionResponse.ok || productionData.error)
+          throw new Error(
+            `Production: ${productionData.error || 'inspection failed.'}`
+          )
+        const rows = comparisonFields.map(([label, get]) => ({
+          label,
+          preview: get(previewData),
+          production: get(productionData),
+        }))
+        const differences = rows.filter(
+          (row) => (row.preview || '') !== (row.production || '')
+        )
+        if (title)
+          title.textContent =
+            differences.length === 0
+              ? 'No checked differences.'
+              : `${differences.length} checked difference${differences.length === 1 ? '' : 's'}.`
+        if (summary)
+          summary.textContent =
+            differences.length === 0
+              ? 'The checked release signals match. Still test the real user paths before deploying.'
+              : 'Review every highlighted row. A difference can be intentional, but it should never be a surprise.'
+        if (table) {
+          table.replaceChildren()
+          const grid = document.createElement('div')
+          grid.className = 'min-w-[48rem]'
+          const head = document.createElement('div')
+          head.className =
+            'grid grid-cols-[11rem_1fr_1fr] border-b border-border/70 bg-secondary/60 font-mono text-xs font-bold tracking-[0.1em] uppercase'
+          ;['Check', 'Preview', 'Production'].forEach((value) => {
+            const cell = document.createElement('div')
+            cell.className = 'p-4'
+            cell.textContent = value
+            head.appendChild(cell)
+          })
+          grid.appendChild(head)
+          rows.forEach((row) => {
+            const changed = (row.preview || '') !== (row.production || '')
+            const line = document.createElement('div')
+            line.className = `grid grid-cols-[11rem_1fr_1fr] border-b border-border/70 text-sm last:border-0 ${changed ? 'bg-accent/10' : ''}`
+            ;[
+              row.label,
+              row.preview || 'Not set',
+              row.production || 'Not set',
+            ].forEach((value, index) => {
+              const cell = document.createElement('div')
+              cell.className =
+                index === 0
+                  ? 'p-4 font-semibold'
+                  : 'break-words p-4 text-muted-foreground'
+              cell.textContent = value
+              line.appendChild(cell)
+            })
+            grid.appendChild(line)
+          })
+          table.appendChild(grid)
+        }
+        result?.classList.remove('hidden')
+        status.textContent = 'Comparison complete.'
+      } catch (error) {
+        status.textContent =
+          error instanceof Error ? error.message : 'Comparison failed.'
+      } finally {
+        button.disabled = false
+        button.textContent = 'Compare'
+      }
+    })
+  }
+  setupReleaseCompare()
+  document.addEventListener('astro:after-swap', setupReleaseCompare)
+</script>

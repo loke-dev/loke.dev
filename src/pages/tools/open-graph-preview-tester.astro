@@ -1,0 +1,252 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
+import { SITE_DOMAIN } from '@/utils/meta'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const pageUrl = `${SITE_DOMAIN}/tools/open-graph-preview-tester`
+const description =
+  'Inspect a public URL’s Open Graph, X card, canonical, robots, and share image metadata in one place.'
+---
+
+<BaseLayout
+  title="Open Graph preview tester"
+  description={description}
+  url={pageUrl}
+>
+  <script
+    is:inline
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Open Graph preview tester',
+      description,
+      url: pageUrl,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Any',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    })}
+  />
+
+  <div class="workshop-page max-w-5xl">
+    <section class="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">
+      <div>
+        <p class="workshop-label">Share metadata / inspector</p>
+        <h1 class="workshop-heading mt-5">
+          Check the card before you share it.
+        </h1>
+      </div>
+      <p class="text-muted-foreground text-lg leading-relaxed">
+        Paste a public URL. See the metadata crawlers are likely to use, plus
+        the things that are easy to miss.
+      </p>
+    </section>
+
+    <form id="og-inspector" class="workshop-card mt-12 p-5 md:p-7">
+      <label
+        for="inspect-url"
+        class="font-mono text-xs font-bold tracking-[0.12em] uppercase"
+        >Public page URL</label
+      >
+      <div class="mt-3 flex flex-col gap-3 sm:flex-row">
+        <input
+          id="inspect-url"
+          name="url"
+          type="url"
+          required
+          placeholder="https://example.com/page"
+          class="border-border bg-background placeholder:text-muted-foreground/70 min-w-0 flex-1 border px-4 py-3 outline-none"
+        /><button
+          class="interactive-button bg-accent text-accent-foreground px-5 py-3 font-mono text-sm font-bold tracking-wide uppercase"
+          type="submit">Inspect URL</button
+        >
+      </div>
+      <p
+        id="inspect-status"
+        class="text-muted-foreground mt-3 text-sm"
+        aria-live="polite"
+      >
+        Only public HTML pages are fetched. Local and private network addresses
+        are blocked.
+      </p>
+    </form>
+
+    <section id="og-result" class="mt-8 hidden" aria-live="polite">
+      <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <article class="paper-panel overflow-hidden border border-[#121212]/15">
+          <img
+            id="preview-image"
+            alt=""
+            class="hidden aspect-[1.91/1] w-full object-cover"
+          />
+          <div class="p-6">
+            <p
+              class="font-mono text-xs font-bold tracking-[0.13em] text-[#ff5a1f] uppercase"
+            >
+              Share card preview
+            </p><p id="preview-domain" class="mt-5 text-sm text-[#5d5a54]">
+            </p><h2
+              id="preview-title"
+              class="mt-2 text-2xl font-bold tracking-[-0.04em] text-[#121212]"
+            >
+            </h2><p
+              id="preview-description"
+              class="mt-3 leading-relaxed text-[#5d5a54]"
+            >
+            </p>
+          </div>
+        </article>
+        <aside class="workshop-card p-6">
+          <p class="workshop-label">Quick checks</p><dl
+            id="quick-checks"
+            class="mt-5 space-y-4 text-sm"
+          >
+          </dl>
+        </aside>
+      </div>
+      <details class="workshop-card mt-6 p-6">
+        <summary class="cursor-pointer font-semibold"
+          >Show extracted tags</summary
+        ><pre
+          id="tag-output"
+          class="border-border/70 text-muted-foreground mt-5 overflow-x-auto border-t pt-5 font-mono text-xs leading-relaxed">
+        </pre>
+      </details>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  type Inspection = {
+    finalUrl: string
+    status: number
+    title: string | null
+    canonical: string | null
+    robots: string | null
+    description: string | null
+    openGraph: Record<string, string | null>
+    twitter: Record<string, string | null>
+  }
+
+  function setText(selector: string, value: string) {
+    const element = document.querySelector<HTMLElement>(selector)
+    if (element) element.textContent = value
+  }
+
+  function setupOgInspector() {
+    const form = document.querySelector<HTMLFormElement>('#og-inspector')
+    if (!form || form.dataset.ready === 'true') return
+    form.dataset.ready = 'true'
+    const input = form.querySelector<HTMLInputElement>('#inspect-url')
+    const button = form.querySelector<HTMLButtonElement>(
+      'button[type="submit"]'
+    )
+    const result = document.querySelector<HTMLElement>('#og-result')
+    const status = document.querySelector<HTMLElement>('#inspect-status')
+    const image = document.querySelector<HTMLImageElement>('#preview-image')
+    const checks = document.querySelector<HTMLElement>('#quick-checks')
+    const tags = document.querySelector<HTMLElement>('#tag-output')
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      const value = input?.value.trim()
+      if (!value || !button || !status) return
+      button.disabled = true
+      button.textContent = 'Checking…'
+      status.textContent =
+        'Fetching the page and following safe public redirects…'
+      try {
+        const response = await fetch(
+          `/api/inspect-url?url=${encodeURIComponent(value)}`
+        )
+        const data = (await response.json()) as Inspection & { error?: string }
+        if (!response.ok || data.error)
+          throw new Error(data.error || 'Inspection failed.')
+        const ogTitle =
+          data.openGraph['og:title'] ||
+          data.twitter['twitter:title'] ||
+          data.title ||
+          'No title found'
+        const ogDescription =
+          data.openGraph['og:description'] ||
+          data.twitter['twitter:description'] ||
+          data.description ||
+          'No description found'
+        const ogImage =
+          data.openGraph['og:image'] || data.twitter['twitter:image']
+        const final = new URL(data.finalUrl)
+        setText('#preview-domain', final.hostname)
+        setText('#preview-title', ogTitle)
+        setText('#preview-description', ogDescription)
+        if (image) {
+          if (ogImage) {
+            image.src = ogImage
+            image.alt = ogTitle
+            image.classList.remove('hidden')
+          } else {
+            image.removeAttribute('src')
+            image.alt = ''
+            image.classList.add('hidden')
+          }
+        }
+        const rows = [
+          [
+            'Response',
+            `${data.status} ${data.status >= 200 && data.status < 400 ? 'looks reachable' : 'needs attention'}`,
+          ],
+          ['Canonical', data.canonical || 'Missing'],
+          ['Robots', data.robots || 'Not set'],
+          ['Open Graph image', ogImage ? 'Found' : 'Missing'],
+          ['X card', data.twitter['twitter:card'] || 'Not set'],
+        ]
+        if (checks) {
+          checks.replaceChildren()
+          rows.forEach(([label, detail]) => {
+            const item = document.createElement('div')
+            item.className = 'border-border/70 border-b pb-3 last:border-0'
+            const term = document.createElement('dt')
+            term.className =
+              'font-mono text-[0.68rem] font-bold tracking-[0.11em] text-accent uppercase'
+            term.textContent = label
+            const definition = document.createElement('dd')
+            definition.className = 'mt-1 break-words text-muted-foreground'
+            definition.textContent = detail
+            item.appendChild(term)
+            item.appendChild(definition)
+            checks.appendChild(item)
+          })
+        }
+        if (tags)
+          tags.textContent = JSON.stringify(
+            {
+              title: data.title,
+              description: data.description,
+              canonical: data.canonical,
+              robots: data.robots,
+              openGraph: data.openGraph,
+              twitter: data.twitter,
+            },
+            null,
+            2
+          )
+        result?.classList.remove('hidden')
+        status.textContent = `Checked ${final.hostname}.`
+      } catch (error) {
+        status.textContent =
+          error instanceof Error ? error.message : 'Inspection failed.'
+      } finally {
+        button.disabled = false
+        button.textContent = 'Inspect URL'
+      }
+    })
+  }
+
+  setupOgInspector()
+  document.addEventListener('astro:after-swap', setupOgInspector)
+</script>
