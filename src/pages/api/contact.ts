@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro'
+import { z } from 'zod'
 import { verifyTurnstileToken } from '@/utils/captcha.server'
 import { sendContactEmail } from '@/utils/email.server'
 import { ContactSubmissionSchema } from '@/lib/contact-schema'
@@ -69,7 +70,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const parsed = ContactSubmissionSchema.safeParse(body)
   if (!parsed.success) {
     return Response.json(
-      { ok: false, errors: parsed.error.flatten().fieldErrors },
+      { ok: false, errors: z.flattenError(parsed.error).fieldErrors },
       { status: 400 }
     )
   }

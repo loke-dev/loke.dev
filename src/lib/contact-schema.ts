@@ -2,7 +2,10 @@ import { z } from 'zod'
 
 export const ContactFieldsSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
-  email: z.string().trim().email('Please enter a valid email address'),
+  email: z
+    .string()
+    .trim()
+    .pipe(z.email({ error: 'Please enter a valid email address' })),
   message: z
     .string()
     .trim()

@@ -1,4 +1,5 @@
 import { createSignal, onMount, Show } from 'solid-js'
+import { z } from 'zod'
 import { ContactFieldsSchema } from '@/lib/contact-schema'
 
 type FormState =
@@ -80,7 +81,7 @@ export default function ContactForm() {
     if (!parsed.success) {
       const errors: Record<string, string> = {}
       for (const [field, issues] of Object.entries(
-        parsed.error.flatten().fieldErrors
+        z.flattenError(parsed.error).fieldErrors
       )) {
         errors[field] = (issues as string[])[0]
       }
