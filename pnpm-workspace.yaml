@@ -7,6 +7,11 @@ allowBuilds:
   unrs-resolver: true
   workerd: true
 
+auditConfig:
+  ignoreGhsas:
+    # Remediated by the brace-expansion 1 compatibility patch below.
+    - GHSA-mh99-v99m-4gvg
+
 minimumReleaseAgeExclude:
   - picomatch@4.0.4
   - undici@7.28.0
@@ -28,3 +33,14 @@ overrides:
   undici@>=7.0.0 <7.28.0: ^7.28.0
   vite: 8.1.5
   ws@>=8.0.0 <8.21.0: ^8.21.0
+
+# ESLint's import and accessibility plugins still require brace-expansion 1's
+# callable CommonJS export. Preserve that API while delegating expansion to the
+# upstream 5.0.8 implementation that bounds total output length.
+packageExtensions:
+  brace-expansion@1.1.16:
+    dependencies:
+      brace-expansion-v5: npm:brace-expansion@5.0.8
+
+patchedDependencies:
+  brace-expansion@1.1.16: patches/brace-expansion@1.1.16.patch
