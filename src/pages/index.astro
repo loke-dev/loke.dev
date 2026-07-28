@@ -3,11 +3,8 @@ import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
 import BlogPostCard from '@/components/BlogPostCard.astro'
-import profileAvif256 from '@/assets/loke-clay-256.avif'
-import profileWebp256 from '@/assets/loke-clay-256.webp'
-import profileAvif512 from '@/assets/loke-clay-512.avif'
-import profilePng512 from '@/assets/loke-clay-512.png'
-import profileWebp512 from '@/assets/loke-clay-512.webp'
+import profilePortrait256 from '@/assets/loke-workshop-signal-portrait-256.png'
+import profilePortrait512 from '@/assets/loke-workshop-signal-portrait-512.png'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
@@ -20,12 +17,8 @@ const [allPosts, page] = await Promise.all([
 ])
 const latestPosts = allPosts.slice(0, 3)
 
-const heroTitleParts = page.heroTitle.split('.')
-const hasAccentDot = heroTitleParts.length === 2
-
 const heroLcpSizes = '(min-width: 640px) 256px, 192px'
-const profileAvifSrcset = `${profileAvif256.src} 256w, ${profileAvif512.src} 512w`
-const profileWebpSrcset = `${profileWebp256.src} 256w, ${profileWebp512.src} 512w`
+const profilePortraitSrcset = `${profilePortrait256.src} 256w, ${profilePortrait512.src} 512w`
 
 const focusAreas = [
   {
@@ -59,104 +52,89 @@ const focusAreas = [
     slot="head"
     rel="preload"
     as="image"
-    href={profileAvif512.src}
-    imagesrcset={profileAvifSrcset}
+    href={profilePortrait512.src}
+    imagesrcset={profilePortraitSrcset}
     imagesizes={heroLcpSizes}
-    type="image/avif"
+    type="image/png"
     fetchpriority="high"
   />
   <div class="flex flex-col items-center">
-    <section class="w-full max-w-6xl px-4 pt-16 pb-20 md:pt-28 md:pb-28">
+    <section class="w-full max-w-6xl px-4 pt-12 pb-20 md:pt-20 md:pb-28">
       <div
-        class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1.1fr_0.9fr] md:gap-14"
+        class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_0.88fr] md:gap-16"
       >
         <div>
-          <p
-            class="text-accent mb-6 text-xs font-semibold tracking-[0.2em] uppercase"
+          <p class="signal-eyebrow mb-6">Independent developer / Sweden</p>
+          <h1
+            class="max-w-3xl font-mono text-5xl leading-[0.96] font-bold tracking-[-0.09em] md:text-7xl lg:text-8xl"
           >
-            Independent developer / websites, CMS and AI
-          </p>
-          <h1 class="text-6xl font-bold tracking-tight md:text-8xl">
-            {
-              hasAccentDot ? (
-                <>
-                  {heroTitleParts[0]}
-                  <span class="text-accent">.</span>
-                  {heroTitleParts[1]}
-                </>
-              ) : (
-                page.heroTitle
-              )
-            }
+            Build useful<br />
+            <span class="text-accent">things</span>, then<br />
+            make them stick.
           </h1>
           <p
-            class="text-muted-foreground mt-6 max-w-xl text-xl leading-relaxed"
+            class="text-muted-foreground mt-7 max-w-xl text-lg leading-relaxed md:text-xl"
           >
-            {page.heroDescription}
-          </p>
-          <p
-            class="text-muted-foreground mt-5 max-w-lg text-sm leading-relaxed"
-          >
-            I build the public bits people see, plus the boring systems that
-            keep them working after launch.
+            {
+              page.heroDescription ??
+                'Websites, software, AI work, and the systems that keep them useful after launch.'
+            }
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <a
               href="/services"
-              class="interactive-button bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium shadow-[0_12px_32px_-16px_oklch(72%_0.2_70/0.4)] transition-[transform,background-color,box-shadow] duration-200"
+              class="interactive-button bg-accent text-accent-foreground hover:bg-accent/85 inline-flex items-center justify-center rounded-sm px-6 py-3 font-mono text-sm font-bold tracking-wide uppercase shadow-[0_14px_36px_-20px_rgb(255_90_31/0.65)] transition-[transform,background-color,box-shadow] duration-200"
             >
-              Explore services
+              Work with me →
             </a>
             <a
               href="/projects"
-              class="interactive-button border-accent/30 bg-background hover:border-accent/55 hover:bg-secondary inline-flex items-center justify-center rounded-md border px-6 py-3 text-base font-medium transition-[transform,background-color,border-color,box-shadow] duration-200 hover:shadow-[0_14px_36px_-20px_oklch(72%_0.16_70/0.35)]"
+              class="interactive-button border-border bg-card hover:border-accent/70 hover:bg-secondary inline-flex items-center justify-center rounded-sm border px-6 py-3 font-mono text-sm font-bold tracking-wide uppercase transition-[transform,background-color,border-color,box-shadow] duration-200"
             >
-              See selected work
+              See the work
             </a>
           </div>
         </div>
-        <div class="relative">
+        <div class="relative py-5">
           <div
-            class="hero-frame border-accent/25 from-card via-card to-accent/10 relative min-h-[26rem] overflow-hidden rounded-2xl border bg-gradient-to-br p-5 shadow-[0_28px_80px_-40px_oklch(72%_0.18_70/0.45)]"
+            class="hero-frame signal-grid border-accent/45 relative min-h-[27rem] overflow-hidden rounded-sm border bg-[#171715] p-5 shadow-[0_32px_90px_-48px_rgb(0_0_0/0.95)]"
           >
-            <div class="hero-grid" aria-hidden="true"></div>
             <div
-              class="text-muted-foreground absolute top-5 right-5 text-right text-[0.68rem] font-semibold tracking-[0.18em] uppercase"
+              class="absolute top-5 right-5 font-mono text-[0.65rem] font-bold tracking-[0.16em] text-[#f4f0e8]/70 uppercase"
             >
-              <p>Field note</p>
-              <p class="text-accent mt-1">No. 001</p>
+              <p>Signal / 001</p>
+              <p class="text-accent mt-1">live system</p>
             </div>
             <aside
-              class="hero-note border-accent/35 bg-background/90 absolute top-5 left-5 max-w-40 rotate-[-3deg] rounded-lg border p-3 shadow-lg"
+              class="paper-panel absolute top-5 left-5 z-10 max-w-44 rotate-[-2deg] border border-[#121212]/20 p-3 shadow-xl"
             >
               <p
-                class="text-accent text-[0.65rem] font-semibold tracking-[0.16em] uppercase"
+                class="font-mono text-[0.62rem] font-bold tracking-[0.16em] text-[#ff5a1f] uppercase"
               >
-                Working note
+                Working note / 01
               </p>
-              <p class="text-foreground mt-2 text-xs leading-relaxed">
-                Keep it clear. Keep it quick. Make it a bit more fun than
-                expected.
+              <p class="mt-2 text-xs leading-relaxed text-[#121212]">
+                Make the useful bit easy to find. Do the boring bit properly.
               </p>
             </aside>
             <a
               href="/services"
               data-astro-prefetch="hover"
-              class="hero-focus-panel border-border/80 bg-background/75 hover:border-accent/50 focus-visible:border-accent absolute right-5 bottom-5 left-5 rounded-xl border p-4 backdrop-blur"
+              class="hero-focus-panel paper-panel hover:border-accent/70 focus-visible:border-accent absolute right-5 bottom-5 left-5 border border-[#121212]/15 p-4"
             >
               <div class="flex items-center justify-between gap-4">
                 <div>
                   <p
-                    class="text-accent text-xs font-semibold tracking-[0.18em] uppercase"
+                    class="font-mono text-[0.65rem] font-bold tracking-[0.16em] text-[#ff5a1f] uppercase"
                   >
-                    Current focus
+                    Current focus / 2026
                   </p>
-                  <p class="mt-2 text-sm font-medium">
-                    Fast sites, simple CMS setups, AI that helps.
+                  <p class="mt-2 text-sm font-semibold text-[#121212]">
+                    Fast sites, simple systems, AI that helps.
                   </p>
                 </div>
                 <span
-                  class="border-accent/40 text-accent hero-focus-panel__arrow grid h-9 w-9 place-items-center rounded-full border"
+                  class="border-accent text-accent hero-focus-panel__arrow grid h-9 w-9 place-items-center rounded-full border"
                   aria-hidden="true">↗</span
                 >
               </div>
@@ -165,30 +143,20 @@ const focusAreas = [
               class="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2"
             >
               <div
-                class="border-accent/35 bg-muted relative h-48 w-48 overflow-hidden rounded-full border-4 shadow-[0_0_0_10px_oklch(72%_0.18_70/0.06)] sm:h-56 sm:w-56"
+                class="border-accent/70 relative h-48 w-48 overflow-hidden rounded-full border-2 bg-[#121212] shadow-[0_0_0_12px_rgb(255_90_31/0.1)] sm:h-56 sm:w-56"
               >
-                <picture>
-                  <source
-                    type="image/avif"
-                    srcset={profileAvifSrcset}
-                    sizes={heroLcpSizes}
-                  />
-                  <source
-                    type="image/webp"
-                    srcset={profileWebpSrcset}
-                    sizes={heroLcpSizes}
-                  />
-                  <img
-                    src={profilePng512.src}
-                    alt="Profile avatar"
-                    fetchpriority="high"
-                    loading="eager"
-                    decoding="async"
-                    width={512}
-                    height={512}
-                    class="h-full w-full object-cover"
-                  />
-                </picture>
+                <img
+                  src={profilePortrait512.src}
+                  srcset={profilePortraitSrcset}
+                  sizes={heroLcpSizes}
+                  alt="Loke"
+                  fetchpriority="high"
+                  loading="eager"
+                  decoding="async"
+                  width={512}
+                  height={512}
+                  class="h-full w-full object-cover"
+                />
               </div>
             </div>
             <div class="bg-accent absolute bottom-0 left-0 h-1 w-2/3"></div>

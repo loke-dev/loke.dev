@@ -6,7 +6,7 @@
 @plugin '@tailwindcss/typography';
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -41,37 +41,37 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(68% 0.165 54.98);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #121212;
+  --foreground: #f4f0e8;
+  --card: #1b1b19;
+  --card-foreground: #f4f0e8;
+  --popover: #1b1b19;
+  --popover-foreground: #f4f0e8;
+  --primary: #f4f0e8;
+  --primary-foreground: #121212;
+  --secondary: #262622;
+  --secondary-foreground: #f4f0e8;
+  --muted: #20201d;
+  --muted-foreground: #b8b3aa;
+  --accent: #ff5a1f;
+  --accent-foreground: #121212;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: rgb(244 240 232 / 14%);
+  --input: rgb(244 240 232 / 18%);
+  --ring: #ff5a1f;
+  --chart-1: #ff5a1f;
+  --chart-2: #6f91aa;
+  --chart-3: #f4f0e8;
+  --chart-4: #d0a95f;
+  --chart-5: #9f7d5f;
+  --sidebar: #1b1b19;
+  --sidebar-foreground: #f4f0e8;
+  --sidebar-primary: #ff5a1f;
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: #262622;
+  --sidebar-accent-foreground: #f4f0e8;
+  --sidebar-border: rgb(244 240 232 / 14%);
+  --sidebar-ring: #ff5a1f;
 }
 
 @theme inline {
@@ -118,6 +118,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgb(255 90 31 / 8%), transparent 26rem),
+      linear-gradient(rgb(244 240 232 / 2%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(244 240 232 / 2%) 1px, transparent 1px);
+    background-size:
+      auto,
+      40px 40px,
+      40px 40px;
   }
 
   :where(a, button, input, select, summary, textarea):focus-visible {
@@ -126,11 +134,45 @@
   }
 }
 
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.signal-eyebrow {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.signal-grid {
+  background-image:
+    linear-gradient(rgb(255 90 31 / 16%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 90 31 / 16%) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.paper-panel {
+  background: #f4f0e8;
+  color: #121212;
+  box-shadow: 0 24px 80px -44px rgb(0 0 0 / 90%);
+}
+
+.paper-panel .text-muted-foreground {
+  color: #5d5a54;
+}
+
 /* Mobile menu dialog animation */
 @media (prefers-reduced-motion: no-preference) {
   dialog.mobile-menu-dialog {
     translate: 100% 0;
-    transition: translate 0.3s ease, overlay 0.3s ease allow-discrete, display 0.3s ease allow-discrete;
+    transition:
+      translate 0.3s ease,
+      overlay 0.3s ease allow-discrete,
+      display 0.3s ease allow-discrete;
   }
   dialog.mobile-menu-dialog[open] {
     translate: 0 0;
@@ -142,7 +184,10 @@
   }
   dialog.mobile-menu-dialog::backdrop {
     background-color: rgb(0 0 0 / 0);
-    transition: background-color 0.3s ease, overlay 0.3s ease allow-discrete, display 0.3s ease allow-discrete;
+    transition:
+      background-color 0.3s ease,
+      overlay 0.3s ease allow-discrete,
+      display 0.3s ease allow-discrete;
   }
   dialog.mobile-menu-dialog[open]::backdrop {
     background-color: rgb(0 0 0 / 0.5);
@@ -193,7 +238,9 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-frame {
-    transition: box-shadow 0.35s ease, border-color 0.35s ease;
+    transition:
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
   }
 
   .hero-frame:hover {
@@ -367,7 +414,9 @@
 }
 
 .hero-note {
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .hero-focus-panel {

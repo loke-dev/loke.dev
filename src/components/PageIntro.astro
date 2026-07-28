@@ -15,14 +15,10 @@ const { eyebrow, title, description, compact = false } = Astro.props
     compact ? 'pb-8' : 'pb-10 md:pb-12',
   ]}
 >
-  {
-    eyebrow && (
-      <p class="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
-        {eyebrow}
-      </p>
-    )
-  }
-  <h1 class="mt-3 max-w-3xl text-4xl font-bold tracking-tight md:text-5xl">
+  {eyebrow && <p class="signal-eyebrow">{eyebrow}</p>}
+  <h1
+    class="mt-3 max-w-3xl font-mono text-4xl font-bold tracking-[-0.06em] md:text-5xl"
+  >
     {title}
   </h1>
   {

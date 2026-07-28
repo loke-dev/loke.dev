@@ -21,7 +21,7 @@ function isCurrentPath(href: string): boolean {
 ---
 
 <header
-  class="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur"
+  class="bg-background/92 supports-backdrop-filter:bg-background/72 sticky top-0 z-50 w-full border-b backdrop-blur"
 >
   <div
     class="container mx-auto flex h-16 items-center justify-between px-4 md:px-8"
@@ -29,9 +29,15 @@ function isCurrentPath(href: string): boolean {
     <a
       href="/"
       aria-current={pathname === '/' ? 'page' : undefined}
-      class="flex items-center"
+      class="group flex items-center gap-2"
     >
-      <span class="text-xl font-bold tracking-tight">loke.dev</span>
+      <span
+        class="border-accent/60 text-accent grid h-7 w-7 place-items-center rounded-full border text-[0.65rem] font-bold transition-transform duration-200 group-hover:rotate-45"
+        aria-hidden="true">+</span
+      >
+      <span class="font-mono text-lg font-bold tracking-[-0.08em]"
+        >loke<span class="text-accent">.</span>dev</span
+      >
     </a>
 
     <nav class="hidden items-center gap-8 md:flex" aria-label="Main navigation">
@@ -40,7 +46,7 @@ function isCurrentPath(href: string): boolean {
           <a
             href={href}
             aria-current={isCurrentPath(href) ? 'page' : undefined}
-            class="nav-link-animate text-muted-foreground hover:text-accent text-sm font-medium transition-colors"
+            class="nav-link-animate text-muted-foreground hover:text-accent font-mono text-xs font-semibold tracking-wide uppercase transition-colors"
           >
             {label}
           </a>
@@ -49,7 +55,7 @@ function isCurrentPath(href: string): boolean {
       <div class="group relative">
         <a
           href="/blog"
-          class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 text-sm font-medium transition-colors"
+          class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 font-mono text-xs font-semibold tracking-wide uppercase transition-colors"
           aria-current={isCurrentPath('/blog') ? 'page' : undefined}
         >
           Blog
@@ -69,7 +75,7 @@ function isCurrentPath(href: string): boolean {
           class="invisible absolute top-full left-1/2 z-50 w-64 -translate-x-1/2 pt-3 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
         >
           <nav
-            class="border-border bg-card rounded-lg border p-2 shadow-xl"
+            class="border-border bg-card rounded-lg border p-2 shadow-2xl"
             aria-label="Blog topics"
           >
             <a
@@ -102,7 +108,7 @@ function isCurrentPath(href: string): boolean {
           <a
             href={href}
             aria-current={isCurrentPath(href) ? 'page' : undefined}
-            class="nav-link-animate text-muted-foreground hover:text-accent text-sm font-medium transition-colors"
+            class="nav-link-animate text-muted-foreground hover:text-accent font-mono text-xs font-semibold tracking-wide uppercase transition-colors"
           >
             {label}
           </a>
