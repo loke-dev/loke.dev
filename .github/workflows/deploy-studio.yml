@@ -23,7 +23,7 @@ jobs:
           cache-dependency-path: studio/pnpm-lock.yaml
 
       - name: Install Studio dependencies
-        run: pnpm --dir studio --ignore-workspace install --frozen-lockfile
+        run: pnpm --dir studio install --frozen-lockfile
 
       - name: Require SANITY_DEPLOY_TOKEN
         env:
@@ -33,4 +33,4 @@ jobs:
       - name: Deploy to Sanity Hosting
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_TOKEN }}
-        run: pnpm --dir studio --ignore-workspace exec sanity deploy -y
+        run: pnpm --dir studio exec sanity deploy -y

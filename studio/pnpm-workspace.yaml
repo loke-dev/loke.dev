@@ -1,0 +1,26 @@
+packages:
+  - .
+
+allowBuilds:
+  esbuild: true
+
+auditConfig:
+  ignoreGhsas:
+    # Remediated by the brace-expansion 2 compatibility patch below.
+    - GHSA-mh99-v99m-4gvg
+
+overrides:
+  adm-zip@<0.6.0: ^0.6.0
+  js-yaml@>=3.0.0 <3.15.0: ^3.15.0
+  smol-toml@<1.6.1: ^1.6.1
+  uuid@<11.1.1: ^11.1.1
+
+# Sanity's CLI still reaches brace-expansion through CommonJS callers. Keep its
+# callable API while delegating expansion to the fixed 5.0.8 implementation.
+packageExtensions:
+  brace-expansion@2.1.2:
+    dependencies:
+      brace-expansion-v5: npm:brace-expansion@5.0.8
+
+patchedDependencies:
+  brace-expansion@2.1.2: patches/brace-expansion@2.1.2.patch

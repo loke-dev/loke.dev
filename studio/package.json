@@ -8,17 +8,12 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
-    "@sanity/vision": "^5.19.0",
-    "esbuild": "^0.28.0",
-    "lucide-react": "^1.7.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "sanity": "^5.19.0",
-    "styled-components": "^6.3.12"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
+    "@sanity/vision": "^6.6.0",
+    "esbuild": "^0.28.1",
+    "lucide-react": "^1.27.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sanity": "^6.6.0",
+    "styled-components": "^6.4.4"
   }
 }
