@@ -1,0 +1,91 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+
+const helpItems = [
+  {
+    title: 'A widget looks out of date',
+    body: 'Open FlexiThyme once to refresh its shared time-bank snapshot. If a timer is running, the widget updates its elapsed time automatically.',
+  },
+  {
+    title: 'iCloud sync is unavailable',
+    body: 'Check that iCloud Drive is enabled and that the same Apple Account is active on each device. Reopen FlexiThyme to retry. The banner and Settings screen show whether changes are syncing or staying on one device.',
+  },
+  {
+    title: 'The Mac menu-bar timer is missing',
+    body: 'Open FlexiThyme Settings and enable Show timer in menu bar. The main Mac app and its sidebar remain available when the menu-bar extra is hidden.',
+  },
+  {
+    title: 'A session or balance is incorrect',
+    body: 'Open History to edit or remove a work session. Use a balance adjustment for flex time used, public holidays, paid leave, or sick leave.',
+  },
+]
+---
+
+<BaseLayout
+  title="FlexiThyme support"
+  description="Help with FlexiThyme time tracking, widgets, iCloud sync, the Mac menu-bar timer, exports, and data removal."
+  url={`${SITE_DOMAIN}/apps/flexithyme/support`}
+>
+  <div class="mx-auto max-w-4xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="FlexiThyme / Support"
+      title="Keep your time bank moving."
+      description="Practical help for the FlexiThyme app on iPhone, iPad, and Mac."
+    />
+
+    <div class="mt-12 grid gap-4 md:grid-cols-2">
+      {
+        helpItems.map((item, index) => (
+          <section class="workshop-card p-6">
+            <p class="workshop-number">{String(index + 1).padStart(2, '0')}</p>
+            <h2 class="mt-8 text-xl font-bold">{item.title}</h2>
+            <p class="text-muted-foreground mt-3 leading-relaxed">
+              {item.body}
+            </p>
+          </section>
+        ))
+      }
+    </div>
+
+    <div class="prose prose-invert mt-14 max-w-none">
+      <h2>Export your records</h2>
+      <p>
+        Open Reports, choose Week or Month, then select <strong
+          >Export CSV</strong
+        >. FlexiThyme creates the file only when you request it and opens the
+        system share sheet so you control its destination.
+      </p>
+
+      <h2>Remove your time bank</h2>
+      <p>
+        Open Settings and choose <strong>Erase all FlexiThyme data</strong>.
+        After confirmation, the app deletes work sessions, adjustments,
+        schedules, and settings, resets its widgets, and returns to setup. When
+        private iCloud sync is active, the deletions are also scheduled for the
+        other devices in that time bank.
+      </p>
+
+      <h2>Still need help?</h2>
+      <p>
+        Email <a href="mailto:hi@loke.dev?subject=FlexiThyme%20support"
+          >hi@loke.dev</a
+        >
+        with the device model, operating-system version, and a short description of
+        what happened. Do not include private work notes or other sensitive information.
+      </p>
+
+      <p>
+        FlexiThyme 1.0 requires iOS or iPadOS 17 or later, or macOS 14 or later.
+        Read the <a href="/apps/flexithyme/privacy">FlexiThyme privacy notice</a
+        >.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

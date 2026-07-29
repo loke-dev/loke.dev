@@ -1,0 +1,117 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { SITE_DOMAIN } from '@/utils/meta'
+import PageIntro from '@/components/PageIntro.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = true
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
+---
+
+<BaseLayout
+  title="FlexiThyme privacy"
+  description="How FlexiThyme stores work sessions, syncs a private time bank with iCloud, supplies widgets, exports CSV files, and removes data."
+  url={`${SITE_DOMAIN}/apps/flexithyme/privacy`}
+>
+  <div class="mx-auto max-w-3xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="FlexiThyme / Privacy"
+      title="Your work history stays yours."
+      description="FlexiThyme has no account, advertising, analytics, or tracking. Its job is to maintain your time bank on your devices."
+    />
+
+    <div class="prose prose-invert mt-12 max-w-none">
+      <p><strong>Last updated:</strong> 29 July 2026.</p>
+
+      <h2>Who operates FlexiThyme</h2>
+      <p>
+        FlexiThyme is an independent app operated by Loke in Sweden. Privacy and
+        support questions can be sent to
+        <a href="mailto:hi@loke.dev?subject=FlexiThyme%20privacy">hi@loke.dev</a
+        >.
+      </p>
+
+      <h2>Data the app stores</h2>
+      <p>
+        FlexiThyme stores the work sessions, break durations, notes, balance
+        adjustments, weekly schedules, starting balance, and app settings that
+        you enter. This information is stored on your device using Apple
+        SwiftData.
+      </p>
+      <p>
+        A small snapshot containing the current balance, today's totals, timer
+        state, and update time is kept in the app's shared Apple App Group
+        container. The iOS and macOS widgets use that snapshot to show current
+        information.
+      </p>
+
+      <h2>Private iCloud sync</h2>
+      <p>
+        When available, Apple CloudKit syncs FlexiThyme records through your
+        private iCloud database. The developer does not receive or query that
+        private database. Apple processes the synced records under your Apple
+        Account and Apple's terms and privacy policy.
+      </p>
+      <p>
+        If the iCloud-backed store cannot open, FlexiThyme may use local-only
+        storage and shows that state in the app. If persistent storage is
+        unavailable, the app clearly warns that temporary changes will be lost
+        when it closes.
+      </p>
+
+      <h2>No developer analytics or advertising</h2>
+      <p>
+        FlexiThyme does not create an app account and does not include
+        advertising, tracking, analytics, or third-party crash-reporting SDKs.
+        It does not sell work-history data or transmit that history to the
+        developer.
+      </p>
+      <p>
+        Apple may process device diagnostics, App Store information, Siri or
+        Shortcuts requests, and iCloud traffic according to your device settings
+        and Apple's privacy terms. That platform processing is not an app-owned
+        tracking system.
+      </p>
+
+      <h2>CSV exports</h2>
+      <p>
+        A weekly or monthly CSV report is created only after you choose Export
+        CSV. The system share sheet lets you select where it goes. FlexiThyme
+        does not upload the exported file to the developer.
+      </p>
+
+      <h2>Retention and deletion</h2>
+      <p>
+        Your records remain on your devices and, when enabled, in your private
+        iCloud database until you edit or delete them. Choosing <strong
+          >Erase all FlexiThyme data</strong
+        >
+        removes work sessions, adjustments, schedules, and settings from the local
+        time bank and schedules the corresponding private iCloud deletions. The app
+        then returns to first-run setup.
+      </p>
+
+      <h2>Questions and changes</h2>
+      <p>
+        Contact <a href="mailto:hi@loke.dev?subject=FlexiThyme%20privacy"
+          >hi@loke.dev</a
+        >
+        with a privacy question. Because the developer does not operate an app account
+        or receive the private time bank, requests about records stored in iCloud
+        normally need to be handled from the app or through your Apple Account.
+      </p>
+      <p>
+        This notice may be updated when FlexiThyme's storage, sync, or
+        third-party services change. The current version will remain at this
+        address.
+      </p>
+
+      <p>
+        For app help, visit <a href="/apps/flexithyme/support"
+          >FlexiThyme support</a
+        >.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
