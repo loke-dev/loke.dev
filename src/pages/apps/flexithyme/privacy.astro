@@ -11,7 +11,7 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 <BaseLayout
   title="FlexiThyme privacy"
-  description="How FlexiThyme stores work sessions, syncs a private time bank with iCloud, supplies widgets, exports CSV files, and removes data."
+  description="How FlexiThyme stores work sessions, syncs a private time bank with iCloud, supplies widgets, exports user-requested files, and removes data."
   url={`${SITE_DOMAIN}/apps/flexithyme/privacy`}
 >
   <div class="mx-auto max-w-3xl px-4 py-16 md:py-20">
@@ -74,11 +74,18 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
         tracking system.
       </p>
 
-      <h2>CSV exports</h2>
+      <h2>User-requested exports</h2>
       <p>
         A weekly or monthly CSV report is created only after you choose Export
         CSV. The system share sheet lets you select where it goes. FlexiThyme
         does not upload the exported file to the developer.
+      </p>
+      <p>
+        You can also choose <strong>Export data archive</strong> in Settings to create
+        a complete JSON copy of work sessions, notes, adjustments, schedule history,
+        and settings. This file is created only when you request it and goes only
+        to the destination you select in the system share sheet. Because it can contain
+        notes, protect it like other private work records.
       </p>
 
       <h2>Retention and deletion</h2>
