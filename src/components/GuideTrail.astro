@@ -1,0 +1,31 @@
+---
+import { getGuideForPost } from '@/data/guide-collections'
+
+interface Props {
+  postSlug: string
+}
+
+const { postSlug } = Astro.props
+const guide = getGuideForPost(postSlug)
+---
+
+{
+  guide && (
+    <aside
+      class="border-accent/25 bg-accent/10 mb-8 rounded-lg border p-5"
+      aria-label="Related guide"
+    >
+      <p class="workshop-label">{guide.label} guide</p>
+      <p class="mt-2 text-sm leading-relaxed">
+        This is one step in <strong>{guide.title}</strong>. Follow the full path
+        when you want the surrounding checks and the next useful read.
+      </p>
+      <a
+        href={`/guides#${guide.slug}`}
+        class="text-accent mt-3 inline-flex text-sm font-medium underline-offset-4 hover:underline"
+      >
+        See the full guide →
+      </a>
+    </aside>
+  )
+}

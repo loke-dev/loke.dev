@@ -75,6 +75,10 @@ export const guideCollections: GuideCollection[] = [
   },
 ]
 
+export function getGuideForPost(postSlug: string): GuideCollection | undefined {
+  return guideCollections.find((guide) => guide.postSlugs.includes(postSlug))
+}
+
 export const toolStartingPoints = [
   {
     label: 'Before a release',

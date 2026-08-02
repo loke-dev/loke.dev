@@ -9,6 +9,7 @@ import {
   getRedirectByFrom,
   getRelatedPosts,
 } from '@/utils/sanity.queries'
+import GuideTrail from '@/components/GuideTrail.astro'
 import PortableText from '@/components/PortableText.astro'
 import PostAdjacentNav from '@/components/PostAdjacentNav.astro'
 import PostEvidence from '@/components/PostEvidence.astro'
@@ -166,6 +167,7 @@ const breadcrumbSchema = post
           </div>
         </header>
         <>
+          <GuideTrail postSlug={post.slug.current} />
           <PortableText value={post.body} />
           <PostEvidence
             sources={post.sources}
