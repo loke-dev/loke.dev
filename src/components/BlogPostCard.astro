@@ -35,7 +35,6 @@ const srcSet = getSanityImageSrcSet(
   imageWidth
 )
 const updatedDisplay = getPostUpdatedDisplay(post)
-const titleId = `post-card-title-${post._id}`
 ---
 
 <article
@@ -45,7 +44,7 @@ const titleId = `post-card-title-${post._id}`
     href={`/blog/${post.slug.current}`}
     data-astro-prefetch="hover"
     class="flex flex-1 flex-col"
-    aria-labelledby={titleId}
+    aria-label={post.title}
   >
     {
       imageUrl && (
@@ -91,10 +90,7 @@ const titleId = `post-card-title-${post._id}`
           ) : null
         }
       </div>
-      <h2
-        id={titleId}
-        class="mb-2 text-xl font-bold tracking-tight group-hover:underline"
-      >
+      <h2 class="mb-2 text-xl font-bold tracking-tight group-hover:underline">
         {post.title}
       </h2>
       <p class="text-muted-foreground line-clamp-3 flex-1">
