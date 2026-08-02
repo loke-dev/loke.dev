@@ -67,20 +67,31 @@ function collectDocumentText(value, location, issues) {
   }
 }
 
-async function listFiles(directory) {
+async function listFiles(directory, extensions) {
   const entries = await readdir(directory, { withFileTypes: true })
   const files = await Promise.all(
     entries.map(async (entry) => {
       const path = join(directory, entry.name)
       return entry.isDirectory()
-        ? listFiles(path)
-        : entry.isFile() && /\.(astro|ts|tsx)$/.test(entry.name)
+        ? listFiles(path, extensions)
+        : entry.isFile() && extensions.has(entry.name.match(/\.[^.]+$/)?.[0])
           ? [path]
           : []
     })
   )
   return files.flat()
 }
+
+const publicCopyRoots = [
+  {
+    directory: new URL('../src/', import.meta.url).pathname,
+    extensions: new Set(['.astro', '.ts', '.tsx']),
+  },
+  {
+    directory: new URL('../public/', import.meta.url).pathname,
+    extensions: new Set(['.json', '.md', '.txt']),
+  },
+]
 
 const query = '*[_type in ["post", "project", "homePage", "nowPage", "aboutPage", "blogPage", "contactPage", "projectsPage", "topic", "author"]]'
 const endpoint = new URL(
@@ -100,9 +111,11 @@ for (const document of documents) {
   collectDocumentText(document, `${document._type}:${document._id}`, issues)
 }
 
-for (const file of await listFiles(new URL('../src/', import.meta.url).pathname)) {
-  const text = await readFile(file, 'utf8')
-  issues.push(...findVoiceIssues(text, file.replace(process.cwd(), '.')))
+for (const { directory, extensions } of publicCopyRoots) {
+  for (const file of await listFiles(directory, extensions)) {
+    const text = await readFile(file, 'utf8')
+    issues.push(...findVoiceIssues(text, file.replace(process.cwd(), '.')))
+  }
 }
 
 if (issues.length) {
