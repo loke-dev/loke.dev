@@ -3,6 +3,7 @@ import type { StructureBuilder } from 'sanity/structure'
 // Singleton document IDs
 const SINGLETON_TYPES = [
   'homePage',
+  'nowPage',
   'aboutPage',
   'blogPage',
   'projectsPage',
@@ -36,6 +37,7 @@ export const structure = (S: StructureBuilder) =>
             .title('Pages')
             .items([
               singletonListItem(S, 'homePage', 'Home', '🏠'),
+              singletonListItem(S, 'nowPage', 'Now', '📍'),
               singletonListItem(S, 'aboutPage', 'About', '👤'),
               singletonListItem(S, 'blogPage', 'Blog', '📰'),
               singletonListItem(S, 'projectsPage', 'Projects', '🚀'),

@@ -8,6 +8,7 @@ import {
   BLOG_PAGE_QUERY,
   CONTACT_PAGE_QUERY,
   HOME_PAGE_QUERY,
+  NOW_PAGE_QUERY,
   POST_BY_SLUG_QUERY,
   POST_COUNT_QUERY,
   POST_LIST_QUERY,
@@ -31,6 +32,7 @@ import type {
   BlogPage,
   ContactPage,
   HomePage,
+  NowPage,
   Post,
   PostListItem,
   ProjectsPage,
@@ -42,6 +44,7 @@ export type {
   BlogPage,
   ContactPage,
   HomePage,
+  NowPage,
   Post,
   PostListItem,
   Author,
@@ -201,6 +204,10 @@ export async function getAdjacentPosts(
 
 export async function getHomePage(): Promise<HomePage> {
   return client.fetch<HomePage>(HOME_PAGE_QUERY)
+}
+
+export async function getNowPage(): Promise<NowPage | null> {
+  return client.fetch<NowPage | null>(NOW_PAGE_QUERY)
 }
 
 export async function getAboutPage(): Promise<AboutPage> {

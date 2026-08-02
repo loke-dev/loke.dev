@@ -6,6 +6,7 @@ import code from './code'
 import contactPage from './contactPage'
 import diagram from './diagram'
 import homePage from './homePage'
+import nowPage from './nowPage'
 import post from './post'
 import project from './project'
 import projectsPage from './projectsPage'
@@ -21,6 +22,7 @@ export const schemaTypes = [
   project,
   // Page singletons
   homePage,
+  nowPage,
   aboutPage,
   blogPage,
   projectsPage,

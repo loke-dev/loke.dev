@@ -35,6 +35,7 @@ const TYPE_PATHS: Record<string, string[]> = {
   topic: ['/topics', '/sitemap.xml'],
   author: ['/sitemap.xml'],
   homePage: ['/'],
+  nowPage: ['/now'],
   blogPage: ['/blog'],
   aboutPage: ['/about'],
   projectsPage: ['/projects'],

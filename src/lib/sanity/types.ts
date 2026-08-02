@@ -102,6 +102,15 @@ export interface HomePage {
   ctaButtonText: string
 }
 
+export interface NowPage {
+  period: string
+  title: string
+  intro: string
+  items: Array<{ _key?: string; label: string; copy: string }>
+  note: string
+  ctaText: string
+}
+
 export interface AboutPageSection {
   _key: string
   title: string
