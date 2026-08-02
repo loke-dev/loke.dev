@@ -239,6 +239,39 @@ function extractInspection(
   }
 }
 
+async function readHtmlBody(response: Response): Promise<string> {
+  if (!response.body) return ''
+
+  const reader = response.body.getReader()
+  const chunks: Uint8Array[] = []
+  let totalBytes = 0
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      totalBytes += value.byteLength
+      if (totalBytes > MAX_BODY_BYTES) {
+        await reader.cancel()
+        throw new InspectionError('The page is too large to inspect.', 413)
+      }
+      chunks.push(value)
+    }
+  } finally {
+    reader.releaseLock()
+  }
+
+  const body = new Uint8Array(totalBytes)
+  let offset = 0
+  for (const chunk of chunks) {
+    body.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+
+  return new TextDecoder().decode(body)
+}
+
 export async function inspectPublicUrl(value: string): Promise<PageInspection> {
   const requestedUrl = validateUrl(value)
   let currentUrl = requestedUrl
@@ -288,10 +321,7 @@ export async function inspectPublicUrl(value: string): Promise<PageInspection> {
     throw new InspectionError('The page is too large to inspect.', 413)
   }
 
-  const html = await response.text()
-  if (html.length > MAX_BODY_BYTES) {
-    throw new InspectionError('The page is too large to inspect.', 413)
-  }
+  const html = await readHtmlBody(response)
 
   return extractInspection(html, requestedUrl, response)
 }
