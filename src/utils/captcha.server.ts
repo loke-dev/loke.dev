@@ -24,7 +24,6 @@ export async function verifyTurnstileToken(
 ): Promise<boolean> {
   // In development, always return true for test tokens
   if (import.meta.env.DEV) {
-    console.log('Development mode: Skipping CAPTCHA verification')
     return true
   }
 
