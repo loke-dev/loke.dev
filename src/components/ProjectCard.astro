@@ -45,7 +45,7 @@ const sourceLinkLabel = template ? 'View source' : 'GitHub'
               ? '(min-width: 1024px) 50vw, 100vw'
               : '(min-width: 1280px) 45vw, (min-width: 768px) 48vw, 100vw'
           }
-          alt={project.image?.alt || project.title}
+          alt={project.imageAlt || project.image?.alt || project.title}
           loading="lazy"
           decoding="async"
           width={width}

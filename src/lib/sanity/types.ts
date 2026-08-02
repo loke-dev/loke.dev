@@ -80,6 +80,7 @@ export interface Project {
   description: string
   technologies: string[]
   image?: SanityImage
+  imageAlt?: string
   url?: string
   github?: string
   featured: boolean

@@ -47,6 +47,18 @@ export default defineType({
       },
     }),
     defineField({
+      name: 'imageAlt',
+      title: 'Image alt text',
+      type: 'string',
+      description:
+        'Describe what is in the image plainly. Keep it short and skip prompt-like details.',
+      validation: (Rule) =>
+        Rule.required()
+          .min(10)
+          .max(160)
+          .warning('Keep this short and describe the image in plain language.'),
+    }),
+    defineField({
       name: 'url',
       title: 'Project URL',
       type: 'url',
