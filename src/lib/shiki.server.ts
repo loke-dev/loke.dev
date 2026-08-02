@@ -19,6 +19,7 @@ import { createHighlighterCore, type HighlighterCore } from 'shiki/core'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
 let highlighter: HighlighterCore | null = null
+let highlighterPromise: Promise<HighlighterCore> | null = null
 
 const highlightCache = new Map<string, string>()
 const MAX_CACHE_ENTRIES = 500
@@ -44,8 +45,10 @@ const SUPPORTED_LANGUAGES = [
 type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number] | 'text'
 
 async function getHighlighter(): Promise<HighlighterCore> {
-  if (!highlighter) {
-    highlighter = await createHighlighterCore({
+  if (highlighter) return highlighter
+
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighterCore({
       themes: [minDark, catppuccinLatte],
       langs: [
         javascript,
@@ -66,8 +69,17 @@ async function getHighlighter(): Promise<HighlighterCore> {
       ],
       engine: createJavaScriptRegexEngine(),
     })
+      .then((createdHighlighter) => {
+        highlighter = createdHighlighter
+        return createdHighlighter
+      })
+      .catch((error) => {
+        highlighterPromise = null
+        throw error
+      })
   }
-  return highlighter
+
+  return highlighterPromise
 }
 
 function normalizeLanguage(lang: string | undefined): SupportedLanguage {
