@@ -50,6 +50,7 @@ export interface SanityImage {
 // Base post type for list views (no body content)
 export interface PostListItem {
   _id: string
+  _createdAt: string
   title: string
   slug: { current: string }
   description: string

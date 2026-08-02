@@ -2,7 +2,7 @@ const AUTHOR_PROJECTION = `"author": author->{ _id, name, slug, role }`
 const TOPICS_PROJECTION = `"topics": topics[]->{ _id, title, slug, description }`
 const PLAIN_BODY = `"plainBody": pt::text(body)`
 
-const POST_LIST_BODY = `_id, title, slug, description, date, lastModified, _updatedAt,
+const POST_LIST_BODY = `_id, _createdAt, title, slug, description, date, lastModified, _updatedAt,
   ${AUTHOR_PROJECTION}, ${TOPICS_PROJECTION}, image, imageAlt`
 
 export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc, _createdAt desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
@@ -12,8 +12,8 @@ export const POST_BY_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**
 export const REDIRECT_BY_FROM_QUERY = `*[_type == "redirect" && from == $from][0] { to, permanent }`
 export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && _id != $excludeId && count(topics[@._ref in $topicIds]) > 0] | order(date desc) [0...$limit] { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 const ADJACENT_POST_FIELDS = POST_LIST_BODY
-export const POST_PREV_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && date < $date] | order(date desc) [0] { ${ADJACENT_POST_FIELDS} }`
-export const POST_NEXT_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && date > $date] | order(date asc) [0] { ${ADJACENT_POST_FIELDS} }`
+export const POST_PREV_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && (date < $date || (date == $date && _createdAt < $createdAt))] | order(date desc, _createdAt desc) [0] { ${ADJACENT_POST_FIELDS} }`
+export const POST_NEXT_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && (date > $date || (date == $date && _createdAt > $createdAt))] | order(date asc, _createdAt asc) [0] { ${ADJACENT_POST_FIELDS} }`
 
 export const TOPIC_BY_SLUG_QUERY = `*[_type == "topic" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, title, slug, description }`
 export const POSTS_BY_TOPIC_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && references(*[_type == "topic" && slug.current == $slug][0]._id)] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`

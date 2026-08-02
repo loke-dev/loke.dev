@@ -195,11 +195,18 @@ export async function getAllAuthors(
 
 export async function getAdjacentPosts(
   date: string,
+  createdAt: string,
   contentClient: SanityClient = client
 ): Promise<{ prev: PostListItem | null; next: PostListItem | null }> {
   const [prev, next] = await Promise.all([
-    contentClient.fetch<PostListItem | null>(POST_PREV_QUERY, { date }),
-    contentClient.fetch<PostListItem | null>(POST_NEXT_QUERY, { date }),
+    contentClient.fetch<PostListItem | null>(POST_PREV_QUERY, {
+      date,
+      createdAt,
+    }),
+    contentClient.fetch<PostListItem | null>(POST_NEXT_QUERY, {
+      date,
+      createdAt,
+    }),
   ])
   return { prev, next }
 }
