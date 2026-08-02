@@ -82,7 +82,7 @@ async function listFiles(directory) {
   return files.flat()
 }
 
-const query = '*[_type in ["post", "project", "homePage", "aboutPage", "blogPage", "contactPage", "projectsPage", "contentTopic", "author"]]'
+const query = '*[_type in ["post", "project", "homePage", "aboutPage", "blogPage", "contactPage", "projectsPage", "topic", "author"]]'
 const endpoint = new URL(
   `https://${SANITY_PROJECT_ID}.api.sanity.io/v2025-02-19/data/query/${SANITY_DATASET}`
 )
