@@ -1,6 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
-import { SITE_DOMAIN } from '@/utils/meta'
+import { SITE_CONTACT_EMAIL, SITE_DOMAIN } from '@/utils/meta'
 import { getContactPage } from '@/utils/sanity.queries'
 import ContactForm from '@/components/ContactForm'
 import PageIntro from '@/components/PageIntro.astro'
@@ -42,6 +42,20 @@ const page = await getContactPage()
               {page.alternativeContactDescription}
             </p>
           )}
+          <div class="mt-5 flex flex-wrap gap-4">
+            <a
+              href={`mailto:${SITE_CONTACT_EMAIL}`}
+              class="text-accent font-medium underline-offset-4 hover:underline"
+            >
+              Email me →
+            </a>
+            <a
+              href="https://github.com/loke-dev"
+              class="text-accent font-medium underline-offset-4 hover:underline"
+            >
+              GitHub →
+            </a>
+          </div>
         </div>
       )
     }
