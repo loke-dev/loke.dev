@@ -21,26 +21,34 @@ const assets = [
       'Favicon, app icon, small avatar, or a little signature in a corner.',
     preview: '/brand/workshop-signal/loke-signal-mark.svg',
     href: '/brand/workshop-signal/loke-signal-mark.svg',
+    width: 128,
+    height: 128,
   },
   {
     title: 'X header',
     detail: 'Graphic-only 3:1 header. The wordmark sits above the avatar zone.',
-    preview: '/brand/workshop-signal/loke-x-header.png',
+    preview: '/brand/workshop-signal/loke-x-header-preview.webp',
     href: '/brand/workshop-signal/loke-x-header.png',
+    width: 900,
+    height: 300,
   },
   {
     title: 'Profile portrait',
     detail:
       'Use for places where a face helps, not as a decoration everywhere.',
-    preview: '/brand/workshop-signal/loke-profile-portrait.png',
+    preview: '/brand/workshop-signal/loke-profile-portrait-preview.webp',
     href: '/brand/workshop-signal/loke-profile-portrait.png',
+    width: 760,
+    height: 760,
   },
   {
     title: 'Social square',
     detail:
       'A starting point for launch posts, project cards, and short notes.',
-    preview: '/brand/workshop-signal/loke-social-square-template.png',
+    preview: '/brand/workshop-signal/loke-social-square-template-preview.webp',
     href: '/brand/workshop-signal/loke-social-square-template.png',
+    width: 760,
+    height: 760,
   },
 ]
 
@@ -184,6 +192,9 @@ const illustrations = [
                   src={asset.preview}
                   alt=""
                   loading="lazy"
+                  width={asset.width}
+                  height={asset.height}
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   class="aspect-[16/8] w-full object-cover object-center"
                 />
                 <div class="p-5">
