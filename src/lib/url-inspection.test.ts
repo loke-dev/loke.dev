@@ -24,7 +24,13 @@ test('rejects local and private inspection URLs', () => {
     'http://localhost',
     'http://127.0.0.1',
     'http://192.168.1.1',
+    'http://192.0.2.1',
+    'http://198.51.100.1',
+    'http://203.0.113.1',
+    'http://255.255.255.255',
     'http://[::1]',
+    'http://[2001:db8::1]',
+    'http://[ff02::1]',
   ]) {
     assert.throws(
       () => validateUrl(value),

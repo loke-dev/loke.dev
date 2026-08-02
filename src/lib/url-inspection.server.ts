@@ -27,7 +27,7 @@ export class InspectionError extends Error {
   }
 }
 
-function isPrivateIpv4Address(parts: number[]): boolean {
+function isNonPublicIpv4Address(parts: number[]): boolean {
   const [first, second] = parts
   return (
     first === 0 ||
@@ -36,8 +36,13 @@ function isPrivateIpv4Address(parts: number[]): boolean {
     (first === 100 && second >= 64 && second <= 127) ||
     (first === 169 && second === 254) ||
     (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 0) ||
+    (first === 192 && second === 2) ||
     (first === 192 && second === 168) ||
-    (first === 198 && (second === 18 || second === 19))
+    (first === 198 && (second === 18 || second === 19)) ||
+    (first === 198 && second === 51) ||
+    (first === 203 && second === 0) ||
+    first >= 224
   )
 }
 
@@ -70,9 +75,9 @@ function parseIpv6Address(hostname: string): number[] | null {
   return groups.map((group) => Number.parseInt(group, 16))
 }
 
-function isPrivateIpAddress(hostname: string): boolean {
+function isNonPublicIpAddress(hostname: string): boolean {
   const ipv4 = parseIpv4Address(hostname)
-  if (ipv4) return isPrivateIpv4Address(ipv4)
+  if (ipv4) return isNonPublicIpv4Address(ipv4)
 
   const normalizedHostname = hostname.replace(/^\[|\]$/g, '').toLowerCase()
   // Public pages have no reason to use an IPv4-mapped IPv6 literal. Reject the
@@ -89,6 +94,10 @@ function isPrivateIpAddress(hostname: string): boolean {
     ipv6.slice(0, 7).every((group) => group === 0) && ipv6[7] === 1
   const isUniqueLocal = (firstGroup & 0xfe00) === 0xfc00
   const isLinkLocal = (firstGroup & 0xffc0) === 0xfe80
+  const isMulticast = (firstGroup & 0xff00) === 0xff00
+  const isDocumentation =
+    (firstGroup === 0x2001 && ipv6[1] === 0x0db8) ||
+    (firstGroup === 0x3fff && (ipv6[1] & 0xf000) === 0)
   const isEmbeddedIpv4 =
     ipv6.slice(0, 6).every((group) => group === 0) ||
     (ipv6.slice(0, 5).every((group) => group === 0) && ipv6[5] === 0xffff)
@@ -104,7 +113,9 @@ function isPrivateIpAddress(hostname: string): boolean {
     isLoopback ||
     isUniqueLocal ||
     isLinkLocal ||
-    (isEmbeddedIpv4 && isPrivateIpv4Address(embeddedIpv4))
+    isMulticast ||
+    isDocumentation ||
+    (isEmbeddedIpv4 && isNonPublicIpv4Address(embeddedIpv4))
   )
 }
 
@@ -126,7 +137,7 @@ export function validateUrl(value: string): URL {
 
   if (
     PRIVATE_HOST_PATTERN.test(url.hostname) ||
-    isPrivateIpAddress(url.hostname)
+    isNonPublicIpAddress(url.hostname)
   ) {
     throw new InspectionError(
       'Private and local network addresses are not allowed.'
