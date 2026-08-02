@@ -18,6 +18,7 @@ import {
   POSTS_BY_AUTHOR_SLUG_QUERY,
   POSTS_BY_TOPIC_SLUG_QUERY,
   PROJECTS_PAGE_QUERY,
+  PROJECTS_QUERY,
   REDIRECT_BY_FROM_QUERY,
   RELATED_POSTS_QUERY,
   TOPIC_BY_SLUG_QUERY,
@@ -35,6 +36,7 @@ import type {
   NowPage,
   Post,
   PostListItem,
+  Project,
   ProjectsPage,
   Topic,
 } from '@/lib/sanity/types'
@@ -220,6 +222,12 @@ export async function getBlogPage(): Promise<BlogPage> {
 
 export async function getProjectsPage(): Promise<ProjectsPage> {
   return client.fetch<ProjectsPage>(PROJECTS_PAGE_QUERY)
+}
+
+export async function getAllProjects(
+  contentClient: SanityClient = client
+): Promise<Project[]> {
+  return contentClient.fetch<Project[]>(PROJECTS_QUERY)
 }
 
 export async function getContactPage(): Promise<ContactPage> {

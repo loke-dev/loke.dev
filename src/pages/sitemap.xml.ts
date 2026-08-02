@@ -3,6 +3,7 @@ import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 import {
   getAllAuthors,
+  getAllProjects,
   getAllPublishedPosts,
   getAllTopics,
   getBlogTotalPages,
@@ -13,8 +14,9 @@ import { freshClient } from '@/lib/sanity/client'
 export const prerender = false
 
 export const GET: APIRoute = async () => {
-  const [posts, totalPages, topics, authors] = await Promise.all([
+  const [posts, projects, totalPages, topics, authors] = await Promise.all([
     getAllPublishedPosts(freshClient),
+    getAllProjects(freshClient),
     getBlogTotalPages(freshClient),
     getAllTopics(freshClient),
     getAllAuthors(freshClient),
@@ -46,9 +48,25 @@ export const GET: APIRoute = async () => {
           (_, index) => `/blog/page/${index + 2}`
         )
       : []
-  const staticUrlEntries = [...staticUrls, ...blogPageUrls].map(
-    (url) => `  <url><loc>${SITE_DOMAIN}${url}</loc></url>`
-  )
+  const latestPostUpdate = posts
+    .map((post) => post.lastModified ?? post._updatedAt ?? post.date)
+    .filter(Boolean)
+    .sort()
+    .at(-1)
+  const latestProjectUpdate = projects
+    .map((project) => project._updatedAt)
+    .filter(Boolean)
+    .sort()
+    .at(-1)
+  const staticUrlEntries = [...staticUrls, ...blogPageUrls].map((url) => {
+    const lastModified =
+      url === '/blog'
+        ? latestPostUpdate
+        : url === '/projects'
+          ? latestProjectUpdate
+          : undefined
+    return `  <url><loc>${SITE_DOMAIN}${url}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
+  })
   const postUrlEntries = posts.map((post) => {
     const lastModified = post.lastModified ?? post._updatedAt ?? post.date
     return `  <url><loc>${SITE_DOMAIN}/blog/${post.slug.current}</loc><lastmod>${lastModified}</lastmod></url>`

@@ -2,19 +2,16 @@
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
-import { getProjectsPage } from '@/utils/sanity.queries'
+import { getAllProjects, getProjectsPage } from '@/utils/sanity.queries'
 import ProjectCard from '@/components/ProjectCard.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { client } from '@/lib/sanity/client'
-import { PROJECTS_QUERY } from '@/lib/sanity/queries'
-import type { Project } from '@/lib/sanity/types'
 
 export const prerender = true
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 const [projects, page] = await Promise.all([
-  client.fetch<Project[]>(PROJECTS_QUERY),
+  getAllProjects(),
   getProjectsPage(),
 ])
 
