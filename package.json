@@ -10,6 +10,7 @@
     "content:check": "node scripts/check-public-copy.mjs",
     "deploy": "pnpm run build && wrangler deploy",
     "start": "astro preview",
+    "test": "node --test src/lib/studio-redirect.test.ts",
     "cf-typegen": "wrangler types",
     "typecheck": "astro check && tsc --noEmit",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",

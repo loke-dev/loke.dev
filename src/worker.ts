@@ -1,21 +1,8 @@
 import { handle } from '@astrojs/cloudflare/handler'
 import * as Sentry from '@sentry/cloudflare'
+import { getStudioRedirect } from '@/lib/studio-redirect'
 
-const STUDIO_HOST = 'loke-dev.sanity.studio'
 const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
-
-function getStudioRedirect(request: Request): Response | null {
-  const url = new URL(request.url)
-  if (url.pathname !== '/studio' && !url.pathname.startsWith('/studio/')) {
-    return null
-  }
-
-  const studioPath = url.pathname.slice('/studio'.length) || '/'
-  const studioUrl = new URL(`https://${STUDIO_HOST}${studioPath}`)
-  studioUrl.search = url.search
-
-  return Response.redirect(studioUrl, 302)
-}
 
 function withWorkerVersion(request: Request, versionId?: string): Request {
   if (!versionId) return request
