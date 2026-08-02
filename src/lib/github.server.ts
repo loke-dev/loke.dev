@@ -12,6 +12,8 @@ const DEFAULT_REPOSITORY = {
   repo: 'loke.dev',
 } as const
 
+const GITHUB_REQUEST_TIMEOUT_MS = 8_000
+
 interface GitHubCommitApi {
   sha: string
   html_url: string
@@ -22,10 +24,14 @@ interface GitHubCommitApi {
 }
 
 function env(name: string): string | undefined {
-  const fromMeta = (import.meta.env as Record<string, string | undefined>)[name]
+  const fromMeta = (
+    import.meta.env as Record<string, string | undefined> | undefined
+  )?.[name]
   if (typeof fromMeta === 'string' && fromMeta.trim()) return fromMeta.trim()
   const fromProc =
-    typeof process !== 'undefined' ? process.env[name] : undefined
+    typeof process !== 'undefined' && process.env
+      ? process.env[name]
+      : undefined
   if (typeof fromProc === 'string' && fromProc.trim()) return fromProc.trim()
   return undefined
 }
@@ -75,13 +81,21 @@ export async function fetchRecentRepoCommits(
   const token = env('GITHUB_TOKEN')
   const perPage = Math.min(Math.max(limit, 1), 100)
   const url = `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${perPage}`
-  const res = await fetch(url, { headers: getHeaders(token) })
-  if (!res.ok) return []
-  const data = (await res.json()) as GitHubCommitApi[]
-  if (!Array.isArray(data)) return []
-  return data
-    .filter((c) => c?.sha && c?.commit?.message)
-    .map((c) => mapCommit(c))
+
+  try {
+    const res = await fetch(url, {
+      headers: getHeaders(token),
+      signal: AbortSignal.timeout(GITHUB_REQUEST_TIMEOUT_MS),
+    })
+    if (!res.ok) return []
+    const data = (await res.json()) as GitHubCommitApi[]
+    if (!Array.isArray(data)) return []
+    return data
+      .filter((c) => c?.sha && c?.commit?.message)
+      .map((c) => mapCommit(c))
+  } catch {
+    return []
+  }
 }
 
 export function getGithubRepoConfig(): { owner: string; repo: string } {
