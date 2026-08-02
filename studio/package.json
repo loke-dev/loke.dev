@@ -8,12 +8,12 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
-    "@sanity/vision": "^6.6.0",
+    "@sanity/vision": "^6.8.0",
     "esbuild": "^0.28.1",
-    "lucide-react": "^1.27.0",
+    "lucide-react": "^1.28.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "sanity": "^6.6.0",
+    "sanity": "^6.8.0",
     "styled-components": "^6.4.4"
   }
 }
