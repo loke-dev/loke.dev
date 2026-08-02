@@ -92,7 +92,6 @@ export type ProjectSlug = { slug: { current: string } }
 
 // Page singleton types
 export interface HomePage {
-  heroTitle: string
   heroDescription: string
   technologiesSectionTitle: string
   technologies: string[]

@@ -8,13 +8,6 @@ export default defineType({
   icon: () => '🏠',
   fields: [
     defineField({
-      name: 'heroTitle',
-      title: 'Hero Title',
-      type: 'string',
-      description: 'The main title with accent (e.g., "Loke.dev")',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
       name: 'heroDescription',
       title: 'Hero Description',
       type: 'text',

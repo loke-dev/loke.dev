@@ -23,7 +23,7 @@ export const POSTS_BY_AUTHOR_SLUG_QUERY = `*[_type == "post" && !(_id in path("d
 export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs, _updatedAt }`
 
 export const PROJECTS_QUERY = `*[_type == "project" && !(_id in path("drafts.**"))] | order(order asc, year desc) { _id, _updatedAt, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
-export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0] { heroTitle, heroDescription, technologiesSectionTitle, technologies, blogSectionTitle, blogSectionDescription, ctaTitle, ctaDescription, ctaButtonText }`
+export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0] { heroDescription, technologiesSectionTitle, technologies, blogSectionTitle, blogSectionDescription, ctaTitle, ctaDescription, ctaButtonText }`
 export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage" && _id == "aboutPage"][0] { title, intro, sections[] { _key, title, content } }`
 export const BLOG_PAGE_QUERY = `*[_type == "blogPage" && _id == "blogPage"][0] { title, description, emptyStateTitle, emptyStateDescription }`
 export const PROJECTS_PAGE_QUERY = `*[_type == "projectsPage" && _id == "projectsPage"][0] { title, description, featuredSectionTitle, otherSectionTitle, templatesSectionTitle }`
