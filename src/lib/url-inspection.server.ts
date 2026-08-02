@@ -27,31 +27,78 @@ export class InspectionError extends Error {
   }
 }
 
-function isPrivateIpAddress(hostname: string): boolean {
-  const ipv4 = hostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
-  if (ipv4) {
-    const parts = ipv4.slice(1).map(Number)
-    if (parts.some((part) => part > 255)) return true
-    const [first, second] = parts
-    return (
-      first === 0 ||
-      first === 10 ||
-      first === 127 ||
-      (first === 100 && second >= 64 && second <= 127) ||
-      (first === 169 && second === 254) ||
-      (first === 172 && second >= 16 && second <= 31) ||
-      (first === 192 && second === 168) ||
-      (first === 198 && (second === 18 || second === 19))
-    )
-  }
-
-  const normalized = hostname.replace(/^\[|\]$/g, '').toLowerCase()
+function isPrivateIpv4Address(parts: number[]): boolean {
+  const [first, second] = parts
   return (
-    normalized === '::1' ||
-    normalized === '::' ||
-    normalized.startsWith('fc') ||
-    normalized.startsWith('fd') ||
-    normalized.startsWith('fe80:')
+    first === 0 ||
+    first === 10 ||
+    first === 127 ||
+    (first === 100 && second >= 64 && second <= 127) ||
+    (first === 169 && second === 254) ||
+    (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 168) ||
+    (first === 198 && (second === 18 || second === 19))
+  )
+}
+
+function parseIpv4Address(hostname: string): number[] | null {
+  const match = hostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (!match) return null
+
+  const parts = match.slice(1).map(Number)
+  return parts.some((part) => part > 255) ? null : parts
+}
+
+function parseIpv6Address(hostname: string): number[] | null {
+  const normalized = hostname.replace(/^\[|\]$/g, '').toLowerCase()
+  const sections = normalized.split('::')
+  if (sections.length > 2) return null
+
+  const left = sections[0] ? sections[0].split(':') : []
+  const right = sections[1] ? sections[1].split(':') : []
+  const missingGroups = 8 - left.length - right.length
+  if (missingGroups < 0 || (sections.length === 1 && missingGroups !== 0))
+    return null
+
+  const groups = [...left, ...Array(missingGroups).fill('0'), ...right]
+  if (
+    groups.length !== 8 ||
+    groups.some((group) => !/^[0-9a-f]{1,4}$/.test(group))
+  )
+    return null
+
+  return groups.map((group) => Number.parseInt(group, 16))
+}
+
+function isPrivateIpAddress(hostname: string): boolean {
+  const ipv4 = parseIpv4Address(hostname)
+  if (ipv4) return isPrivateIpv4Address(ipv4)
+
+  const ipv6 = parseIpv6Address(hostname)
+  if (!ipv6) return false
+
+  const [firstGroup] = ipv6
+  const isUnspecified = ipv6.every((group) => group === 0)
+  const isLoopback =
+    ipv6.slice(0, 7).every((group) => group === 0) && ipv6[7] === 1
+  const isUniqueLocal = (firstGroup & 0xfe00) === 0xfc00
+  const isLinkLocal = (firstGroup & 0xffc0) === 0xfe80
+  const isEmbeddedIpv4 =
+    ipv6.slice(0, 6).every((group) => group === 0) ||
+    (ipv6.slice(0, 5).every((group) => group === 0) && ipv6[5] === 0xffff)
+  const embeddedIpv4 = [
+    ipv6[6] >> 8,
+    ipv6[6] & 0xff,
+    ipv6[7] >> 8,
+    ipv6[7] & 0xff,
+  ]
+
+  return (
+    isUnspecified ||
+    isLoopback ||
+    isUniqueLocal ||
+    isLinkLocal ||
+    (isEmbeddedIpv4 && isPrivateIpv4Address(embeddedIpv4))
   )
 }
 
