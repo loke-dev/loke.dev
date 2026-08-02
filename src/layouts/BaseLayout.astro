@@ -38,7 +38,10 @@ const {
   loadTurnstile = false,
   preconnectSanity = false,
 } = Astro.props
-const canonicalUrl = url ?? Astro.url.href
+const canonical = new URL(url ?? Astro.url.href)
+canonical.search = ''
+canonical.hash = ''
+const canonicalUrl = canonical.href
 ---
 
 <!doctype html>
