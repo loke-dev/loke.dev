@@ -76,12 +76,14 @@ jobs:
           origin="https://loke-dev.gitdash.workers.dev"
           user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36 loke.dev deployment smoke test"
           sitemap=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/sitemap.xml")
-          while IFS= read -r route; do
-            test -n "$route" || continue
-            route=$(printf '%s' "$route" | sed "s#https://loke.dev#$origin#")
-            printf 'Checking %s\n' "$route"
-            curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS -o /dev/null "$route"
-          done < <(printf '%s' "$sitemap" | sed -n 's#.*<loc>\(.*\)</loc>.*#\1#p')
+          export user_agent
+          printf '%s' "$sitemap" \
+            | sed -n 's#.*<loc>\(.*\)</loc>.*#\1#p' \
+            | sed "s#https://loke.dev#$origin#" \
+            | xargs -r -n1 -P8 sh -c '
+                printf "Checking %s\\n" "$1"
+                curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS -o /dev/null "$1"
+              ' sh
 
       - name: Warm SSR routes
         run: |
