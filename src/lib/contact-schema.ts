@@ -14,5 +14,5 @@ export const ContactFieldsSchema = z.object({
 })
 
 export const ContactSubmissionSchema = ContactFieldsSchema.extend({
-  captchaToken: z.string().min(1),
+  captchaToken: z.string().min(1).max(2048),
 })

@@ -94,7 +94,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     )
   }
 
-  const captchaValid = await verifyTurnstileToken(captchaToken)
+  const captchaValid = await verifyTurnstileToken(captchaToken, clientAddress)
   if (!captchaValid) {
     return Response.json(
       { ok: false, error: 'CAPTCHA verification failed. Please try again.' },

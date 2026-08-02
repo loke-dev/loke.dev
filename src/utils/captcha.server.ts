@@ -18,7 +18,10 @@ function getTurnstileSecret(): string | undefined {
   return processSecret?.trim() || undefined
 }
 
-export async function verifyTurnstileToken(token: string): Promise<boolean> {
+export async function verifyTurnstileToken(
+  token: string,
+  remoteIp?: string
+): Promise<boolean> {
   // In development, always return true for test tokens
   if (import.meta.env.DEV) {
     console.log('Development mode: Skipping CAPTCHA verification')
@@ -36,6 +39,9 @@ export async function verifyTurnstileToken(token: string): Promise<boolean> {
   }
 
   try {
+    const body = new URLSearchParams({ secret, response: token })
+    if (remoteIp) body.set('remoteip', remoteIp)
+
     const response = await fetch(
       'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
@@ -43,10 +49,7 @@ export async function verifyTurnstileToken(token: string): Promise<boolean> {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({
-          secret,
-          response: token,
-        }),
+        body,
       }
     )
 
