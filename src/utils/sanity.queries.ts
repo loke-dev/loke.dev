@@ -133,14 +133,18 @@ export async function getBlogTotalPages(
 export async function getRelatedPosts(
   excludeId: string,
   topicIds: string[],
-  limit: number = 3
+  limit: number = 3,
+  contentClient: SanityClient = client
 ): Promise<PostListItem[]> {
   if (topicIds.length === 0) return []
-  const rows = await client.fetch<PostListFetchRow[]>(RELATED_POSTS_QUERY, {
-    excludeId,
-    topicIds,
-    limit,
-  })
+  const rows = await contentClient.fetch<PostListFetchRow[]>(
+    RELATED_POSTS_QUERY,
+    {
+      excludeId,
+      topicIds,
+      limit,
+    }
+  )
   return rows.map(mapPostListRow)
 }
 
@@ -191,11 +195,12 @@ export async function getAllAuthors(
 }
 
 export async function getAdjacentPosts(
-  date: string
+  date: string,
+  contentClient: SanityClient = client
 ): Promise<{ prev: PostListItem | null; next: PostListItem | null }> {
   const [prev, next] = await Promise.all([
-    client.fetch<PostListItem | null>(POST_PREV_QUERY, { date }),
-    client.fetch<PostListItem | null>(POST_NEXT_QUERY, { date }),
+    contentClient.fetch<PostListItem | null>(POST_PREV_QUERY, { date }),
+    contentClient.fetch<PostListItem | null>(POST_NEXT_QUERY, { date }),
   ])
   return { prev, next }
 }

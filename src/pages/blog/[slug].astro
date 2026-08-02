@@ -50,8 +50,8 @@ if (!post) {
 const topicIds = post?.topics.map((topic) => topic._id) ?? []
 const [relatedPosts, adjacent] = post
   ? await Promise.all([
-      getRelatedPosts(post._id, topicIds, 3),
-      getAdjacentPosts(post.date),
+      getRelatedPosts(post._id, topicIds, 3, contentClient),
+      getAdjacentPosts(post.date, contentClient),
     ])
   : [[], { prev: null, next: null }]
 const updatedMeta = post ? getPostUpdatedDisplay(post) : null
