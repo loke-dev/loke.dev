@@ -1,5 +1,6 @@
 const DEFAULT_DEPLOY_EVENT = 'sanity-content-update'
 const REVALIDATION_PATH_ORIGIN = 'https://revalidation.invalid'
+const EXTERNAL_REQUEST_TIMEOUT_MS = 8_000
 
 export type RuntimeEnvironment = Record<string, unknown>
 
@@ -12,10 +13,14 @@ function env(
     return fromRuntime.trim()
   }
 
-  const fromMeta = (import.meta.env as Record<string, string | undefined>)[name]
+  const fromMeta = (
+    import.meta.env as Record<string, string | undefined> | undefined
+  )?.[name]
   if (typeof fromMeta === 'string' && fromMeta.trim()) return fromMeta.trim()
   const fromProcess =
-    typeof process !== 'undefined' ? process.env[name] : undefined
+    typeof process !== 'undefined' && process.env
+      ? process.env[name]
+      : undefined
   if (typeof fromProcess === 'string' && fromProcess.trim()) {
     return fromProcess.trim()
   }
@@ -71,34 +76,44 @@ export async function triggerSiteDeploy(
     }
   }
 
-  const response = await fetch(
-    `https://api.github.com/repos/${config.owner}/${config.repo}/dispatches`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${config.token}`,
-        Accept: 'application/vnd.github+json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'loke.dev-revalidation/1.0',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-      body: JSON.stringify({
-        event_type: DEFAULT_DEPLOY_EVENT,
-        client_payload: { paths },
-      }),
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${config.owner}/${config.repo}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${config.token}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'User-Agent': 'loke.dev-revalidation/1.0',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+        body: JSON.stringify({
+          event_type: DEFAULT_DEPLOY_EVENT,
+          client_payload: { paths },
+        }),
+        signal: AbortSignal.timeout(EXTERNAL_REQUEST_TIMEOUT_MS),
+      }
+    )
+
+    if (response.status === 204) {
+      return { ok: true, skipped: false, status: response.status }
     }
-  )
 
-  if (response.status === 204) {
-    return { ok: true, skipped: false, status: response.status }
-  }
-
-  const detail = await response.text().catch(() => response.statusText)
-  return {
-    ok: false,
-    skipped: false,
-    status: response.status,
-    detail,
+    const detail = await response.text().catch(() => response.statusText)
+    return {
+      ok: false,
+      skipped: false,
+      status: response.status,
+      detail,
+    }
+  } catch {
+    return {
+      ok: false,
+      skipped: false,
+      status: 502,
+      detail: 'Could not reach GitHub to trigger a deploy.',
+    }
   }
 }
 
@@ -164,26 +179,39 @@ export async function purgeCloudflareCache(
     }
   }
 
-  const response = await fetch(
-    `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ files }),
+  try {
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ files }),
+        signal: AbortSignal.timeout(EXTERNAL_REQUEST_TIMEOUT_MS),
+      }
+    )
+
+    const result = (await response
+      .json()
+      .catch(() => null)) as CloudflarePurgeResponse | null
+
+    return {
+      ok: response.ok && result?.success === true,
+      status: response.status,
+      result,
     }
-  )
-
-  const result = (await response
-    .json()
-    .catch(() => null)) as CloudflarePurgeResponse | null
-
-  return {
-    ok: response.ok && result?.success === true,
-    status: response.status,
-    result,
+  } catch {
+    return {
+      ok: false,
+      status: 502,
+      result: {
+        success: false,
+        errors: [{ message: 'Could not reach Cloudflare to purge the cache.' }],
+        messages: [],
+      } satisfies CloudflarePurgeResponse,
+    }
   }
 }
 
@@ -200,6 +228,7 @@ export async function warmCachePaths(
           Accept:
             'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         },
+        signal: AbortSignal.timeout(EXTERNAL_REQUEST_TIMEOUT_MS),
       })
     )
   )
