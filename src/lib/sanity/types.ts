@@ -125,6 +125,7 @@ export interface AboutPage {
 }
 
 export interface BlogPage {
+  _updatedAt?: string
   title: string
   description: string
   emptyStateTitle?: string
@@ -132,6 +133,7 @@ export interface BlogPage {
 }
 
 export interface ProjectsPage {
+  _updatedAt?: string
   title: string
   description: string
   featuredSectionTitle: string

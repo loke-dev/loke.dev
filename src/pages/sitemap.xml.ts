@@ -6,21 +6,33 @@ import {
   getAllProjects,
   getAllPublishedPosts,
   getAllTopics,
+  getBlogPage,
   getBlogTotalPages,
+  getProjectsPage,
 } from '@/utils/sanity.queries'
 import { toolPages } from '@/data/tool-pages'
 import { freshClient } from '@/lib/sanity/client'
 
 export const prerender = false
 
+function latestDate(values: Array<string | undefined>): string | undefined {
+  return values
+    .filter((value): value is string => Boolean(value))
+    .sort()
+    .at(-1)
+}
+
 export const GET: APIRoute = async () => {
-  const [posts, projects, totalPages, topics, authors] = await Promise.all([
-    getAllPublishedPosts(freshClient),
-    getAllProjects(freshClient),
-    getBlogTotalPages(freshClient),
-    getAllTopics(freshClient),
-    getAllAuthors(freshClient),
-  ])
+  const [posts, projects, blogPage, projectsPage, totalPages, topics, authors] =
+    await Promise.all([
+      getAllPublishedPosts(freshClient),
+      getAllProjects(freshClient),
+      getBlogPage(freshClient),
+      getProjectsPage(freshClient),
+      getBlogTotalPages(freshClient),
+      getAllTopics(freshClient),
+      getAllAuthors(freshClient),
+    ])
 
   const staticUrls = [
     '/',
@@ -48,16 +60,14 @@ export const GET: APIRoute = async () => {
           (_, index) => `/blog/page/${index + 2}`
         )
       : []
-  const latestPostUpdate = posts
-    .map((post) => post.lastModified ?? post._updatedAt ?? post.date)
-    .filter(Boolean)
-    .sort()
-    .at(-1)
-  const latestProjectUpdate = projects
-    .map((project) => project._updatedAt)
-    .filter(Boolean)
-    .sort()
-    .at(-1)
+  const latestPostUpdate = latestDate([
+    blogPage._updatedAt,
+    ...posts.map((post) => post.lastModified ?? post._updatedAt ?? post.date),
+  ])
+  const latestProjectUpdate = latestDate([
+    projectsPage._updatedAt,
+    ...projects.map((project) => project._updatedAt),
+  ])
   const staticUrlEntries = [...staticUrls, ...blogPageUrls].map((url) => {
     const lastModified =
       url === '/blog'

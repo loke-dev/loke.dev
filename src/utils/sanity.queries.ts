@@ -216,12 +216,16 @@ export async function getAboutPage(): Promise<AboutPage> {
   return client.fetch<AboutPage>(ABOUT_PAGE_QUERY)
 }
 
-export async function getBlogPage(): Promise<BlogPage> {
-  return client.fetch<BlogPage>(BLOG_PAGE_QUERY)
+export async function getBlogPage(
+  contentClient: SanityClient = client
+): Promise<BlogPage> {
+  return contentClient.fetch<BlogPage>(BLOG_PAGE_QUERY)
 }
 
-export async function getProjectsPage(): Promise<ProjectsPage> {
-  return client.fetch<ProjectsPage>(PROJECTS_PAGE_QUERY)
+export async function getProjectsPage(
+  contentClient: SanityClient = client
+): Promise<ProjectsPage> {
+  return contentClient.fetch<ProjectsPage>(PROJECTS_PAGE_QUERY)
 }
 
 export async function getAllProjects(
