@@ -30,6 +30,25 @@ const breadcrumbSchema = {
     },
   ],
 }
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: page.title,
+  description: page.description,
+  url: `${SITE_DOMAIN}/blog`,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: post.title,
+      url: `${SITE_DOMAIN}/blog/${post.slug.current}`,
+    })),
+  },
+}
 ---
 
 <BaseLayout
@@ -42,6 +61,11 @@ const breadcrumbSchema = {
     is:inline
     type="application/ld+json"
     set:html={serializeJsonLd(breadcrumbSchema)}
+  />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={serializeJsonLd(collectionSchema)}
   />
 
   <BlogListSection

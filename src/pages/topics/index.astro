@@ -19,6 +19,15 @@ const collectionSchema = {
   description:
     'Posts grouped by subject, including AI, CMS work, web frameworks, cloud, and performance.',
   url,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: topics.map((topic, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: topic.title,
+      url: `${SITE_DOMAIN}/topics/${topic.slug.current}`,
+    })),
+  },
 }
 ---
 

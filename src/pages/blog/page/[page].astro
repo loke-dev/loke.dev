@@ -2,7 +2,11 @@
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
-import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
+import {
+  getBlogPage,
+  getPaginatedPosts,
+  POSTS_PER_PAGE,
+} from '@/utils/sanity.queries'
 import BlogListSection from '@/components/BlogListSection.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
@@ -51,18 +55,43 @@ const breadcrumbSchema = {
     },
   ],
 }
+
+const url = `${SITE_DOMAIN}/blog/page/${currentPage}`
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${page.title}, page ${currentPage}`,
+  description: page.description,
+  url,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: (currentPage - 1) * POSTS_PER_PAGE + index + 1,
+      name: post.title,
+      url: `${SITE_DOMAIN}/blog/${post.slug.current}`,
+    })),
+  },
+}
 ---
 
 <BaseLayout
   title={`Blog, page ${currentPage}`}
   description={`More practical technical guides from loke.dev. This is page ${currentPage} of the blog archive.`}
-  url={`${SITE_DOMAIN}/blog/page/${currentPage}`}
+  url={url}
   preconnectSanity={true}
 >
   <script
     is:inline
     type="application/ld+json"
     set:html={serializeJsonLd(breadcrumbSchema)}
+  />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={serializeJsonLd(collectionSchema)}
   />
 
   <BlogListSection
