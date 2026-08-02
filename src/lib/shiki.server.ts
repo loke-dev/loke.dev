@@ -122,12 +122,19 @@ export async function highlightCode(
           },
         })
 
+  // min-dark renders comments too close to the code background. Keep the
+  // theme's muted look while meeting the normal-text contrast threshold.
+  const accessibleHtml = html.replaceAll(
+    '--shiki-dark: #6B737C',
+    '--shiki-dark: #818C97'
+  )
+
   if (highlightCache.size >= MAX_CACHE_ENTRIES) {
     const firstKey = highlightCache.keys().next().value
     if (firstKey) highlightCache.delete(firstKey)
   }
-  highlightCache.set(key, html)
-  return html
+  highlightCache.set(key, accessibleHtml)
+  return accessibleHtml
 }
 
 function renderPlainTextCode(code: string): string {
