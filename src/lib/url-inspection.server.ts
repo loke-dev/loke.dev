@@ -19,11 +19,11 @@ export interface PageInspection {
 }
 
 export class InspectionError extends Error {
-  constructor(
-    message: string,
-    public status = 400
-  ) {
+  public status: number
+
+  constructor(message: string, status = 400) {
     super(message)
+    this.status = status
   }
 }
 
@@ -108,7 +108,7 @@ function isPrivateIpAddress(hostname: string): boolean {
   )
 }
 
-function validateUrl(value: string): URL {
+export function validateUrl(value: string): URL {
   let url: URL
   try {
     url = new URL(value)
@@ -118,6 +118,10 @@ function validateUrl(value: string): URL {
 
   if (!['http:', 'https:'].includes(url.protocol)) {
     throw new InspectionError('Only http and https URLs can be inspected.')
+  }
+
+  if (url.username || url.password) {
+    throw new InspectionError('URLs with credentials cannot be inspected.')
   }
 
   if (
