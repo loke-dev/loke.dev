@@ -31,7 +31,7 @@ function getRuntimeString(
 }
 
 const TYPE_PATHS: Record<string, string[]> = {
-  post: ['/', '/blog', '/rss.xml', '/sitemap.xml'],
+  post: ['/', '/blog', '/guides', '/topics', '/rss.xml', '/sitemap.xml'],
   topic: ['/topics', '/sitemap.xml'],
   author: ['/sitemap.xml'],
   homePage: ['/'],
