@@ -1,5 +1,5 @@
 const bannedPatterns = [
-  /—/u,
+  /[—–]/u,
   /\b(?:delve|delving|landscape|seamless|robust|comprehensive|cutting-edge|game[ -]?changer|leverage|unlock|empower|revolutionize|transformative|testament|ever-evolving)\b/iu,
   /\b(?:it'?s important to note|in today'?s|at the end of the day|in conclusion|dive into)\b/iu,
 ]
@@ -27,7 +27,7 @@ const ignoredFields = new Set([
 ])
 
 export const voiceDescription =
-  'Use casual, plain English. Write like a real person, not a polished AI demo. No em dashes. Avoid stock words like “seamless”, “robust”, “comprehensive”, “leverage”, and “unlock”.'
+  'Use casual, plain English. Write like a real person, not a polished AI demo. No long dashes. Avoid stock words like “seamless”, “robust”, “comprehensive”, “leverage”, and “unlock”.'
 
 export function validatePublicCopy(value: unknown): true | string {
   const texts: string[] = []
@@ -56,6 +56,6 @@ export function validatePublicCopy(value: unknown): true | string {
     .find(Boolean)
 
   return match
-    ? `Remove “${match}”. Keep the wording plain and casual; em dashes and stock AI phrasing are not allowed.`
+    ? `Remove “${match}”. Keep the wording plain and casual; long dashes and stock AI phrasing are not allowed.`
     : true
 }

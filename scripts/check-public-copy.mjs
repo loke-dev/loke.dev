@@ -5,7 +5,7 @@ const SANITY_PROJECT_ID = 'l25uat4p'
 const SANITY_DATASET = 'production'
 
 const voiceRules = [
-  { label: 'em dash', pattern: /—/u },
+  { label: 'long dash', pattern: /[—–]/u },
   {
     label: 'stock AI phrase',
     pattern:
