@@ -56,6 +56,25 @@ export default function ContactForm() {
     setCaptchaToken('')
   }
 
+  function showInvalidState(errors: Record<string, string>) {
+    setState({ status: 'invalid', errors })
+    const firstInvalidField = ['name', 'email', 'message'].find(
+      (field) => errors[field]
+    )
+    if (firstInvalidField) {
+      requestAnimationFrame(() => {
+        document.getElementById(firstInvalidField)?.focus()
+      })
+    }
+  }
+
+  function showSuccessState() {
+    setState({ status: 'success' })
+    requestAnimationFrame(() => {
+      document.getElementById('contact-form-success')?.focus()
+    })
+  }
+
   async function handleSubmit(
     e: SubmitEvent & { currentTarget: HTMLFormElement }
   ) {
@@ -63,10 +82,7 @@ export default function ContactForm() {
     const form = e.currentTarget
 
     if (!captchaToken()) {
-      setState({
-        status: 'invalid',
-        errors: { captchaToken: 'Please complete the CAPTCHA' },
-      })
+      showInvalidState({ captchaToken: 'Please complete the CAPTCHA' })
       return
     }
 
@@ -85,7 +101,7 @@ export default function ContactForm() {
       )) {
         errors[field] = (issues as string[])[0]
       }
-      setState({ status: 'invalid', errors })
+      showInvalidState(errors)
       return
     }
 
@@ -102,7 +118,7 @@ export default function ContactForm() {
       })
 
       if (res.ok) {
-        setState({ status: 'success' })
+        showSuccessState()
       } else {
         const body = (await res.json().catch(() => ({}))) as { error?: string }
         setState({
@@ -236,7 +252,13 @@ export default function ContactForm() {
         </form>
       }
     >
-      <div class="p-6 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400">
+      <div
+        id="contact-form-success"
+        tabindex="-1"
+        role="status"
+        aria-live="polite"
+        class="p-6 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400"
+      >
         <p class="font-medium">Message sent!</p>
         <p class="text-sm mt-1">I'll get back to you as soon as possible.</p>
       </div>

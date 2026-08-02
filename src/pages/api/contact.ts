@@ -14,6 +14,16 @@ interface RateLimitEntry {
 const rateLimitMap = new Map<string, RateLimitEntry>()
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000
 const MAX_ATTEMPTS = 3
+let lastRateLimitPruneAt = 0
+
+function pruneExpiredRateLimits(now: number): void {
+  if (now - lastRateLimitPruneAt < RATE_LIMIT_WINDOW) return
+
+  lastRateLimitPruneAt = now
+  for (const [ip, entry] of rateLimitMap) {
+    if (now >= entry.resetTime) rateLimitMap.delete(ip)
+  }
+}
 
 function checkRateLimit(ip: string): {
   allowed: boolean
@@ -22,9 +32,10 @@ function checkRateLimit(ip: string): {
   error?: string
 } {
   const now = Date.now()
+  pruneExpiredRateLimits(now)
   const entry = rateLimitMap.get(ip)
 
-  if (!entry || now > entry.resetTime) {
+  if (!entry || now >= entry.resetTime) {
     rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
     return {
       allowed: true,
