@@ -22,6 +22,8 @@ const srcSet = getSanityImageSrcSet(
   listQuality,
   width
 )
+const projectLinkLabel = template ? 'Live preview' : 'Visit project'
+const sourceLinkLabel = template ? 'View source' : 'GitHub'
 ---
 
 <article
@@ -120,7 +122,7 @@ const srcSet = getSanityImageSrcSet(
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Visit ${project.title} (opens in new tab)`}
+            aria-label={`${projectLinkLabel}: ${project.title} (opens in new tab)`}
             class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             {template ? 'Live preview' : 'Visit project'}
@@ -133,7 +135,7 @@ const srcSet = getSanityImageSrcSet(
             href={project.github}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`View ${project.title} on GitHub (opens in new tab)`}
+            aria-label={`${sourceLinkLabel}: ${project.title} (opens in new tab)`}
             class="border-input bg-background hover:bg-secondary inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors"
           >
             {template ? 'View source' : 'GitHub'}
