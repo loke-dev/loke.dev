@@ -41,6 +41,8 @@ export const GET: APIRoute = async () => {
     '/tools/kinsta-wordpress-total-cost-calculator',
     '/tools/cloudflare-workers-cost-calculator',
     '/tools/kilo-pass-vs-byok-calculator',
+    '/apps/flexithyme/privacy',
+    '/apps/flexithyme/support',
     '/affiliate-disclosure',
     '/privacy',
     '/projects',
