@@ -76,6 +76,7 @@ export type PostSlug = { slug: { current: string } }
 
 export interface Project {
   _id: string
+  _updatedAt?: string
   title: string
   slug: { current: string }
   description: string

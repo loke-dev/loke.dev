@@ -23,7 +23,7 @@ export const AUTHOR_BY_SLUG_QUERY = `*[_type == "author" && !(_id in path("draft
 export const POSTS_BY_AUTHOR_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && author->slug.current == $slug] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs, _updatedAt }`
 
-export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
+export const PROJECTS_QUERY = `*[_type == "project"] | order(order asc, year desc) { _id, _updatedAt, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
 export const FEATURED_PROJECTS_QUERY = `*[_type == "project" && featured == true] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
 export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0] { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
 export const PROJECT_SLUGS_QUERY = `*[_type == "project"] { slug }`
