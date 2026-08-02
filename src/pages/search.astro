@@ -4,6 +4,7 @@ import { SITE_DOMAIN } from '@/utils/meta'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatDate } from '@/lib/sanity/helpers'
 import { runSearch, type SearchPayload } from '@/lib/sanity/search.server'
+import { checkSearchRateLimit } from '@/lib/search-rate-limit.server'
 
 export const prerender = false
 
@@ -14,11 +15,17 @@ let payload: SearchPayload | null = null
 let serverError: string | null = null
 
 if (q.trim().length >= 2) {
-  const result = await runSearch(q)
-  if (result.ok) {
-    payload = result.data
+  if (!checkSearchRateLimit(Astro.clientAddress ?? 'unknown')) {
+    Astro.response.status = 429
+    serverError = 'Too many search requests. Try again in a minute.'
   } else {
-    serverError = result.error
+    const result = await runSearch(q)
+    if (result.ok) {
+      payload = result.data
+    } else {
+      Astro.response.status = result.status
+      serverError = result.error
+    }
   }
 }
 

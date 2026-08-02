@@ -1,13 +1,8 @@
 import type { APIRoute } from 'astro'
-import { createInMemoryRateLimiter } from '@/lib/rate-limit.server'
 import { runSearch } from '@/lib/sanity/search.server'
+import { checkSearchRateLimit } from '@/lib/search-rate-limit.server'
 
 export const prerender = false
-
-const checkSearchRateLimit = createInMemoryRateLimiter({
-  windowMs: 60_000,
-  maxRequests: 40,
-})
 
 export const GET: APIRoute = async ({ url, clientAddress }) => {
   const ip = clientAddress ?? 'unknown'
