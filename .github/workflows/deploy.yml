@@ -73,10 +73,12 @@ jobs:
       - name: Smoke test public sitemap
         run: |
           set -euo pipefail
-          sitemap=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -sS "https://loke.dev/sitemap.xml")
+          user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36 loke.dev deployment smoke test"
+          sitemap=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "https://loke.dev/sitemap.xml")
           while IFS= read -r route; do
             test -n "$route" || continue
-            curl --fail --retry 3 --retry-all-errors --retry-delay 2 -sS -o /dev/null "$route"
+            printf 'Checking %s\n' "$route"
+            curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS -o /dev/null "$route"
           done < <(printf '%s' "$sitemap" | sed -n 's#.*<loc>\(.*\)</loc>.*#\1#p')
 
       - name: Warm SSR routes
