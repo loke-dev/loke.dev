@@ -1,28 +1,13 @@
 import type { APIRoute } from 'astro'
+import { createInMemoryRateLimiter } from '@/lib/rate-limit.server'
 import { InspectionError, inspectPublicUrl } from '@/lib/url-inspection.server'
 
 export const prerender = false
 
-interface RateBucket {
-  count: number
-  resetAt: number
-}
-
-const buckets = new Map<string, RateBucket>()
-const WINDOW_MS = 60_000
-const MAX_REQUESTS = 12
-
-function withinRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const current = buckets.get(ip)
-  if (!current || now > current.resetAt) {
-    buckets.set(ip, { count: 1, resetAt: now + WINDOW_MS })
-    return true
-  }
-  if (current.count >= MAX_REQUESTS) return false
-  current.count += 1
-  return true
-}
+const withinRateLimit = createInMemoryRateLimiter({
+  windowMs: 60_000,
+  maxRequests: 12,
+})
 
 export const GET: APIRoute = async ({ url, clientAddress }) => {
   if (!withinRateLimit(clientAddress ?? 'unknown')) {

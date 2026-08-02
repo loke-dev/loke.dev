@@ -1,30 +1,13 @@
 import type { APIRoute } from 'astro'
+import { createInMemoryRateLimiter } from '@/lib/rate-limit.server'
 import { runSearch } from '@/lib/sanity/search.server'
 
 export const prerender = false
 
-interface RateBucket {
-  count: number
-  resetTime: number
-}
-
-const rateLimitMap = new Map<string, RateBucket>()
-const WINDOW_MS = 60_000
-const MAX_REQUESTS = 40
-
-function checkSearchRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + WINDOW_MS })
-    return true
-  }
-  if (entry.count >= MAX_REQUESTS) {
-    return false
-  }
-  entry.count++
-  return true
-}
+const checkSearchRateLimit = createInMemoryRateLimiter({
+  windowMs: 60_000,
+  maxRequests: 40,
+})
 
 export const GET: APIRoute = async ({ url, clientAddress }) => {
   const ip = clientAddress ?? 'unknown'
