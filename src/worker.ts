@@ -2,6 +2,7 @@ import { handle } from '@astrojs/cloudflare/handler'
 import * as Sentry from '@sentry/cloudflare'
 
 const STUDIO_HOST = 'loke-dev.sanity.studio'
+const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
 
 function getStudioRedirect(request: Request): Response | null {
   const url = new URL(request.url)
@@ -16,6 +17,14 @@ function getStudioRedirect(request: Request): Response | null {
   return Response.redirect(studioUrl, 302)
 }
 
+function withWorkerVersion(request: Request, versionId?: string): Request {
+  if (!versionId) return request
+
+  const headers = new Headers(request.headers)
+  headers.set(WORKER_VERSION_HEADER, versionId)
+  return new Request(request, { headers })
+}
+
 type SentryEnv = Env & { SENTRY_DSN?: string }
 
 const handler: ExportedHandler<SentryEnv> = {
@@ -25,7 +34,11 @@ const handler: ExportedHandler<SentryEnv> = {
       return studioRedirect
     }
 
-    return handle(request, env, context)
+    return handle(
+      withWorkerVersion(request, env.CF_VERSION_METADATA?.id),
+      env,
+      context
+    )
   },
 }
 

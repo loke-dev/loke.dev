@@ -6,7 +6,11 @@ const CACHEABLE_PATHS =
   /^\/(?:blog(?:\/|$)|topics(?:\/|$)|authors(?:\/|$)|sitemap\.xml$|rss\.xml$)/
 const CANONICAL_NO_SLASH_PATHS = /^\/(?:blog|topics|authors)(?:\/.+)?\/$/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
-const CONTENT_CACHE_VERSION = '2026-07-17-projects-template-shelf-v5'
+const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
+
+function getContentCacheVersion(request: Request): string {
+  return request.headers.get(WORKER_VERSION_HEADER) ?? 'local'
+}
 
 function isCacheableRequest(request: Request, pathname: string): boolean {
   return request.method === 'GET' && CACHEABLE_PATHS.test(pathname)
@@ -62,7 +66,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     ? (() => {
         const cacheUrl = new URL(url)
         cacheUrl.search = ''
-        cacheUrl.searchParams.set('__content_cache', CONTENT_CACHE_VERSION)
+        cacheUrl.searchParams.set(
+          '__content_cache',
+          getContentCacheVersion(request)
+        )
         return new Request(cacheUrl.toString(), { method: 'GET' })
       })()
     : undefined
