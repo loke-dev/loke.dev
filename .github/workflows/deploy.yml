@@ -43,6 +43,7 @@ jobs:
         env:
           VITE_SANITY_PROJECT_ID: ${{ secrets.VITE_SANITY_PROJECT_ID }}
           VITE_SANITY_DATASET: ${{ secrets.VITE_SANITY_DATASET }}
+          VITE_SANITY_USE_CDN: 'false'
           GITHUB_OWNER: ${{ secrets.GITHUB_OWNER }}
           GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
           GITHUB_TOKEN: ${{ github.token }}
