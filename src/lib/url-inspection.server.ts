@@ -74,6 +74,12 @@ function isPrivateIpAddress(hostname: string): boolean {
   const ipv4 = parseIpv4Address(hostname)
   if (ipv4) return isPrivateIpv4Address(ipv4)
 
+  const normalizedHostname = hostname.replace(/^\[|\]$/g, '').toLowerCase()
+  // Public pages have no reason to use an IPv4-mapped IPv6 literal. Reject the
+  // whole representation instead of trying to distinguish mapped public and
+  // private ranges, which also prevents loopback aliases such as ::ffff:127.0.0.1.
+  if (normalizedHostname.startsWith('::ffff:')) return true
+
   const ipv6 = parseIpv6Address(hostname)
   if (!ipv6) return false
 
