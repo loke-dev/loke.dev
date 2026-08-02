@@ -7,6 +7,7 @@ import {
   getAllTopics,
   getBlogTotalPages,
 } from '@/utils/sanity.queries'
+import { toolPages } from '@/data/tool-pages'
 import { freshClient } from '@/lib/sanity/client'
 
 export const prerender = false
@@ -30,17 +31,7 @@ export const GET: APIRoute = async () => {
     '/now',
     '/services',
     '/tools',
-    '/tools/open-graph-preview-tester',
-    '/tools/preview-vs-production-checker',
-    '/tools/wrangler-config-explainer',
-    '/tools/n8n-hosting-calculator',
-    '/tools/ai-app-production-readiness-checklist',
-    '/tools/digitalocean-droplet-vs-app-platform-calculator',
-    '/tools/git-tool-subscription-break-even-calculator',
-    '/tools/1password-teams-vs-business-calculator',
-    '/tools/kinsta-wordpress-total-cost-calculator',
-    '/tools/cloudflare-workers-cost-calculator',
-    '/tools/kilo-pass-vs-byok-calculator',
+    ...toolPages.map(({ href }) => href),
     '/apps/flexithyme/privacy',
     '/apps/flexithyme/support',
     '/affiliate-disclosure',

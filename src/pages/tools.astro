@@ -5,6 +5,7 @@ import { SITE_DOMAIN } from '@/utils/meta'
 import PageIntro from '@/components/PageIntro.astro'
 import { toolStartingPoints } from '@/data/guide-collections'
 import { getPartnerHref, partners, type PartnerCategory } from '@/data/partners'
+import { toolPages } from '@/data/tool-pages'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
@@ -27,43 +28,7 @@ const toolCollectionSchema = {
   url,
   mainEntity: {
     '@type': 'ItemList',
-    itemListElement: [
-      ['Open Graph preview tester', '/tools/open-graph-preview-tester'],
-      ['Preview vs production checker', '/tools/preview-vs-production-checker'],
-      ['Wrangler config explainer', '/tools/wrangler-config-explainer'],
-      [
-        'n8n execution and hosting cost calculator',
-        '/tools/n8n-hosting-calculator',
-      ],
-      [
-        'AI app production readiness checklist',
-        '/tools/ai-app-production-readiness-checklist',
-      ],
-      [
-        'DigitalOcean Droplet vs App Platform cost calculator',
-        '/tools/digitalocean-droplet-vs-app-platform-calculator',
-      ],
-      [
-        'Git tool subscription break-even calculator',
-        '/tools/git-tool-subscription-break-even-calculator',
-      ],
-      [
-        '1Password Teams vs Business calculator',
-        '/tools/1password-teams-vs-business-calculator',
-      ],
-      [
-        'Kinsta WordPress total cost calculator',
-        '/tools/kinsta-wordpress-total-cost-calculator',
-      ],
-      [
-        'Cloudflare Workers Free vs Paid calculator',
-        '/tools/cloudflare-workers-cost-calculator',
-      ],
-      [
-        'Kilo Pass vs pay-as-you-go and BYOK calculator',
-        '/tools/kilo-pass-vs-byok-calculator',
-      ],
-    ].map(([name, href], index) => ({
+    itemListElement: toolPages.map(({ name, href }, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name,
