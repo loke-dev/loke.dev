@@ -38,14 +38,26 @@ const breadcrumbSchema = {
   ],
 }
 
-const projectSchemas = projects.map((project) => ({
+const projectSchema = {
   '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: project.title,
-  description: project.description,
-  url: project.url,
-  applicationCategory: 'WebApplication',
-}))
+  '@graph': projects.map((project) => {
+    const url = project.url ?? project.github
+
+    return {
+      '@type':
+        project.kind === 'template'
+          ? 'SoftwareSourceCode'
+          : 'SoftwareApplication',
+      name: project.title,
+      description: project.description,
+      ...(url ? { url } : {}),
+      ...(project.github ? { codeRepository: project.github } : {}),
+      ...(project.kind !== 'template'
+        ? { applicationCategory: 'DeveloperApplication' }
+        : {}),
+    }
+  }),
+}
 ---
 
 <BaseLayout
@@ -62,7 +74,7 @@ const projectSchemas = projects.map((project) => ({
   <script
     is:inline
     type="application/ld+json"
-    set:html={serializeJsonLd(projectSchemas)}
+    set:html={serializeJsonLd(projectSchema)}
   />
 
   <div class="workshop-page">
