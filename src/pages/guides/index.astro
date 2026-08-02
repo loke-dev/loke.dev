@@ -1,0 +1,134 @@
+---
+import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
+import { SITE_DOMAIN } from '@/utils/meta'
+import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import PageIntro from '@/components/PageIntro.astro'
+import { guideCollections } from '@/data/guide-collections'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = false
+
+Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
+
+const url = `${SITE_DOMAIN}/guides`
+const posts = await getAllPublishedPosts()
+const postsBySlug = new Map(posts.map((post) => [post.slug.current, post]))
+const collections = guideCollections
+  .map((guide) => ({
+    ...guide,
+    posts: guide.postSlugs
+      .map((slug) => postsBySlug.get(slug))
+      .filter((post): post is (typeof posts)[number] => Boolean(post)),
+  }))
+  .filter((guide) => guide.posts.length > 0)
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Loke.dev guides',
+  description:
+    'Practical reading paths for releases, upgrades, Next.js, Cloudflare, and AI work.',
+  url,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: collections.map((guide, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: guide.title,
+      url: `${url}#${guide.slug}`,
+    })),
+  },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
+    { '@type': 'ListItem', position: 2, name: 'Guides', item: url },
+  ],
+}
+---
+
+<BaseLayout
+  title="Developer guides"
+  description="Practical reading paths for safer releases, dependency upgrades, Next.js App Router work, Cloudflare Workers, and AI features."
+  url={url}
+  preconnectSanity={true}
+>
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={serializeJsonLd(collectionSchema)}
+  />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={serializeJsonLd(breadcrumbSchema)}
+  />
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+    <PageIntro
+      eyebrow="Start here"
+      title="A few useful paths through the archive."
+      description="These are short, practical reading paths built around real jobs. Start with the problem in front of you, not the oldest article in the list."
+    />
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      {
+        collections.map((guide) => (
+          <section
+            id={guide.slug}
+            class="workshop-card scroll-mt-28 p-6 md:p-8"
+            aria-labelledby={`${guide.slug}-title`}
+          >
+            <p class="workshop-label">{guide.label}</p>
+            <h2
+              id={`${guide.slug}-title`}
+              class="mt-4 text-2xl font-bold tracking-tight"
+            >
+              {guide.title}
+            </h2>
+            <p class="text-muted-foreground mt-3 leading-relaxed">
+              {guide.description}
+            </p>
+            <p class="border-accent/25 bg-accent/10 mt-5 border-l-2 px-4 py-3 text-sm leading-relaxed">
+              {guide.outcome}
+            </p>
+            <ol class="mt-6 space-y-3">
+              {guide.posts.map((post, index) => (
+                <li>
+                  <a
+                    href={`/blog/${post.slug.current}`}
+                    class="group hover:bg-secondary -m-2 flex gap-3 rounded-md p-2 transition-colors"
+                  >
+                    <span class="text-accent font-mono text-sm font-bold">
+                      0{index + 1}
+                    </span>
+                    <span>
+                      <span class="group-hover:text-accent block font-semibold transition-colors">
+                        {post.title}
+                      </span>
+                      <span class="text-muted-foreground mt-1 block text-sm leading-relaxed">
+                        {post.description}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+            {guide.tool && (
+              <a
+                href={guide.tool.href}
+                class="text-accent mt-6 inline-flex font-medium underline-offset-4 hover:underline"
+              >
+                {guide.tool.label} →
+              </a>
+            )}
+          </section>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

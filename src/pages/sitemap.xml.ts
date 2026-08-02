@@ -22,6 +22,7 @@ export const GET: APIRoute = async () => {
   const staticUrls = [
     '/',
     '/blog',
+    '/guides',
     '/topics',
     '/changelog',
     '/about',

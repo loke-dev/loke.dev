@@ -1,7 +1,9 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import PageIntro from '@/components/PageIntro.astro'
+import { toolStartingPoints } from '@/data/guide-collections'
 import { getPartnerHref, partners, type PartnerCategory } from '@/data/partners'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
@@ -15,18 +17,53 @@ const categories: PartnerCategory[] = [
   'Content and email',
   'Developer tooling',
 ]
+const url = `${SITE_DOMAIN}/tools`
+const toolCollectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Loke.dev developer tools',
+  description:
+    'Free calculators, release checks, and practical developer tools for web, AI, cloud, and content work.',
+  url,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: [
+      ['Open Graph preview tester', '/tools/open-graph-preview-tester'],
+      ['Preview vs production checker', '/tools/preview-vs-production-checker'],
+      ['Wrangler config explainer', '/tools/wrangler-config-explainer'],
+      [
+        'n8n execution and hosting cost calculator',
+        '/tools/n8n-hosting-calculator',
+      ],
+      [
+        'AI app production readiness checklist',
+        '/tools/ai-app-production-readiness-checklist',
+      ],
+    ].map(([name, href], index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name,
+      url: `${SITE_DOMAIN}${href}`,
+    })),
+  },
+}
 ---
 
 <BaseLayout
-  title="Developer tools"
-  description="Developer, AI, hosting, content, and automation tools used on loke.dev or being evaluated for specific jobs."
-  url={`${SITE_DOMAIN}/tools`}
+  title="Free developer tools and calculators"
+  description="Free web development calculators, release checks, metadata inspectors, and Cloudflare tools for practical day-to-day decisions."
+  url={url}
 >
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={serializeJsonLd(toolCollectionSchema)}
+  />
   <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
     <PageIntro
       eyebrow="Tools"
       title="Tools with a clear job."
-      description="This is a maintained shortlist, not a giant software directory. Products are included when I use them on loke.dev or when there is a specific developer workflow worth evaluating."
+      description="Free checks and calculators for the small decisions around a real project. There are also a few tools I use or keep an eye on when there is a specific job they can help with."
     />
 
     <aside
@@ -40,6 +77,46 @@ const categories: PartnerCategory[] = [
         href="/affiliate-disclosure">affiliate and editorial disclosure</a
       >.
     </aside>
+
+    <section class="mt-12" aria-labelledby="tool-starting-points">
+      <div
+        class="border-border/70 flex items-end justify-between gap-6 border-b pb-4"
+      >
+        <div>
+          <p class="workshop-label">Use the result</p>
+          <h2
+            id="tool-starting-points"
+            class="mt-2 text-2xl font-bold tracking-tight"
+          >
+            A tool is better with a next step.
+          </h2>
+        </div>
+        <a
+          href="/guides"
+          class="text-accent shrink-0 text-sm font-medium underline-offset-4 hover:underline"
+          >Browse guides →</a
+        >
+      </div>
+      <div class="mt-5 grid gap-5 md:grid-cols-3">
+        {
+          toolStartingPoints.map((item) => (
+            <article class="workshop-card p-5">
+              <p class="workshop-label">{item.label}</p>
+              <h3 class="mt-3 text-lg font-bold">{item.title}</h3>
+              <p class="text-muted-foreground mt-3 text-sm leading-relaxed">
+                {item.description}
+              </p>
+              <a
+                href={item.href}
+                class="text-accent mt-5 inline-flex text-sm font-medium underline-offset-4 hover:underline"
+              >
+                Read the guide →
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
 
     <section class="mt-14" aria-labelledby="free-calculators">
       <div

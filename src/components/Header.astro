@@ -87,6 +87,12 @@ function isCurrentPath(href: string): boolean {
               class="text-foreground hover:bg-secondary block rounded-md px-3 py-2 text-sm font-medium transition-colors"
               >All posts</a
             >
+            <a
+              href="/guides"
+              aria-current={isCurrentPath('/guides') ? 'page' : undefined}
+              class="text-foreground hover:bg-secondary block rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              >Guides</a
+            >
             {topics.length > 0 && <div class="border-border my-1 border-t" />}
             {
               topics.map((topic) => (
@@ -209,6 +215,15 @@ function isCurrentPath(href: string): boolean {
                         class="text-foreground hover:text-accent text-sm font-medium"
                       >
                         All posts
+                      </a>
+                      <a
+                        href="/guides"
+                        aria-current={
+                          isCurrentPath('/guides') ? 'page' : undefined
+                        }
+                        class="text-foreground hover:text-accent text-sm font-medium"
+                      >
+                        Guides
                       </a>
                       {topics.map((topic) => (
                         <a
