@@ -9,7 +9,6 @@ export const POST_LIST_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))
 export const POST_PAGINATED_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] | order(date desc, _createdAt desc) [$start...$end] { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 export const POST_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**"))])`
 export const POST_BY_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0] { ${POST_LIST_BODY}, body, sources, reproduction, versionScope }`
-export const POST_SLUGS_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))] { slug }`
 export const REDIRECT_BY_FROM_QUERY = `*[_type == "redirect" && from == $from][0] { to, permanent }`
 export const RELATED_POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && _id != $excludeId && count(topics[@._ref in $topicIds]) > 0] | order(date desc) [0...$limit] { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 const ADJACENT_POST_FIELDS = POST_LIST_BODY
@@ -24,9 +23,6 @@ export const POSTS_BY_AUTHOR_SLUG_QUERY = `*[_type == "post" && !(_id in path("d
 export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs, _updatedAt }`
 
 export const PROJECTS_QUERY = `*[_type == "project" && !(_id in path("drafts.**"))] | order(order asc, year desc) { _id, _updatedAt, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
-export const FEATURED_PROJECTS_QUERY = `*[_type == "project" && !(_id in path("drafts.**")) && featured == true] | order(order asc, year desc) { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
-export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, title, slug, description, technologies, image, url, github, featured, kind, year, order }`
-export const PROJECT_SLUGS_QUERY = `*[_type == "project" && !(_id in path("drafts.**"))] { slug }`
 export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0] { heroTitle, heroDescription, technologiesSectionTitle, technologies, blogSectionTitle, blogSectionDescription, ctaTitle, ctaDescription, ctaButtonText }`
 export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage" && _id == "aboutPage"][0] { title, intro, sections[] { _key, title, content } }`
 export const BLOG_PAGE_QUERY = `*[_type == "blogPage" && _id == "blogPage"][0] { title, description, emptyStateTitle, emptyStateDescription }`

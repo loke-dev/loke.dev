@@ -14,7 +14,6 @@ import {
   POST_NEXT_QUERY,
   POST_PAGINATED_QUERY,
   POST_PREV_QUERY,
-  POST_SLUGS_QUERY,
   POSTS_BY_AUTHOR_SLUG_QUERY,
   POSTS_BY_TOPIC_SLUG_QUERY,
   PROJECTS_PAGE_QUERY,
@@ -34,7 +33,6 @@ import type {
   HomePage,
   Post,
   PostListItem,
-  PostSlug,
   ProjectsPage,
   Topic,
 } from '@/lib/sanity/types'
@@ -117,10 +115,6 @@ export async function getPostBySlug(
 
   const { readingTime, wordCount } = calculateReadingTime(post.body || [])
   return { ...post, topics: post.topics ?? [], readingTime, wordCount }
-}
-
-export async function getAllPostSlugs(): Promise<PostSlug[]> {
-  return client.fetch<PostSlug[]>(POST_SLUGS_QUERY)
 }
 
 export async function getBlogTotalPages(

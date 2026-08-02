@@ -72,8 +72,6 @@ export interface Post extends PostListItem {
   versionScope?: VersionScope
 }
 
-export type PostSlug = { slug: { current: string } }
-
 export interface Project {
   _id: string
   _updatedAt?: string
