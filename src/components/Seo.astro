@@ -46,11 +46,11 @@ const publishedTimeIso = toIsoDate(publishedTime)
 const modifiedTimeIso = toIsoDate(modifiedTime)
 
 const fullTitle = type === 'article' ? title : createTitle(title)
-const keywordsArr = Array.isArray(keywords)
-  ? keywords
-  : keywords
-    ? [keywords]
-    : []
+const keywordsArr = (
+  Array.isArray(keywords) ? keywords : keywords ? [keywords] : []
+)
+  .map((keyword) => keyword.trim())
+  .filter(Boolean)
 ---
 
 <title>{fullTitle}</title>
