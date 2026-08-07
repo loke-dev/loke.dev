@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { latestIsoDate } from '@/utils/date'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllPublishedPosts, getHomePage } from '@/utils/sanity.queries'
 import BlogPostCard from '@/components/BlogPostCard.astro'
@@ -16,6 +17,14 @@ const [allPosts, page] = await Promise.all([
   getHomePage(),
 ])
 const latestPosts = allPosts.slice(0, 3)
+const modifiedTime = latestIsoDate([
+  page._updatedAt,
+  ...allPosts.flatMap((post) => [
+    post.lastModified,
+    post._updatedAt,
+    post.date,
+  ]),
+])
 
 const heroLcpSizes = '(min-width: 640px) 256px, 192px'
 const profilePortraitSrcset = `${profilePortrait256.src} 256w, ${profilePortrait512.src} 512w`
@@ -46,7 +55,7 @@ const focusAreas = [
   title="Independent web developer"
   description="Independent web developer building fast websites, web apps, software, and practical AI tools for small teams and products."
   url={SITE_DOMAIN}
-  modifiedTime={page._updatedAt}
+  modifiedTime={modifiedTime}
   preconnectSanity={true}
 >
   <link

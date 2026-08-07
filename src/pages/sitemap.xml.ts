@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
-import { toIsoDate } from '@/utils/date'
+import { latestIsoDate, toIsoDate } from '@/utils/date'
 import { SITE_DOMAIN } from '@/utils/meta'
 import {
   getAboutPage,
@@ -21,12 +21,7 @@ import { freshClient } from '@/lib/sanity/client'
 export const prerender = false
 
 function latestDate(values: Array<string | undefined>): string | undefined {
-  return values
-    .filter((value): value is string => Boolean(value))
-    .map((value) => toIsoDate(value))
-    .filter((value): value is string => Boolean(value))
-    .sort()
-    .at(-1)
+  return latestIsoDate(values)
 }
 
 export const GET: APIRoute = async () => {

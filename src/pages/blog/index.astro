@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { latestIsoDate } from '@/utils/date'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getBlogPage, getPaginatedPosts } from '@/utils/sanity.queries'
@@ -16,6 +17,10 @@ const [paginatedResult, page] = await Promise.all([
 ])
 
 const { posts, totalPages } = paginatedResult
+const modifiedTime = latestIsoDate([
+  page._updatedAt,
+  ...posts.flatMap((post) => [post.lastModified, post._updatedAt, post.date]),
+])
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -55,7 +60,7 @@ const collectionSchema = {
   title={page.title}
   description={page.description}
   url={`${SITE_DOMAIN}/blog`}
-  modifiedTime={page._updatedAt}
+  modifiedTime={modifiedTime}
   preconnectSanity={true}
 >
   <script

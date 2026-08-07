@@ -15,3 +15,13 @@ export function toIsoDate(value: string | undefined): string | undefined {
 export function toRfc822Date(value: string | undefined): string | undefined {
   return parseDate(value)?.toUTCString()
 }
+
+export function latestIsoDate(
+  values: Array<string | undefined>
+): string | undefined {
+  return values
+    .map((value) => toIsoDate(value))
+    .filter((value): value is string => Boolean(value))
+    .sort()
+    .at(-1)
+}
