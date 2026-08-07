@@ -6,6 +6,8 @@ import { ContactSubmissionSchema } from '@/lib/contact-schema'
 
 export const prerender = false
 
+const MAX_BODY_BYTES = 16 * 1024
+
 interface RateLimitEntry {
   count: number
   resetTime: number
@@ -62,9 +64,24 @@ function checkRateLimit(ip: string): {
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const contentLength = Number(request.headers.get('content-length'))
+  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+    return Response.json(
+      { ok: false, error: 'Request body is too large.' },
+      { status: 413 }
+    )
+  }
+
   let body: unknown
   try {
-    body = await request.json()
+    const rawBody = await request.text()
+    if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+      return Response.json(
+        { ok: false, error: 'Request body is too large.' },
+        { status: 413 }
+      )
+    }
+    body = JSON.parse(rawBody)
   } catch {
     return Response.json({ ok: false, error: 'Invalid JSON' }, { status: 400 })
   }
