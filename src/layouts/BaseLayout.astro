@@ -6,6 +6,7 @@ import Footer from '@/components/Footer.astro'
 import Header from '@/components/Header.astro'
 import Seo from '@/components/Seo.astro'
 import '@/styles/global.css'
+import { toIsoDate } from '@/utils/date'
 
 interface Props {
   title: string
@@ -42,6 +43,7 @@ const canonical = new URL(url ?? Astro.url.href)
 canonical.search = ''
 canonical.hash = ''
 const canonicalUrl = canonical.href
+const normalizedModifiedTime = toIsoDate(modifiedTime)
 ---
 
 <!doctype html>
@@ -141,7 +143,9 @@ const canonicalUrl = canonical.href
             isPartOf: { '@id': 'https://loke.dev/#website' },
             about: { '@id': 'https://loke.dev/#person' },
             inLanguage: 'en',
-            ...(modifiedTime ? { dateModified: modifiedTime } : {}),
+            ...(normalizedModifiedTime
+              ? { dateModified: normalizedModifiedTime }
+              : {}),
           },
         ],
       })}

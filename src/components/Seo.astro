@@ -1,4 +1,5 @@
 ---
+import { toIsoDate } from '@/utils/date'
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 import {
   AUTHOR_NAME,
@@ -41,6 +42,8 @@ const {
 const image = imageProp ?? defaultImageUrl
 const imageUrl = new URL(image, SITE_DOMAIN).href
 const usesDefaultImage = !imageProp
+const publishedTimeIso = toIsoDate(publishedTime)
+const modifiedTimeIso = toIsoDate(modifiedTime)
 
 const fullTitle = type === 'article' ? title : createTitle(title)
 const keywordsArr = Array.isArray(keywords)
@@ -87,11 +90,11 @@ const keywordsArr = Array.isArray(keywords)
 }
 
 {
-  type === 'article' && publishedTime && (
+  type === 'article' && publishedTimeIso && (
     <>
-      <meta property="article:published_time" content={publishedTime} />
-      {modifiedTime && (
-        <meta property="article:modified_time" content={modifiedTime} />
+      <meta property="article:published_time" content={publishedTimeIso} />
+      {modifiedTimeIso && (
+        <meta property="article:modified_time" content={modifiedTimeIso} />
       )}
       <meta property="article:author" content={author} />
       {keywordsArr.map((tag) => (
