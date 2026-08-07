@@ -7,5 +7,6 @@ export const GET: APIRoute = () =>
     headers: {
       'Cache-Control': 'no-store',
       'Content-Type': 'application/json; charset=utf-8',
+      'X-Robots-Tag': 'noindex, nofollow',
     },
   })

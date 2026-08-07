@@ -96,6 +96,9 @@ jobs:
             printf 'Checking %s%s\n' "$origin" "$route"
             curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS -o /dev/null "$origin$route"
           done
+          printf 'Checking %s/health\n' "$origin"
+          health=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/health")
+          printf '%s' "$health" | jq --exit-status '.ok == true and .service == "loke.dev"' >/dev/null
           printf '%s' "$sitemap" \
             | sed -n 's#.*<loc>\(.*\)</loc>.*#\1#p' \
             | sed "s#https://loke.dev#$origin#" \
