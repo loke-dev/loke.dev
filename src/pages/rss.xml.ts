@@ -19,7 +19,7 @@ export const GET: APIRoute = async () => {
   const allPosts = await getAllPublishedPosts(freshClient)
   const posts = allPosts.slice(0, 20)
   const lastBuildDate = latestDateOrNow(
-    posts.map((post) => post.lastModified ?? post._updatedAt ?? post.date)
+    posts.flatMap((post) => [post.lastModified, post._updatedAt, post.date])
   )
 
   const items = posts
