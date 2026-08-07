@@ -88,6 +88,19 @@ const serviceSchema = {
     'Chrome extension development',
   ],
 }
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_DOMAIN },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Services',
+      item: `${SITE_DOMAIN}/services`,
+    },
+  ],
+}
 ---
 
 <BaseLayout
@@ -99,6 +112,11 @@ const serviceSchema = {
     is:inline
     type="application/ld+json"
     set:html={serializeJsonLd(serviceSchema)}
+  />
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={serializeJsonLd(breadcrumbSchema)}
   />
 
   <div class="workshop-page">
