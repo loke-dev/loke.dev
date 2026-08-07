@@ -78,6 +78,17 @@ export default defineType({
       name: 'lastModified',
       title: 'Last verified or updated',
       type: 'date',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          if (!value) return true
+
+          const publishedDate = (
+            context.document as { date?: string } | undefined
+          )?.date
+          if (!publishedDate || value >= publishedDate) return true
+
+          return 'Use a date on or after the published date.'
+        }),
     }),
     defineField({
       name: 'image',
