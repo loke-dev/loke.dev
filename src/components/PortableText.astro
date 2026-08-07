@@ -1,6 +1,7 @@
 ---
 import { toHTML } from '@portabletext/to-html'
 import { createImageUrlBuilder } from '@sanity/image-url'
+import { getSanityImageDimensions } from '@/utils/sanity-image'
 import { renderArticleDiagram } from '@/lib/article-diagrams'
 import { client } from '@/lib/sanity/client'
 import { processBodyWithHighlighting } from '@/lib/sanity/process-body.server'
@@ -65,10 +66,14 @@ const html = toHTML(processedBlocks as Parameters<typeof toHTML>[0], {
         const src800 = builder.image(v).width(800).auto('format').url()
         const src1200 = builder.image(v).width(1200).auto('format').url()
         const alt = String(v.alt ?? '')
+        const dimensions = getSanityImageDimensions(v.asset)
+        const dimensionAttrs = dimensions
+          ? ` width="${dimensions.width}" height="${dimensions.height}"`
+          : ''
         return `<figure class="my-8">
           <picture>
             <source srcset="${src400} 400w, ${src800} 800w, ${src1200} 1200w" sizes="(max-width: 400px) 100vw, (max-width: 800px) 100vw, 800px" />
-            <img src="${src400}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" class="rounded-lg w-full" />
+            <img src="${src400}" alt="${escapeHtml(alt)}"${dimensionAttrs} loading="lazy" decoding="async" class="rounded-lg w-full" />
           </picture>
           ${alt ? `<figcaption class="text-sm text-center text-muted-foreground mt-2">${escapeHtml(alt)}</figcaption>` : ''}
         </figure>`
