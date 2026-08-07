@@ -9,6 +9,7 @@ export const prerender = true
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
 const fallbackPage = {
+  _updatedAt: undefined,
   period: 'August 2026',
   title: 'What I am up to right now.',
   intro:
@@ -37,6 +38,7 @@ const page = (await getNowPage()) ?? fallbackPage
   title={page.title}
   description={page.intro}
   url={`${SITE_DOMAIN}/now`}
+  modifiedTime={page._updatedAt}
 >
   <div class="workshop-page max-w-5xl">
     <section class="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-end">

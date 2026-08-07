@@ -17,6 +17,7 @@ const page = await getContactPage()
   title="Contact"
   description={page?.description ?? 'Get in touch with Loke.'}
   url={`${SITE_DOMAIN}/contact`}
+  modifiedTime={page?._updatedAt}
   loadTurnstile={true}
 >
   <div class="mx-auto max-w-2xl px-4 py-16 md:py-20">
