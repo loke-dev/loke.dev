@@ -6,9 +6,15 @@ interface Props {
   project: Project
   featured?: boolean
   template?: boolean
+  priority?: boolean
 }
 
-const { project, featured = false, template = false } = Astro.props
+const {
+  project,
+  featured = false,
+  template = false,
+  priority = false,
+} = Astro.props
 
 const width = featured ? 1000 : 760
 const height = featured ? 620 : 500
@@ -46,7 +52,8 @@ const sourceLinkLabel = template ? 'View source' : 'GitHub'
               : '(min-width: 1280px) 45vw, (min-width: 768px) 48vw, 100vw'
           }
           alt={project.imageAlt || project.image?.alt || project.title}
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : undefined}
           decoding="async"
           width={width}
           height={height}
@@ -64,7 +71,8 @@ const sourceLinkLabel = template ? 'View source' : 'GitHub'
           src="/brand/workshop-signal/illustrations/signal-target.svg"
           alt=""
           aria-hidden="true"
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : undefined}
           width="640"
           height="420"
           class="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.025]"
