@@ -57,7 +57,7 @@ const updatedDisplay = getPostUpdatedDisplay(post)
           <img
             src={imageUrl}
             srcset={srcSet || undefined}
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw"
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             alt=""
             loading={priority ? 'eager' : 'lazy'}
             fetchpriority={priority ? 'high' : undefined}
