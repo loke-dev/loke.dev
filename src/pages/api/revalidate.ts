@@ -14,6 +14,8 @@ import {
 
 export const prerender = false
 
+const MAX_BODY_BYTES = 64 * 1024
+
 interface RevalidatePayload {
   _type?: string
   slug?: string | { current?: string }
@@ -148,7 +150,21 @@ export const POST: APIRoute = async ({ request, url }) => {
     'SANITY_WEBHOOK_SECRET'
   )
 
+  const contentLength = Number(request.headers.get('content-length'))
+  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+    return Response.json(
+      { ok: false, error: 'Webhook payload is too large.' },
+      { status: 413 }
+    )
+  }
+
   const rawBody = await request.text()
+  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+    return Response.json(
+      { ok: false, error: 'Webhook payload is too large.' },
+      { status: 413 }
+    )
+  }
   const signature = request.headers.get(SIGNATURE_HEADER_NAME)
   const incomingSecret = getIncomingSecret(request)
 
