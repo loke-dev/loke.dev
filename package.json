@@ -21,7 +21,7 @@
     "studio": "pnpm --dir studio dev"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^14.1.7",
+    "@astrojs/cloudflare": "^14.2.0",
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/solid-js": "^7.0.1",
     "@portabletext/to-html": "^5.0.2",
@@ -33,7 +33,7 @@
     "@shikijs/engine-javascript": "4.4.1",
     "@shikijs/langs": "4.4.1",
     "@shikijs/themes": "4.4.1",
-    "astro": "^7.1.6",
+    "astro": "^7.2.0",
     "clsx": "^2.1.1",
     "resend": "^6.18.1",
     "sharp": "^0.35.3",
@@ -65,7 +65,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.2",
     "vite": "8.1.5",
-    "wrangler": "^4.118.0"
+    "wrangler": "^4.119.0"
   },
   "packageManager": "pnpm@11.17.0",
   "engines": {
