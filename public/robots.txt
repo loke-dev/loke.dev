@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /go/
+Disallow: /health
+Disallow: /search
+Disallow: /studio
 
 Sitemap: https://loke.dev/sitemap.xml
