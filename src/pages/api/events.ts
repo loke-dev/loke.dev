@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro'
 import { recordAnalyticsEvent } from '@/lib/analytics.server'
+import { checkEventRateLimit } from '@/lib/events-rate-limit.server'
 
 export const prerender = false
 
@@ -128,12 +129,23 @@ export const OPTIONS: APIRoute = ({ request }) => {
   return new Response(null, { status: 204, headers })
 }
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   const origin = getOrigin(request)
   if (!origin) {
     return Response.json(
       { error: 'Origin not allowed' },
       { status: 403, headers: responseHeaders(null) }
+    )
+  }
+
+  const rateLimitKey = `${origin}:${clientAddress ?? 'unknown'}`
+  if (!checkEventRateLimit(rateLimitKey)) {
+    return Response.json(
+      { error: 'Too many analytics events. Try again in a minute.' },
+      {
+        status: 429,
+        headers: responseHeaders(origin),
+      }
     )
   }
 
