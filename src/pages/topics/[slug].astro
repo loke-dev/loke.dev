@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { latestIsoDate } from '@/utils/date'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getPostsByTopicSlug, getTopicBySlug } from '@/utils/sanity.queries'
@@ -18,6 +19,16 @@ if (!topic) {
 }
 const posts = topic ? await getPostsByTopicSlug(topicSlug) : []
 const url = `${SITE_DOMAIN}/topics/${topicSlug}`
+const modifiedTime = topic
+  ? latestIsoDate([
+      topic._updatedAt,
+      ...posts.flatMap((post) => [
+        post.lastModified,
+        post._updatedAt,
+        post.date,
+      ]),
+    ])
+  : undefined
 const breadcrumbSchema = topic
   ? {
       '@context': 'https://schema.org',
@@ -60,6 +71,7 @@ const collectionSchema = topic
       title={`${topic.title} posts`}
       description={topic.description}
       url={url}
+      modifiedTime={modifiedTime}
       preconnectSanity={true}
     >
       <script

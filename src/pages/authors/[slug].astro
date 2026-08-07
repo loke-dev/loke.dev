@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { latestIsoDate } from '@/utils/date'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAuthorBySlug, getPostsByAuthorSlug } from '@/utils/sanity.queries'
@@ -19,6 +20,16 @@ if (!author) {
 }
 const posts = author ? await getPostsByAuthorSlug(authorSlug) : []
 const url = `${SITE_DOMAIN}/authors/${authorSlug}`
+const modifiedTime = author
+  ? latestIsoDate([
+      author._updatedAt,
+      ...posts.flatMap((post) => [
+        post.lastModified,
+        post._updatedAt,
+        post.date,
+      ]),
+    ])
+  : undefined
 const image = author ? getSanityImageUrl(author.image, 400, 400) : null
 const breadcrumbSchema = author
   ? {
@@ -79,6 +90,7 @@ function getProfileLabel(profile: string): string {
       }
       url={url}
       image={image ?? undefined}
+      modifiedTime={modifiedTime}
       preconnectSanity={true}
     >
       <script

@@ -15,10 +15,10 @@ const ADJACENT_POST_FIELDS = POST_LIST_BODY
 export const POST_PREV_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && (date < $date || (date == $date && _createdAt < $createdAt))] | order(date desc, _createdAt desc) [0] { ${ADJACENT_POST_FIELDS} }`
 export const POST_NEXT_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && (date > $date || (date == $date && _createdAt > $createdAt))] | order(date asc, _createdAt asc) [0] { ${ADJACENT_POST_FIELDS} }`
 
-export const TOPIC_BY_SLUG_QUERY = `*[_type == "topic" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, title, slug, description }`
+export const TOPIC_BY_SLUG_QUERY = `*[_type == "topic" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, title, slug, description, _updatedAt }`
 export const POSTS_BY_TOPIC_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && references(*[_type == "topic" && slug.current == $slug][0]._id)] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 export const ALL_TOPICS_QUERY = `*[_type == "topic" && !(_id in path("drafts.**"))] | order(title asc) { _id, title, slug, description, _updatedAt }`
-export const AUTHOR_BY_SLUG_QUERY = `*[_type == "author" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, name, slug, role, bio, image, sameAs }`
+export const AUTHOR_BY_SLUG_QUERY = `*[_type == "author" && !(_id in path("drafts.**")) && slug.current == $slug][0] { _id, name, slug, role, bio, image, sameAs, _updatedAt }`
 export const POSTS_BY_AUTHOR_SLUG_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && author->slug.current == $slug] | order(date desc) { ${POST_LIST_BODY}, ${PLAIN_BODY} }`
 export const ALL_AUTHORS_QUERY = `*[_type == "author" && !(_id in path("drafts.**"))] { _id, name, slug, role, bio, image, sameAs, _updatedAt }`
 
