@@ -34,8 +34,8 @@ const page = (await getNowPage()) ?? fallbackPage
 ---
 
 <BaseLayout
-  title="Now"
-  description="What Loke is building, trying, and open to right now."
+  title={page.title}
+  description={page.intro}
   url={`${SITE_DOMAIN}/now`}
 >
   <div class="workshop-page max-w-5xl">

@@ -52,8 +52,8 @@ const collectionSchema = {
 ---
 
 <BaseLayout
-  title="Blog"
-  description="Notes, guides, experiments, and useful things from building on the web, with AI, and in software."
+  title={page.title}
+  description={page.description}
   url={`${SITE_DOMAIN}/blog`}
   preconnectSanity={true}
 >
