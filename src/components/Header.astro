@@ -60,6 +60,7 @@ function isCurrentPath(href: string): boolean {
           href="/blog"
           class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 font-mono text-[0.68rem] font-semibold tracking-[0.1em] uppercase transition-colors"
           aria-current={isCurrentPath('/blog') ? 'page' : undefined}
+          aria-haspopup="true"
         >
           Blog
           <svg
