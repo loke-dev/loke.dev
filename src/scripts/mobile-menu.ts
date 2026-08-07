@@ -14,6 +14,10 @@ function initOnce(root: HTMLElement): void {
 
   const setOpen = (open: boolean) => {
     openBtn.setAttribute('aria-expanded', open ? 'true' : 'false')
+    openBtn.setAttribute(
+      'aria-label',
+      open ? 'Close navigation menu' : 'Open navigation menu'
+    )
     if (open) {
       if (!dialog.open) dialog.showModal()
     } else if (dialog.open) {
