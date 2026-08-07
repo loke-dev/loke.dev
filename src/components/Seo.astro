@@ -42,7 +42,7 @@ const image = imageProp ?? defaultImageUrl
 const imageUrl = new URL(image, SITE_DOMAIN).href
 const usesDefaultImage = !imageProp
 
-const fullTitle = createTitle(title)
+const fullTitle = type === 'article' ? title : createTitle(title)
 const keywordsArr = Array.isArray(keywords)
   ? keywords
   : keywords
