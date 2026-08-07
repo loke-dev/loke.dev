@@ -22,6 +22,8 @@ function initOnce(root: HTMLElement): void {
       if (!dialog.open) dialog.showModal()
     } else if (dialog.open) {
       dialog.close()
+    } else {
+      openBtn.focus({ preventScroll: true })
     }
   }
 
