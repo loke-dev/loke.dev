@@ -80,7 +80,7 @@ export const GET: APIRoute = async () => {
       : []
   const latestPostUpdate = latestDate([
     blogPage._updatedAt,
-    ...posts.map((post) => post.lastModified ?? post._updatedAt ?? post.date),
+    ...posts.flatMap((post) => [post.lastModified, post._updatedAt, post.date]),
   ])
   const latestProjectUpdate = latestDate([
     projectsPage._updatedAt,

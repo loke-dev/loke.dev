@@ -1,5 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { latestIsoDate } from '@/utils/date'
 import { getDefaultProfileOgUrl } from '@/utils/default-profile-og'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
@@ -55,6 +56,9 @@ const [relatedPosts, adjacent] = post
     ])
   : [[], { prev: null, next: null }]
 const updatedMeta = post ? getPostUpdatedDisplay(post) : null
+const modifiedTime = post
+  ? latestIsoDate([post.lastModified, post._updatedAt, post.date])
+  : undefined
 const imageUrl = post ? getSanityImageUrl(post.image, 1200, 630) : null
 const heroSrcSet = post
   ? getSanityImageSrcSet(post.image, [640, 768, 1024, 1280, 1600])
@@ -81,7 +85,7 @@ const breadcrumbSchema = post
       imageAlt={post.imageAlt ?? `Cover image for ${post.title}`}
       type="article"
       publishedTime={post.date}
-      modifiedTime={post.lastModified ?? post._updatedAt ?? post.date}
+      modifiedTime={modifiedTime}
       keywords={post.topics.map((topic) => topic.title)}
       preconnectSanity={true}
     >

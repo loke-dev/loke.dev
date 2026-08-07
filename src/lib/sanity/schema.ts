@@ -1,15 +1,15 @@
-import { toIsoDate } from '@/utils/date'
+import { latestIsoDate, toIsoDate } from '@/utils/date'
 import { AUTHOR_NAME, SITE_DOMAIN } from '@/utils/meta'
 import { getSanityImageUrl } from './helpers'
 import type { Post, Project } from './types'
 
 function resolveDateModifiedIso(post: Post): string | undefined {
-  return (
-    toIsoDate(post.lastModified) ??
-    toIsoDate(post._updatedAt) ??
-    toIsoDate(post.date) ??
-    toIsoDate(post._createdAt)
-  )
+  return latestIsoDate([
+    post.lastModified,
+    post._updatedAt,
+    post.date,
+    post._createdAt,
+  ])
 }
 
 export function createArticleSchema(post: Post, fallbackImageUrl: string) {
