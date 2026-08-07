@@ -9,19 +9,11 @@ import {
   SITE_RSS_DESCRIPTION,
 } from '@/utils/meta'
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
+import { escapeXml } from '@/utils/xml'
 import { freshClient } from '@/lib/sanity/client'
 import { getSanityImageUrl } from '@/lib/sanity/helpers'
 
 export const prerender = false
-
-function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
-}
 
 export const GET: APIRoute = async () => {
   const allPosts = await getAllPublishedPosts(freshClient)
