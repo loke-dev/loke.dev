@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { verifyTurnstileToken } from '@/utils/captcha.server'
 import { sendContactEmail } from '@/utils/email.server'
 import { ContactSubmissionSchema } from '@/lib/contact-schema'
+import { readRequestBody } from '@/lib/request-body.server'
 
 export const prerender = false
 
@@ -64,18 +65,10 @@ function checkRateLimit(ip: string): {
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  const contentLength = Number(request.headers.get('content-length'))
-  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
-    return Response.json(
-      { ok: false, error: 'Request body is too large.' },
-      { status: 413 }
-    )
-  }
-
   let body: unknown
   try {
-    const rawBody = await request.text()
-    if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+    const rawBody = await readRequestBody(request, MAX_BODY_BYTES)
+    if (rawBody === null) {
       return Response.json(
         { ok: false, error: 'Request body is too large.' },
         { status: 413 }

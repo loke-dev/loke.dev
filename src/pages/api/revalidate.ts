@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto'
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook'
 import type { APIRoute } from 'astro'
 import { env as workerEnv } from 'cloudflare:workers'
+import { readRequestBody } from '@/lib/request-body.server'
 import {
   buildPurgeUrls,
   normalizeRevalidationPath,
@@ -150,16 +151,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     'SANITY_WEBHOOK_SECRET'
   )
 
-  const contentLength = Number(request.headers.get('content-length'))
-  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
-    return Response.json(
-      { ok: false, error: 'Webhook payload is too large.' },
-      { status: 413 }
-    )
-  }
-
-  const rawBody = await request.text()
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+  const rawBody = await readRequestBody(request, MAX_BODY_BYTES)
+  if (rawBody === null) {
     return Response.json(
       { ok: false, error: 'Webhook payload is too large.' },
       { status: 413 }
