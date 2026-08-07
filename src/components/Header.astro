@@ -14,6 +14,9 @@ const pathname = Astro.url.pathname
 const hasCurrentTopic = topics.some((topic) =>
   isCurrentPath(`/topics/${topic.slug.current}`)
 )
+const hasCurrentBlogSection = ['/blog', '/guides', '/topics', '/authors'].some(
+  (href) => isCurrentPath(href)
+)
 
 function isCurrentPath(href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -59,7 +62,7 @@ function isCurrentPath(href: string): boolean {
         <a
           href="/blog"
           class="nav-link-animate text-muted-foreground hover:text-accent inline-flex items-center gap-1 font-mono text-[0.68rem] font-semibold tracking-[0.1em] uppercase transition-colors"
-          aria-current={isCurrentPath('/blog') ? 'page' : undefined}
+          aria-current={hasCurrentBlogSection ? 'page' : undefined}
           aria-haspopup="true"
         >
           Blog
@@ -198,13 +201,16 @@ function isCurrentPath(href: string): boolean {
             <div class="-mt-2">
               <a
                 href="/blog"
-                aria-current={isCurrentPath('/blog') ? 'page' : undefined}
+                aria-current={hasCurrentBlogSection ? 'page' : undefined}
                 class="nav-link-animate text-muted-foreground hover:text-accent text-base font-medium transition-colors"
                 >Blog</a
               >
               {
                 topics.length > 0 && (
-                  <details class="mt-2" open={hasCurrentTopic}>
+                  <details
+                    class="mt-2"
+                    open={hasCurrentTopic || hasCurrentBlogSection}
+                  >
                     <summary class="text-muted-foreground marker:text-accent cursor-pointer text-sm">
                       Topics
                     </summary>
