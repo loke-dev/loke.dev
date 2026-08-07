@@ -109,14 +109,24 @@ export const GET: APIRoute = async () => {
     )
     return `  <url><loc>${escapeXml(`${SITE_DOMAIN}/blog/${post.slug.current}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
   })
-  const topicUrlEntries = topics.map(
-    (topic) =>
-      `  <url><loc>${escapeXml(`${SITE_DOMAIN}/topics/${topic.slug.current}`)}</loc>${toIsoDate(topic._updatedAt) ? `<lastmod>${toIsoDate(topic._updatedAt)}</lastmod>` : ''}</url>`
-  )
-  const authorUrlEntries = authors.map(
-    (author) =>
-      `  <url><loc>${escapeXml(`${SITE_DOMAIN}/authors/${author.slug.current}`)}</loc>${toIsoDate(author._updatedAt) ? `<lastmod>${toIsoDate(author._updatedAt)}</lastmod>` : ''}</url>`
-  )
+  const topicUrlEntries = topics.map((topic) => {
+    const relatedPostDates = posts
+      .filter((post) =>
+        post.topics.some(
+          (postTopic) => postTopic.slug.current === topic.slug.current
+        )
+      )
+      .flatMap((post) => [post.lastModified, post._updatedAt, post.date])
+    const lastModified = latestDate([topic._updatedAt, ...relatedPostDates])
+    return `  <url><loc>${escapeXml(`${SITE_DOMAIN}/topics/${topic.slug.current}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
+  })
+  const authorUrlEntries = authors.map((author) => {
+    const relatedPostDates = posts
+      .filter((post) => post.author?.slug.current === author.slug.current)
+      .flatMap((post) => [post.lastModified, post._updatedAt, post.date])
+    const lastModified = latestDate([author._updatedAt, ...relatedPostDates])
+    return `  <url><loc>${escapeXml(`${SITE_DOMAIN}/authors/${author.slug.current}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
+  })
 
   const urlset = [
     ...staticUrlEntries,
