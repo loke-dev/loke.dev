@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { latestIsoDate, parseDate, toIsoDate, toRfc822Date } from './date.ts'
+import {
+  latestDateOrNow,
+  latestIsoDate,
+  parseDate,
+  toIsoDate,
+  toRfc822Date,
+} from './date.ts'
 import { formatDate } from './format-date.ts'
 
 test('normalizes valid CMS dates', () => {
@@ -24,6 +30,13 @@ test('finds the newest valid date while ignoring malformed values', () => {
     '2026-08-07T12:00:00.000Z'
   )
   assert.equal(latestIsoDate([undefined, '']), undefined)
+})
+
+test('uses the current time when no valid date exists', () => {
+  const before = Date.now()
+  const result = latestDateOrNow(['not-a-date'])
+  const after = Date.now()
+  assert.ok(result.getTime() >= before && result.getTime() <= after)
 })
 
 test('uses readable fallback text for malformed display dates', () => {

@@ -25,3 +25,11 @@ export function latestIsoDate(
     .sort()
     .at(-1)
 }
+
+export function latestDateOrNow(values: Array<string | undefined>): Date {
+  const dates = values
+    .map(parseDate)
+    .filter((value): value is Date => value !== null)
+  if (dates.length === 0) return new Date()
+  return new Date(Math.max(...dates.map((date) => date.getTime())))
+}

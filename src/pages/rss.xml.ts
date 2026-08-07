@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
-import { toRfc822Date } from '@/utils/date'
+import { latestDateOrNow, toRfc822Date } from '@/utils/date'
 import {
   AUTHOR_NAME,
   SITE_CONTACT_EMAIL,
@@ -18,12 +18,9 @@ export const prerender = false
 export const GET: APIRoute = async () => {
   const allPosts = await getAllPublishedPosts(freshClient)
   const posts = allPosts.slice(0, 20)
-  const lastBuildDate = posts.reduce((latest, post) => {
-    const candidate = new Date(
-      post.lastModified ?? post._updatedAt ?? post.date
-    )
-    return candidate > latest ? candidate : latest
-  }, new Date(0))
+  const lastBuildDate = latestDateOrNow(
+    posts.map((post) => post.lastModified ?? post._updatedAt ?? post.date)
+  )
 
   const items = posts
     .map((post) => {
