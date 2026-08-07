@@ -15,6 +15,7 @@ import {
   getNowPage,
   getProjectsPage,
 } from '@/utils/sanity.queries'
+import { escapeXml } from '@/utils/xml'
 import { toolPages } from '@/data/tool-pages'
 import { freshClient } from '@/lib/sanity/client'
 
@@ -100,21 +101,21 @@ export const GET: APIRoute = async () => {
       pageLastModified[url] ??
       (url.startsWith('/blog/page/') ? latestPostUpdate : undefined)
     const normalizedLastModified = toIsoDate(lastModified)
-    return `  <url><loc>${SITE_DOMAIN}${url}</loc>${normalizedLastModified ? `<lastmod>${normalizedLastModified}</lastmod>` : ''}</url>`
+    return `  <url><loc>${escapeXml(`${SITE_DOMAIN}${url}`)}</loc>${normalizedLastModified ? `<lastmod>${normalizedLastModified}</lastmod>` : ''}</url>`
   })
   const postUrlEntries = posts.map((post) => {
     const lastModified = toIsoDate(
       post.lastModified ?? post._updatedAt ?? post.date
     )
-    return `  <url><loc>${SITE_DOMAIN}/blog/${post.slug.current}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
+    return `  <url><loc>${escapeXml(`${SITE_DOMAIN}/blog/${post.slug.current}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
   })
   const topicUrlEntries = topics.map(
     (topic) =>
-      `  <url><loc>${SITE_DOMAIN}/topics/${topic.slug.current}</loc>${toIsoDate(topic._updatedAt) ? `<lastmod>${toIsoDate(topic._updatedAt)}</lastmod>` : ''}</url>`
+      `  <url><loc>${escapeXml(`${SITE_DOMAIN}/topics/${topic.slug.current}`)}</loc>${toIsoDate(topic._updatedAt) ? `<lastmod>${toIsoDate(topic._updatedAt)}</lastmod>` : ''}</url>`
   )
   const authorUrlEntries = authors.map(
     (author) =>
-      `  <url><loc>${SITE_DOMAIN}/authors/${author.slug.current}</loc>${toIsoDate(author._updatedAt) ? `<lastmod>${toIsoDate(author._updatedAt)}</lastmod>` : ''}</url>`
+      `  <url><loc>${escapeXml(`${SITE_DOMAIN}/authors/${author.slug.current}`)}</loc>${toIsoDate(author._updatedAt) ? `<lastmod>${toIsoDate(author._updatedAt)}</lastmod>` : ''}</url>`
   )
 
   const urlset = [
