@@ -18,8 +18,8 @@ export function getSecurityHeaders(options?: {
       "form-action 'self'",
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
-      "connect-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://api.muroanalytics.com https://challenges.cloudflare.com https://static.cloudflareinsights.com",
+      "connect-src 'self' https://cdn.muroanalytics.com",
       'frame-src https://challenges.cloudflare.com',
     ].join('; '),
   }
