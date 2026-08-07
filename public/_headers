@@ -14,3 +14,9 @@
 
 /brand/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon-*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=31536000, immutable
