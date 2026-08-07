@@ -47,7 +47,9 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
       '@type': 'WebPage',
       '@id': `${SITE_DOMAIN}/blog/${post.slug.current}`,
     },
-    keywords: post.topics.map((topic) => topic.title).join(', '),
+    ...(post.topics.length > 0
+      ? { keywords: post.topics.map((topic) => topic.title).join(', ') }
+      : {}),
     ...(post.wordCount && post.wordCount > 0
       ? { wordCount: post.wordCount }
       : {}),
