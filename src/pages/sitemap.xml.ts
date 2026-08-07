@@ -47,10 +47,10 @@ export const GET: APIRoute = async () => {
     getBlogTotalPages(freshClient),
     getAllTopics(freshClient),
     getAllAuthors(freshClient),
-    getHomePage(),
-    getNowPage(),
-    getAboutPage(),
-    getContactPage(),
+    getHomePage(freshClient),
+    getNowPage(freshClient),
+    getAboutPage(freshClient),
+    getContactPage(freshClient),
   ])
 
   const staticUrls = [

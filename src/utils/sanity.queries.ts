@@ -211,16 +211,22 @@ export async function getAdjacentPosts(
   return { prev, next }
 }
 
-export async function getHomePage(): Promise<HomePage> {
-  return client.fetch<HomePage>(HOME_PAGE_QUERY)
+export async function getHomePage(
+  contentClient: SanityClient = client
+): Promise<HomePage> {
+  return contentClient.fetch<HomePage>(HOME_PAGE_QUERY)
 }
 
-export async function getNowPage(): Promise<NowPage | null> {
-  return client.fetch<NowPage | null>(NOW_PAGE_QUERY)
+export async function getNowPage(
+  contentClient: SanityClient = client
+): Promise<NowPage | null> {
+  return contentClient.fetch<NowPage | null>(NOW_PAGE_QUERY)
 }
 
-export async function getAboutPage(): Promise<AboutPage> {
-  return client.fetch<AboutPage>(ABOUT_PAGE_QUERY)
+export async function getAboutPage(
+  contentClient: SanityClient = client
+): Promise<AboutPage> {
+  return contentClient.fetch<AboutPage>(ABOUT_PAGE_QUERY)
 }
 
 export async function getBlogPage(
@@ -241,6 +247,8 @@ export async function getAllProjects(
   return contentClient.fetch<Project[]>(PROJECTS_QUERY)
 }
 
-export async function getContactPage(): Promise<ContactPage> {
-  return client.fetch<ContactPage>(CONTACT_PAGE_QUERY)
+export async function getContactPage(
+  contentClient: SanityClient = client
+): Promise<ContactPage> {
+  return contentClient.fetch<ContactPage>(CONTACT_PAGE_QUERY)
 }
