@@ -1,6 +1,6 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
-import { latestIsoDate } from '@/utils/date'
+import { latestIsoDate, toIsoDate } from '@/utils/date'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllProjects, getProjectsPage } from '@/utils/sanity.queries'
@@ -66,6 +66,7 @@ const projectSchema = {
     ...projects.map((project) => {
       const url = project.url ?? project.github
       const isTemplate = project.kind === 'template'
+      const modifiedTime = toIsoDate(project._updatedAt)
 
       return {
         '@type': isTemplate ? 'SoftwareSourceCode' : 'SoftwareApplication',
@@ -75,7 +76,7 @@ const projectSchema = {
         author: { '@id': `${SITE_DOMAIN}/#person` },
         isAccessibleForFree: true,
         ...(url ? { url } : {}),
-        ...(project._updatedAt ? { dateModified: project._updatedAt } : {}),
+        ...(modifiedTime ? { dateModified: modifiedTime } : {}),
         ...(project.github
           ? isTemplate
             ? { codeRepository: project.github }
