@@ -22,7 +22,7 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
     />
 
     <div class="prose prose-invert mt-12 max-w-none">
-      <p><strong>Last updated:</strong> 24 July 2026.</p>
+      <p><strong>Last updated:</strong> 7 August 2026.</p>
 
       <h2>Who operates these sites</h2>
       <p>
@@ -45,18 +45,26 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
 
       <h2>Aggregate site and event analytics</h2>
       <p>
-        The sites may use Cloudflare Web Analytics for aggregate traffic and
-        performance reporting. The custom event collector records only an
-        approved event name, site, page path, placement, target, campaign label,
-        and count. Examples include a successful command copy, a tool action, a
-        completed shuffle, or an outbound partner click.
+        Loke.dev uses Muro Analytics for basic page-view reporting. Its browser
+        script keeps a random visitor ID in local storage for up to 24 hours and
+        a random session ID in session storage. These IDs are used to group
+        visits, not to identify you by name.
       </p>
       <p>
-        The application event payload does not include an email address, account
-        ID, raw IP address, raw user agent, advertising identifier, or browser
-        fingerprint. The collector does not set a cookie or use local storage.
-        Infrastructure providers still process the network request as described
-        above.
+        Page-view requests may include the page path, referrer, UTM campaign
+        values, screen size, device type, browser, operating system, and a
+        timestamp. The browser script does not send an email address, account
+        ID, advertising identifier, or raw IP address. The analytics endpoint
+        can still receive normal network information needed to deliver the
+        request.
+      </p>
+      <p>
+        The sites may also use Cloudflare Web Analytics and a separate custom
+        event collector for approved actions. Those events can include a site,
+        page path, placement, target, campaign label, and count, such as a
+        successful command copy, a tool action, a completed shuffle, or an
+        outbound partner click. The custom event collector does not set a cookie
+        or use local storage.
       </p>
 
       <h2>Affiliate and outbound links</h2>
@@ -79,17 +87,19 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.staticPage)
       <h2>Service providers and external sites</h2>
       <p>
         Current infrastructure and operational providers may include Cloudflare
-        for delivery and analytics, Sanity for published content, Resend for
-        contact email, and Sentry for error diagnostics. Following an external
-        or affiliate link makes the destination provider responsible for its own
-        processing under its privacy notice.
+        for delivery, security, and analytics, Muro Analytics for page-view
+        reporting, Sanity for published content, Resend for contact email, and
+        Sentry for error diagnostics. Following an external or affiliate link
+        makes the destination provider responsible for its own processing under
+        its privacy notice.
       </p>
 
       <h2>Retention and choices</h2>
       <p>
         Aggregate application events are kept only as long as they are useful
         for product and affiliate measurement. Analytics Engine currently has a
-        three-month data window when enabled. Infrastructure logs follow
+        three-month data window when enabled. Muro Analytics retention follows
+        the provider's service and account settings. Infrastructure logs follow
         provider and account retention settings. Contact messages are retained
         only as needed to respond, maintain reasonable records, or meet a legal
         obligation.
