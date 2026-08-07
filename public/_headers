@@ -24,6 +24,9 @@
 /
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
+/index.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
 /about
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
