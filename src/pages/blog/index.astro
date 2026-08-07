@@ -16,7 +16,7 @@ const [paginatedResult, page] = await Promise.all([
   getBlogPage(),
 ])
 
-const { posts, totalPages } = paginatedResult
+const { posts, totalCount, totalPages } = paginatedResult
 const modifiedTime = latestIsoDate([
   page._updatedAt,
   ...posts.flatMap((post) => [post.lastModified, post._updatedAt, post.date]),
@@ -45,7 +45,7 @@ const collectionSchema = {
   mainEntity: {
     '@type': 'ItemList',
     itemListOrder: 'https://schema.org/ItemListOrderDescending',
-    numberOfItems: posts.length,
+    numberOfItems: totalCount,
     itemListElement: posts.map((post, index) => ({
       '@type': 'ListItem',
       position: index + 1,
