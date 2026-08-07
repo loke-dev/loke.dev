@@ -132,6 +132,17 @@ const canonicalUrl = canonical.href
             name: 'Loke.dev',
             publisher: { '@id': 'https://loke.dev/#person' },
           },
+          {
+            '@type': 'WebPage',
+            '@id': `${canonicalUrl}#webpage`,
+            url: canonicalUrl,
+            name: title,
+            description,
+            isPartOf: { '@id': 'https://loke.dev/#website' },
+            about: { '@id': 'https://loke.dev/#person' },
+            inLanguage: 'en',
+            ...(modifiedTime ? { dateModified: modifiedTime } : {}),
+          },
         ],
       })}
     />
