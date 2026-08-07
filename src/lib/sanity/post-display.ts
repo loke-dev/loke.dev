@@ -1,17 +1,20 @@
+import { parseDate } from '@/utils/date'
 import { formatDate } from '@/lib/sanity/helpers'
 import type { PostListItem } from '@/lib/sanity/types'
 
 export function getPostUpdatedDisplay(
   post: Pick<PostListItem, 'date' | 'lastModified' | '_updatedAt'>
 ): { label: string; datetime: string } | null {
-  if (post.lastModified && post.lastModified > post.date) {
-    return { label: formatDate(post.lastModified), datetime: post.lastModified }
+  const published = parseDate(post.date)
+  const lastModified = parseDate(post.lastModified)
+  if (lastModified && (!published || lastModified > published)) {
+    const datetime = lastModified.toISOString()
+    return { label: formatDate(datetime), datetime }
   }
-  if (post._updatedAt) {
-    const day = post._updatedAt.slice(0, 10)
-    if (day > post.date) {
-      return { label: formatDate(day), datetime: day }
-    }
+  const updatedAt = parseDate(post._updatedAt)
+  if (updatedAt && (!published || updatedAt > published)) {
+    const datetime = updatedAt.toISOString()
+    return { label: formatDate(datetime), datetime }
   }
   return null
 }

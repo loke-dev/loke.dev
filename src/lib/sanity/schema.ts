@@ -1,11 +1,15 @@
+import { toIsoDate } from '@/utils/date'
 import { AUTHOR_NAME, SITE_DOMAIN } from '@/utils/meta'
 import { getSanityImageUrl } from './helpers'
 import type { Post, Project } from './types'
 
-function resolveDateModifiedIso(post: Post): string {
-  if (post.lastModified) return new Date(post.lastModified).toISOString()
-  if (post._updatedAt) return new Date(post._updatedAt).toISOString()
-  return new Date(post.date).toISOString()
+function resolveDateModifiedIso(post: Post): string | undefined {
+  return (
+    toIsoDate(post.lastModified) ??
+    toIsoDate(post._updatedAt) ??
+    toIsoDate(post.date) ??
+    toIsoDate(post._createdAt)
+  )
 }
 
 export function createArticleSchema(post: Post, fallbackImageUrl: string) {
@@ -17,7 +21,11 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
     headline: post.title,
     description: post.description,
     image: imageUrl,
-    datePublished: new Date(post.date).toISOString(),
+    ...(toIsoDate(post.date) || toIsoDate(post._createdAt)
+      ? {
+          datePublished: toIsoDate(post.date) ?? toIsoDate(post._createdAt),
+        }
+      : {}),
     dateModified: resolveDateModifiedIso(post),
     author: post.author
       ? {

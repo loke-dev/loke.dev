@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
+import { toRfc822Date } from '@/utils/date'
 import {
   AUTHOR_NAME,
   SITE_CONTACT_EMAIL,
@@ -35,7 +36,8 @@ export const GET: APIRoute = async () => {
   const items = posts
     .map((post) => {
       const postUrl = `${SITE_DOMAIN}/blog/${post.slug.current}`
-      const pubDate = new Date(post.date).toUTCString()
+      const pubDate =
+        toRfc822Date(post.date) ?? toRfc822Date(post._createdAt) ?? null
       const imageUrl = getSanityImageUrl(post.image, 1200)
       const safePostUrl = escapeXml(postUrl)
       const safeImageUrl = imageUrl ? escapeXml(imageUrl) : ''
@@ -45,7 +47,7 @@ export const GET: APIRoute = async () => {
       <description>${escapeXml(post.description ?? '')}</description>
       <link>${safePostUrl}</link>
       <guid isPermaLink="true">${safePostUrl}</guid>
-      <pubDate>${pubDate}</pubDate>
+      ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ''}
       <author>${escapeXml(`${SITE_CONTACT_EMAIL} (${AUTHOR_NAME})`)}</author>
       ${safeImageUrl ? `<enclosure url="${safeImageUrl}" type="image/jpeg" length="0" />` : ''}
     </item>`
