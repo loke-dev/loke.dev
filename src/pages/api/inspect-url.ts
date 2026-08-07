@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ url, clientAddress }) => {
   if (!withinRateLimit(clientAddress ?? 'unknown')) {
     return Response.json(
       { error: 'Too many inspections. Try again in a minute.' },
-      { status: 429 }
+      { status: 429, headers: { 'Retry-After': '60' } }
     )
   }
 

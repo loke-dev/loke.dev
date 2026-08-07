@@ -144,7 +144,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       { error: 'Too many analytics events. Try again in a minute.' },
       {
         status: 429,
-        headers: responseHeaders(origin),
+        headers: {
+          ...responseHeaders(origin),
+          'Retry-After': '60',
+        },
       }
     )
   }

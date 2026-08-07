@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ url, clientAddress }) => {
   if (!checkSearchRateLimit(ip)) {
     return Response.json(
       { error: 'Too many search requests. Try again in a minute.' },
-      { status: 429 }
+      { status: 429, headers: { 'Retry-After': '60' } }
     )
   }
 

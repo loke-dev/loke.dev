@@ -110,6 +110,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
           'X-RateLimit-Limit': MAX_ATTEMPTS.toString(),
           'X-RateLimit-Remaining': '0',
           'X-RateLimit-Reset': Math.ceil(rateLimit.resetTime / 1000).toString(),
+          'Retry-After': Math.max(
+            1,
+            Math.ceil((rateLimit.resetTime - Date.now()) / 1000)
+          ).toString(),
         },
       }
     )
