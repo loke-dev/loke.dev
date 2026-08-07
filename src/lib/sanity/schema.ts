@@ -48,8 +48,12 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
       '@id': `${SITE_DOMAIN}/blog/${post.slug.current}`,
     },
     keywords: post.topics.map((topic) => topic.title).join(', '),
-    wordCount: post.wordCount || 0,
-    timeRequired: `PT${post.readingTime || 0}M`,
+    ...(post.wordCount && post.wordCount > 0
+      ? { wordCount: post.wordCount }
+      : {}),
+    ...(post.readingTime && post.readingTime > 0
+      ? { timeRequired: `PT${post.readingTime}M` }
+      : {}),
   }
 }
 
