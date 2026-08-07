@@ -18,7 +18,7 @@ export function calculateReadingTime(body: unknown[]): {
       if (typedBlock._type === 'block' && typedBlock.children) {
         typedBlock.children.forEach((child) => {
           if (child.text) {
-            wordCount += child.text.split(/\s+/).length
+            wordCount += child.text.split(/\s+/).filter(Boolean).length
           }
         })
       } else if (typedBlock._type === 'callout') {
