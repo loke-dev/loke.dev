@@ -8,6 +8,10 @@ const CANONICAL_NO_SLASH_PATHS = /^\/(?:blog|guides|topics|authors)(?:\/.+)?\/$/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
 const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
 
+function isApiPath(pathname: string): boolean {
+  return pathname === '/api' || pathname.startsWith('/api/')
+}
+
 function getContentCacheVersion(request: Request): string {
   return request.headers.get(WORKER_VERSION_HEADER) ?? 'local'
 }
@@ -95,6 +99,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   })
   for (const [key, value] of Object.entries(securityHeaders)) {
     response.headers.set(key, value)
+  }
+  if (isApiPath(pathname)) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
   }
 
   if (cache && cacheKey && response.status === 200) {
