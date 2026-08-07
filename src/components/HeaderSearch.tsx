@@ -47,6 +47,11 @@ function PopoverResults(props: { data: SearchPayload; onPick: () => void }) {
                   href={href}
                   target={external ? '_blank' : undefined}
                   rel={external ? 'noopener noreferrer' : undefined}
+                  aria-label={
+                    external
+                      ? `${project.title} (opens in new tab)`
+                      : project.title
+                  }
                   class="block rounded-md px-2 py-2 text-sm transition-colors hover:bg-secondary"
                   onClick={() => props.onPick()}
                 >
@@ -193,6 +198,7 @@ export default function HeaderSearch() {
         class="inline-grid h-11 w-11 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
         aria-expanded={open()}
         aria-controls="header-search-popover"
+        aria-haspopup="dialog"
         aria-label={open() ? 'Close search' : 'Open search'}
         ref={(el) => (triggerEl = el)}
         onClick={() => toggle()}
