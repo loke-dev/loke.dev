@@ -2,12 +2,16 @@ import type { APIRoute } from 'astro'
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { SITE_DOMAIN } from '@/utils/meta'
 import {
+  getAboutPage,
   getAllAuthors,
   getAllProjects,
   getAllPublishedPosts,
   getAllTopics,
   getBlogPage,
   getBlogTotalPages,
+  getContactPage,
+  getHomePage,
+  getNowPage,
   getProjectsPage,
 } from '@/utils/sanity.queries'
 import { toolPages } from '@/data/tool-pages'
@@ -23,16 +27,31 @@ function latestDate(values: Array<string | undefined>): string | undefined {
 }
 
 export const GET: APIRoute = async () => {
-  const [posts, projects, blogPage, projectsPage, totalPages, topics, authors] =
-    await Promise.all([
-      getAllPublishedPosts(freshClient),
-      getAllProjects(freshClient),
-      getBlogPage(freshClient),
-      getProjectsPage(freshClient),
-      getBlogTotalPages(freshClient),
-      getAllTopics(freshClient),
-      getAllAuthors(freshClient),
-    ])
+  const [
+    posts,
+    projects,
+    blogPage,
+    projectsPage,
+    totalPages,
+    topics,
+    authors,
+    homePage,
+    nowPage,
+    aboutPage,
+    contactPage,
+  ] = await Promise.all([
+    getAllPublishedPosts(freshClient),
+    getAllProjects(freshClient),
+    getBlogPage(freshClient),
+    getProjectsPage(freshClient),
+    getBlogTotalPages(freshClient),
+    getAllTopics(freshClient),
+    getAllAuthors(freshClient),
+    getHomePage(),
+    getNowPage(),
+    getAboutPage(),
+    getContactPage(),
+  ])
 
   const staticUrls = [
     '/',
@@ -68,13 +87,20 @@ export const GET: APIRoute = async () => {
     projectsPage._updatedAt,
     ...projects.map((project) => project._updatedAt),
   ])
+  const pageLastModified: Record<string, string | undefined> = {
+    '/': homePage?._updatedAt,
+    '/blog': latestPostUpdate,
+    '/guides': latestPostUpdate,
+    '/topics': latestDate(topics.map((topic) => topic._updatedAt)),
+    '/now': nowPage?._updatedAt,
+    '/about': aboutPage?._updatedAt,
+    '/projects': latestProjectUpdate,
+    '/contact': contactPage?._updatedAt,
+  }
   const staticUrlEntries = [...staticUrls, ...blogPageUrls].map((url) => {
     const lastModified =
-      url === '/blog'
-        ? latestPostUpdate
-        : url === '/projects'
-          ? latestProjectUpdate
-          : undefined
+      pageLastModified[url] ??
+      (url.startsWith('/blog/page/') ? latestPostUpdate : undefined)
     return `  <url><loc>${SITE_DOMAIN}${url}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
   })
   const postUrlEntries = posts.map((post) => {

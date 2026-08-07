@@ -94,6 +94,7 @@ export type ProjectSlug = { slug: { current: string } }
 
 // Page singleton types
 export interface HomePage {
+  _updatedAt?: string
   heroDescription: string
   technologiesSectionTitle: string
   technologies: string[]
@@ -105,6 +106,7 @@ export interface HomePage {
 }
 
 export interface NowPage {
+  _updatedAt?: string
   period: string
   title: string
   intro: string
@@ -120,6 +122,7 @@ export interface AboutPageSection {
 }
 
 export interface AboutPage {
+  _updatedAt?: string
   title: string
   intro: string
   sections?: AboutPageSection[]
@@ -143,6 +146,7 @@ export interface ProjectsPage {
 }
 
 export interface ContactPage {
+  _updatedAt?: string
   title: string
   description: string
   alternativeContactTitle?: string
