@@ -100,10 +100,13 @@ jobs:
             printf 'Checking cache policy for %s%s\n' "$origin" "$route"
             headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$origin$route")
             printf '%s\n' "$headers" | grep -Fqi 'cache-control: public, max-age=3600, stale-while-revalidate=86400'
+            printf '%s\n' "$headers" | grep -Fqi 'stale-if-error=86400'
           done
           printf 'Checking %s/health\n' "$origin"
           health=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/health")
           printf '%s' "$health" | jq --exit-status '.ok == true and .service == "loke.dev"' >/dev/null
+          # The inner shell must expand $1, not the outer workflow shell.
+          # shellcheck disable=SC2016
           printf '%s' "$sitemap" \
             | sed -n 's#.*<loc>\(.*\)</loc>.*#\1#p' \
             | sed "s#https://loke.dev#$origin#" \
