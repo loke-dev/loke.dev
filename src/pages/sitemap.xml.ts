@@ -104,9 +104,11 @@ export const GET: APIRoute = async () => {
     return `  <url><loc>${escapeXml(`${SITE_DOMAIN}${url}`)}</loc>${normalizedLastModified ? `<lastmod>${normalizedLastModified}</lastmod>` : ''}</url>`
   })
   const postUrlEntries = posts.map((post) => {
-    const lastModified = toIsoDate(
-      post.lastModified ?? post._updatedAt ?? post.date
-    )
+    const lastModified = latestDate([
+      post.lastModified,
+      post._updatedAt,
+      post.date,
+    ])
     return `  <url><loc>${escapeXml(`${SITE_DOMAIN}/blog/${post.slug.current}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ''}</url>`
   })
   const topicUrlEntries = topics.map((topic) => {
