@@ -1,4 +1,5 @@
 ---
+import { toIsoDate } from '@/utils/date'
 import { formatDate } from '@/lib/sanity/helpers'
 import type { PostListItem } from '@/lib/sanity/types'
 
@@ -28,48 +29,53 @@ const { posts } = Astro.props
             </div>
           </div>
           <ul class="mt-8 grid gap-4 md:grid-cols-3">
-            {posts.map((post) => (
-              <li>
-                <a
-                  href={`/blog/${post.slug.current}`}
-                  data-astro-prefetch="hover"
-                  class="group border-border bg-background/80 after:via-accent/60 hover:border-accent/50 focus-visible:outline-accent relative flex h-full flex-col overflow-hidden rounded-xl border p-4 transition-[transform,border-color,box-shadow] duration-200 after:pointer-events-none after:absolute after:inset-x-4 after:top-0 after:h-px after:bg-gradient-to-r after:from-transparent after:to-transparent hover:-translate-y-1 hover:shadow-[0_16px_40px_-20px_oklch(72%_0.18_70/0.45)] focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  <span class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase">
-                    <time datetime={post.date}>{formatDate(post.date)}</time>
-                    {post.readingTime ? (
-                      <>
-                        <span aria-hidden="true"> · </span>
-                        {post.readingTime} min read
-                      </>
-                    ) : null}
-                  </span>
-                  <span class="text-foreground group-hover:text-accent mt-2 text-base font-semibold transition-colors">
-                    {post.title}
-                  </span>
-                  <span class="text-muted-foreground mt-2 line-clamp-2 text-sm">
-                    {post.description}
-                  </span>
-                  <span class="text-accent mt-4 inline-flex items-center gap-1 text-sm font-medium">
-                    Read
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                      class="transition-transform group-hover:translate-x-0.5"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-            ))}
+            {posts.map((post) => {
+              const publishedDatetime = toIsoDate(post.date)
+              return (
+                <li>
+                  <a
+                    href={`/blog/${post.slug.current}`}
+                    data-astro-prefetch="hover"
+                    class="group border-border bg-background/80 after:via-accent/60 hover:border-accent/50 focus-visible:outline-accent relative flex h-full flex-col overflow-hidden rounded-xl border p-4 transition-[transform,border-color,box-shadow] duration-200 after:pointer-events-none after:absolute after:inset-x-4 after:top-0 after:h-px after:bg-gradient-to-r after:from-transparent after:to-transparent hover:-translate-y-1 hover:shadow-[0_16px_40px_-20px_oklch(72%_0.18_70/0.45)] focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    <span class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase">
+                      <time datetime={publishedDatetime}>
+                        {formatDate(post.date)}
+                      </time>
+                      {post.readingTime ? (
+                        <>
+                          <span aria-hidden="true"> · </span>
+                          {post.readingTime} min read
+                        </>
+                      ) : null}
+                    </span>
+                    <span class="text-foreground group-hover:text-accent mt-2 text-base font-semibold transition-colors">
+                      {post.title}
+                    </span>
+                    <span class="text-muted-foreground mt-2 line-clamp-2 text-sm">
+                      {post.description}
+                    </span>
+                    <span class="text-accent mt-4 inline-flex items-center gap-1 text-sm font-medium">
+                      Read
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                        class="transition-transform group-hover:translate-x-0.5"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+              )
+            })}
           </ul>
         </div>
       </div>
