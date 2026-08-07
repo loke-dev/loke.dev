@@ -48,6 +48,9 @@ jobs:
       - name: Audit production dependencies
         run: pnpm audit --prod --audit-level=high
 
+      - name: Check peer dependencies
+        run: pnpm peers check
+
       - name: Run unit tests
         run: pnpm test
 
