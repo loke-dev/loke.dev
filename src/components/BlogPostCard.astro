@@ -11,9 +11,15 @@ interface Props {
   post: PostListItem
   imageWidth?: number
   imageHeight?: number
+  priority?: boolean
 }
 
-const { post, imageWidth = 600, imageHeight = 338 } = Astro.props
+const {
+  post,
+  imageWidth = 600,
+  imageHeight = 338,
+  priority = false,
+} = Astro.props
 
 const listQuality = 72
 const srcWidths = [
@@ -53,7 +59,8 @@ const updatedDisplay = getPostUpdatedDisplay(post)
             srcset={srcSet || undefined}
             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw"
             alt=""
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchpriority={priority ? 'high' : undefined}
             decoding="async"
             width={imageWidth}
             height={imageHeight}
