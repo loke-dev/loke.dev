@@ -81,12 +81,12 @@ jobs:
 
       - name: Run browser smoke and accessibility tests
         env:
-          BASE_URL: https://loke-dev.gitdash.workers.dev
+          BASE_URL: https://loke.dev
         run: pnpm test:e2e
 
       - name: Run Lighthouse CI audit
         env:
-          BASE_URL: https://loke-dev.gitdash.workers.dev
+          BASE_URL: https://loke.dev
         run: pnpm audit:lighthouse
 
       - name: Purge Cloudflare cache
@@ -104,7 +104,7 @@ jobs:
       - name: Smoke test public sitemap
         run: |
           set -euo pipefail
-          origin="https://loke-dev.gitdash.workers.dev"
+          origin="https://loke.dev"
           user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36 loke.dev deployment smoke test"
           sitemap=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/sitemap.xml")
           export user_agent

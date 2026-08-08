@@ -1,5 +1,5 @@
 const origin = (
-  process.env.SITE_ORIGIN ?? 'https://loke-dev.gitdash.workers.dev'
+  process.env.SITE_ORIGIN ?? 'https://loke.dev'
 ).replace(/\/$/, '')
 const userAgent =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36 loke.dev deployment smoke test'

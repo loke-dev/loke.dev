@@ -2,6 +2,13 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "loke-dev",
   "main": "./src/worker.ts",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "loke.dev",
+      "custom_domain": true,
+    },
+  ],
   "compatibility_date": "2026-06-02",
   "compatibility_flags": ["nodejs_compat"],
   "version_metadata": {
