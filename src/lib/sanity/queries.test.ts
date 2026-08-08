@@ -58,3 +58,14 @@ test('taxonomy indexes only include entries used by published posts', () => {
     assert.match(query, /references\(\^\._id\)/)
   }
 })
+
+test('post search includes topic and author metadata', () => {
+  assert.match(
+    SEARCH_POSTS_QUERY,
+    /count\(topics\[lower\(@->title\) match \$pattern\]\)/
+  )
+  assert.match(
+    SEARCH_POSTS_QUERY,
+    /lower\(coalesce\(author->name, ""\)\) match \$pattern/
+  )
+})
