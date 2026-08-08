@@ -63,6 +63,22 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+function resolveWithTimeout<T>(operation: Promise<T>, timeoutMs: number) {
+  return new Promise<T | null>((resolve) => {
+    const timer = setTimeout(() => resolve(null), timeoutMs)
+    operation.then(
+      (value) => {
+        clearTimeout(timer)
+        resolve(value)
+      },
+      () => {
+        clearTimeout(timer)
+        resolve(null)
+      }
+    )
+  })
+}
+
 function payloadSlug(value: RevalidatePayload['slug']): string | null {
   if (typeof value === 'string') return value.trim() || null
   if (value && typeof value === 'object' && typeof value.current === 'string') {
@@ -80,12 +96,12 @@ async function addRelatedPostPaths(
   if (!slug) return paths
 
   try {
-    const posts = await Promise.race([
+    const posts = await resolveWithTimeout(
       payload._type === 'topic'
         ? getPostsByTopicSlug(slug, freshClient)
         : getPostsByAuthorSlug(slug, freshClient),
-      delay(RELATED_LOOKUP_TIMEOUT_MS).then(() => null),
-    ])
+      RELATED_LOOKUP_TIMEOUT_MS
+    )
     if (!posts) return paths
     const relatedPaths = posts
       .map((post) => normalizeRevalidationPath(`/blog/${post.slug.current}`))
