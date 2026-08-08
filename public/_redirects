@@ -1,0 +1,14 @@
+# Keep the public URL shape consistent with the canonical links in the HTML.
+/about/ /about 308
+/affiliate-disclosure/ /affiliate-disclosure 308
+/brand/ /brand 308
+/changelog/ /changelog 308
+/contact/ /contact 308
+/now/ /now 308
+/privacy/ /privacy 308
+/projects/ /projects 308
+/services/ /services 308
+/tools/ /tools 308
+/tools/*/ /tools/:splat 308
+/apps/flexithyme/privacy/ /apps/flexithyme/privacy 308
+/apps/flexithyme/support/ /apps/flexithyme/support 308
