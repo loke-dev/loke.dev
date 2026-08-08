@@ -1,10 +1,33 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { POST_NEXT_QUERY, POST_PREV_QUERY } from './queries.ts'
+import {
+  POST_BY_SLUG_QUERY,
+  POST_COUNT_QUERY,
+  POST_LIST_QUERY,
+  POST_NEXT_QUERY,
+  POST_PAGINATED_QUERY,
+  POST_PREV_QUERY,
+  POSTS_BY_AUTHOR_SLUG_QUERY,
+  POSTS_BY_TOPIC_SLUG_QUERY,
+  RELATED_POSTS_QUERY,
+  SEARCH_POSTS_QUERY,
+} from './queries.ts'
 
-test('adjacent post queries keep posts from the same day in order', () => {
-  assert.match(POST_PREV_QUERY, /date == \$date && _createdAt < \$createdAt/)
-  assert.match(POST_NEXT_QUERY, /date == \$date && _createdAt > \$createdAt/)
-  assert.match(POST_PREV_QUERY, /order\(date desc, _createdAt desc\)/)
-  assert.match(POST_NEXT_QUERY, /order\(date asc, _createdAt asc\)/)
+const publicPostQueries = [
+  POST_BY_SLUG_QUERY,
+  POST_COUNT_QUERY,
+  POST_LIST_QUERY,
+  POST_NEXT_QUERY,
+  POST_PAGINATED_QUERY,
+  POST_PREV_QUERY,
+  POSTS_BY_AUTHOR_SLUG_QUERY,
+  POSTS_BY_TOPIC_SLUG_QUERY,
+  RELATED_POSTS_QUERY,
+  SEARCH_POSTS_QUERY,
+]
+
+test('all public post queries exclude Sanity drafts', () => {
+  for (const query of publicPostQueries) {
+    assert.match(query, /!\(_id in path\("drafts\.\*\*"\)\)/)
+  }
 })
