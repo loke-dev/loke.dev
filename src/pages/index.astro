@@ -31,24 +31,24 @@ const profilePortraitSrcset = `${profilePortrait256.src} 256w, ${profilePortrait
 
 const focusAreas = [
   {
-    number: '01',
     title: 'Make the first impression useful',
     description:
       'Clear positioning, strong content hierarchy, and interfaces that make the next step obvious.',
   },
   {
-    number: '02',
     title: 'Build for the long middle',
     description:
       'A maintainable system for the months after launch: content, performance, and the team using it.',
   },
   {
-    number: '03',
     title: 'Use AI where it removes real friction',
     description:
       'Practical workflows and product features with review, guardrails, and a reason to exist.',
   },
 ]
+const editableFocusAreas = page.focusAreas?.length
+  ? page.focusAreas
+  : focusAreas
 ---
 
 <BaseLayout
@@ -194,10 +194,10 @@ const focusAreas = [
           </div>
           <div class="grid gap-3 sm:grid-cols-3">
             {
-              focusAreas.map((area) => (
+              editableFocusAreas.map((area, index) => (
                 <article class="workshop-card p-5 sm:even:translate-y-8">
                   <>
-                    <p class="workshop-number">{area.number}</p>
+                    <p class="workshop-number">0{index + 1}</p>
                     <h3 class="mt-10 text-xl leading-tight font-bold">
                       {area.title}
                     </h3>

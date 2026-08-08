@@ -96,6 +96,11 @@ export type ProjectSlug = { slug: { current: string } }
 export interface HomePage {
   _updatedAt?: string
   heroDescription: string
+  focusAreas?: Array<{
+    _key?: string
+    title: string
+    description: string
+  }>
   technologiesSectionTitle: string
   technologies: string[]
   blogSectionTitle: string
