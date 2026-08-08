@@ -21,6 +21,7 @@ import {
   getSanityImageSrcSet,
   getSanityImageUrl,
 } from '@/lib/sanity/helpers'
+import { urlFor } from '@/lib/sanity/image'
 import { getPostUpdatedDisplay } from '@/lib/sanity/post-display'
 import { getRequestSanityClient } from '@/lib/sanity/preview-client'
 import {
@@ -61,6 +62,9 @@ const modifiedTime = post
   : undefined
 const publishedTime = post ? toIsoDate(post.date) : undefined
 const imageUrl = post ? getSanityImageUrl(post.image, 1200, 630) : null
+const ogImageUrl = post?.image
+  ? urlFor(post.image).width(1200).height(630).quality(80).format('jpg').url()
+  : null
 const imageAlt = post
   ? (post.imageAlt ?? post.image?.alt ?? `Cover image for ${post.title}`)
   : undefined
@@ -85,7 +89,7 @@ const breadcrumbSchema = post
       title={post.title}
       description={post.description}
       url={canonicalUrl}
-      image={imageUrl ?? undefined}
+      image={ogImageUrl ?? undefined}
       imageAlt={imageAlt}
       type="article"
       publishedTime={publishedTime}
