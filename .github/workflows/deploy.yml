@@ -106,8 +106,11 @@ jobs:
           for route in / /about /projects /tools '/tools?smoke=1'; do
             printf 'Checking rendered HTML body for %s%s\n' "$origin" "$route"
             body=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin$route")
-            printf '%s' "$body" | grep -Fq '<html'
-            if printf '%s' "$body" | grep -Fq 'Redirecting from'; then
+            if [[ "$body" != *'<html'* ]]; then
+              echo "Canonical route did not return an HTML document: $origin$route"
+              exit 1
+            fi
+            if [[ "$body" == *'Redirecting from'* ]]; then
               echo "Canonical route returned a redirect document: $origin$route"
               exit 1
             fi
