@@ -103,6 +103,12 @@ jobs:
             printf '%s\n' "$headers" | grep -Fqi 'stale-if-error=86400'
             printf '%s\n' "$headers" | grep -Fqi 'strict-transport-security: max-age=31536000; includeSubDomains'
           done
+          public_domain="https://loke.dev"
+          for route in / /blog; do
+            printf 'Checking public security headers for %s%s\n' "$public_domain" "$route"
+            headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$public_domain$route")
+            printf '%s\n' "$headers" | grep -Fqi 'strict-transport-security: max-age=31536000; includeSubDomains'
+          done
           printf 'Checking %s/health\n' "$origin"
           health=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/health")
           printf '%s' "$health" | jq --exit-status '.ok == true and .service == "loke.dev"' >/dev/null
