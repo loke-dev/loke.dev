@@ -9,7 +9,9 @@ const navLinks = [
   { href: '/projects', label: 'Projects' },
   { href: '/contact', label: 'Contact' },
 ]
-const topics = await getAllTopics()
+// Topics are a convenience in the navigation. Do not let a temporary CMS
+// outage take down every page that shares the header.
+const topics = await getAllTopics().catch(() => [])
 const pathname = Astro.url.pathname
 const hasCurrentTopic = topics.some((topic) =>
   isCurrentPath(`/topics/${topic.slug.current}`)
