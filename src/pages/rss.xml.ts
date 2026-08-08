@@ -32,6 +32,9 @@ export const GET: APIRoute = async () => {
         : null
       const safePostUrl = escapeXml(postUrl)
       const safeImageUrl = imageUrl ? escapeXml(imageUrl) : ''
+      const categories = post.topics
+        .map((topic) => `<category>${escapeXml(topic.title)}</category>`)
+        .join('')
       return `
     <item>
       <title>${escapeXml(post.title)}</title>
@@ -39,6 +42,7 @@ export const GET: APIRoute = async () => {
       <link>${safePostUrl}</link>
       <guid isPermaLink="true">${safePostUrl}</guid>
       ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ''}
+      ${categories}
       <author>${escapeXml(`${SITE_CONTACT_EMAIL} (${AUTHOR_NAME})`)}</author>
       ${safeImageUrl ? `<media:content url="${safeImageUrl}" type="image/jpeg" medium="image" />` : ''}
     </item>`
