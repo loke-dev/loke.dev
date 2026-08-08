@@ -1,6 +1,9 @@
 {
   "name": "Loke.dev",
   "short_name": "Loke.dev",
+  "id": "/",
+  "lang": "en",
+  "scope": "/",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",
