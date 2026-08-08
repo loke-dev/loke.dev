@@ -53,17 +53,38 @@ function toMutableResponse(response: Response): Response {
   })
 }
 
+function withSecurityHeaders(
+  response: Response,
+  allowStudioFrame: boolean
+): Response {
+  const headers = new Headers(response.headers)
+  for (const [key, value] of Object.entries(
+    getSecurityHeaders({ allowStudioFrame })
+  )) {
+    headers.set(key, value)
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context
   const pathname = url.pathname
+  const previewRequest =
+    !context.isPrerendered && isStudioPreviewRequest(request)
 
   const canonicalRedirect = getCanonicalPathRedirect(url)
   if (canonicalRedirect) {
-    return Response.redirect(canonicalRedirect, 308)
+    return withSecurityHeaders(
+      Response.redirect(canonicalRedirect, 308),
+      previewRequest
+    )
   }
 
-  const previewRequest =
-    !context.isPrerendered && isStudioPreviewRequest(request)
   const cacheable = !previewRequest && isCacheableRequest(request, pathname)
   const cache =
     cacheable && typeof caches !== 'undefined'
@@ -87,7 +108,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       if (Number.isFinite(expiresAt) && expiresAt > Date.now()) {
         // Cache API responses expose immutable headers. Astro finalizes every
         // response by adding headers, so return a mutable equivalent instead.
-        return toMutableResponse(cached)
+        return withSecurityHeaders(toMutableResponse(cached), previewRequest)
       }
 
       // Entries from before explicit expiry tracking are also treated as stale.
@@ -95,14 +116,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  const response = await next()
-
-  const securityHeaders = getSecurityHeaders({
-    allowStudioFrame: !context.isPrerendered && previewRequest,
-  })
-  for (const [key, value] of Object.entries(securityHeaders)) {
-    response.headers.set(key, value)
-  }
+  const response = withSecurityHeaders(await next(), previewRequest)
   if (isApiPath(pathname)) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow')
   }
