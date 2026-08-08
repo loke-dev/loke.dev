@@ -1,8 +1,31 @@
 const DEFAULT_DEPLOY_EVENT = 'sanity-content-update'
 const REVALIDATION_PATH_ORIGIN = 'https://revalidation.invalid'
 const EXTERNAL_REQUEST_TIMEOUT_MS = 8_000
+const TYPE_PATHS: Record<string, string[]> = {
+  post: ['/', '/blog', '/guides', '/topics', '/rss.xml', '/sitemap.xml'],
+  topic: ['/topics', '/sitemap.xml'],
+  author: ['/sitemap.xml'],
+  homePage: ['/'],
+  nowPage: ['/now'],
+  blogPage: ['/blog'],
+  aboutPage: ['/about'],
+  projectsPage: ['/projects'],
+  project: ['/', '/projects'],
+  contactPage: ['/contact'],
+  changelog: ['/changelog'],
+}
 
 export type RuntimeEnvironment = Record<string, unknown>
+
+export interface RevalidatePayload {
+  _type?: string
+  slug?: string | { current?: string }
+  authorSlug?: string | { current?: string }
+  topicSlugs?: Array<string | { current?: string }>
+  path?: string
+  route?: string
+  paths?: string[]
+}
 
 function env(
   name: string,
@@ -47,6 +70,71 @@ export function normalizeRevalidationPath(value: string): string | null {
   } catch {
     return null
   }
+}
+
+function extractSlug(slug: RevalidatePayload['slug']): string | null {
+  if (typeof slug === 'string') return slug.trim() || null
+  if (slug && typeof slug === 'object' && typeof slug.current === 'string') {
+    return slug.current.trim() || null
+  }
+  return null
+}
+
+function isSafeSlug(value: string): boolean {
+  return /^[a-z0-9][a-z0-9_-]*$/i.test(value)
+}
+
+function addSlugPath(paths: Set<string>, prefix: string, value: unknown) {
+  const slug = extractSlug(value as RevalidatePayload['slug'])
+  if (slug && isSafeSlug(slug)) paths.add(`${prefix}/${slug}`)
+}
+
+export function collectPaths(payload: RevalidatePayload): string[] {
+  const paths = new Set<string>()
+
+  if (payload._type) {
+    for (const mappedPath of TYPE_PATHS[payload._type] ?? []) {
+      paths.add(mappedPath)
+    }
+  }
+
+  const slug = extractSlug(payload.slug)
+  if (slug) {
+    const slugPathByType: Record<string, string[]> = {
+      post: [`/blog/${slug}`, '/blog'],
+      topic: [`/topics/${slug}`, '/topics'],
+      author: [`/authors/${slug}`],
+    }
+
+    for (const path of slugPathByType[payload._type ?? ''] ?? []) {
+      paths.add(path)
+    }
+  }
+
+  if (payload._type === 'post') {
+    addSlugPath(paths, '/authors', payload.authorSlug)
+    for (const topicSlug of payload.topicSlugs ?? []) {
+      addSlugPath(paths, '/topics', topicSlug)
+    }
+  }
+
+  const singularCandidates = [payload.path, payload.route]
+  for (const candidate of singularCandidates) {
+    if (typeof candidate !== 'string') continue
+    const normalized = normalizeRevalidationPath(candidate)
+    if (normalized) paths.add(normalized)
+  }
+
+  if (Array.isArray(payload.paths)) {
+    for (const path of payload.paths) {
+      if (typeof path !== 'string') continue
+      const normalized = normalizeRevalidationPath(path)
+      if (normalized) paths.add(normalized)
+    }
+  }
+
+  if (paths.size === 0) paths.add('/')
+  return [...paths]
 }
 
 export function getDeployRepositoryConfig(runtimeEnv?: RuntimeEnvironment) {

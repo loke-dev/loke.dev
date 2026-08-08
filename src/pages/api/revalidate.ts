@@ -5,11 +5,12 @@ import { env as workerEnv } from 'cloudflare:workers'
 import { readRequestBody } from '@/lib/request-body.server'
 import {
   buildPurgeUrls,
-  normalizeRevalidationPath,
+  collectPaths,
   purgeCloudflareCache,
   SSR_WARM_PATHS,
   triggerSiteDeploy,
   warmCachePaths,
+  type RevalidatePayload,
   type RuntimeEnvironment,
 } from '@/lib/revalidate.server'
 
@@ -17,44 +18,12 @@ export const prerender = false
 
 const MAX_BODY_BYTES = 64 * 1024
 
-interface RevalidatePayload {
-  _type?: string
-  slug?: string | { current?: string }
-  path?: string
-  route?: string
-  paths?: string[]
-}
-
 function getRuntimeString(
   runtimeEnv: RuntimeEnvironment | undefined,
   name: string
 ): string | undefined {
   const value = runtimeEnv?.[name]
   return typeof value === 'string' && value.trim() ? value.trim() : undefined
-}
-
-const TYPE_PATHS: Record<string, string[]> = {
-  post: ['/', '/blog', '/guides', '/topics', '/rss.xml', '/sitemap.xml'],
-  topic: ['/topics', '/sitemap.xml'],
-  author: ['/sitemap.xml'],
-  homePage: ['/'],
-  nowPage: ['/now'],
-  blogPage: ['/blog'],
-  aboutPage: ['/about'],
-  projectsPage: ['/projects'],
-  project: ['/', '/projects'],
-  contactPage: ['/contact'],
-  changelog: ['/changelog'],
-}
-
-function extractSlug(slug: RevalidatePayload['slug']): string | null {
-  if (typeof slug === 'string') {
-    return slug.trim() || null
-  }
-  if (slug && typeof slug === 'object' && typeof slug.current === 'string') {
-    return slug.current.trim() || null
-  }
-  return null
 }
 
 function constantTimeEquals(a: string, b: string): boolean {
@@ -85,54 +54,6 @@ function parsePayload(rawBody: string): RevalidatePayload | null {
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-function collectPaths(payload: RevalidatePayload): string[] {
-  const paths = new Set<string>()
-
-  if (payload._type) {
-    for (const mappedPath of TYPE_PATHS[payload._type] ?? []) {
-      paths.add(mappedPath)
-    }
-  }
-
-  const slug = extractSlug(payload.slug)
-  if (slug) {
-    const slugPathByType: Record<string, string[]> = {
-      post: [`/blog/${slug}`, '/blog'],
-      topic: [`/topics/${slug}`, '/topics'],
-      author: [`/authors/${slug}`],
-    }
-
-    for (const path of slugPathByType[payload._type ?? ''] ?? []) {
-      paths.add(path)
-    }
-  }
-
-  const singularCandidates = [payload.path, payload.route]
-  for (const candidate of singularCandidates) {
-    if (typeof candidate !== 'string') continue
-    const normalized = normalizeRevalidationPath(candidate)
-    if (normalized) {
-      paths.add(normalized)
-    }
-  }
-
-  if (Array.isArray(payload.paths)) {
-    for (const path of payload.paths) {
-      if (typeof path !== 'string') continue
-      const normalized = normalizeRevalidationPath(path)
-      if (normalized) {
-        paths.add(normalized)
-      }
-    }
-  }
-
-  if (paths.size === 0) {
-    paths.add('/')
-  }
-
-  return [...paths]
 }
 
 function getIncomingSecret(request: Request): string | null {
