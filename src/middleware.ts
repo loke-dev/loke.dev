@@ -4,7 +4,8 @@ import { getPreviewPerspective } from '@/lib/sanity/draft-mode'
 
 const CACHEABLE_PATHS =
   /^\/(?:blog(?:\/|$)|guides(?:\/|$)|topics(?:\/|$)|authors(?:\/|$)|sitemap\.xml$|rss\.xml$)/
-const CANONICAL_NO_SLASH_PATHS = /^\/(?:blog|guides|topics|authors)(?:\/.+)?\/$/
+const CANONICAL_NO_SLASH_PATHS =
+  /^\/(?:about|affiliate-disclosure|apps|authors|blog|brand|changelog|contact|guides|now|privacy|projects|services|tools|topics)(?:\/[^?]*)?\/$/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
 const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
 
