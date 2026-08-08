@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro'
+import { normalizeSearchQuery } from '@/lib/sanity/search'
 import { runSearch } from '@/lib/sanity/search.server'
 import { checkSearchRateLimit } from '@/lib/search-rate-limit.server'
 
@@ -13,6 +14,14 @@ const NO_STORE_HEADERS = {
 }
 
 export const GET: APIRoute = async ({ url, clientAddress }) => {
+  const q = url.searchParams.get('q') ?? ''
+  if (!normalizeSearchQuery(q)) {
+    return Response.json(
+      { error: 'Query must be between 2 and 100 characters.' },
+      { status: 400, headers: NO_STORE_HEADERS }
+    )
+  }
+
   const ip = clientAddress ?? 'unknown'
   if (!checkSearchRateLimit(ip)) {
     return Response.json(
@@ -23,8 +32,6 @@ export const GET: APIRoute = async ({ url, clientAddress }) => {
       }
     )
   }
-
-  const q = url.searchParams.get('q') ?? ''
 
   const result = await runSearch(q)
   if (!result.ok) {
