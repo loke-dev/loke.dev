@@ -31,6 +31,8 @@ const modifiedTime = author
     ])
   : undefined
 const image = author ? getSanityImageUrl(author.image, 400, 400) : null
+const profileLinks =
+  author?.sameAs?.filter((profile) => /^https?:\/\//i.test(profile)) ?? []
 const breadcrumbSchema = author
   ? {
       '@context': 'https://schema.org',
@@ -59,7 +61,7 @@ const profileSchema = author
         ...(author.bio ? { description: author.bio } : {}),
         ...(author.role ? { jobTitle: author.role } : {}),
         ...(image ? { image } : {}),
-        ...(author.sameAs?.length ? { sameAs: author.sameAs } : {}),
+        ...(profileLinks.length ? { sameAs: profileLinks } : {}),
       },
     }
   : null
@@ -124,9 +126,9 @@ function getProfileLabel(profile: string): string {
           {author.bio ? (
             <p class="text-muted-foreground mt-4 text-lg">{author.bio}</p>
           ) : null}
-          {author.sameAs?.length ? (
+          {profileLinks.length ? (
             <ul class="mt-5 flex flex-wrap gap-3">
-              {author.sameAs.map((profile) => (
+              {profileLinks.map((profile) => (
                 <li>
                   <a
                     class="text-accent underline underline-offset-4"
