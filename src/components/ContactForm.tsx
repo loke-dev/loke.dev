@@ -144,7 +144,12 @@ export default function ContactForm() {
     <Show
       when={state().status === 'success'}
       fallback={
-        <form onSubmit={handleSubmit} class="space-y-6" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          class="space-y-6"
+          noValidate
+          aria-busy={isSubmitting()}
+        >
           {(() => {
             const s = state()
             return s.status === 'error' ? (
@@ -233,10 +238,15 @@ export default function ContactForm() {
             <input name="honeypot" tabIndex={-1} autocomplete="off" />
           </div>
 
-          <div id="turnstile-widget" />
+          <div
+            id="turnstile-widget"
+            aria-describedby={
+              errors().captchaToken ? 'captcha-error' : undefined
+            }
+          />
           <Show when={errors().captchaToken}>
             {(msg) => (
-              <p class="text-sm text-red-500" role="alert">
+              <p id="captcha-error" class="text-sm text-red-500" role="alert">
                 {msg()}
               </p>
             )}
