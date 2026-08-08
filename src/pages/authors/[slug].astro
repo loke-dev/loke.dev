@@ -1,6 +1,7 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { latestIsoDate } from '@/utils/date'
+import { safeExternalUrl } from '@/utils/external-url'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAuthorBySlug, getPostsByAuthorSlug } from '@/utils/sanity.queries'
@@ -32,7 +33,10 @@ const modifiedTime = author
   : undefined
 const image = author ? getSanityImageUrl(author.image, 400, 400) : null
 const profileLinks =
-  author?.sameAs?.filter((profile) => /^https?:\/\//i.test(profile)) ?? []
+  author?.sameAs?.flatMap((profile) => {
+    const safeUrl = safeExternalUrl(profile)
+    return safeUrl ? [safeUrl] : []
+  }) ?? []
 const breadcrumbSchema = author
   ? {
       '@context': 'https://schema.org',
