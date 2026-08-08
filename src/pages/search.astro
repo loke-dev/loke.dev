@@ -1,4 +1,5 @@
 ---
+import { safeExternalUrl } from '@/utils/external-url'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import BaseLayout from '@/layouts/BaseLayout.astro'
@@ -152,8 +153,11 @@ const totalHits =
               </h2>
               <ul class="flex flex-col gap-3">
                 {payload.projects.map((project) => {
-                  const href = project.url ?? project.github ?? '/projects'
-                  const external = Boolean(project.url ?? project.github)
+                  const href =
+                    safeExternalUrl(project.url) ??
+                    safeExternalUrl(project.github) ??
+                    '/projects'
+                  const external = href !== '/projects'
                   return (
                     <li>
                       <a

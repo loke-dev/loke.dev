@@ -1,4 +1,5 @@
 ---
+import { safeExternalUrl } from '@/utils/external-url'
 import { getSanityImageSrcSet, getSanityImageUrl } from '@/lib/sanity/helpers'
 import type { Project } from '@/lib/sanity/types'
 
@@ -19,6 +20,8 @@ const {
 const width = featured ? 1000 : 760
 const height = featured ? 620 : 500
 const listQuality = 72
+const projectUrl = safeExternalUrl(project.url)
+const githubUrl = safeExternalUrl(project.github)
 const srcWidths = [Math.round(width / 2), width, Math.round(width * 1.5)]
 const imageUrl = getSanityImageUrl(project.image, width, height, listQuality)
 const srcSet = getSanityImageSrcSet(
@@ -125,9 +128,9 @@ const sourceLinkLabel = template ? 'View source' : 'GitHub'
 
     <div class="mt-auto flex flex-wrap gap-3 px-6 pb-6 md:px-7 md:pb-7">
       {
-        project.url && (
+        projectUrl && (
           <a
-            href={project.url}
+            href={projectUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${projectLinkLabel}: ${project.title} (opens in new tab)`}
@@ -138,9 +141,9 @@ const sourceLinkLabel = template ? 'View source' : 'GitHub'
         )
       }
       {
-        project.github && (
+        githubUrl && (
           <a
-            href={project.github}
+            href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${sourceLinkLabel}: ${project.title} (opens in new tab)`}

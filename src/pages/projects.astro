@@ -1,6 +1,7 @@
 ---
 import { CACHE_CONTROL } from '@/utils/cache-control'
 import { latestIsoDate, toIsoDate } from '@/utils/date'
+import { safeExternalUrl } from '@/utils/external-url'
 import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import { getAllProjects, getProjectsPage } from '@/utils/sanity.queries'
@@ -64,7 +65,9 @@ const projectSchema = {
       })),
     },
     ...projects.map((project) => {
-      const url = project.url ?? project.github
+      const projectUrl = safeExternalUrl(project.url)
+      const githubUrl = safeExternalUrl(project.github)
+      const url = projectUrl ?? githubUrl
       const isTemplate = project.kind === 'template'
       const modifiedTime = toIsoDate(project._updatedAt)
 
@@ -77,10 +80,10 @@ const projectSchema = {
         isAccessibleForFree: true,
         ...(url ? { url } : {}),
         ...(modifiedTime ? { dateModified: modifiedTime } : {}),
-        ...(project.github
+        ...(githubUrl
           ? isTemplate
-            ? { codeRepository: project.github }
-            : { sameAs: [project.github] }
+            ? { codeRepository: githubUrl }
+            : { sameAs: [githubUrl] }
           : {}),
         ...(isTemplate
           ? { programmingLanguage: project.technologies }

@@ -1,4 +1,5 @@
 import { latestIsoDate, toIsoDate } from '@/utils/date'
+import { safeExternalUrl } from '@/utils/external-url'
 import { AUTHOR_NAME, SITE_DOMAIN } from '@/utils/meta'
 import { getSanityImageUrl } from './helpers'
 import type { Post, Project } from './types'
@@ -75,12 +76,13 @@ export function createBreadcrumbSchema(
 }
 
 export function createProjectSchema(project: Project) {
+  const projectUrl = safeExternalUrl(project.url)
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: project.title,
     description: project.description,
-    url: project.url || `${SITE_DOMAIN}/projects`,
+    url: projectUrl || `${SITE_DOMAIN}/projects`,
     author: {
       '@type': 'Person',
       name: AUTHOR_NAME,

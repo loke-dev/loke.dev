@@ -1,4 +1,5 @@
 import { createSignal, onCleanup, onMount, Show } from 'solid-js'
+import { safeExternalUrl } from '@/utils/external-url'
 import { formatDate } from '@/utils/format-date'
 import type { SearchPayload } from '@/lib/sanity/search-types'
 
@@ -39,8 +40,11 @@ function PopoverResults(props: { data: SearchPayload; onPick: () => void }) {
         </p>
         <ul class="flex flex-col gap-0.5">
           {props.data.projects.map((project) => {
-            const href = project.url ?? project.github ?? '/projects'
-            const external = Boolean(project.url ?? project.github)
+            const href =
+              safeExternalUrl(project.url) ??
+              safeExternalUrl(project.github) ??
+              '/projects'
+            const external = href !== '/projects'
             return (
               <li>
                 <a
