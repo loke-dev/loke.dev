@@ -9,7 +9,13 @@ const withinRateLimit = createInMemoryRateLimiter({
   maxRequests: 12,
 })
 
-const NO_STORE_HEADERS = { 'Cache-Control': 'private, no-store' }
+const PRIVATE_HEADERS = {
+  'X-Robots-Tag': 'noindex, nofollow',
+}
+const NO_STORE_HEADERS = {
+  ...PRIVATE_HEADERS,
+  'Cache-Control': 'private, no-store',
+}
 
 export const GET: APIRoute = async ({ url, clientAddress }) => {
   if (!withinRateLimit(clientAddress ?? 'unknown')) {
@@ -25,7 +31,10 @@ export const GET: APIRoute = async ({ url, clientAddress }) => {
   const target = url.searchParams.get('url') ?? ''
   try {
     return Response.json(await inspectPublicUrl(target), {
-      headers: { 'Cache-Control': 'private, max-age=60' },
+      headers: {
+        ...PRIVATE_HEADERS,
+        'Cache-Control': 'private, max-age=60',
+      },
     })
   } catch (error) {
     const inspectionError = error instanceof InspectionError ? error : undefined

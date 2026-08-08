@@ -4,7 +4,13 @@ import { checkSearchRateLimit } from '@/lib/search-rate-limit.server'
 
 export const prerender = false
 
-const NO_STORE_HEADERS = { 'Cache-Control': 'private, no-store' }
+const PRIVATE_HEADERS = {
+  'X-Robots-Tag': 'noindex, nofollow',
+}
+const NO_STORE_HEADERS = {
+  ...PRIVATE_HEADERS,
+  'Cache-Control': 'private, no-store',
+}
 
 export const GET: APIRoute = async ({ url, clientAddress }) => {
   const ip = clientAddress ?? 'unknown'
@@ -30,6 +36,7 @@ export const GET: APIRoute = async ({ url, clientAddress }) => {
 
   return Response.json(result.data, {
     headers: {
+      ...PRIVATE_HEADERS,
       'Cache-Control': 'private, max-age=60',
     },
   })
