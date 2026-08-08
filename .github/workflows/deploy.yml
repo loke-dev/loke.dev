@@ -119,6 +119,14 @@ jobs:
               echo "Canonical route returned a redirect document: $origin$route"
               exit 1
             fi
+            if [[ "$body" != *'<link rel="canonical"'* ]]; then
+              echo "Canonical route is missing a canonical link: $origin$route"
+              exit 1
+            fi
+            if [[ "$body" != *'property="og:title"'* ]]; then
+              echo "Canonical route is missing an Open Graph title: $origin$route"
+              exit 1
+            fi
           done
           public_domain="https://loke.dev"
           for route in / /blog; do
