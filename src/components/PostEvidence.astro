@@ -74,6 +74,7 @@ const hasEvidence = sourceLinks.length > 0 || hasReproduction || hasTestScope
               href={reproductionUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Open the repository (opens in new tab)"
             >
               Open the repository
             </a>
@@ -105,6 +106,7 @@ const hasEvidence = sourceLinks.length > 0 || hasReproduction || hasTestScope
                   href={source.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`${source.title} (opens in new tab)`}
                   class="decoration-accent/50 hover:text-accent font-medium underline underline-offset-4"
                 >
                   {source.title}
