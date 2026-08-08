@@ -41,21 +41,49 @@ Astro.response.headers.set(
 const { slug } = Astro.params
 if (!slug) return Astro.redirect('/blog', 302)
 
-const post = await getPostBySlug(slug, contentClient)
-if (!post) {
-  const redirect = await getRedirectByFrom(`/blog/${slug}`)
-  if (redirect)
-    return Astro.redirect(redirect.to, redirect.permanent === false ? 302 : 301)
-  Astro.response.status = 410
+let post: Awaited<ReturnType<typeof getPostBySlug>> = null
+let postUnavailable = false
+try {
+  post = await getPostBySlug(slug, contentClient)
+} catch {
+  postUnavailable = true
+  Astro.response.status = 503
+  Astro.response.headers.set('Cache-Control', 'no-store')
+}
+if (!post && !postUnavailable) {
+  try {
+    const redirect = await getRedirectByFrom(`/blog/${slug}`)
+    if (redirect)
+      return Astro.redirect(
+        redirect.to,
+        redirect.permanent === false ? 302 : 301
+      )
+  } catch {
+    postUnavailable = true
+    Astro.response.status = 503
+    Astro.response.headers.set('Cache-Control', 'no-store')
+  }
+  if (!postUnavailable) Astro.response.status = 410
 }
 
 const topicIds = post?.topics.map((topic) => topic._id) ?? []
-const [relatedPosts, adjacent] = post
-  ? await Promise.all([
+let relatedPosts: Awaited<ReturnType<typeof getRelatedPosts>> = []
+let adjacent: Awaited<ReturnType<typeof getAdjacentPosts>> = {
+  prev: null,
+  next: null,
+}
+if (post) {
+  try {
+    const [nextRelatedPosts, nextAdjacent] = await Promise.all([
       getRelatedPosts(post._id, topicIds, 3, contentClient),
       getAdjacentPosts(post.date, post._createdAt, contentClient),
     ])
-  : [[], { prev: null, next: null }]
+    relatedPosts = nextRelatedPosts
+    adjacent = nextAdjacent
+  } catch {
+    // The article itself is still useful when optional navigation is unavailable.
+  }
+}
 const updatedMeta = post ? getPostUpdatedDisplay(post) : null
 const modifiedTime = post
   ? latestIsoDate([post.lastModified, post._updatedAt, post.date])
@@ -84,7 +112,7 @@ const breadcrumbSchema = post
 ---
 
 {
-  post ? (
+  post && !postUnavailable ? (
     <BaseLayout
       title={post.title}
       description={post.description}
@@ -197,22 +225,33 @@ const breadcrumbSchema = post
     </BaseLayout>
   ) : (
     <BaseLayout
-      title="Article no longer available"
-      description="This article was retired because it no longer met loke.dev's editorial standards."
+      title={
+        postUnavailable
+          ? 'Article temporarily unavailable'
+          : 'Article no longer available'
+      }
+      description={
+        postUnavailable
+          ? 'This article could not be loaded right now.'
+          : "This article was retired because it no longer met loke.dev's editorial standards."
+      }
       url={canonicalUrl}
       noindex={true}
     >
       <section class="mx-auto max-w-2xl px-4 py-24 text-center">
         <>
           <p class="text-accent text-sm font-semibold tracking-wider uppercase">
-            410 · Gone
+            {postUnavailable ? 'Try again soon' : '410 · Gone'}
           </p>
           <h1 class="mt-3 text-4xl font-bold">
-            This article has been retired.
+            {postUnavailable
+              ? 'This article is taking a short break.'
+              : 'This article has been retired.'}
           </h1>
           <p class="text-muted-foreground mt-4 text-lg">
-            It no longer met our editorial standards. Browse the current,
-            maintained guides instead.
+            {postUnavailable
+              ? 'The content service did not respond. Please try again in a moment.'
+              : 'It no longer met our editorial standards. Browse the current, maintained guides instead.'}
           </p>
           <a
             class="bg-primary text-primary-foreground mt-8 inline-flex rounded-md px-4 py-2 font-medium"
