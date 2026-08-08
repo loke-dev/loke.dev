@@ -2,13 +2,9 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "loke-dev",
   "main": "./src/worker.ts",
+  // The production custom domain is managed in Cloudflare and already points
+  // to this Worker. Keep route lifecycle out of the deploy token's scope.
   "workers_dev": false,
-  "routes": [
-    {
-      "pattern": "loke.dev",
-      "custom_domain": true,
-    },
-  ],
   "compatibility_date": "2026-06-02",
   "compatibility_flags": ["nodejs_compat"],
   "version_metadata": {
