@@ -1,6 +1,7 @@
 ---
 import { toHTML } from '@portabletext/to-html'
 import { createImageUrlBuilder } from '@sanity/image-url'
+import { safeLinkHref } from '@/utils/safe-link'
 import { getSanityImageDimensions } from '@/utils/sanity-image'
 import { renderArticleDiagram } from '@/lib/article-diagrams'
 import { client } from '@/lib/sanity/client'
@@ -18,17 +19,6 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
-}
-
-function safeLinkHref(value: unknown): string {
-  if (typeof value !== 'string') return '#'
-  const href = value.trim()
-  if (!href) return '#'
-  const compactHref = href.replace(/[\u0000-\u0020]/g, '')
-  const scheme = /^([a-z][a-z\d+.-]*):/i.exec(compactHref)?.[1]?.toLowerCase()
-  return !scheme || ['http', 'https', 'mailto', 'tel'].includes(scheme)
-    ? href
-    : '#'
 }
 
 const { value } = Astro.props
