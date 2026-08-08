@@ -9,11 +9,16 @@ const withinRateLimit = createInMemoryRateLimiter({
   maxRequests: 12,
 })
 
+const NO_STORE_HEADERS = { 'Cache-Control': 'private, no-store' }
+
 export const GET: APIRoute = async ({ url, clientAddress }) => {
   if (!withinRateLimit(clientAddress ?? 'unknown')) {
     return Response.json(
       { error: 'Too many inspections. Try again in a minute.' },
-      { status: 429, headers: { 'Retry-After': '60' } }
+      {
+        status: 429,
+        headers: { ...NO_STORE_HEADERS, 'Retry-After': '60' },
+      }
     )
   }
 
@@ -26,7 +31,10 @@ export const GET: APIRoute = async ({ url, clientAddress }) => {
     const inspectionError = error instanceof InspectionError ? error : undefined
     return Response.json(
       { error: inspectionError?.message ?? 'Inspection failed.' },
-      { status: inspectionError?.status ?? 500 }
+      {
+        status: inspectionError?.status ?? 500,
+        headers: NO_STORE_HEADERS,
+      }
     )
   }
 }
