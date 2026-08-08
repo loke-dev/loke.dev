@@ -78,12 +78,12 @@ jobs:
 
       - name: Run browser smoke and accessibility tests
         env:
-          BASE_URL: https://loke.dev
+          BASE_URL: https://loke-dev.gitdash.workers.dev
         run: pnpm test:e2e
 
       - name: Run Lighthouse CI audit
         env:
-          BASE_URL: https://loke.dev
+          BASE_URL: https://loke-dev.gitdash.workers.dev
         run: pnpm audit:lighthouse
 
       - name: Purge Cloudflare cache
