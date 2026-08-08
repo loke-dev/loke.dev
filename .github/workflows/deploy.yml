@@ -81,12 +81,14 @@ jobs:
 
       - name: Run browser smoke and accessibility tests
         env:
-          BASE_URL: https://loke.dev
+          # Use the dedicated Cloudflare custom domain so CI browser traffic
+          # does not get mixed with the public site's bot-protection rules.
+          BASE_URL: https://ci.loke.dev
         run: pnpm test:e2e
 
       - name: Run Lighthouse CI audit
         env:
-          BASE_URL: https://loke.dev
+          BASE_URL: https://ci.loke.dev
         run: pnpm audit:lighthouse
 
       - name: Purge Cloudflare cache

@@ -27,7 +27,15 @@ pnpm start
 
 ## Hosting
 
-This website is configured to use Cloudflare workers. You are free to adapt it to any hosting solution.
+This website runs on the `loke-dev` Cloudflare Worker with `loke.dev` as its
+production custom domain. Cloudflare's `workers.dev` production and preview
+URLs are disabled. `ci.loke.dev` points to the same Worker and is reserved for
+GitHub Actions browser and Lighthouse checks, so those checks do not depend on
+the public site's bot-protection behavior.
+
+Custom-domain and route lifecycle is managed in the Cloudflare dashboard;
+the GitHub deployment token is intentionally limited to uploading new Worker
+versions.
 
 ## Monitoring
 
