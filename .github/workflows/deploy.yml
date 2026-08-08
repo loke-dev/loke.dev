@@ -42,6 +42,9 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
+      - name: Lint Markdown documentation
+        run: pnpm lint:md
+
       - name: Run typecheck
         run: pnpm typecheck
 
@@ -52,7 +55,7 @@ jobs:
         run: pnpm peers check
 
       - name: Run unit tests
-        run: pnpm test
+        run: pnpm test:coverage
 
       - name: Check Cloudflare Worker configuration
         uses: loke-dev/flarecheck@v0.9.0

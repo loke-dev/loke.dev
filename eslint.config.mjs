@@ -1,10 +1,13 @@
 import eslintJs from '@eslint/js'
+import astroPlugin from 'eslint-plugin-astro'
 import tseslint from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import importPlugin from 'eslint-plugin-import'
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 
 export default [
+  ...astroPlugin.configs['flat/recommended'],
+
   // Global ignores
   {
     ignores: [

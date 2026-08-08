@@ -4,6 +4,7 @@ import { serializeJsonLd } from '@/utils/json-ld'
 import { SITE_DOMAIN } from '@/utils/meta'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatDate } from '@/lib/sanity/helpers'
+import { normalizeSearchQuery } from '@/lib/sanity/search'
 import { runSearch, type SearchPayload } from '@/lib/sanity/search.server'
 import { checkSearchRateLimit } from '@/lib/search-rate-limit.server'
 
@@ -12,15 +13,19 @@ export const prerender = false
 Astro.response.headers.set('Cache-Control', 'private, no-store')
 
 const q = Astro.url.searchParams.get('q') ?? ''
+const normalizedQuery = normalizeSearchQuery(q)
 let payload: SearchPayload | null = null
 let serverError: string | null = null
 
-if (q.trim().length >= 2) {
+if (q && !normalizedQuery) {
+  Astro.response.status = 400
+  serverError = 'Query must be between 2 and 100 characters.'
+} else if (normalizedQuery) {
   if (!checkSearchRateLimit(Astro.clientAddress ?? 'unknown')) {
     Astro.response.status = 429
     serverError = 'Too many search requests. Try again in a minute.'
   } else {
-    const result = await runSearch(q)
+    const result = await runSearch(normalizedQuery)
     if (result.ok) {
       payload = result.data
     } else {

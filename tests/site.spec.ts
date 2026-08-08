@@ -8,7 +8,7 @@ test.describe('public site smoke tests', () => {
     await page.goto('/')
 
     await expect(page).toHaveTitle(/Independent web developer/)
-    await expect(page.locator('h1')).toContainText('Make the useful thing')
+    await expect(page.locator('main h1')).toContainText('Make the useful thing')
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
       'https://loke.dev/'
@@ -30,10 +30,35 @@ test.describe('public site smoke tests', () => {
 
       expect(response?.ok()).toBeTruthy()
       await expect(page.locator('main')).toBeVisible()
-      await expect(page.locator('h1')).toBeVisible()
+      await expect(page.locator('main h1')).toBeVisible()
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(1)
     })
   }
+
+  test('search rejects queries that are too short', async ({ page }) => {
+    const response = await page.goto('/search?q=x')
+
+    expect(response?.status()).toBe(400)
+    await expect(page.getByRole('alert')).toContainText(
+      'Query must be between 2 and 100 characters.'
+    )
+  })
+
+  test('robots and sitemap expose crawlable site metadata', async ({
+    request,
+  }) => {
+    const [robots, sitemap] = await Promise.all([
+      request.get('/robots.txt'),
+      request.get('/sitemap.xml'),
+    ])
+
+    expect(robots.ok()).toBeTruthy()
+    expect(await robots.text()).toContain(
+      'Sitemap: https://loke.dev/sitemap.xml'
+    )
+    expect(sitemap.ok()).toBeTruthy()
+    expect(await sitemap.text()).toContain('<urlset')
+  })
 
   test('homepage has no automated accessibility violations', async ({
     page,
