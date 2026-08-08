@@ -73,6 +73,19 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: pnpm exec wrangler deploy
 
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser smoke and accessibility tests
+        env:
+          BASE_URL: https://loke.dev
+        run: pnpm test:e2e
+
+      - name: Run Lighthouse CI audit
+        env:
+          BASE_URL: https://loke.dev
+        run: pnpm audit:lighthouse
+
       - name: Purge Cloudflare cache
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}

@@ -148,10 +148,11 @@ export default [
 
   // Node files
   {
-    files: ['eslint.config.mjs'],
+    files: ['eslint.config.mjs', 'lighthouserc.cjs'],
     languageOptions: {
       globals: {
-        node: true,
+        module: 'readonly',
+        process: 'readonly',
       },
     },
   },

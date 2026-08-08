@@ -15,6 +15,7 @@ import {
   PROJECTS_QUERY,
   RELATED_POSTS_QUERY,
   SEARCH_POSTS_QUERY,
+  SEARCH_PROJECTS_QUERY,
   TOPIC_BY_SLUG_QUERY,
 } from './queries.ts'
 
@@ -73,4 +74,15 @@ test('post search includes topic and author metadata', () => {
     /score\(boost\(lower\(title\) match \$pattern, 4\)/
   )
   assert.match(SEARCH_POSTS_QUERY, /order\(_score desc, date desc\)/)
+})
+
+test('project search ranks title and description matches', () => {
+  assert.match(
+    SEARCH_PROJECTS_QUERY,
+    /score\(boost\(lower\(title\) match \$pattern, 4\)/
+  )
+  assert.match(
+    SEARCH_PROJECTS_QUERY,
+    /order\(_score desc, order asc, year desc\)/
+  )
 })
