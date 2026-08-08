@@ -5,7 +5,7 @@ test('mobile navigation can close, navigate, and open again', async ({
 }) => {
   await page.goto('/')
 
-  const menuButton = page.locator('[data-mobile-nav-open]')
+  const menuButton = page.locator('[data-mobile-nav-open]:visible')
   const dialog = page.locator('#mobile-nav-dialog')
 
   await menuButton.click()
@@ -16,6 +16,6 @@ test('mobile navigation can close, navigate, and open again', async ({
   await expect(page).toHaveURL(/\/blog$/)
   await expect(dialog).not.toBeVisible()
 
-  await page.locator('[data-mobile-nav-open]').click()
+  await page.locator('[data-mobile-nav-open]:visible').click()
   await expect(page.locator('#mobile-nav-dialog')).toBeVisible()
 })
