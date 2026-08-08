@@ -21,6 +21,7 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
+    inLanguage: 'en',
     image: imageUrl,
     ...(toIsoDate(post.date) || toIsoDate(post._createdAt)
       ? {
@@ -49,7 +50,10 @@ export function createArticleSchema(post: Post, fallbackImageUrl: string) {
       '@id': `${SITE_DOMAIN}/blog/${post.slug.current}`,
     },
     ...(post.topics.length > 0
-      ? { keywords: post.topics.map((topic) => topic.title).join(', ') }
+      ? {
+          articleSection: post.topics.map((topic) => topic.title),
+          keywords: post.topics.map((topic) => topic.title).join(', '),
+        }
       : {}),
     ...(post.wordCount && post.wordCount > 0
       ? { wordCount: post.wordCount }
