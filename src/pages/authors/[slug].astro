@@ -16,9 +16,17 @@ Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
 const { slug } = Astro.params
 const authorSlug = slug ?? ''
 let author: Awaited<ReturnType<typeof getAuthorBySlug>> = null
+let posts: Awaited<ReturnType<typeof getPostsByAuthorSlug>> = []
 let authorUnavailable = false
 try {
-  author = authorSlug ? await getAuthorBySlug(authorSlug) : null
+  if (authorSlug) {
+    const [loadedAuthor, loadedPosts] = await Promise.all([
+      getAuthorBySlug(authorSlug),
+      getPostsByAuthorSlug(authorSlug),
+    ])
+    author = loadedAuthor
+    posts = loadedPosts
+  }
 } catch {
   authorUnavailable = true
   Astro.response.status = 503
@@ -28,7 +36,6 @@ if (!author && !authorUnavailable) {
   Astro.response.status = 404
   Astro.response.headers.set('Cache-Control', 'no-store')
 }
-const posts = author ? await getPostsByAuthorSlug(authorSlug) : []
 const url = `${SITE_DOMAIN}/authors/${authorSlug}`
 const modifiedTime = author
   ? latestIsoDate([
