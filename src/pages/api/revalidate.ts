@@ -2,6 +2,10 @@ import { timingSafeEqual } from 'node:crypto'
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook'
 import type { APIRoute } from 'astro'
 import { env as workerEnv } from 'cloudflare:workers'
+import {
+  getPostsByAuthorSlug,
+  getPostsByTopicSlug,
+} from '@/utils/sanity.queries'
 import { readRequestBody } from '@/lib/request-body.server'
 import {
   buildPurgeUrls,
@@ -13,6 +17,7 @@ import {
   type RevalidatePayload,
   type RuntimeEnvironment,
 } from '@/lib/revalidate.server'
+import { freshClient } from '@/lib/sanity/client'
 
 export const prerender = false
 
@@ -54,6 +59,34 @@ function parsePayload(rawBody: string): RevalidatePayload | null {
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function payloadSlug(value: RevalidatePayload['slug']): string | null {
+  if (typeof value === 'string') return value.trim() || null
+  if (value && typeof value === 'object' && typeof value.current === 'string') {
+    return value.current.trim() || null
+  }
+  return null
+}
+
+async function addRelatedPostPaths(
+  payload: RevalidatePayload,
+  paths: string[]
+): Promise<string[]> {
+  if (payload._type !== 'topic' && payload._type !== 'author') return paths
+  const slug = payloadSlug(payload.slug)
+  if (!slug) return paths
+
+  try {
+    const posts =
+      payload._type === 'topic'
+        ? await getPostsByTopicSlug(slug, freshClient)
+        : await getPostsByAuthorSlug(slug, freshClient)
+    const relatedPaths = posts.map((post) => `/blog/${post.slug.current}`)
+    return [...new Set([...paths, ...relatedPaths])]
+  } catch {
+    return paths
+  }
 }
 
 function getIncomingSecret(request: Request): string | null {
@@ -147,7 +180,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     await delay(Math.min(delayMs, 5000))
   }
 
-  const paths = collectPaths(payload)
+  const paths = await addRelatedPostPaths(payload, collectPaths(payload))
   const deploy = await triggerSiteDeploy(paths, runtimeEnv)
 
   if (deploy.ok) {

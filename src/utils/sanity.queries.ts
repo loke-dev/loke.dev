@@ -158,9 +158,10 @@ export async function getTopicBySlug(slug: string): Promise<Topic | null> {
 }
 
 export async function getPostsByTopicSlug(
-  slug: string
+  slug: string,
+  contentClient: SanityClient = client
 ): Promise<PostListItem[]> {
-  const rows = await client.fetch<PostListFetchRow[]>(
+  const rows = await contentClient.fetch<PostListFetchRow[]>(
     POSTS_BY_TOPIC_SLUG_QUERY,
     { slug }
   )
@@ -178,9 +179,10 @@ export async function getAuthorBySlug(slug: string): Promise<Author | null> {
 }
 
 export async function getPostsByAuthorSlug(
-  slug: string
+  slug: string,
+  contentClient: SanityClient = client
 ): Promise<PostListItem[]> {
-  const rows = await client.fetch<PostListFetchRow[]>(
+  const rows = await contentClient.fetch<PostListFetchRow[]>(
     POSTS_BY_AUTHOR_SLUG_QUERY,
     { slug }
   )
