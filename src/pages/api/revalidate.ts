@@ -10,6 +10,7 @@ import { readRequestBody } from '@/lib/request-body.server'
 import {
   buildPurgeUrls,
   collectPaths,
+  normalizeRevalidationPath,
   purgeCloudflareCache,
   SSR_WARM_PATHS,
   triggerSiteDeploy,
@@ -82,7 +83,9 @@ async function addRelatedPostPaths(
       payload._type === 'topic'
         ? await getPostsByTopicSlug(slug, freshClient)
         : await getPostsByAuthorSlug(slug, freshClient)
-    const relatedPaths = posts.map((post) => `/blog/${post.slug.current}`)
+    const relatedPaths = posts
+      .map((post) => normalizeRevalidationPath(`/blog/${post.slug.current}`))
+      .filter((path): path is string => Boolean(path))
     return [...new Set([...paths, ...relatedPaths])]
   } catch {
     return paths
