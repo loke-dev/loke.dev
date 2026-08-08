@@ -23,6 +23,7 @@ import { freshClient } from '@/lib/sanity/client'
 export const prerender = false
 
 const MAX_BODY_BYTES = 64 * 1024
+const RELATED_LOOKUP_TIMEOUT_MS = 4_000
 
 function getRuntimeString(
   runtimeEnv: RuntimeEnvironment | undefined,
@@ -79,10 +80,13 @@ async function addRelatedPostPaths(
   if (!slug) return paths
 
   try {
-    const posts =
+    const posts = await Promise.race([
       payload._type === 'topic'
-        ? await getPostsByTopicSlug(slug, freshClient)
-        : await getPostsByAuthorSlug(slug, freshClient)
+        ? getPostsByTopicSlug(slug, freshClient)
+        : getPostsByAuthorSlug(slug, freshClient),
+      delay(RELATED_LOOKUP_TIMEOUT_MS).then(() => null),
+    ])
+    if (!posts) return paths
     const relatedPaths = posts
       .map((post) => normalizeRevalidationPath(`/blog/${post.slug.current}`))
       .filter((path): path is string => Boolean(path))
