@@ -88,19 +88,35 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}'
 
+      - name: Start local Worker preview for browser checks
+        run: |
+          pnpm exec wrangler dev --local \
+            --config dist/server/wrangler.json \
+            --port 8787 \
+            --inspector-port 0 \
+            --show-interactive-dev-session=false \
+            --log-level error > "$RUNNER_TEMP/loke-worker-preview.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/loke-worker-preview.pid"
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8787/health >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/loke-worker-preview.log"
+          exit 1
+
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run browser smoke and accessibility tests
         env:
-          # Use the dedicated Cloudflare custom domain so CI browser traffic
-          # does not get mixed with the public site's bot-protection rules.
-          BASE_URL: https://ci.loke.dev
+          BASE_URL: http://127.0.0.1:8787
         run: pnpm test:e2e
 
       - name: Run Lighthouse CI audit
         env:
-          BASE_URL: https://ci.loke.dev
+          BASE_URL: http://127.0.0.1:8787
         run: pnpm audit:lighthouse
 
       - name: Smoke test public sitemap
@@ -193,3 +209,9 @@ jobs:
       - name: Warm SSR routes
         run: |
           curl -sS -o /dev/null "https://loke.dev/search" || true
+
+      - name: Stop local Worker preview
+        if: always()
+        run: |
+          test -f "$RUNNER_TEMP/loke-worker-preview.pid" || exit 0
+          kill "$(cat "$RUNNER_TEMP/loke-worker-preview.pid")" 2>/dev/null || true
