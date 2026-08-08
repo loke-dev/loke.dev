@@ -8,6 +8,8 @@ const CANONICAL_NO_SLASH_PATHS =
   /^\/(?:about|affiliate-disclosure|apps|authors|blog|brand|changelog|contact|guides|now|privacy|projects|services|tools|topics)(?:\/[^?]*)?\/$/
 const CACHE_EXPIRY_HEADER = 'X-Loke-Cache-Expires-At'
 const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
+const ERROR_CACHE_CONTROL =
+  'public, max-age=0, s-maxage=300, stale-while-revalidate=86400, stale-if-error=86400'
 
 function isApiPath(pathname: string): boolean {
   return pathname === '/api' || pathname.startsWith('/api/')
@@ -103,6 +105,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
   if (isApiPath(pathname)) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  }
+  if (response.status === 404 || response.status === 410) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+    if (
+      !response.headers.has('Cache-Control') &&
+      !isApiPath(pathname) &&
+      !pathname.startsWith('/go/')
+    ) {
+      response.headers.set('Cache-Control', ERROR_CACHE_CONTROL)
+    }
   }
 
   if (cache && cacheKey && response.status === 200) {

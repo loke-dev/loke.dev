@@ -145,6 +145,10 @@ jobs:
           printf 'Checking %s/health\n' "$origin"
           health=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/health")
           printf '%s' "$health" | jq --exit-status '.ok == true and .service == "loke.dev"' >/dev/null
+          error_headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$origin/smoke-route-that-does-not-exist")
+          printf '%s\n' "$error_headers" | grep -Eq '^HTTP/[0-9.]+ 404([[:space:]]|$)'
+          printf '%s\n' "$error_headers" | grep -Fqi 'x-robots-tag: noindex, nofollow'
+          printf '%s\n' "$error_headers" | grep -Fqi 'cache-control: public, max-age=0, s-maxage=300, stale-while-revalidate=86400, stale-if-error=86400'
           # The inner shell must expand $1, not the outer workflow shell.
           # shellcheck disable=SC2016
           printf '%s' "$sitemap" \
