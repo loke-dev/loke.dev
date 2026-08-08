@@ -19,6 +19,7 @@
     "enabled": true,
   },
   "triggers": {
-    "crons": ["45 23 * * *"],
+    // Keep scheduled events explicitly disabled; this Worker has no scheduled handler.
+    "crons": [],
   },
 }

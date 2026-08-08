@@ -43,7 +43,7 @@ versions.
 ## Monitoring
 
 `/health` is monitored by Better Stack, while Sentry collects application errors, logs,
-performance traces, cron check-ins, and custom scheduler metrics. Cloudflare Web
+performance traces and custom scheduler metrics. Cloudflare Web
 Analytics is enabled in the Cloudflare dashboard.
 
 For future read-only monitoring automation, create local API credentials in

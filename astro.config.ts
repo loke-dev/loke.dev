@@ -8,6 +8,8 @@ export default defineConfig({
   site: 'https://loke.dev',
   trailingSlash: 'never',
   output: 'server',
+  // This site does not use Astro.session; avoid provisioning an unused KV namespace.
+  session: false,
   build: {
     inlineStylesheets: 'always',
   },
