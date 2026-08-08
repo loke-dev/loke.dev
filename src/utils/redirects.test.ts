@@ -31,3 +31,13 @@ test('keeps static page URLs permanently slashless', () => {
 test('keeps nested tool URLs permanently slashless', () => {
   assert.match(redirects, /^\/tools\/\*\/ \/tools\/:splat 308$/m)
 })
+
+test('keeps CMS route URLs permanently slashless', () => {
+  for (const route of ['blog', 'guides', 'topics', 'authors']) {
+    assert.match(redirects, new RegExp(`^/${route}/ /${route} 308$`, 'm'))
+    assert.match(
+      redirects,
+      new RegExp(`^/${route}/\\*/ /${route}/:splat 308$`, 'm')
+    )
+  }
+})

@@ -9,6 +9,14 @@
 /projects/ /projects 308
 /services/ /services 308
 /tools/ /tools 308
+/blog/ /blog 308
+/blog/*/ /blog/:splat 308
+/guides/ /guides 308
+/guides/*/ /guides/:splat 308
+/topics/ /topics 308
+/topics/*/ /topics/:splat 308
+/authors/ /authors 308
+/authors/*/ /authors/:splat 308
 /tools/*/ /tools/:splat 308
 /apps/flexithyme/privacy/ /apps/flexithyme/privacy 308
 /apps/flexithyme/support/ /apps/flexithyme/support 308
