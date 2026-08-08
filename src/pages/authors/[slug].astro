@@ -110,6 +110,7 @@ function getProfileLabel(profile: string): string {
       image={ogImage ?? undefined}
       modifiedTime={modifiedTime}
       preconnectSanity={true}
+      noindex={posts.length === 0}
     >
       <script
         is:inline

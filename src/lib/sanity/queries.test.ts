@@ -50,3 +50,11 @@ test('public document queries exclude Sanity drafts', () => {
     assert.match(query, /!\(_id in path\("drafts\.\*\*"\)\)/)
   }
 })
+
+test('taxonomy indexes only include entries used by published posts', () => {
+  for (const query of [ALL_AUTHORS_QUERY, ALL_TOPICS_QUERY]) {
+    assert.match(query, /count\(\*\[_type == "post"/)
+    assert.match(query, /!\(_id in path\("drafts\.\*\*"\)\)/)
+    assert.match(query, /references\(\^\._id\)/)
+  }
+})
