@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --port 3000",
-    "build": "pnpm run content:check && astro build",
+    "build": "pnpm run content:check && astro build && node scripts/check-static-pages.mjs",
     "audit": "node scripts/check-brace-expansion-patch.mjs && pnpm audit",
     "content:check": "node scripts/check-public-copy.mjs",
     "deploy": "pnpm run build && wrangler deploy",

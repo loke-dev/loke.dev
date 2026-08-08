@@ -6,6 +6,7 @@ import type { PluginOption } from 'vite'
 
 export default defineConfig({
   site: 'https://loke.dev',
+  trailingSlash: 'never',
   output: 'server',
   build: {
     inlineStylesheets: 'always',
