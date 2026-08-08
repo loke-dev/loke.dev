@@ -68,4 +68,9 @@ test('post search includes topic and author metadata', () => {
     SEARCH_POSTS_QUERY,
     /lower\(coalesce\(author->name, ""\)\) match \$pattern/
   )
+  assert.match(
+    SEARCH_POSTS_QUERY,
+    /score\(boost\(lower\(title\) match \$pattern, 4\)/
+  )
+  assert.match(SEARCH_POSTS_QUERY, /order\(_score desc, date desc\)/)
 })
