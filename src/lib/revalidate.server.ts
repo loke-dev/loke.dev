@@ -3,7 +3,7 @@ const REVALIDATION_PATH_ORIGIN = 'https://revalidation.invalid'
 const EXTERNAL_REQUEST_TIMEOUT_MS = 8_000
 const TYPE_PATHS: Record<string, string[]> = {
   post: ['/', '/blog', '/guides', '/topics', '/rss.xml', '/sitemap.xml'],
-  topic: ['/topics', '/sitemap.xml'],
+  topic: ['/', '/blog', '/guides', '/topics', '/sitemap.xml'],
   author: ['/sitemap.xml'],
   homePage: ['/'],
   nowPage: ['/now'],

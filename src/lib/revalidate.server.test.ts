@@ -90,3 +90,20 @@ test('ignores unsafe relationship slugs in post webhooks', () => {
     ]
   )
 })
+
+test('refreshes topic labels anywhere they are rendered', () => {
+  assert.deepEqual(
+    collectPaths({
+      _type: 'topic',
+      slug: { current: 'web-performance' },
+    }),
+    [
+      '/',
+      '/blog',
+      '/guides',
+      '/topics',
+      '/sitemap.xml',
+      '/topics/web-performance',
+    ]
+  )
+})
