@@ -104,6 +104,10 @@ jobs:
           printf '%s\n' "$manifest_headers" | grep -Fqi 'cache-control: public, max-age=3600, stale-while-revalidate=86400'
           favicon_headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$origin/favicon.ico")
           printf '%s\n' "$favicon_headers" | grep -Fqi 'cache-control: public, max-age=86400, stale-while-revalidate=604800'
+          for icon in android-chrome-192x192.png android-chrome-512x512.png; do
+            icon_headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$origin/$icon")
+            printf '%s\n' "$icon_headers" | grep -Fqi 'cache-control: public, max-age=31536000, immutable'
+          done
           for route in / /about /projects /tools; do
             printf 'Checking cache policy for %s%s\n' "$origin" "$route"
             headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$origin$route")
