@@ -38,4 +38,9 @@ for (const route of routes) {
   }
 }
 
+const homepage = readFileSync(resolve('dist/client/index.html'), 'utf8')
+if (!homepage.includes('portrait-512') || !homepage.includes('type="image/webp"')) {
+  throw new Error('Homepage portrait preload is missing or not declared as WebP.')
+}
+
 console.log(`Static page body check passed for ${routes.length} routes.`)
