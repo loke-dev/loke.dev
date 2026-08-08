@@ -1,3 +1,5 @@
+export const STRICT_TRANSPORT_SECURITY = 'max-age=31536000; includeSubDomains'
+
 export function getSecurityHeaders(options?: {
   allowStudioFrame?: boolean
 }): Record<string, string> {
@@ -8,7 +10,7 @@ export function getSecurityHeaders(options?: {
   const headers: Record<string, string> = {
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'Strict-Transport-Security': STRICT_TRANSPORT_SECURITY,
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), unload=()',
     'X-DNS-Prefetch-Control': 'on',
     'Content-Security-Policy': [

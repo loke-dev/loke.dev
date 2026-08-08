@@ -1,8 +1,19 @@
 import { handle } from '@astrojs/cloudflare/handler'
 import * as Sentry from '@sentry/cloudflare'
+import { STRICT_TRANSPORT_SECURITY } from '@/utils/headers.server'
 import { getStudioRedirect } from '@/lib/studio-redirect'
 
 const WORKER_VERSION_HEADER = 'X-Loke-Worker-Version'
+
+function withTransportSecurity(response: Response): Response {
+  const headers = new Headers(response.headers)
+  headers.set('Strict-Transport-Security', STRICT_TRANSPORT_SECURITY)
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
 
 function withWorkerVersion(request: Request, versionId?: string): Request {
   if (!versionId) return request
@@ -15,17 +26,18 @@ function withWorkerVersion(request: Request, versionId?: string): Request {
 type SentryEnv = Env & { SENTRY_DSN?: string }
 
 const handler: ExportedHandler<SentryEnv> = {
-  fetch(request, env, context) {
+  async fetch(request, env, context) {
     const studioRedirect = getStudioRedirect(request)
     if (studioRedirect) {
-      return studioRedirect
+      return withTransportSecurity(studioRedirect)
     }
 
-    return handle(
+    const response = await handle(
       withWorkerVersion(request, env.CF_VERSION_METADATA?.id),
       env,
       context
     )
+    return withTransportSecurity(response)
   },
 }
 
