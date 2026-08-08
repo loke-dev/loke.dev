@@ -89,6 +89,20 @@ const collectionSchema = {
   modifiedTime={modifiedTime}
   preconnectSanity={true}
 >
+  <link
+    slot="head"
+    rel="prev"
+    href={`${SITE_DOMAIN}${currentPage === 2 ? '/blog' : `/blog/page/${currentPage - 1}`}`}
+  />
+  {
+    currentPage < totalPages && (
+      <link
+        slot="head"
+        rel="next"
+        href={`${SITE_DOMAIN}/blog/page/${currentPage + 1}`}
+      />
+    )
+  }
   <script
     is:inline
     type="application/ld+json"

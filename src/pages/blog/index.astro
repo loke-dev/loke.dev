@@ -63,6 +63,11 @@ const collectionSchema = {
   modifiedTime={modifiedTime}
   preconnectSanity={true}
 >
+  {
+    totalPages > 1 && (
+      <link slot="head" rel="next" href={`${SITE_DOMAIN}/blog/page/2`} />
+    )
+  }
   <script
     is:inline
     type="application/ld+json"
