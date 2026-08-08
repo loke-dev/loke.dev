@@ -103,6 +103,15 @@ jobs:
             printf '%s\n' "$headers" | grep -Fqi 'stale-if-error=86400'
             printf '%s\n' "$headers" | grep -Fqi 'strict-transport-security: max-age=31536000; includeSubDomains'
           done
+          for route in / /about /projects /tools '/tools?smoke=1'; do
+            printf 'Checking rendered HTML body for %s%s\n' "$origin" "$route"
+            body=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin$route")
+            printf '%s' "$body" | grep -Fq '<html'
+            if printf '%s' "$body" | grep -Fq 'Redirecting from'; then
+              echo "Canonical route returned a redirect document: $origin$route"
+              exit 1
+            fi
+          done
           public_domain="https://loke.dev"
           for route in / /blog; do
             printf 'Checking public security headers for %s%s\n' "$public_domain" "$route"
