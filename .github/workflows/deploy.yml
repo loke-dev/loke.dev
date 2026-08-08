@@ -101,7 +101,7 @@ jobs:
             headers=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sSI "$origin$route")
             printf '%s\n' "$headers" | grep -Fqi 'cache-control: public, max-age=3600, stale-while-revalidate=86400'
             printf '%s\n' "$headers" | grep -Fqi 'stale-if-error=86400'
-            printf '%s\n' "$headers" | grep -Fqi 'strict-transport-security: max-age=31536000'
+            printf '%s\n' "$headers" | grep -Fqi 'strict-transport-security: max-age=31536000; includeSubDomains'
           done
           printf 'Checking %s/health\n' "$origin"
           health=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/health")
