@@ -123,23 +123,23 @@ const normalizedModifiedTime = toIsoDate(modifiedTime)
         '@graph': [
           {
             '@type': 'Person',
-            '@id': 'https://loke.dev/#person',
+            '@id': `${SITE_DOMAIN}/#person`,
             name: 'Loke',
-            url: 'https://loke.dev/about',
+            url: `${SITE_DOMAIN}/about`,
             image: `${SITE_DOMAIN}/brand/workshop-signal/loke-profile-portrait-preview.webp`,
             sameAs: ['https://github.com/loke-dev', 'https://x.com/loke_dev'],
           },
           {
             '@type': 'WebSite',
-            '@id': 'https://loke.dev/#website',
-            url: 'https://loke.dev',
+            '@id': `${SITE_DOMAIN}/#website`,
+            url: SITE_DOMAIN,
             name: 'Loke.dev',
-            publisher: { '@id': 'https://loke.dev/#person' },
+            publisher: { '@id': `${SITE_DOMAIN}/#person` },
             potentialAction: {
               '@type': 'SearchAction',
               target: {
                 '@type': 'EntryPoint',
-                urlTemplate: 'https://loke.dev/search?q={search_term_string}',
+                urlTemplate: `${SITE_DOMAIN}/search?q={search_term_string}`,
               },
               'query-input': 'required name=search_term_string',
             },
@@ -150,8 +150,8 @@ const normalizedModifiedTime = toIsoDate(modifiedTime)
             url: canonicalUrl,
             name: title,
             description,
-            isPartOf: { '@id': 'https://loke.dev/#website' },
-            about: { '@id': 'https://loke.dev/#person' },
+            isPartOf: { '@id': `${SITE_DOMAIN}/#website` },
+            about: { '@id': `${SITE_DOMAIN}/#person` },
             inLanguage: 'en',
             ...(normalizedModifiedTime
               ? { dateModified: normalizedModifiedTime }
