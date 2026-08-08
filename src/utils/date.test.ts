@@ -20,6 +20,7 @@ test('normalizes valid CMS dates', () => {
 
 test('returns nullish values for malformed CMS dates', () => {
   assert.equal(parseDate('not-a-date'), null)
+  assert.equal(parseDate('2026-02-30'), null)
   assert.equal(toIsoDate(undefined), undefined)
   assert.equal(toRfc822Date(''), undefined)
 })

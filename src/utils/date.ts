@@ -4,7 +4,23 @@
 export function parseDate(value: string | undefined): Date | null {
   if (!value?.trim()) return null
 
-  const timestamp = Date.parse(value)
+  const normalized = value.trim()
+  const calendarDate = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|[T\s])/u)
+  if (calendarDate) {
+    const year = Number(calendarDate[1])
+    const month = Number(calendarDate[2])
+    const day = Number(calendarDate[3])
+    const checked = new Date(Date.UTC(year, month - 1, day))
+    if (
+      checked.getUTCFullYear() !== year ||
+      checked.getUTCMonth() !== month - 1 ||
+      checked.getUTCDate() !== day
+    ) {
+      return null
+    }
+  }
+
+  const timestamp = Date.parse(normalized)
   return Number.isNaN(timestamp) ? null : new Date(timestamp)
 }
 
