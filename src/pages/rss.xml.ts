@@ -11,7 +11,7 @@ import {
 import { getAllPublishedPosts } from '@/utils/sanity.queries'
 import { escapeXml } from '@/utils/xml'
 import { freshClient } from '@/lib/sanity/client'
-import { getSanityImageUrl } from '@/lib/sanity/helpers'
+import { urlFor } from '@/lib/sanity/image'
 
 export const prerender = false
 
@@ -27,7 +27,9 @@ export const GET: APIRoute = async () => {
       const postUrl = `${SITE_DOMAIN}/blog/${post.slug.current}`
       const pubDate =
         toRfc822Date(post.date) ?? toRfc822Date(post._createdAt) ?? null
-      const imageUrl = getSanityImageUrl(post.image, 1200)
+      const imageUrl = post.image
+        ? urlFor(post.image).width(1200).quality(80).format('jpg').url()
+        : null
       const safePostUrl = escapeXml(postUrl)
       const safeImageUrl = imageUrl ? escapeXml(imageUrl) : ''
       return `
@@ -38,13 +40,13 @@ export const GET: APIRoute = async () => {
       <guid isPermaLink="true">${safePostUrl}</guid>
       ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ''}
       <author>${escapeXml(`${SITE_CONTACT_EMAIL} (${AUTHOR_NAME})`)}</author>
-      ${safeImageUrl ? `<enclosure url="${safeImageUrl}" type="image/jpeg" length="0" />` : ''}
+      ${safeImageUrl ? `<enclosure url="${safeImageUrl}" type="image/jpeg" length="0" /><media:content url="${safeImageUrl}" type="image/jpeg" medium="image" />` : ''}
     </item>`
     })
     .join('')
 
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>${escapeXml(SITE_NAME)}</title>
     <description>${escapeXml(SITE_RSS_DESCRIPTION)}</description>
