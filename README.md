@@ -32,7 +32,9 @@ production custom domain. Cloudflare's `workers.dev` production and preview
 URLs are disabled. `ci.loke.dev` points to the same Worker and is reserved for
 controlled live checks. GitHub browser and Lighthouse checks run against the
 built local Worker preview, so code verification does not depend on the
-public site's bot-protection behavior.
+public site's bot-protection behavior. If Cloudflare blocks GitHub's shared
+runner network, the live content check is reported as skipped while the local
+Worker checks still run in full.
 
 Custom-domain and route lifecycle is managed in the Cloudflare dashboard;
 the GitHub deployment token is intentionally limited to uploading new Worker
