@@ -16,7 +16,16 @@ import { urlFor } from '@/lib/sanity/image'
 export const prerender = false
 
 export const GET: APIRoute = async () => {
-  const allPosts = await getAllPublishedPosts(freshClient)
+  const allPosts = await getAllPublishedPosts(freshClient).catch(() => null)
+  if (!allPosts) {
+    return new Response('Feed temporarily unavailable.\n', {
+      status: 503,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-store',
+      },
+    })
+  }
   const posts = allPosts.slice(0, 20)
   const lastBuildDate = latestDateOrNow(
     posts.flatMap((post) => [post.lastModified, post._updatedAt, post.date])
