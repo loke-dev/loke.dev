@@ -26,6 +26,30 @@ function latestDate(values: Array<string | undefined>): string | undefined {
 }
 
 export const GET: APIRoute = async () => {
+  const queryResults = await Promise.all([
+    getAllPublishedPosts(freshClient),
+    getAllProjects(freshClient),
+    getBlogPage(freshClient),
+    getProjectsPage(freshClient),
+    getBlogTotalPages(freshClient),
+    getAllTopics(freshClient),
+    getAllAuthors(freshClient),
+    getHomePage(freshClient),
+    getNowPage(freshClient),
+    getAboutPage(freshClient),
+    getContactPage(freshClient),
+  ]).catch(() => null)
+
+  if (!queryResults) {
+    return new Response('Sitemap temporarily unavailable.\n', {
+      status: 503,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-store',
+      },
+    })
+  }
+
   const [
     posts,
     projects,
@@ -38,19 +62,7 @@ export const GET: APIRoute = async () => {
     nowPage,
     aboutPage,
     contactPage,
-  ] = await Promise.all([
-    getAllPublishedPosts(freshClient),
-    getAllProjects(freshClient),
-    getBlogPage(freshClient),
-    getProjectsPage(freshClient),
-    getBlogTotalPages(freshClient),
-    getAllTopics(freshClient),
-    getAllAuthors(freshClient),
-    getHomePage(freshClient),
-    getNowPage(freshClient),
-    getAboutPage(freshClient),
-    getContactPage(freshClient),
-  ])
+  ] = queryResults
 
   const staticUrls = [
     '/',
