@@ -17,6 +17,7 @@ try {
 } catch {
   // Keep the archive route usable when the CMS has a short-lived outage.
   topicsUnavailable = true
+  Astro.response.headers.set('Cache-Control', 'no-store')
 }
 const url = `${SITE_DOMAIN}/topics`
 const modifiedTime = latestIsoDate(topics.map((topic) => topic._updatedAt))
@@ -53,6 +54,7 @@ const breadcrumbSchema = {
   description="Browse posts by subject, from AI and CMS work to frameworks, cloud, performance, and the usual web dev rabbit holes."
   url={url}
   modifiedTime={modifiedTime}
+  noindex={topicsUnavailable}
 >
   <script
     is:inline
