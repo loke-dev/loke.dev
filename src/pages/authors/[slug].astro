@@ -7,6 +7,7 @@ import { SITE_DOMAIN } from '@/utils/meta'
 import { getAuthorBySlug, getPostsByAuthorSlug } from '@/utils/sanity.queries'
 import BlogPostCard from '@/components/BlogPostCard.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getSanityImageUrl } from '@/lib/sanity/helpers'
 import { urlFor } from '@/lib/sanity/image'
 
 export const prerender = false
@@ -31,7 +32,8 @@ const modifiedTime = author
       ]),
     ])
   : undefined
-const image = author?.image
+const image = author ? getSanityImageUrl(author.image, 400, 400) : null
+const ogImage = author?.image
   ? urlFor(author.image).width(400).height(400).quality(80).format('jpg').url()
   : null
 const profileLinks =
@@ -97,7 +99,7 @@ function getProfileLabel(profile: string): string {
         author.bio ?? `${author.name}'s practical development writing.`
       }
       url={url}
-      image={image ?? undefined}
+      image={ogImage ?? undefined}
       modifiedTime={modifiedTime}
       preconnectSanity={true}
     >
