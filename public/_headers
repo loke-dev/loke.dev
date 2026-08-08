@@ -13,11 +13,11 @@
 /images/*
   Cache-Control: public, max-age=31536000, immutable
 
-/brand/*
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
-
 /brand/workshop-signal/loke-signal-mark.svg
   Cache-Control: public, max-age=31536000, immutable
+
+/brand/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /favicon-*.png
   Cache-Control: public, max-age=31536000, immutable
