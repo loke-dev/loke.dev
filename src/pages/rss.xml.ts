@@ -40,7 +40,7 @@ export const GET: APIRoute = async () => {
       <guid isPermaLink="true">${safePostUrl}</guid>
       ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ''}
       <author>${escapeXml(`${SITE_CONTACT_EMAIL} (${AUTHOR_NAME})`)}</author>
-      ${safeImageUrl ? `<enclosure url="${safeImageUrl}" type="image/jpeg" length="0" /><media:content url="${safeImageUrl}" type="image/jpeg" medium="image" />` : ''}
+      ${safeImageUrl ? `<media:content url="${safeImageUrl}" type="image/jpeg" medium="image" />` : ''}
     </item>`
     })
     .join('')
