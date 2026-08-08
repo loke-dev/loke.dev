@@ -1,9 +1,9 @@
 export const CACHE_CONTROL = {
   home: 'public, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
   blogIndex:
-    'public, s-maxage=1800, stale-while-revalidate=86400, stale-if-error=86400',
+    'public, max-age=0, s-maxage=1800, stale-while-revalidate=86400, stale-if-error=86400',
   blogPost:
-    'public, s-maxage=86400, stale-while-revalidate=604800, stale-if-error=86400',
+    'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800, stale-if-error=86400',
   staticPage:
     'public, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
   contact:
@@ -11,5 +11,5 @@ export const CACHE_CONTROL = {
   changelog:
     'public, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
   xmlFeed:
-    'public, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
+    'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
 } as const
