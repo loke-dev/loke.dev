@@ -10,7 +10,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 export const prerender = false
 
 Astro.response.headers.set('Cache-Control', CACHE_CONTROL.blogIndex)
-const topics = await getAllTopics()
+let topics = [] as Awaited<ReturnType<typeof getAllTopics>>
+let topicsUnavailable = false
+try {
+  topics = await getAllTopics()
+} catch {
+  // Keep the archive route usable when the CMS has a short-lived outage.
+  topicsUnavailable = true
+}
 const url = `${SITE_DOMAIN}/topics`
 const modifiedTime = latestIsoDate(topics.map((topic) => topic._updatedAt))
 
@@ -64,7 +71,11 @@ const breadcrumbSchema = {
       description="A simple way to explore the writing by subject."
     />
     {
-      topics.length ? (
+      topicsUnavailable ? (
+        <p class="border-border bg-card text-muted-foreground mt-10 rounded-xl border p-6">
+          Topics are temporarily unavailable. Please try again in a moment.
+        </p>
+      ) : topics.length ? (
         <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {topics.map((topic) => (
             <li>
