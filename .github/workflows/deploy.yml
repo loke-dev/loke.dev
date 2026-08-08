@@ -97,6 +97,8 @@ jobs:
             printf 'Checking %s%s\n' "$origin" "$route"
             curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS -o /dev/null "$origin$route"
           done
+          home_html=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/")
+          printf '%s' "$home_html" | grep -Fq '<script async data-project-id="f08c2acd-2566-41d9-9af5-c34505ca3a1c" src="https://api.muroanalytics.com/muro.js"></script>'
           manifest=$(curl --fail --retry 3 --retry-all-errors --retry-delay 2 -A "$user_agent" -sS "$origin/manifest.json")
           printf '%s' "$manifest" \
             | jq --exit-status '(.id == "/") and (.lang == "en") and (.scope == "/") and (.start_url == "/")' >/dev/null
